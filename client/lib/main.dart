@@ -1,4 +1,4 @@
-import 'package:first_app/signup/welcomScreen.dart';
+import 'package:first_app/features/auth/presentation/screens/welcomScreen.dart';
 import 'package:first_app/theme/theme.dart';
 import 'package:flutter/material.dart';
 

@@ -1,6 +1,6 @@
-import 'package:first_app/signup/register.dart';
+import 'package:first_app/features/auth/presentation/screens/register.dart';
 import 'package:first_app/theme/theme.dart';
-import 'package:first_app/widgets/custom_scaffold.dart';
+import 'package:first_app/features/auth/presentation/widgets/custom_scaffold.dart';
 import 'package:flutter/material.dart';
 
 class ForgetPassword extends StatefulWidget {
