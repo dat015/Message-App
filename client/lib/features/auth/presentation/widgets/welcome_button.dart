@@ -1,4 +1,4 @@
-import 'package:first_app/signup/register.dart';
+import 'package:first_app/features/auth/presentation/screens/register.dart';
 import 'package:flutter/material.dart';
 
 class WelcomeButton extends StatelessWidget {

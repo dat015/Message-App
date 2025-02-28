@@ -1,9 +1,9 @@
-import 'package:first_app/signup/forget_password.dart';
-import 'package:first_app/signup/register.dart';
-import 'package:first_app/widgets/custom_scaffold.dart';
+import 'package:first_app/features/auth/presentation/screens/forget_password.dart';
+import 'package:first_app/features/auth/presentation/screens/register.dart';
+import 'package:first_app/features/auth/presentation/widgets/custom_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
-import '../theme/theme.dart';
+import '../../../../theme/theme.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
