@@ -3,6 +3,9 @@ import 'package:first_app/features/auth/presentation/screens/register.dart';
 import 'package:first_app/features/auth/presentation/widgets/custom_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
+import '../../../../data/api/api_client.dart';
+import '../../../../data/repositories/Auth/auth_repository.dart';
+import '../../../../data/repositories/Auth/auth_repository_implement.dart';
 import '../../../../theme/theme.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -17,6 +20,8 @@ class _SignUpScreenState extends State<SignInScreen> {
   bool rememberPassword = false;
   bool _obscureText = true;
 
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
   // Hàm tạo tiêu đề
   Widget _buildHeader() {
     return Column(
@@ -42,10 +47,35 @@ class _SignUpScreenState extends State<SignInScreen> {
       ],
     );
   }
+  Future<void> sendDataLogin() async {
+    if (_formSignInKey.currentState!.validate()) {
+      String email = _emailController.text;
+      String password = _passwordController.text;
+
+      print("Email: $email");
+      print("Password: $password");
+
+      final AuthRepository _authRepository = AuthRepositoryImpl(
+        ApiClient(baseUrl: 'http://10.0.2.2:5053'),
+      );
+
+      try {
+        final response = await _authRepository.login(email, password);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Login successful: ${response.token ?? "No token"}')),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Login failed: $e')),
+        );
+      }
+    }
+  }
 
   // Hàm tạo trường nhập email
   Widget _buildEmailField() {
     return TextFormField(
+      controller: _emailController,
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'Please enter Email';
@@ -66,6 +96,7 @@ class _SignUpScreenState extends State<SignInScreen> {
   Widget _buildPasswordField() {
     return TextFormField(
       obscureText: _obscureText,
+      controller: _passwordController,
       obscuringCharacter: '*',
       validator: (value) {
         if (value == null || value.isEmpty) {
@@ -133,15 +164,13 @@ class _SignUpScreenState extends State<SignInScreen> {
   }
 
   // Hàm tạo nút "Sign In"
-  Widget _buildSignInButton() {
+  Widget  _buildSignInButton()  {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
         onPressed: () {
           if (_formSignInKey.currentState!.validate()) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Processing Data')),
-            );
+             sendDataLogin();
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(

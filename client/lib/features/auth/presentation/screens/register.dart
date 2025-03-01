@@ -1,9 +1,15 @@
+import 'dart:convert';
+
+import 'package:first_app/data/dto/register_dto.dart';
 import 'package:first_app/features/auth/presentation/screens/login.dart';
 import 'package:first_app/theme/theme.dart';
 import 'package:first_app/features/auth/presentation/widgets/custom_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:intl/intl.dart';
+import 'package:first_app/data/api/api_client.dart';
+import '../../../../data/repositories/Auth/auth_repository.dart';
+import '../../../../data/repositories/Auth/auth_repository_implement.dart'; // Thêm import này
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -14,11 +20,30 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   final _formSignupKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+  final _dateController = TextEditingController();
+
   bool agreePersonalData = false;
   bool _obscureText = true;
   int _genderRadioBtnVal = -1;
   DateTime? _selectedDate;
-  final TextEditingController _dateController = TextEditingController();
+
+  // Khởi tạo AuthRepository
+  final AuthRepository _authRepository = AuthRepositoryImpl(
+    ApiClient(baseUrl: 'http://10.0.2.2:5053'), // Đảm bảo dùng 10.0.2.2
+  );
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    _dateController.dispose();
+    super.dispose();
+  }
 
   // Hàm xử lý thay đổi giới tính
   void _handleGenderChange(int? value) {
@@ -43,6 +68,58 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
   }
 
+  // Hàm gửi dữ liệu đăng ký
+  Future<void> sendDataRegister() async {
+    if (_formSignupKey.currentState!.validate()) {
+      if (_passwordController.text != _confirmPasswordController.text) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Passwords do not match')),
+        );
+        return;
+      }
+      if (_genderRadioBtnVal == -1) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please select your gender')),
+        );
+        return;
+      }
+      if (!agreePersonalData) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please agree to personal data processing'),
+          ),
+        );
+        return;
+      }
+
+      final registerDTO = RegisterDTO(
+        username: _nameController.text,
+        password: _passwordController.text,
+        email: _emailController.text,
+        avatarUrl: 'https://i.pravatar.cc/150?img=3',
+        birthday: _selectedDate,
+        gender: _genderRadioBtnVal == 0, // 0: Male (true), 1: Female (false)
+      );
+      debugPrint('RegisterDTO: ${jsonEncode(registerDTO.toJson())}');
+
+      try {
+        final response = await _authRepository.register(registerDTO);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Registration successful: ${response.token}')),
+        );
+        // Chuyển đến màn hình đăng nhập sau khi đăng ký thành công
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (e) => const SignInScreen()),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Registration failed: $e')),
+        );
+      }
+    }
+  }
+
   // Hàm tạo tiêu đề
   Widget _buildHeader() {
     return Text(
@@ -58,6 +135,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   // Hàm tạo trường nhập tên
   Widget _buildNameField() {
     return TextFormField(
+      controller: _nameController,
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'Please enter Name';
@@ -77,6 +155,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   // Hàm tạo trường nhập email
   Widget _buildEmailField() {
     return TextFormField(
+      controller: _emailController,
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'Please enter Email';
@@ -96,6 +175,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   // Hàm tạo trường nhập mật khẩu
   Widget _buildPasswordField() {
     return TextFormField(
+      controller: _passwordController,
       obscureText: _obscureText,
       obscuringCharacter: '*',
       validator: (value) {
@@ -125,6 +205,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   // Hàm tạo trường xác nhận mật khẩu
   Widget _buildConfirmPasswordField() {
     return TextFormField(
+      controller: _confirmPasswordController,
       obscureText: _obscureText,
       obscuringCharacter: '*',
       validator: (value) {
@@ -240,27 +321,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
-        onPressed: () {
-          if (_formSignupKey.currentState!.validate()) {
-            if (_genderRadioBtnVal == -1) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Please select your gender')),
-              );
-            } else if (!agreePersonalData) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text(
-                    'Please agree to the processing of personal data',
-                  ),
-                ),
-              );
-            } else {
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(const SnackBar(content: Text('Processing Data')));
-            }
-          }
-        },
+        onPressed: sendDataRegister, // Gọi hàm gửi dữ liệu
         child: const Text('CREATE ACCOUNT'),
       ),
     );
