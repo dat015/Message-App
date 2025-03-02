@@ -1,4 +1,5 @@
 import 'package:first_app/features/auth/presentation/screens/welcomScreen.dart';
+import 'package:first_app/features/home/presentation/screens/home_screen.dart';
 import 'package:first_app/theme/theme.dart';
 import 'package:flutter/material.dart';
 
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: lightMode,
-      home: const WelcomeScreen(),
+      home: const HomeScreen(),
     );
   }
 }
