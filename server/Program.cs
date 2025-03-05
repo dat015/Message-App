@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using server.Data;
 using server.InjectService;
+using server.Services.ChatService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -55,7 +56,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.MapControllers();
-
+app.UseRouting();
+app.MapHub<ChatHub>("/chatHub");
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

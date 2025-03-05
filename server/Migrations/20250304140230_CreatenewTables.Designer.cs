@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using server.Data;
 
@@ -11,9 +12,11 @@ using server.Data;
 namespace Message_app.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250304140230_CreatenewTables")]
+    partial class CreatenewTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -59,6 +62,9 @@ namespace Message_app.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
+                    b.Property<int?>("Conversationid")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("created_at")
                         .HasColumnType("datetime2");
 
@@ -71,6 +77,8 @@ namespace Message_app.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.HasKey("id");
+
+                    b.HasIndex("Conversationid");
 
                     b.ToTable("Conversations");
                 });
@@ -423,18 +431,23 @@ namespace Message_app.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("server.Models.Conversation", b =>
+                {
+                    b.HasOne("server.Models.Conversation", null)
+                        .WithMany("Conversations")
+                        .HasForeignKey("Conversationid");
+                });
+
             modelBuilder.Entity("server.Models.GroupSettings", b =>
                 {
                     b.HasOne("server.Models.Conversation", "Conversation")
                         .WithMany("GroupSettings")
                         .HasForeignKey("ConversationId")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("server.Models.User", "User")
                         .WithMany("groupSettings")
                         .HasForeignKey("CreatedBy")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Conversation");
@@ -447,19 +460,17 @@ namespace Message_app.Migrations
                     b.HasOne("server.Models.Attachment", "attachment")
                         .WithMany()
                         .HasForeignKey("attachment_id")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("server.Models.Conversation", "conversation")
                         .WithMany("Messages")
                         .HasForeignKey("conversation_id")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("server.Models.User", "sender")
                         .WithMany("messages")
                         .HasForeignKey("sender_id")
-                        .OnDelete(DeleteBehavior.Cascade)
+
                         .IsRequired();
 
                     b.Navigation("attachment");
@@ -481,7 +492,7 @@ namespace Message_app.Migrations
                     b.HasOne("server.Models.User", "user")
                         .WithMany("notifications")
                         .HasForeignKey("user_id")
-                        .OnDelete(DeleteBehavior.Cascade)
+
                         .IsRequired();
 
                     b.Navigation("user");
@@ -492,13 +503,12 @@ namespace Message_app.Migrations
                     b.HasOne("server.Models.Conversation", "conversation")
                         .WithMany()
                         .HasForeignKey("conversation_id")
-                        .OnDelete(DeleteBehavior.Cascade)
+
                         .IsRequired();
 
                     b.HasOne("server.Models.User", "user")
                         .WithMany("participants")
                         .HasForeignKey("user_id")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("conversation");
@@ -511,13 +521,12 @@ namespace Message_app.Migrations
                     b.HasOne("server.Models.Role", "role")
                         .WithMany("role_Of_Users")
                         .HasForeignKey("role_id")
-                        .OnDelete(DeleteBehavior.Cascade)
+
                         .IsRequired();
 
                     b.HasOne("server.Models.User", "user")
                         .WithMany("role_of_users")
                         .HasForeignKey("user_id")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("role");
@@ -530,7 +539,6 @@ namespace Message_app.Migrations
                     b.HasOne("server.Models.User", "user")
                         .WithMany("stories")
                         .HasForeignKey("user_id")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("user");
@@ -541,13 +549,12 @@ namespace Message_app.Migrations
                     b.HasOne("server.Models.Story", "story")
                         .WithMany("story_reactions")
                         .HasForeignKey("story_id")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        
                         .IsRequired();
 
                     b.HasOne("server.Models.User", "user")
                         .WithMany("storyReactions")
                         .HasForeignKey("user_id")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("story");
@@ -560,13 +567,11 @@ namespace Message_app.Migrations
                     b.HasOne("server.Models.Story", "story")
                         .WithMany()
                         .HasForeignKey("story_id")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("server.Models.User", "user")
                         .WithMany("storyViewers")
                         .HasForeignKey("user_id")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("story");
@@ -576,6 +581,8 @@ namespace Message_app.Migrations
 
             modelBuilder.Entity("server.Models.Conversation", b =>
                 {
+                    b.Navigation("Conversations");
+
                     b.Navigation("GroupSettings");
 
                     b.Navigation("Messages");
