@@ -33,7 +33,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   // Khởi tạo AuthRepository
   final AuthRepository _authRepository = AuthRepositoryImpl(
-    ApiClient(baseUrl: 'http://10.0.2.2:5053'), // Đảm bảo dùng 10.0.2.2
+    ApiClient(baseUrl: 'http://localhost:5053/'), // Đảm bảo dùng 10.0.2.2
   );
   @override
   void dispose() {

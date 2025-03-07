@@ -114,6 +114,54 @@ namespace server.Services.UserService
             return user;
         }
 
-      
+        public async Task<User> GetUserByEmail(string email)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.email == email);
+        }
+
+        public async Task SaveOTPAsync(OTPs otp)
+        {
+            _context.OTPs.Add(otp);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<OTPs> GetLatestOTPByUserIdAsync(int userId)
+        {
+            return await _context.OTPs
+                .Where(o => o.UserId == userId)
+                .OrderByDescending(o => o.ExpiryDate)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task UpdateOTPAsync(OTPs otp)
+        {
+            _context.OTPs.Update(otp);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdatePassword(string email, string newPassword)
+        {
+            var user = await GetUserByEmail(email);
+            if (user == null) throw new Exception("User not found");
+
+            var latestOtp = await GetLatestOTPByUserIdAsync(user.id);
+            if (latestOtp == null) throw new Exception("No valid OTP found");
+
+            var allOtps = await _context.OTPs.Where(o => o.UserId == user.id).ToListAsync();
+            if (allOtps.Any())
+            {
+                _context.OTPs.RemoveRange(allOtps);
+            }
+
+            var salt = Hash.GenerateKey();
+            var passwordHash = Hash.HashPassword(newPassword, salt);
+
+            user.password = passwordHash;
+            user.passwordSalt = salt;
+
+            _context.Users.Update(user);
+
+            await _context.SaveChangesAsync();
+        }
     }
 }

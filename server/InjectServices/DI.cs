@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using server.Data;
 using server.Filters;
 using server.Services.AuthService;
+using server.Services.OTPsService;
 using server.Services.UserService;
 
 namespace server.InjectService
@@ -20,6 +21,7 @@ namespace server.InjectService
     
             services.AddScoped<IAuthSV, AuthSV>();
             services.AddScoped<IUserSV, UserSV>();
+            services.AddScoped<IOTPsSV, OTPsSV>();
             services.AddScoped<AuthorizationJWT>();
 
         }

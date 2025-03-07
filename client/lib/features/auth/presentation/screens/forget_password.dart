@@ -1,3 +1,9 @@
+import 'dart:convert';
+import 'package:first_app/core/utils/auth_utils.dart';
+import 'package:first_app/data/api/api_client.dart';
+import 'package:first_app/data/repositories/Auth/auth_repository.dart';
+import 'package:first_app/data/repositories/Auth/auth_repository_implement.dart';
+import 'package:first_app/features/auth/presentation/screens/otps_form.dart';
 import 'package:first_app/features/auth/presentation/screens/register.dart';
 import 'package:first_app/theme/theme.dart';
 import 'package:first_app/features/auth/presentation/widgets/custom_scaffold.dart';
@@ -12,6 +18,17 @@ class ForgetPassword extends StatefulWidget {
 
 class _ForgetPasswordScreenState extends State<ForgetPassword> {
   final _formForgetPassKey = GlobalKey<FormState>();
+  final TextEditingController _emailController = TextEditingController();
+
+  Future<void> _sendOTP(BuildContext context) async {
+  if (_formForgetPassKey.currentState!.validate()) {
+    await sendOTPToServer(context, _emailController.text);
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Please enter a valid email')),
+    );
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +36,6 @@ class _ForgetPasswordScreenState extends State<ForgetPassword> {
       child: Column(
         children: [
           Expanded(flex: 1, child: SizedBox(height: 10)),
-
           Expanded(
             flex: 7,
             child: Container(
@@ -32,8 +48,8 @@ class _ForgetPasswordScreenState extends State<ForgetPassword> {
                 ),
               ),
               child: SingleChildScrollView(
-                key: _formForgetPassKey,
                 child: Form(
+                  key: _formForgetPassKey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -45,13 +61,17 @@ class _ForgetPasswordScreenState extends State<ForgetPassword> {
                           color: lightColorScheme.primary,
                         ),
                       ),
-
                       const SizedBox(height: 40),
-
+                      // Ô nhập email
                       TextFormField(
+                        controller: _emailController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter Email';
+                          }
+                          if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                              .hasMatch(value)) {
+                            return 'Please enter a valid email';
                           }
                           return null;
                         },
@@ -60,28 +80,21 @@ class _ForgetPasswordScreenState extends State<ForgetPassword> {
                           labelStyle: const TextStyle(fontSize: 14),
                           hintText: 'Enter Email',
                           hintStyle: const TextStyle(color: Colors.black26),
-                          prefixIcon: const Icon(Icons.lock),
+                          prefixIcon: const Icon(Icons.email),
                         ),
                       ),
-
                       const SizedBox(height: 25.0),
-
+                      // Nút gửi OTP
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () {
                             if (_formForgetPassKey.currentState!.validate()) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Processing Data'),
-                                ),
-                              );
+                              sendOTPToServer(context, _emailController.text);
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text(
-                                    'Please agree to the processing of personal data',
-                                  ),
+                                  content: Text('Please enter a valid email'),
                                 ),
                               );
                             }
@@ -89,9 +102,8 @@ class _ForgetPasswordScreenState extends State<ForgetPassword> {
                           child: const Text('SEND'),
                         ),
                       ),
-
                       const SizedBox(height: 25.0),
-                      // don't have an account
+                      // Tạo tài khoản mới
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [

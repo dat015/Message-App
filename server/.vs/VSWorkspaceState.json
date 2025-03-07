@@ -1,0 +1,11 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\Controllers",
+    "\\Services",
+    "\\Services\\AuthService",
+    "\\Services\\OTPsService"
+  ],
+  "SelectedNode": "\\Services\\OTPsService\\OTPsSV.cs",
+  "PreviewInSolutionExplorer": false
+}

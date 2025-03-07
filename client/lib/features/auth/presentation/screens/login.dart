@@ -47,6 +47,7 @@ class _SignUpScreenState extends State<SignInScreen> {
       ],
     );
   }
+  
   Future<void> sendDataLogin() async {
     if (_formSignInKey.currentState!.validate()) {
       String email = _emailController.text;
@@ -56,7 +57,7 @@ class _SignUpScreenState extends State<SignInScreen> {
       print("Password: $password");
 
       final AuthRepository _authRepository = AuthRepositoryImpl(
-        ApiClient(baseUrl: 'http://10.0.2.2:5053'),
+        ApiClient(baseUrl: 'http://localhost:5053/'),
       );
 
       try {
