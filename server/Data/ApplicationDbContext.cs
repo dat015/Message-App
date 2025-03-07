@@ -9,5 +9,6 @@ namespace server.Data
             : base(options) { }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<OTPs> OTPs { get; set; }
     }
 }

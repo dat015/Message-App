@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using server.Data;
 using server.InjectService;
+using server.Services.UserService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,6 +42,8 @@ builder.Services.AddAuthentication(option =>
 });
 
 builder.Services.Inject(builder.Configuration);
+builder.Services.AddScoped<UserSV>();
+
 //Log setting
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()

@@ -17,5 +17,10 @@ namespace server.Services.UserService
         Task<User> UnlockUserAsync(int id);
         Task<User?> FindUserAsync(string username, string password);
         bool VerifyUser(UserDTO model);
+        Task<User> GetUserByEmail(string email);
+        Task SaveOTPAsync(OTPs otp);
+        Task<OTPs> GetLatestOTPByUserIdAsync(int userId);
+        Task UpdateOTPAsync(OTPs otp);
+        Task UpdatePassword(string email, string password);
     }
 }
