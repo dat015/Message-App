@@ -21,5 +21,6 @@ namespace server.Data
         public DbSet<Story> Stories { get; set; }
         public DbSet<StoryReaction> StoryReactions { get; set; }
         public DbSet<StoryViewers> StoryViewers { get; set; }
+        public DbSet<OTPs> OTPs { get; set; }
     }
 }

@@ -51,7 +51,7 @@ class _SignUpScreenState extends State<SignInScreen> {
       ],
     );
   }
-
+  
   Future<void> sendDataLogin() async {
     if (_formSignInKey.currentState!.validate()) {
       String email = _emailController.text;

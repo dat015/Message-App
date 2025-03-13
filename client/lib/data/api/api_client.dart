@@ -6,15 +6,16 @@ class ApiClient {
   late Dio _dio;
   String baseUrl = Config.baseUrl;
   ApiClient({
-    int connectTimeout = 5000,
-    int receiveTimeout = 3000,
+    String baseUrl = 'http://localhost:5053/', 
+    Duration connectTimeout = const Duration(seconds: 30),
+    Duration receiveTimeout = const Duration(seconds: 30),
     Map<String, String>? headers,
   }) {
     _dio = Dio(
       BaseOptions(
         baseUrl: baseUrl,
-        connectTimeout: Duration(milliseconds: connectTimeout),
-        receiveTimeout: Duration(milliseconds: receiveTimeout),
+        connectTimeout: connectTimeout,
+        receiveTimeout: receiveTimeout,
         headers: headers ?? {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -46,10 +47,10 @@ class ApiClient {
 
   // GET request
   Future<dynamic> get(
-      String path, {
-        Map<String, dynamic>? queryParameters,
-        Options? options,
-      }) async {
+    String path, {
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+  }) async {
     try {
       final response = await _dio.get(
         path,
@@ -64,11 +65,11 @@ class ApiClient {
 
   // POST request
   Future<dynamic> post(
-      String path, {
-        dynamic data,
-        Map<String, dynamic>? queryParameters,
-        Options? options,
-      }) async {
+    String path, {
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+  }) async {
     try {
       final response = await _dio.post(
         path,
@@ -84,11 +85,11 @@ class ApiClient {
 
   // PUT request
   Future<dynamic> put(
-      String path, {
-        dynamic data,
-        Map<String, dynamic>? queryParameters,
-        Options? options,
-      }) async {
+    String path, {
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+  }) async {
     try {
       final response = await _dio.put(
         path,
@@ -104,11 +105,11 @@ class ApiClient {
 
   // DELETE request
   Future<dynamic> delete(
-      String path, {
-        dynamic data,
-        Map<String, dynamic>? queryParameters,
-        Options? options,
-      }) async {
+    String path, {
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+  }) async {
     try {
       final response = await _dio.delete(
         path,

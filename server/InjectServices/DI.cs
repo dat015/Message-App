@@ -9,6 +9,7 @@ using server.Services.DiffieHellmanService;
 using server.Services.MessageService;
 using server.Services.ParticipantService;
 using server.Services.RedisService;
+using server.Services.OTPsService;
 using server.Services.UserService;
 using server.Services.WebSocketService;
 using StackExchange.Redis;
@@ -47,6 +48,7 @@ namespace server.InjectService
             services.AddScoped<IConversation, ConversationSV>();
             services.AddScoped<IParticipant, ParticipantSV>();
             services.AddScoped<IMessage,MessagesV>();
+            services.AddScoped<IOTPsSV, OTPsSV>();
             services.AddScoped<AuthorizationJWT>();
         }
 

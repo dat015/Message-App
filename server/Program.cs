@@ -8,6 +8,7 @@ using server.Data;
 using server.InjectService;
 using server.Services.ChatService;
 using server.Services.WebSocketService;
+using server.Services.UserService;
 
 var builder = WebApplication.CreateBuilder(args);
 
