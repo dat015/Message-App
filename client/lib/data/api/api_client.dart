@@ -1,10 +1,11 @@
 import 'package:dio/dio.dart';
 
+import '../../PlatformClient/config.dart';
+
 class ApiClient {
   late Dio _dio;
-
+  String baseUrl = Config.baseUrl;
   ApiClient({
-    String baseUrl = 'http://10.0.2.2:5053', // Thay localhost bằng 10.0.2.2
     int connectTimeout = 5000,
     int receiveTimeout = 3000,
     Map<String, String>? headers,

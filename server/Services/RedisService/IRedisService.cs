@@ -1,14 +1,13 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using StackExchange.Redis;
 
 namespace server.Services.RedisService
 {
     public interface IRedisService
     {
-        IDatabase GetDatabase();
-        ISubscriber GetSubscriber();
+        Task SetAsync(string key, string value, TimeSpan? expiry = null);
+        Task<string> GetAsync(string key);
+        Task PublishAsync(string channel, string message);
+        Task SubscribeAsync(string channel, Action<string, string> handler);
     }
 }

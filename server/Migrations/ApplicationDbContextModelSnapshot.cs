@@ -43,10 +43,15 @@ namespace Message_app.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
+                    b.Property<int>("message_id")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("uploaded_at")
                         .HasColumnType("datetime2");
 
                     b.HasKey("id");
+
+                    b.HasIndex("message_id");
 
                     b.ToTable("Attachments");
                 });
@@ -126,9 +131,6 @@ namespace Message_app.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
-                    b.Property<int>("attachment_id")
-                        .HasColumnType("int");
-
                     b.Property<string>("content")
                         .IsRequired()
                         .HasMaxLength(500)
@@ -147,8 +149,6 @@ namespace Message_app.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("id");
-
-                    b.HasIndex("attachment_id");
 
                     b.HasIndex("conversation_id");
 
@@ -423,6 +423,17 @@ namespace Message_app.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("server.Models.Attachment", b =>
+                {
+                    b.HasOne("server.Models.Message", "message")
+                        .WithMany()
+                        .HasForeignKey("message_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("message");
+                });
+
             modelBuilder.Entity("server.Models.GroupSettings", b =>
                 {
                     b.HasOne("server.Models.Conversation", "Conversation")
@@ -444,12 +455,6 @@ namespace Message_app.Migrations
 
             modelBuilder.Entity("server.Models.Message", b =>
                 {
-                    b.HasOne("server.Models.Attachment", "attachment")
-                        .WithMany()
-                        .HasForeignKey("attachment_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("server.Models.Conversation", "conversation")
                         .WithMany("Messages")
                         .HasForeignKey("conversation_id")
@@ -461,8 +466,6 @@ namespace Message_app.Migrations
                         .HasForeignKey("sender_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("attachment");
 
                     b.Navigation("conversation");
 

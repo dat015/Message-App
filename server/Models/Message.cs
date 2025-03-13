@@ -21,13 +21,10 @@ namespace server.Models
         public bool is_read { get; set; } = false;
         public DateTime created_at { get; set; } = DateTime.Now;
         [Required]
-        public int attachment_id { get; set; }
-        [Required]
         public int conversation_id { get; set; }
         [ForeignKey("sender_id")]
         public User sender { get; set; }
-        [ForeignKey("attachment_id")]
-        public Attachment attachment { get; set; }
+      
         [ForeignKey("conversation_id")]
         public Conversation conversation { get; set; }
 
