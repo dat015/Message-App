@@ -6,11 +6,14 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Message_app.Migrations
 {
     /// <inheritdoc />
-    public partial class AddNewTable : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            
+       
+
             migrationBuilder.CreateTable(
                 name: "OTPs",
                 columns: table => new
@@ -33,17 +36,22 @@ namespace Message_app.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+           
+
             migrationBuilder.CreateIndex(
                 name: "IX_OTPs_UserId",
                 table: "OTPs",
                 column: "UserId");
+
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+           
             migrationBuilder.DropTable(
                 name: "OTPs");
+
         }
     }
 }

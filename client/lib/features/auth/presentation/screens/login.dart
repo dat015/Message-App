@@ -1,6 +1,10 @@
+import 'package:first_app/data/dto/login_response.dart';
+import 'package:first_app/data/storage/starage_service.dart';
 import 'package:first_app/features/auth/presentation/screens/forget_password.dart';
 import 'package:first_app/features/auth/presentation/screens/register.dart';
 import 'package:first_app/features/auth/presentation/widgets/custom_scaffold.dart';
+import 'package:first_app/features/home/presentation/screens/home_screen.dart';
+import 'package:first_app/features/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import '../../../../data/api/api_client.dart';
@@ -53,22 +57,34 @@ class _SignUpScreenState extends State<SignInScreen> {
       String email = _emailController.text;
       String password = _passwordController.text;
 
-      print("Email: $email");
-      print("Password: $password");
-
-      final AuthRepository _authRepository = AuthRepositoryImpl(
-        ApiClient(baseUrl: 'http://localhost:5053/'),
-      );
+      final apiClient = ApiClient();
+      final _authRepository = AuthRepositoryImpl(apiClient);
 
       try {
         final response = await _authRepository.login(email, password);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Login successful: ${response.token ?? "No token"}')),
+
+        final userData = {
+          "user":
+              response.user?.toJson(), // Giả sử user có phương thức `toJson()`
+          "token": response.token,
+        };
+        var user_response = LoginResponse(
+          user: response.user,
+          token: response.token,
+        );
+
+        // 🌟 Lưu vào storage (Web + Mobile)
+        await StorageService.saveUserData("user_data", userData);
+
+        // 🔄 Chuyển hướng đến HomeScreen
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => HomeScreen(user: user_response)),
         );
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Login failed: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Login failed: $e')));
       }
     }
   }
@@ -139,10 +155,7 @@ class _SignUpScreenState extends State<SignInScreen> {
               },
               activeColor: lightColorScheme.primary,
             ),
-            const Text(
-              'Remember me',
-              style: TextStyle(color: Colors.black45),
-            ),
+            const Text('Remember me', style: TextStyle(color: Colors.black45)),
           ],
         ),
         GestureDetector(
@@ -165,17 +178,19 @@ class _SignUpScreenState extends State<SignInScreen> {
   }
 
   // Hàm tạo nút "Sign In"
-  Widget  _buildSignInButton()  {
+  Widget _buildSignInButton() {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
         onPressed: () {
           if (_formSignInKey.currentState!.validate()) {
-             sendDataLogin();
+            sendDataLogin();
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text('Please agree to the processing of personal data'),
+                content: Text(
+                  'Please agree to the processing of personal data',
+                ),
               ),
             );
           }
@@ -191,23 +206,14 @@ class _SignUpScreenState extends State<SignInScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Expanded(
-          child: Divider(
-            thickness: 0.7,
-            color: Colors.grey.withOpacity(0.5),
-          ),
+          child: Divider(thickness: 0.7, color: Colors.grey.withOpacity(0.5)),
         ),
         const Padding(
           padding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-          child: Text(
-            'Sign up with',
-            style: TextStyle(color: Colors.black45),
-          ),
+          child: Text('Sign up with', style: TextStyle(color: Colors.black45)),
         ),
         Expanded(
-          child: Divider(
-            thickness: 0.7,
-            color: Colors.grey.withOpacity(0.5),
-          ),
+          child: Divider(thickness: 0.7, color: Colors.grey.withOpacity(0.5)),
         ),
       ],
     );

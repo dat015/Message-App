@@ -9,7 +9,7 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:intl/intl.dart';
 import 'package:first_app/data/api/api_client.dart';
 import '../../../../data/repositories/Auth/auth_repository.dart';
-import '../../../../data/repositories/Auth/auth_repository_implement.dart'; // Thêm import này
+import '../../../../data/repositories/Auth/auth_repository_implement.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -31,10 +31,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
   int _genderRadioBtnVal = -1;
   DateTime? _selectedDate;
 
-  // Khởi tạo AuthRepository
-  final AuthRepository _authRepository = AuthRepositoryImpl(
-    ApiClient(baseUrl: 'http://localhost:5053/'), // Đảm bảo dùng 10.0.2.2
-  );
+  // Khởi tạo ApiClient và AuthRepository
+  final ApiClient apiClient = ApiClient();
+  late final AuthRepository _authRepository; // Sử dụng 'late' để trì hoãn khởi tạo
+
+  _SignUpScreenState() {
+    _authRepository = AuthRepositoryImpl(apiClient); // Khởi tạo trong constructor
+  }
+
   @override
   void dispose() {
     _nameController.dispose();
@@ -107,7 +111,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Registration successful: ${response.token}')),
         );
-        // Chuyển đến màn hình đăng nhập sau khi đăng ký thành công
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (e) => const SignInScreen()),
@@ -321,7 +324,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
-        onPressed: sendDataRegister, // Gọi hàm gửi dữ liệu
+        onPressed: sendDataRegister,
         child: const Text('CREATE ACCOUNT'),
       ),
     );

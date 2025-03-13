@@ -28,11 +28,22 @@ namespace server.Models
         public string email { get; set; }
 
         [Url(ErrorMessage = "Invalid URL format.")]
-        public string avatar_url { get; set; }
+        public string avatar_url { get; set;}
         [Required]
         public DateOnly birthday { get; set; }
         public DateTime created_at { get; set; }
         [Required]
         public bool gender {get; set;}
+
+        public ICollection<Story>? stories { get; set; }
+        public ICollection<StoryReaction>? storyReactions { get; set; }
+        public ICollection<Notification>? notifications { get; set; }
+        public ICollection<Role_of_User>? role_of_users { get; set; }
+        public ICollection<Message>? messages { get; set; }
+        public ICollection<Participants>? participants { get; set; }
+        public ICollection<StoryViewers>? storyViewers { get; set; }
+        public ICollection<GroupSettings>? groupSettings { get; set; }
+        public ICollection<MessageStatus>? messageStatuses { get; set; }
+
     }
 }

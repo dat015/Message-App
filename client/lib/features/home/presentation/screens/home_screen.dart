@@ -1,211 +1,173 @@
+import 'package:first_app/data/api/api_client.dart';
+import 'package:first_app/data/dto/login_response.dart';
+import 'package:first_app/data/models/conversation.dart';
 import 'package:flutter/material.dart';
+import '../../../routes/routes.dart';
+import 'layout/main_layout.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
-
+  final LoginResponse user;
+  const HomeScreen({super.key, required this.user});
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _selectedIndex = 0; // Chỉ số của tab được chọn
+  int _selectedIndex = 0;
+  final ApiClient _apiService = ApiClient();
+  late Future<List<Conversation>> _conversationsFuture;
+  late int userId;
+  
 
-  // Thanh tìm kiếm
-  Widget _nav() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: TextFormField(
-        decoration: InputDecoration(
-          label: const Text('Tìm kiếm'),
-          labelStyle: const TextStyle(fontSize: 14, color: Colors.black54),
-          hintText: 'Tìm kiếm...',
-          hintStyle: const TextStyle(color: Colors.black54),
-          prefixIcon: const Icon(Icons.search, color: Colors.black54),
-          filled: true,
-          fillColor: Colors.white.withOpacity(0.9),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.0),
-            borderSide: BorderSide.none,
-          ),
-        ),
-      ),
-    );
+  @override
+  void initState() {
+    userId = widget.user.user!.id; // Lấy userId từ widget.user
+    super.initState();
+    _conversationsFuture = _fetchConversations();
   }
 
-  // Danh sách người dùng online
-  Widget usersOnline() {
-    final List<Map<String, dynamic>> onlineUsers = [
-      {'name': 'Reus', 'avatar': 'https://thethaovanhoa.mediacdn.vn/thumb_w/650/372676912336973824/2024/5/31/dortmunds-german-forward-marco-reus-904311830-1717128711631634061682.jpg', 'isOnline': true},
-      {'name': 'Beckham', 'avatar': 'https://iv1cdn.vnecdn.net/giaitri/images/web/2022/07/27/david-beckham-tap-luyen-giu-dang-1658895037.jpg?w=460&h=0&q=100&dpr=2&fit=crop&s=zjFL8LohqoklUTAYfA4xhw', 'isOnline': true},
-      {'name': 'Ronaldo', 'avatar': 'https://b.fssta.com/uploads/application/soccer/headshots/885.vresize.350.350.medium.19.png', 'isOnline': false},
-      {'name': 'Neymar', 'avatar': 'https://b.fssta.com/uploads/application/soccer/headshots/713.vresize.350.350.medium.34.png', 'isOnline': true},
-    ];
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-        ),
-        SizedBox(
-          height: 90,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: onlineUsers.length,
-            itemBuilder: (context, index) {
-              final user = onlineUsers[index];
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Stack(
-                      children: [
-                        CircleAvatar(
-                          radius: 30,
-                          backgroundImage: NetworkImage(user['avatar']),
-                        ),
-                        if (user['isOnline'])
-                          Positioned(
-                            right: 0,
-                            bottom: 0,
-                            child: Container(
-                              width: 12,
-                              height: 12,
-                              decoration: const BoxDecoration(
-                                color: Colors.green,
-                                shape: BoxShape.circle,
-                                border: Border.fromBorderSide(
-                                  BorderSide(color: Colors.white, width: 2),
-                                ),
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                    const SizedBox(height: 4.0),
-                    Text(
-                      user['name'],
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.black87,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ),
-      ],
-    );
+  Future<List<Conversation>> _fetchConversations() async {
+    try {
+      final response = await _apiService.get(
+          'api/Conversation/get_conversations/$userId',
+      );
+      print(response.toString());
+      return (response as List).map((e) => Conversation.fromJson(e)).toList();
+    } catch (e) {
+      print('Lỗi khi tải cuộc trò chuyện: $e');
+      return [];
+    }
   }
 
-  // Danh sách các cuộc chat
-  Widget chatList() {
-    final List<Map<String, dynamic>> chats = [
-      {'name': 'Reus', 'avatar': 'https://thethaovanhoa.mediacdn.vn/thumb_w/650/372676912336973824/2024/5/31/dortmunds-german-forward-marco-reus-904311830-1717128711631634061682.jpg', 'message': 'Hey, bạn khỏe không?', 'time': '10:30', 'unread': 2},
-      {'name': 'Beckham', 'avatar': 'https://iv1cdn.vnecdn.net/giaitri/images/web/2022/07/27/david-beckham-tap-luyen-giu-dang-1658895037.jpg?w=460&h=0&q=100&dpr=2&fit=crop&s=zjFL8LohqoklUTAYfA4xhw', 'message': 'Hello bạn!', 'time': '09:15', 'unread': 0},
-      {'name': 'Ronaldo', 'avatar': 'https://b.fssta.com/uploads/application/soccer/headshots/885.vresize.350.350.medium.19.png', 'message': 'Đá bóng chiều nay nhé!', 'time': 'Yesterday', 'unread': 1},
-      {'name': 'Neymar', 'avatar': 'https://b.fssta.com/uploads/application/soccer/headshots/713.vresize.350.350.medium.34.png', 'message': 'Chào bạn!', 'time': 'Monday', 'unread': 0},
-    ];
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-        ),
-        ListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: chats.length,
-          itemBuilder: (context, index) {
-            final chat = chats[index];
-            return ListTile(
-              leading: CircleAvatar(
-                radius: 25,
-                backgroundImage: NetworkImage(chat['avatar']), // Sử dụng avatar từ dữ liệu
-              ),
-              title: Text(
-                chat['name'],
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              subtitle: Text(chat['message']),
-              trailing: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    chat['time'],
-                    style: const TextStyle(color: Colors.black54, fontSize: 12),
-                  ),
-                  if (chat['unread'] > 0)
-                    Container(
-                      margin: const EdgeInsets.only(top: 4.0),
-                      padding: const EdgeInsets.all(6.0),
-                      decoration: const BoxDecoration(
-                        color: Colors.blueAccent,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Text(
-                        chat['unread'].toString(),
-                        style: const TextStyle(color: Colors.white, fontSize: 12),
-                      ),
-                    ),
-                ],
-              ),
-              onTap: () {}, 
-            );
-          },
-        ),
-      ],
-    );
-  }
-
-  // Hàm xử lý khi chuyển tab
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.blueAccent.withOpacity(0.1), // Màu nền đồng nhất
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _nav(),
-              usersOnline(),
-              chatList(),
-              const SizedBox(height: 20),
-            ],
+  Widget _buildSearchBar() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.grey[200],
+          borderRadius: BorderRadius.circular(30.0),
+        ),
+        child: TextFormField(
+          decoration: InputDecoration(
+            hintText: 'Hỏi GroqCloud AI hoặc tìm kiếm',
+            hintStyle: TextStyle(color: Colors.grey[600], fontSize: 16),
+            prefixIcon: const Icon(Icons.circle, color: Colors.blueAccent),
+            border: InputBorder.none,
+            contentPadding: const EdgeInsets.symmetric(vertical: 14.0),
           ),
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            label: 'Chats',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.feed),
-            label: 'Feed',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.blueAccent,
-        backgroundColor: Colors.white,
-        onTap: _onItemTapped,
+    );
+  }
+
+  List<Conversation> getListBoxChat(int userId) {
+    // Có thể tái sử dụng _conversationsFuture nếu cần
+    return [];
+  }
+
+  Widget _buildChatList() {
+    return FutureBuilder<List<Conversation>>(
+      future: _conversationsFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(child: Text('No conversations found'));
+        }
+
+        final conversations = snapshot.data!;
+        return ListView.builder(
+          itemCount: conversations.length,
+          itemBuilder: (context, index) {
+            final chat = conversations[index];
+            return ListTile(
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 8.0,
+              ),
+              leading: Stack(
+                children: [
+                  CircleAvatar(
+                    radius: 25,
+                    backgroundImage: NetworkImage(
+                      'https://via.placeholder.com/150',
+                    ), // Thay bằng avatar thực tế từ API
+                    backgroundColor: Colors.grey[200],
+                  ),
+                  if (!chat.isGroup)
+                    Positioned(
+                      right: 0,
+                      bottom: 0,
+                      child: Container(
+                        width: 14,
+                        height: 14,
+                        decoration: BoxDecoration(
+                          color: Colors.green,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white, width: 2),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              title: Text(
+                chat.name,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                ),
+              ),
+              subtitle: Text(
+                'Last message placeholder', // Cần thêm trường từ API nếu có (xem dưới)
+                style: const TextStyle(
+                  color: Colors.grey,
+                  fontWeight: FontWeight.normal,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              trailing: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    chat.createdAt.toString().substring(11, 16), // Lấy giờ:phút
+                    style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                  ),
+                  // Thêm logic hiển thị unread count nếu API trả về
+                  // Ví dụ: nếu API trả về unread count trong Conversation
+                  // if (chat.unread > 0) ...
+                ],
+              ),
+              onTap: () {
+                Navigator.pushNamed(
+                  context,
+                  AppRoutes.chat,
+                  arguments: chat.id,
+                );
+              },
+            );
+          },
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MainLayout(
+      selectedIndex: _selectedIndex,
+      onItemTapped: _onItemTapped,
+      body: Column(
+        children: [_buildSearchBar(), Expanded(child: _buildChatList())],
       ),
     );
   }

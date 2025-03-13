@@ -1,0 +1,49 @@
+2025-03-13 00:02:05.812 +07:00 [INF] Application is shutting down...
+2025-03-13 00:03:11.898 +07:00 [INF] User profile is available. Using 'C:\Users\Thao\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-03-13 00:03:11.972 +07:00 [INF] Now listening on: http://localhost:5000
+2025-03-13 00:03:11.975 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-03-13 00:03:11.976 +07:00 [INF] Hosting environment: Production
+2025-03-13 00:03:11.977 +07:00 [INF] Content root path: C:\Users\Thao\source\Flutter\Message_app\server
+2025-03-13 00:03:16.045 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/ - null null
+2025-03-13 00:03:16.078 +07:00 [WRN] Failed to determine the https port for redirect.
+2025-03-13 00:03:16.098 +07:00 [ERR] Connection id "0HNB1GV3VO61K", Request id "0HNB1GV3VO61K:00000001": An unhandled exception was thrown by the application.
+System.ArgumentNullException: Value cannot be null. (Parameter 's')
+   at System.ArgumentNullException.Throw(String paramName)
+   at System.Text.Encoding.GetBytes(String s)
+   at Program.<>c__DisplayClass0_0.<<Main>$>b__1(JwtBearerOptions option) in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 31
+   at Microsoft.Extensions.Options.ConfigureNamedOptions`1.Configure(String name, TOptions options)
+   at Microsoft.Extensions.Options.OptionsFactory`1.Create(String name)
+   at Microsoft.Extensions.Options.OptionsMonitor`1.<>c.<Get>b__10_0(String name, IOptionsFactory`1 factory)
+   at Microsoft.Extensions.Options.OptionsCache`1.<>c__DisplayClass3_1`1.<GetOrAdd>b__2()
+   at System.Lazy`1.ViaFactory(LazyThreadSafetyMode mode)
+   at System.Lazy`1.ExecutionAndPublication(LazyHelper executionAndPublication, Boolean useDefaultConstructor)
+   at System.Lazy`1.CreateValue()
+   at Microsoft.Extensions.Options.OptionsCache`1.GetOrAdd[TArg](String name, Func`3 createOptions, TArg factoryArgument)
+   at Microsoft.Extensions.Options.OptionsMonitor`1.Get(String name)
+   at Microsoft.AspNetCore.Authentication.AuthenticationHandler`1.InitializeAsync(AuthenticationScheme scheme, HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationHandlerProvider.GetHandlerAsync(HttpContext context, String authenticationScheme)
+   at Microsoft.AspNetCore.Authentication.AuthenticationService.AuthenticateAsync(HttpContext context, String scheme)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+2025-03-13 00:03:16.122 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/ - 500 0 null 79.2163ms
+2025-03-13 00:03:25.148 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/swagger - null null
+2025-03-13 00:03:25.156 +07:00 [ERR] Connection id "0HNB1GV3VO61K", Request id "0HNB1GV3VO61K:00000002": An unhandled exception was thrown by the application.
+System.ArgumentNullException: Value cannot be null. (Parameter 's')
+   at System.ArgumentNullException.Throw(String paramName)
+   at System.Text.Encoding.GetBytes(String s)
+   at Program.<>c__DisplayClass0_0.<<Main>$>b__1(JwtBearerOptions option) in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 31
+   at Microsoft.Extensions.Options.ConfigureNamedOptions`1.Configure(String name, TOptions options)
+   at Microsoft.Extensions.Options.OptionsFactory`1.Create(String name)
+   at Microsoft.Extensions.Options.OptionsMonitor`1.<>c.<Get>b__10_0(String name, IOptionsFactory`1 factory)
+   at Microsoft.Extensions.Options.OptionsCache`1.<>c__DisplayClass3_1`1.<GetOrAdd>b__2()
+   at System.Lazy`1.ViaFactory(LazyThreadSafetyMode mode)
+--- End of stack trace from previous location ---
+   at System.Lazy`1.CreateValue()
+   at Microsoft.Extensions.Options.OptionsCache`1.GetOrAdd[TArg](String name, Func`3 createOptions, TArg factoryArgument)
+   at Microsoft.Extensions.Options.OptionsMonitor`1.Get(String name)
+   at Microsoft.AspNetCore.Authentication.AuthenticationHandler`1.InitializeAsync(AuthenticationScheme scheme, HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationHandlerProvider.GetHandlerAsync(HttpContext context, String authenticationScheme)
+   at Microsoft.AspNetCore.Authentication.AuthenticationService.AuthenticateAsync(HttpContext context, String scheme)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+2025-03-13 00:03:25.217 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/swagger - 500 0 null 70.2387ms

@@ -12,8 +12,8 @@ using server.Data;
 namespace Message_app.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250303125604_AddNewTable")]
-    partial class AddNewTable
+    [Migration("20250313124610_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,6 +25,7 @@ namespace Message_app.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+         
             modelBuilder.Entity("server.Models.OTPs", b =>
                 {
                     b.Property<int>("Id")
@@ -54,48 +55,8 @@ namespace Message_app.Migrations
                     b.ToTable("OTPs");
                 });
 
-            modelBuilder.Entity("server.Models.User", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
-
-                    b.Property<string>("avatar_url")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateOnly>("birthday")
-                        .HasColumnType("date");
-
-                    b.Property<DateTime>("created_at")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("gender")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("passwordSalt")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("username")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.HasKey("id");
-
-                    b.ToTable("Users");
-                });
+           
+         
 
             modelBuilder.Entity("server.Models.OTPs", b =>
                 {
@@ -107,6 +68,9 @@ namespace Message_app.Migrations
 
                     b.Navigation("User");
                 });
+
+           
+            
 #pragma warning restore 612, 618
         }
     }

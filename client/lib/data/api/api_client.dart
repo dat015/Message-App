@@ -1,8 +1,10 @@
 import 'package:dio/dio.dart';
 
+import '../../PlatformClient/config.dart';
+
 class ApiClient {
   late Dio _dio;
-
+  String baseUrl = Config.baseUrl;
   ApiClient({
     String baseUrl = 'http://localhost:5053/', 
     Duration connectTimeout = const Duration(seconds: 30),

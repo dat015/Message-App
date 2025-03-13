@@ -1,3 +1,4 @@
+import 'package:first_app/PlatformClient/config.dart';
 import 'package:first_app/features/auth/presentation/widgets/custom_scaffold.dart';
 import 'package:flutter/material.dart';
 import '../../../../data/api/api_client.dart';
@@ -59,7 +60,7 @@ class _ChangePasswordState extends State<ChangePassword> {
       }
 
       final AuthRepository authRepository = AuthRepositoryImpl(
-        ApiClient(baseUrl: 'http://localhost:5053/'),
+        ApiClient(baseUrl: Config.baseUrl),
       );
 
       try {
