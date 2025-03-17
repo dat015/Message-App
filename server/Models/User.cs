@@ -44,6 +44,16 @@ namespace server.Models
         public ICollection<StoryViewers>? storyViewers { get; set; }
         public ICollection<GroupSettings>? groupSettings { get; set; }
         public ICollection<MessageStatus>? messageStatuses { get; set; }
+        [InverseProperty("Sender")]
+        public ICollection<FriendRequest>? SentFriendRequests { get; set; }
 
+        [InverseProperty("Receiver")]
+        public ICollection<FriendRequest>? ReceivedFriendRequests { get; set; }
+
+        [InverseProperty("User1")]
+        public ICollection<Friend>? FriendshipsAsUser1 { get; set; }
+
+        [InverseProperty("User2")]
+        public ICollection<Friend>? FriendshipsAsUser2 { get; set; }
     }
 }

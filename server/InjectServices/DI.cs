@@ -13,6 +13,7 @@ using server.Services.OTPsService;
 using server.Services.UserService;
 using server.Services.WebSocketService;
 using StackExchange.Redis;
+using server.Services;
 
 namespace server.InjectService
 {
@@ -49,6 +50,8 @@ namespace server.InjectService
             services.AddScoped<IParticipant, ParticipantSV>();
             services.AddScoped<IMessage,MessagesV>();
             services.AddScoped<IOTPsSV, OTPsSV>();
+            services.AddScoped<IFriendSV, FriendSV>();
+            services.AddScoped<IWebSocketFriendSV, WebSocketFriendSV>();
             services.AddScoped<AuthorizationJWT>();
         }
 
