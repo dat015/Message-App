@@ -1,14 +1,13 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using server.Data;
 using server.InjectService;
 using server.Services.ChatService;
 using server.Services.WebSocketService;
-using server.Services.UserService;
+using server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +15,7 @@ builder.Configuration
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
 
-// Get JWT setting from appsettings.json
+// JWT configuration
 var jwtSetting = builder.Configuration.GetSection("JwtSettings");
 var secretKey = jwtSetting.GetValue<string>("SecretKey");
 
@@ -38,7 +37,7 @@ builder.Services.AddAuthentication(option =>
         ValidateAudience = true,
         ValidAudience = jwtSetting["Audience"],
         ValidateLifetime = true,
-        ClockSkew = TimeSpan.Zero // Không cho phép trễ thời gian
+        ClockSkew = TimeSpan.Zero
     };
 });
 
@@ -47,19 +46,20 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
     {
-        policy.AllowAnyOrigin() // Cho phép tất cả nguồn gốc (thử nghiệm)
-              .AllowAnyMethod()
-              .AllowAnyHeader();
+        policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
     });
 });
 
-// Log setting
+// Logging
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day)
     .CreateLogger();
 
 builder.Host.UseSerilog();
+
+// Đăng ký WebSocketFriendSV
+builder.Services.AddSingleton<IWebSocketFriendSV, WebSocketFriendSV>();
 
 var app = builder.Build();
 
@@ -69,34 +69,39 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapControllers();
-app.UseRouting();
-app.MapHub<ChatHub>("/chatHub");
 app.UseWebSockets(new WebSocketOptions
 {
     KeepAliveInterval = TimeSpan.FromMinutes(2)
 });
-// Config WebSocket
-// Khi client kết nối đến đường dẫn /ws thì sẽ gọi đến hàm HandleWebSocket trong WebSocketService
-app.Map("/ws", async (HttpContext context, WebSocketService webSocketService, IServiceProvider serviceProvider) =>
+
+// Endpoint WebSocket cho kết bạn
+app.Map("/ws", async (HttpContext context, IWebSocketFriendSV webSocketFriendSV) =>
 {
     if (context.WebSockets.IsWebSocketRequest)
     {
-        Console.WriteLine("WebSocket request received");
+        var userIdStr = context.Request.Query["userId"].ToString();
+        if (!int.TryParse(userIdStr, out int userId))
+        {
+            context.Response.StatusCode = 400; // Bad Request nếu không có userId
+            return;
+        }
+
         using var webSocket = await context.WebSockets.AcceptWebSocketAsync();
-        Console.WriteLine("WebSocket connection accepted");
-        await webSocketService.HandleWebSocket(webSocket, serviceProvider);
-        Console.WriteLine("WebSocket connection closed");
+        await webSocketFriendSV.HandleFriendWebSocket(webSocket, userId);
     }
     else
     {
-        Console.WriteLine("Non-WebSocket request, returning 400");
         context.Response.StatusCode = 400;
     }
 });
+
+app.UseRouting();
+app.MapHub<ChatHub>("/chatHub");
+app.MapControllers();
 
 app.UseCors("AllowAll");
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.Run();
