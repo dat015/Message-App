@@ -62,7 +62,7 @@ class _OtpState extends State<Otp> {
 
   Future<void> _verifyOTP(BuildContext context) async {
   final AuthRepository _authRepository =
-      AuthRepositoryImpl(ApiClient(baseUrl: 'http://localhost:5053/'));
+      AuthRepositoryImpl(ApiClient());
   String otp = _otpControllers.map((controller) => controller.text).join();
 
   if (otp.length != 6) {

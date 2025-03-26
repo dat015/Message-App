@@ -1,22 +1,38 @@
+import 'package:first_app/features/home/presentation/friends/friends.dart';
 import 'package:flutter/material.dart';
 
 class MainLayout extends StatelessWidget {
   final Widget body;
   final int selectedIndex;
   final Function(int) onItemTapped;
+  final int currentUserId; // Thêm currentUserId để truyền vào Friends
 
   const MainLayout({
     super.key,
     required this.body,
     required this.selectedIndex,
     required this.onItemTapped,
+    required this.currentUserId,
   });
+
+  void _handleNavigation(BuildContext context, int index) {
+    if (index == 1) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Friends(currentUserId: currentUserId),
+        ),
+      );
+    } else {
+      // Gọi hàm onItemTapped cho các tab khác
+      onItemTapped(index);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // Nền trắng giống Messenger
-
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -57,7 +73,7 @@ class MainLayout extends StatelessWidget {
         selectedItemColor: Colors.blueAccent,
         unselectedItemColor: Colors.grey,
         backgroundColor: Colors.white,
-        onTap: onItemTapped,
+        onTap: (index) => _handleNavigation(context, index),
         showUnselectedLabels: true,
         selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
         unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.normal),

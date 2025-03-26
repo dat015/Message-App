@@ -58,6 +58,11 @@ namespace server.Services
             await SendMessageToUser(senderId, message);
         }
 
+        public async Task SendRequestCancelledNotificationAsync(int userId, string message)
+        {
+            await SendMessageToUser(userId, message);
+        }
+
         // Phương thức chung để gửi tin nhắn qua WebSocket
         private async Task SendMessageToUser(int userId, string message)
         {

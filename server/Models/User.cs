@@ -35,6 +35,15 @@ namespace server.Models
         [Required]
         public bool gender {get; set;}
 
+        [StringLength(500, ErrorMessage = "Interests cannot exceed 500 characters.")]
+        public string interests { get; set; }
+
+        [StringLength(100, ErrorMessage = "Location cannot exceed 100 characters.")]
+        public string location { get; set; } 
+
+        [StringLength(500, ErrorMessage = "Bio cannot exceed 500 characters.")]
+        public string bio { get; set; } 
+
         public ICollection<Story>? stories { get; set; }
         public ICollection<StoryReaction>? storyReactions { get; set; }
         public ICollection<Notification>? notifications { get; set; }

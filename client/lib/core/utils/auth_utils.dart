@@ -3,11 +3,12 @@ import 'package:first_app/data/repositories/Auth/auth_repository.dart';
 import 'package:first_app/data/repositories/Auth/auth_repository_implement.dart';
 import 'package:first_app/features/auth/presentation/screens/otps_form.dart';
 import 'package:flutter/material.dart';
+import 'package:first_app/PlatformClient/config.dart';
 
 Future<void> sendOTPToServer(
     BuildContext context, String email, {bool navigate = true}) async {
   final AuthRepository _authRepository =
-      AuthRepositoryImpl(ApiClient(baseUrl: 'http://localhost:5053/'));
+      AuthRepositoryImpl(ApiClient()); // Sử dụng Config.baseUrl tự động
   try {
     var result = await _authRepository.forgetPass(email);
     ScaffoldMessenger.of(context).showSnackBar(

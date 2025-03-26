@@ -1,32 +1,21 @@
-import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 class Config {
-  static  String get baseUrl {
-    if (kIsWeb) {
-      // Web
-      return  'http://localhost:5053/';
-    } else if (Platform.isAndroid) {
-      // Android emulator
-      return 'http://10.0.2.2:5053/';
-    } else {
-      // Các nền tảng khác (iOS, macOS, v.v.)
-      return 'http://localhost:5053/';
-    }
+  static const String serverIp = '192.168.1.11';
+  static const String serverPort = '5053';
+  static const String apiPrefix = 'api';
+
+  static String get baseUrl {
+    final String host = kIsWeb ? 'localhost' : serverIp;
+    final String protocol = kIsWeb ? 'http' : 'http';
+
+    return '$protocol://$host:$serverPort/';
   }
 
   static String get baseUrlWS {
-    if (kIsWeb) {
-      // Web
-      return 'ws://localhost:5053/ws';
-    } else if (Platform.isAndroid) {
-      // Android emulator
-      return 'ws://10.0.2.2:5053/ws';
-    } else {
-      // Các nền tảng khác (iOS, macOS, v.v.)
-      return 'ws://localhost:5053/ws';
-    }
+    final String host = kIsWeb ? 'localhost' : serverIp;
+    final String protocol = kIsWeb ? 'ws' : 'ws';
 
+    return '$protocol://$host:$serverPort/ws';
   }
-
 }

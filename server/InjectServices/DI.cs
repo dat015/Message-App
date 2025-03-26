@@ -42,6 +42,11 @@ namespace server.InjectService
             services.AddSingleton<WebSocketService>();
             services.AddSingleton<IRedisService, RedisService>();
             services.AddSingleton<DiffieHellman>();
+            services.AddSingleton<IConnectionMultiplexer>(sp =>
+            {
+                var redisConfiguration = ConfigurationOptions.Parse(configuration["Redis:ConnectionString"]);
+                return ConnectionMultiplexer.Connect(redisConfiguration);
+            });
             services.AddSignalR();
             //scoped: tạo ra 1 instance cho mỗi request
             services.AddScoped<IAuthSV, AuthSV>();
