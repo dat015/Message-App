@@ -23,8 +23,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: AppRoutes.login, // Route mặc định là HomeScreen
-      onGenerateRoute: AppRoutes.generateRoute, // Định nghĩa route động
+      initialRoute: AppRoutes.login,
+      onGenerateRoute: AppRoutes.generateRoute,
       title: 'Flutter Demo',
       theme: lightMode,
       home: const SignInScreen(),

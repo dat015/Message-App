@@ -8,5 +8,6 @@ namespace server.Services
         Task SendRequestAcceptedNotificationAsync(int senderId, string message);
         Task SendRequestRejectedNotificationAsync(int senderId, string message);
         Task HandleFriendWebSocket(WebSocket webSocket, int userId);
+        Task SendRequestCancelledNotificationAsync(int userId, string message);
     }
 }

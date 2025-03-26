@@ -47,7 +47,13 @@ class _ChatScreenState extends State<ChatScreen> {
     _webSocketService = WebSocketService(
       url: 'ws://localhost:5053/ws',
       onMessageReceived: _onMessageReceived,
-      user_id: currentUserId,
+      userId: currentUserId,
+      onConnectionStateChanged: (isConnected) {
+    setState(() {
+      // Cập nhật trạng thái kết nối nếu cần
+      print('WebSocket connection state changed: $isConnected');
+    });
+    },
     );
     _webSocketService.connect();
   }
@@ -83,40 +89,39 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  void _onMessageReceived(String message) {
-    print('Received message: $message');
-    try {
-      final jsonMessage = jsonDecode(message) as Map<String, dynamic>;
-      if (jsonMessage['sender_id'] == null || jsonMessage['message'] == null || jsonMessage['conversation_id'] == null) {
-        print('Invalid message format: Missing required fields');
-        return;
-      }
-
-      final receivedConversationId = int.parse(jsonMessage['conversation_id'].toString());
-      if (receivedConversationId != widget.conversationId) {
-        print('Received message for a different conversation: $receivedConversationId');
-        return;
-      }
-
-      final newMessage = Message(
-        id: 0,
-        senderId: int.parse(jsonMessage['sender_id'].toString()),
-        content: jsonMessage['message'].toString(),
-        createdAt: jsonMessage['created_at'] != null
-            ? DateTime.parse(jsonMessage['created_at'].toString())
-            : DateTime.now(),
-        conversationId: receivedConversationId,
-        isRead: false,
-      );
-
-      setState(() {
-        messages.add(newMessage);
-        _scrollToBottom();
-      });
-    } catch (e) {
-      print('Error parsing message: $e');
+  void _onMessageReceived(Map<String, dynamic> message) {
+  print('Received message: $message');
+  try {
+    if (message['sender_id'] == null || message['message'] == null || message['conversation_id'] == null) {
+      print('Invalid message format: Missing required fields');
+      return;
     }
+
+    final receivedConversationId = int.parse(message['conversation_id'].toString());
+    if (receivedConversationId != widget.conversationId) {
+      print('Received message for a different conversation: $receivedConversationId');
+      return;
+    }
+
+    final newMessage = Message(
+      id: 0,
+      senderId: int.parse(message['sender_id'].toString()),
+      content: message['message'].toString(),
+      createdAt: message['created_at'] != null
+          ? DateTime.parse(message['created_at'].toString())
+          : DateTime.now(),
+      conversationId: receivedConversationId,
+      isRead: false,
+    );
+
+    setState(() {
+      messages.add(newMessage);
+      _scrollToBottom();
+    });
+  } catch (e) {
+    print('Error parsing message: $e');
   }
+}
 
   void _sendMessage() {
     final text = _messageController.text;

@@ -17,11 +17,10 @@ class _HomeScreenState extends State<HomeScreen> {
   final ApiClient _apiService = ApiClient();
   late Future<List<Conversation>> _conversationsFuture;
   late int userId;
-  
 
   @override
   void initState() {
-    userId = widget.user.user!.id; // Lấy userId từ widget.user
+    userId = widget.user.user!.id;
     super.initState();
     _conversationsFuture = _fetchConversations();
   }
@@ -61,6 +60,9 @@ class _HomeScreenState extends State<HomeScreen> {
             border: InputBorder.none,
             contentPadding: const EdgeInsets.symmetric(vertical: 14.0),
           ),
+          onFieldSubmitted: (value) {
+
+          },
         ),
       ),
     );
@@ -162,8 +164,14 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MainLayout(
+      currentUserId: userId,
       selectedIndex: _selectedIndex,
       onItemTapped: _onItemTapped,
       body: Column(

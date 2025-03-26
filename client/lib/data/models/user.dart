@@ -4,7 +4,7 @@ class User {
   final String password;
   final String passwordSalt;
   final String email;
-  final String? avatarUrl;
+  final String avatarUrl;
   final DateTime birthday;
   final DateTime createdAt;
   final bool gender;
@@ -16,7 +16,7 @@ class User {
     required this.password,
     required this.passwordSalt,
     required this.email,
-    this.avatarUrl, // Không bắt buộc
+    required this.avatarUrl,
     required this.birthday,
     required this.createdAt,
     required this.gender,
@@ -30,7 +30,7 @@ class User {
       password: json['password'] as String,
       passwordSalt: json['passwordSalt'] as String,
       email: json['email'] as String,
-      avatarUrl: json['avatar_url'] as String?, // Có thể null
+      avatarUrl: json['avatar_url'] as String, // Có thể null
       birthday: DateTime.parse(json['birthday'] as String), // Dart không có DateOnly, dùng DateTime
       createdAt: DateTime.parse(json['created_at'] as String),
       gender: json['gender'] as bool,
