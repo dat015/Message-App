@@ -47,14 +47,20 @@ namespace server.Controllers
             return Ok(new { Message = "Friend request rejected" });
         }
 
-        // Lấy danh sách bạn bè
         [HttpGet("list/{userId}")]
-        public async Task<IActionResult> GetFriends(int userId)
+        public async Task<IActionResult> GetFriendsAsync(int userId)
         {
-            var friends = await _friendService.GetFriendsAsync(userId);
-            return Ok(new { success = true, friends });
+            try
+            {
+                var friends = await _friendService.GetFriendsAsync(userId);
+                return Ok(new { success = true, friends });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
         }
-
+        
         [HttpGet("search")]
         public async Task<IActionResult> SearchUsers([FromQuery] string username, [FromQuery] int senderId)
         {

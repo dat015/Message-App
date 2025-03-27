@@ -32,12 +32,16 @@ namespace server.Services
             if (existingRequest != null)
                 throw new InvalidOperationException("Friend request already sent");
 
+            TimeZoneInfo vietnamTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+
+            var vietnamTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, vietnamTimeZone);
+
             var friendRequest = new FriendRequest
             {
                 SenderId = senderId,
                 ReceiverId = receiverId,
                 Status = "Pending",
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = vietnamTime
             };
 
             _context.FriendRequests.Add(friendRequest);
@@ -111,10 +115,27 @@ namespace server.Services
 
         public async Task<List<User>> GetFriendsAsync(int userId)
         {
-            return await _context.Friends
+            var friends = await _context.Friends
                 .Where(f => f.UserId1 == userId || f.UserId2 == userId)
                 .Select(f => f.UserId1 == userId ? f.User2 : f.User1)
                 .ToListAsync();
+
+            var userFriends = await _context.Friends
+                .Where(f => f.UserId1 == userId || f.UserId2 == userId)
+                .Select(f => f.UserId1 == userId ? f.UserId2 : f.UserId1)
+                .ToListAsync();
+
+            foreach (var friend in friends)
+            {
+                var friendFriends = await _context.Friends
+                    .Where(f => f.UserId1 == friend.id || f.UserId2 == friend.id)
+                    .Select(f => f.UserId1 == friend.id ? f.UserId2 : f.UserId1)
+                    .ToListAsync();
+
+                friend.MutualFriendsCount = userFriends.Intersect(friendFriends).Count();
+            }
+
+            return friends;
         }
 
         public async Task<List<User>> SearchUsersByUsernameAsync(string usernameQuery, int currentUserId)
@@ -351,7 +372,7 @@ namespace server.Services
                     AvatarUrl = fr.Receiver.avatar_url,
                     Status = fr.Status,
                     CreatedAt = fr.CreatedAt,
-                    MutualFriendsCount = 0 
+                    MutualFriendsCount = 0
                 })
                 .ToListAsync();
 

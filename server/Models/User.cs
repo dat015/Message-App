@@ -43,6 +43,9 @@ namespace server.Models
 
         [StringLength(500, ErrorMessage = "Bio cannot exceed 500 characters.")]
         public string bio { get; set; } 
+        
+        [NotMapped]
+        public int MutualFriendsCount { get; set; }
 
         public ICollection<Story>? stories { get; set; }
         public ICollection<StoryReaction>? storyReactions { get; set; }

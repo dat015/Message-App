@@ -56,6 +56,7 @@ namespace server.InjectService
             services.AddScoped<IMessage,MessagesV>();
             services.AddScoped<IOTPsSV, OTPsSV>();
             services.AddScoped<IFriendSV, FriendSV>();
+            services.AddScoped<IUserProfileSV, UserProfileSV>();
             services.AddScoped<IWebSocketFriendSV, WebSocketFriendSV>();
             services.AddScoped<AuthorizationJWT>();
         }

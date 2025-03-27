@@ -8,8 +8,8 @@ class User {
   final DateTime birthday;
   final DateTime createdAt;
   final bool gender;
+  final int mutualFriendsCount;
 
-  // Constructor với các tham số bắt buộc và không bắt buộc
   User({
     required this.id,
     required this.username,
@@ -20,6 +20,7 @@ class User {
     required this.birthday,
     required this.createdAt,
     required this.gender,
+    this.mutualFriendsCount = 0,
   });
 
   // Factory method để parse từ JSON
@@ -34,6 +35,7 @@ class User {
       birthday: DateTime.parse(json['birthday'] as String), // Dart không có DateOnly, dùng DateTime
       createdAt: DateTime.parse(json['created_at'] as String),
       gender: json['gender'] as bool,
+      mutualFriendsCount: json['mutualFriendsCount'] ?? 0,
     );
   }
 
