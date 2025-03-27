@@ -2,6 +2,7 @@ import 'package:first_app/data/api/api_client.dart';
 import 'package:first_app/data/dto/friendrequest_withdetails.dart';
 import 'package:first_app/data/models/friendsuggestion.dart';
 import 'package:first_app/data/models/user.dart';
+import 'package:first_app/features/home/presentation/users_profile/other_us_profile.dart';
 import 'package:first_app/data/repositories/Friends_repo/friends_repo.dart';
 import 'package:first_app/features/search/presentation/screens/searchUsers.dart';
 import 'package:flutter/material.dart';
@@ -9,16 +10,14 @@ import 'package:flutter/material.dart';
 class Friends extends StatefulWidget {
   final int currentUserId;
 
-  const Friends({
-    super.key,
-    required this.currentUserId,
-  });
+  const Friends({super.key, required this.currentUserId});
 
   @override
   _FriendsScreenState createState() => _FriendsScreenState();
 }
 
-class _FriendsScreenState extends State<Friends> with SingleTickerProviderStateMixin {
+class _FriendsScreenState extends State<Friends>
+    with SingleTickerProviderStateMixin {
   List<FriendRequestWithDetails> friendRequests = [];
   List<FriendRequestWithDetails> sentFriendRequests = [];
   List<FriendSuggestion> friendSuggestions = [];
@@ -42,11 +41,25 @@ class _FriendsScreenState extends State<Friends> with SingleTickerProviderStateM
     _loadFriends();
   }
 
-  // Keep your existing data loading methods (_loadFriendRequests, _loadSentFriendRequests, etc.)
+  void _navigateToProfile(int targetUserId) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder:
+            (context) => OtherProfilePage(
+              viewerId: widget.currentUserId,
+              targetUserId: targetUserId,
+            ),
+      ),
+    );
+  }
+
   Future<void> _loadFriendRequests() async {
     setState(() => isLoadingRequests = true);
     try {
-      final requests = await _friendsRepo.getFriendRequests(widget.currentUserId);
+      final requests = await _friendsRepo.getFriendRequests(
+        widget.currentUserId,
+      );
       setState(() {
         friendRequests = requests;
         isLoadingRequests = false;
@@ -60,7 +73,9 @@ class _FriendsScreenState extends State<Friends> with SingleTickerProviderStateM
   Future<void> _loadSentFriendRequests() async {
     setState(() => isLoadingSentRequests = true);
     try {
-      final requests = await _friendsRepo.getSentFriendRequests(widget.currentUserId);
+      final requests = await _friendsRepo.getSentFriendRequests(
+        widget.currentUserId,
+      );
       setState(() {
         sentFriendRequests = requests;
         isLoadingSentRequests = false;
@@ -74,7 +89,9 @@ class _FriendsScreenState extends State<Friends> with SingleTickerProviderStateM
   Future<void> _loadFriendSuggestions() async {
     setState(() => isLoadingSuggestions = true);
     try {
-      final suggestions = await _friendsRepo.getFriendSuggestions(widget.currentUserId);
+      final suggestions = await _friendsRepo.getFriendSuggestions(
+        widget.currentUserId,
+      );
       setState(() {
         friendSuggestions = suggestions;
         isLoadingSuggestions = false;
@@ -99,24 +116,28 @@ class _FriendsScreenState extends State<Friends> with SingleTickerProviderStateM
     }
   }
 
-  // Keep your existing action methods (_searchUsers, _acceptFriendRequest, etc.)
   Future<void> _searchUsers(String query) async {
     if (query.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Vui lòng nhập tên người dùng để tìm kiếm')),
+        const SnackBar(
+          content: Text('Vui lòng nhập tên người dùng để tìm kiếm'),
+        ),
       );
       return;
     }
     try {
-      final response = await _apiService.get('api/friends/search?username=$query&senderId=${widget.currentUserId}');
+      final response = await _apiService.get(
+        'api/friends/search?username=$query&senderId=${widget.currentUserId}',
+      );
       final List<dynamic> users = response as List<dynamic>;
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => SearchUsersScreen(
-            searchResults: users,
-            currentUserId: widget.currentUserId,
-          ),
+          builder:
+              (context) => SearchUsersScreen(
+                searchResults: users,
+                currentUserId: widget.currentUserId,
+              ),
         ),
       );
     } catch (e) {
@@ -124,7 +145,12 @@ class _FriendsScreenState extends State<Friends> with SingleTickerProviderStateM
     }
   }
 
-  Future<void> _acceptFriendRequest(BuildContext context, int requestId, String username, int index) async {
+  Future<void> _acceptFriendRequest(
+    BuildContext context,
+    int requestId,
+    String username,
+    int index,
+  ) async {
     setState(() => isLoadingRequests = true);
     try {
       await _friendsRepo.acceptFriendRequest(requestId);
@@ -140,7 +166,12 @@ class _FriendsScreenState extends State<Friends> with SingleTickerProviderStateM
     }
   }
 
-  Future<void> _rejectFriendRequest(BuildContext context, int requestId, String username, int index) async {
+  Future<void> _rejectFriendRequest(
+    BuildContext context,
+    int requestId,
+    String username,
+    int index,
+  ) async {
     setState(() => isLoadingRequests = true);
     try {
       await _friendsRepo.rejectFriendRequest(requestId);
@@ -155,9 +186,20 @@ class _FriendsScreenState extends State<Friends> with SingleTickerProviderStateM
     }
   }
 
-  Future<void> _sendFriendRequest(BuildContext context, int receiverId, String username, String avatarUrl, int index) async {
+  Future<void> _sendFriendRequest(
+    BuildContext context,
+    int receiverId,
+    String username,
+    String avatarUrl,
+    int index,
+  ) async {
     try {
-      await _friendsRepo.sendFriendRequest(widget.currentUserId, receiverId, username, avatarUrl);
+      await _friendsRepo.sendFriendRequest(
+        widget.currentUserId,
+        receiverId,
+        username,
+        avatarUrl,
+      );
       setState(() {
         friendSuggestions.removeAt(index);
       });
@@ -168,19 +210,31 @@ class _FriendsScreenState extends State<Friends> with SingleTickerProviderStateM
     }
   }
 
-  Future<void> _cancelFriendRequest(BuildContext context, int requestId, int senderId, int receiverId, String username, int index) async {  // Removed unused parameters
-  try {
-    await _friendsRepo.cancelFriendRequest(senderId, receiverId);
-    setState(() {
-      sentFriendRequests.removeAt(index);
-    });
-    _showSuccessSnackBar('Đã hủy lời mời gửi đến $username');
-  } catch (e) {
-    _showErrorSnackBar('Lỗi khi hủy lời mời: $e');
+  Future<void> _cancelFriendRequest(
+    BuildContext context,
+    int requestId,
+    int senderId,
+    int receiverId,
+    String username,
+    int index,
+  ) async {
+    try {
+      await _friendsRepo.cancelFriendRequest(senderId, receiverId);
+      setState(() {
+        sentFriendRequests.removeAt(index);
+      });
+      _showSuccessSnackBar('Đã hủy lời mời gửi đến $username');
+    } catch (e) {
+      _showErrorSnackBar('Lỗi khi hủy lời mời: $e');
+    }
   }
-}
 
-  Future<void> _unfriend(BuildContext context, int friendId, String username, int index) async {
+  Future<void> _unfriend(
+    BuildContext context,
+    int friendId,
+    String username,
+    int index,
+  ) async {
     try {
       await _friendsRepo.unfriend(widget.currentUserId, friendId);
       setState(() {
@@ -195,10 +249,35 @@ class _FriendsScreenState extends State<Friends> with SingleTickerProviderStateM
   void _showSuccessSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.green,
+        content: Row(
+          children: [
+            const Icon(Icons.check_circle, color: Colors.white, size: 24),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                message,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: Colors.green[700],
         behavior: SnackBarBehavior.floating,
-        duration: const Duration(seconds: 2),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        elevation: 6,
+        duration: const Duration(seconds: 3),
+        action: SnackBarAction(
+          label: 'Đóng',
+          textColor: Colors.white,
+          onPressed: () {
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          },
+        ),
       ),
     );
   }
@@ -206,10 +285,62 @@ class _FriendsScreenState extends State<Friends> with SingleTickerProviderStateM
   void _showErrorSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
+        content: Row(
+          children: [
+            const Icon(Icons.error, color: Colors.white, size: 24),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                message,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: Colors.red[700],
         behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        elevation: 6,
+        duration: const Duration(seconds: 4),
+        action: SnackBarAction(
+          label: 'Đóng',
+          textColor: Colors.white,
+          onPressed: () {
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          },
+        ),
       ),
+    );
+  }
+
+  ElevatedButton _buildStyledButton({
+    required VoidCallback onPressed,
+    required String label,
+    required Color backgroundColor,
+    required Color foregroundColor,
+    Color? textColor,
+    double elevation = 2,
+    EdgeInsets padding = const EdgeInsets.symmetric(
+      horizontal: 16,
+      vertical: 8,
+    ),
+  }) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: backgroundColor,
+        foregroundColor: foregroundColor,
+        textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+        padding: padding,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        elevation: elevation,
+      ),
+      child: Text(label, style: TextStyle(color: textColor ?? Colors.white)),
     );
   }
 
@@ -228,7 +359,11 @@ class _FriendsScreenState extends State<Friends> with SingleTickerProviderStateM
     }
   }
 
-  Widget _buildFriendRequestItem(FriendRequestWithDetails item, int index, double screenWidth) {
+  Widget _buildFriendRequestItem(
+    FriendRequestWithDetails item,
+    int index,
+    double screenWidth,
+  ) {
     return Card(
       elevation: 2,
       margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -237,10 +372,14 @@ class _FriendsScreenState extends State<Friends> with SingleTickerProviderStateM
         padding: const EdgeInsets.all(12),
         child: Row(
           children: [
-            CircleAvatar(
-              radius: 30,
-              backgroundImage: NetworkImage(item.friend.avatarUrl),
-              onBackgroundImageError: (_, __) => const Icon(Icons.person, color: Colors.grey),
+            GestureDetector(
+              onTap: () => _navigateToProfile(item.friend.senderId),
+              child: CircleAvatar(
+                radius: 30,
+                backgroundImage: NetworkImage(item.friend.avatarUrl),
+                onBackgroundImageError:
+                    (_, __) => const Icon(Icons.person, color: Colors.grey),
+              ),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -250,13 +389,22 @@ class _FriendsScreenState extends State<Friends> with SingleTickerProviderStateM
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        item.friend.username,
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      GestureDetector(
+                        onTap: () => _navigateToProfile(item.friend.senderId),
+                        child: Text(
+                          item.friend.username,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                       Text(
                         _formatRequestTime(item.request.createdAt),
-                        style: const TextStyle(fontSize: 12, color: Colors.grey),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey,
+                        ),
                       ),
                     ],
                   ),
@@ -270,24 +418,31 @@ class _FriendsScreenState extends State<Friends> with SingleTickerProviderStateM
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      TextButton(
-                        onPressed: () => _acceptFriendRequest(context, item.request.id, item.friend.username, index),
-                        style: TextButton.styleFrom(
-                          foregroundColor: Colors.white,
-                          backgroundColor: Colors.blue,
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                        ),
-                        child: const Text('Chấp nhận'),
+                      _buildStyledButton(
+                        onPressed:
+                            () => _acceptFriendRequest(
+                              context,
+                              item.request.id,
+                              item.friend.username,
+                              index,
+                            ),
+                        label: 'Chấp nhận',
+                        backgroundColor: Colors.blue[600]!,
+                        foregroundColor: Colors.blue[800]!,
                       ),
                       const SizedBox(width: 8),
-                      TextButton(
-                        onPressed: () => _rejectFriendRequest(context, item.request.id, item.friend.username, index),
-                        style: TextButton.styleFrom(
-                          foregroundColor: Colors.grey[800],
-                          backgroundColor: Colors.grey[200],
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                        ),
-                        child: const Text('Từ chối'),
+                      _buildStyledButton(
+                        onPressed:
+                            () => _rejectFriendRequest(
+                              context,
+                              item.request.id,
+                              item.friend.username,
+                              index,
+                            ),
+                        label: 'Từ chối',
+                        backgroundColor: Colors.grey[300]!,
+                        foregroundColor: Colors.grey[500]!,
+                        textColor: Colors.grey[800],
                       ),
                     ],
                   ),
@@ -300,7 +455,11 @@ class _FriendsScreenState extends State<Friends> with SingleTickerProviderStateM
     );
   }
 
-  Widget _buildSentFriendRequestItem(FriendRequestWithDetails item, int index, double screenWidth) {
+  Widget _buildSentFriendRequestItem(
+    FriendRequestWithDetails item,
+    int index,
+    double screenWidth,
+  ) {
     return Card(
       elevation: 2,
       margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -309,10 +468,14 @@ class _FriendsScreenState extends State<Friends> with SingleTickerProviderStateM
         padding: const EdgeInsets.all(12),
         child: Row(
           children: [
-            CircleAvatar(
-              radius: 30,
-              backgroundImage: NetworkImage(item.friend.avatarUrl),
-              onBackgroundImageError: (_, __) => const Icon(Icons.person, color: Colors.grey),
+            GestureDetector(
+              onTap: () => _navigateToProfile(item.friend.receiverId),
+              child: CircleAvatar(
+                radius: 30,
+                backgroundImage: NetworkImage(item.friend.avatarUrl),
+                onBackgroundImageError:
+                    (_, __) => const Icon(Icons.person, color: Colors.grey),
+              ),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -322,17 +485,32 @@ class _FriendsScreenState extends State<Friends> with SingleTickerProviderStateM
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        item.friend.username,
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      GestureDetector(
+                        onTap: () => _navigateToProfile(item.friend.receiverId),
+                        child: Text(
+                          item.friend.username,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                       Text(
                         _formatRequestTime(item.request.createdAt),
-                        style: const TextStyle(fontSize: 12, color: Colors.grey),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey,
+                        ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 4),
+                  if (item.friend.mutualFriendsCount > 0)
+                    Text(
+                      '${item.friend.mutualFriendsCount} bạn chung',
+                      style: const TextStyle(fontSize: 14, color: Colors.grey),
+                    ),
+                  const SizedBox(height: 4),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -340,14 +518,20 @@ class _FriendsScreenState extends State<Friends> with SingleTickerProviderStateM
                         'Đang chờ xác nhận',
                         style: TextStyle(fontSize: 14, color: Colors.grey),
                       ),
-                      TextButton(
-                        onPressed: () => _cancelFriendRequest(context, item.request.id, item.request.senderId, item.request.receiverId, item.friend.username, index),
-                        style: TextButton.styleFrom(
-                          foregroundColor: Colors.grey[800],
-                          backgroundColor: Colors.grey[200],
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                        ),
-                        child: const Text('Hủy'),
+                      _buildStyledButton(
+                        onPressed:
+                            () => _cancelFriendRequest(
+                              context,
+                              item.request.id,
+                              item.request.senderId,
+                              item.request.receiverId,
+                              item.friend.username,
+                              index,
+                            ),
+                        label: 'Hủy',
+                        backgroundColor: Colors.grey[300]!,
+                        foregroundColor: Colors.grey[500]!,
+                        textColor: Colors.grey[800],
                       ),
                     ],
                   ),
@@ -360,7 +544,11 @@ class _FriendsScreenState extends State<Friends> with SingleTickerProviderStateM
     );
   }
 
-  Widget _buildFriendSuggestionItem(FriendSuggestion suggestion, int index, double screenWidth) {
+  Widget _buildFriendSuggestionItem(
+    FriendSuggestion suggestion,
+    int index,
+    double screenWidth,
+  ) {
     return Card(
       elevation: 2,
       margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -369,19 +557,29 @@ class _FriendsScreenState extends State<Friends> with SingleTickerProviderStateM
         padding: const EdgeInsets.all(12),
         child: Row(
           children: [
-            CircleAvatar(
-              radius: 30,
-              backgroundImage: NetworkImage(suggestion.avatarUrl),
-              onBackgroundImageError: (_, __) => const Icon(Icons.person, color: Colors.grey),
+            GestureDetector(
+              onTap: () => _navigateToProfile(suggestion.userId),
+              child: CircleAvatar(
+                radius: 30,
+                backgroundImage: NetworkImage(suggestion.avatarUrl),
+                onBackgroundImageError:
+                    (_, __) => const Icon(Icons.person, color: Colors.grey),
+              ),
             ),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    suggestion.username,
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  GestureDetector(
+                    onTap: () => _navigateToProfile(suggestion.userId),
+                    child: Text(
+                      suggestion.username,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 4),
                   if (suggestion.mutualFriendsCount > 0)
@@ -389,22 +587,21 @@ class _FriendsScreenState extends State<Friends> with SingleTickerProviderStateM
                       '${suggestion.mutualFriendsCount} bạn chung',
                       style: const TextStyle(fontSize: 14, color: Colors.grey),
                     ),
-                  if (suggestion.sameLocation)
-                    const Text(
-                      'Cùng khu vực',
-                      style: TextStyle(fontSize: 14, color: Colors.grey),
-                    ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 4),
                   Align(
                     alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () => _sendFriendRequest(context, suggestion.userId, suggestion.username, suggestion.avatarUrl, index),
-                      style: TextButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor: Colors.blue,
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                      ),
-                      child: const Text('Thêm bạn'),
+                    child: _buildStyledButton(
+                      onPressed:
+                          () => _sendFriendRequest(
+                            context,
+                            suggestion.userId,
+                            suggestion.username,
+                            suggestion.avatarUrl,
+                            index,
+                          ),
+                      label: 'Thêm bạn',
+                      backgroundColor: Colors.blue[600]!,
+                      foregroundColor: Colors.blue[800]!,
                     ),
                   ),
                 ],
@@ -425,30 +622,50 @@ class _FriendsScreenState extends State<Friends> with SingleTickerProviderStateM
         padding: const EdgeInsets.all(12),
         child: Row(
           children: [
-            CircleAvatar(
-              radius: 30,
-              backgroundImage: NetworkImage(friend.avatarUrl),
-              onBackgroundImageError: (_, __) => const Icon(Icons.person, color: Colors.grey),
+            GestureDetector(
+              onTap: () => _navigateToProfile(friend.id),
+              child: CircleAvatar(
+                radius: 30,
+                backgroundImage: NetworkImage(friend.avatarUrl),
+                onBackgroundImageError:
+                    (_, __) => const Icon(Icons.person, color: Colors.grey),
+              ),
             ),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    friend.username,
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  GestureDetector(
+                    onTap: () => _navigateToProfile(friend.id),
+                    child: Text(
+                      friend.username,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 8),
+                  if (friend.mutualFriendsCount > 0)
+                    Text(
+                      '${friend.mutualFriendsCount} bạn chung',
+                      style: const TextStyle(fontSize: 14, color: Colors.grey),
+                    ),
+                  const SizedBox(height: 4),
                   Align(
                     alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () => _unfriend(context, friend.id, friend.username, index),
-                      style: TextButton.styleFrom(
-                        foregroundColor: Colors.red,
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                      ),
-                      child: const Text('Xóa bạn'),
+                    child: _buildStyledButton(
+                      onPressed:
+                          () => _unfriend(
+                            context,
+                            friend.id,
+                            friend.username,
+                            index,
+                          ),
+                      label: 'Hủy kết bạn',
+                      backgroundColor: Colors.red[600]!,
+                      foregroundColor: Colors.red[800]!,
                     ),
                   ),
                 ],
@@ -486,7 +703,10 @@ class _FriendsScreenState extends State<Friends> with SingleTickerProviderStateM
           IconButton(
             icon: const Icon(Icons.search, color: Colors.black),
             onPressed: () {
-              showSearch(context: context, delegate: CustomSearchDelegate(onSearch: _searchUsers));
+              showSearch(
+                context: context,
+                delegate: CustomSearchDelegate(onSearch: _searchUsers),
+              );
             },
           ),
         ],
@@ -506,21 +726,26 @@ class _FriendsScreenState extends State<Friends> with SingleTickerProviderStateM
       body: TabBarView(
         controller: _tabController,
         children: [
-          // Suggestions Tab
           Container(
             color: Colors.grey[100],
             height: screenHeight,
-            child: isLoadingSuggestions
-                ? const Center(child: CircularProgressIndicator(color: Colors.blue))
-                : friendSuggestions.isEmpty
+            child:
+                isLoadingSuggestions
+                    ? const Center(
+                      child: CircularProgressIndicator(color: Colors.blue),
+                    )
+                    : friendSuggestions.isEmpty
                     ? _buildEmptyState('Không có gợi ý kết bạn')
                     : ListView.builder(
-                        itemCount: friendSuggestions.length,
-                        itemBuilder: (context, index) =>
-                            _buildFriendSuggestionItem(friendSuggestions[index], index, screenHeight),
-                      ),
+                      itemCount: friendSuggestions.length,
+                      itemBuilder:
+                          (context, index) => _buildFriendSuggestionItem(
+                            friendSuggestions[index],
+                            index,
+                            screenHeight,
+                          ),
+                    ),
           ),
-          // Friend Requests Tab
           Container(
             color: Colors.grey[100],
             height: screenHeight,
@@ -528,62 +753,77 @@ class _FriendsScreenState extends State<Friends> with SingleTickerProviderStateM
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Sent Requests
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                     child: Text(
                       'Lời mời đã gửi (${sentFriendRequests.length})',
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   isLoadingSentRequests
-                      ? const Center(child: CircularProgressIndicator(color: Colors.blue))
+                      ? const Center(
+                        child: CircularProgressIndicator(color: Colors.blue),
+                      )
                       : sentFriendRequests.isEmpty
-                          ? const Padding(
-                              padding: EdgeInsets.all(16),
-                              child: Text(
-                                'Không có lời mời nào đã gửi',
-                                style: TextStyle(color: Colors.grey),
-                              ),
-                            )
-                          : ListView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: sentFriendRequests.length,
-                              itemBuilder: (context, index) => _buildSentFriendRequestItem(
-                                  sentFriendRequests[index], index, screenHeight),
+                      ? const Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Text(
+                          'Không có lời mời nào đã gửi',
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      )
+                      : ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: sentFriendRequests.length,
+                        itemBuilder:
+                            (context, index) => _buildSentFriendRequestItem(
+                              sentFriendRequests[index],
+                              index,
+                              screenHeight,
                             ),
+                      ),
                   const Divider(height: 1),
-                  // Received Requests
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                     child: Text(
                       'Lời mời đã nhận (${friendRequests.length})',
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   isLoadingRequests
-                      ? const Center(child: CircularProgressIndicator(color: Colors.blue))
+                      ? const Center(
+                        child: CircularProgressIndicator(color: Colors.blue),
+                      )
                       : friendRequests.isEmpty
-                          ? const Padding(
-                              padding: EdgeInsets.all(16),
-                              child: Text(
-                                'Không có lời mời nào',
-                                style: TextStyle(color: Colors.grey),
-                              ),
-                            )
-                          : ListView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: friendRequests.length,
-                              itemBuilder: (context, index) =>
-                                  _buildFriendRequestItem(friendRequests[index], index, screenHeight),
+                      ? const Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Text(
+                          'Không có lời mời nào',
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      )
+                      : ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: friendRequests.length,
+                        itemBuilder:
+                            (context, index) => _buildFriendRequestItem(
+                              friendRequests[index],
+                              index,
+                              screenHeight,
                             ),
+                      ),
                 ],
               ),
             ),
           ),
-          // Friends Tab
           Container(
             color: Colors.grey[100],
             height: screenHeight,
@@ -594,18 +834,31 @@ class _FriendsScreenState extends State<Friends> with SingleTickerProviderStateM
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                   child: Text(
                     'Bạn bè (${friends.length})',
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 Expanded(
-                  child: isLoadingFriends
-                      ? const Center(child: CircularProgressIndicator(color: Colors.blue))
-                      : friends.isEmpty
+                  child:
+                      isLoadingFriends
+                          ? const Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.blue,
+                            ),
+                          )
+                          : friends.isEmpty
                           ? _buildEmptyState('Bạn chưa có bạn bè nào')
                           : ListView.builder(
-                              itemCount: friends.length,
-                              itemBuilder: (context, index) => _buildFriendItem(friends[index], index, screenHeight),
-                            ),
+                            itemCount: friends.length,
+                            itemBuilder:
+                                (context, index) => _buildFriendItem(
+                                  friends[index],
+                                  index,
+                                  screenHeight,
+                                ),
+                          ),
                 ),
               ],
             ),
@@ -640,10 +893,7 @@ class CustomSearchDelegate extends SearchDelegate<String> {
   @override
   List<Widget> buildActions(BuildContext context) {
     return [
-      IconButton(
-        icon: const Icon(Icons.clear),
-        onPressed: () => query = '',
-      ),
+      IconButton(icon: const Icon(Icons.clear), onPressed: () => query = ''),
     ];
   }
 
