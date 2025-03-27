@@ -4,249 +4,68 @@ import 'package:first_app/data/models/friendsuggestion.dart';
 import 'package:first_app/data/models/user.dart';
 import 'package:first_app/features/home/presentation/users_profile/other_us_profile.dart';
 import 'package:first_app/data/repositories/Friends_repo/friends_repo.dart';
-import 'package:first_app/features/search/presentation/screens/searchUsers.dart';
+import 'package:first_app/features/home/presentation/search_us/searchUsers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'bloc/friends_bloc.dart';
+import 'bloc/friends_event.dart';
+import 'bloc/friends_state.dart';
 
-class Friends extends StatefulWidget {
+class Friends extends StatelessWidget {
   final int currentUserId;
 
   const Friends({super.key, required this.currentUserId});
 
   @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => FriendsBloc(
+        friendsRepo: FriendsRepo(),
+        apiClient: ApiClient(),
+        currentUserId: currentUserId,
+      )..add(LoadFriendsDataEvent()),
+      child: FriendsScreen(currentUserId: currentUserId),
+    );
+  }
+}
+
+class FriendsScreen extends StatefulWidget {
+  final int currentUserId;
+
+  const FriendsScreen({super.key, required this.currentUserId});
+
+  @override
   _FriendsScreenState createState() => _FriendsScreenState();
 }
 
-class _FriendsScreenState extends State<Friends>
-    with SingleTickerProviderStateMixin {
-  List<FriendRequestWithDetails> friendRequests = [];
-  List<FriendRequestWithDetails> sentFriendRequests = [];
-  List<FriendSuggestion> friendSuggestions = [];
-  List<User> friends = [];
-  bool isLoadingRequests = true;
-  bool isLoadingSentRequests = true;
-  bool isLoadingSuggestions = true;
-  bool isLoadingFriends = true;
-  late FriendsRepo _friendsRepo;
+class _FriendsScreenState extends State<FriendsScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  final ApiClient _apiService = ApiClient();
 
   @override
   void initState() {
     super.initState();
-    _friendsRepo = FriendsRepo();
     _tabController = TabController(length: 3, vsync: this);
-    _loadFriendRequests();
-    _loadSentFriendRequests();
-    _loadFriendSuggestions();
-    _loadFriends();
   }
 
-  void _navigateToProfile(int targetUserId) {
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  void _navigateToProfile(BuildContext context, int targetUserId) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder:
-            (context) => OtherProfilePage(
-              viewerId: widget.currentUserId,
-              targetUserId: targetUserId,
-            ),
+        builder: (context) => OtherProfilePage(
+          viewerId: widget.currentUserId,
+          targetUserId: targetUserId,
+        ),
       ),
     );
   }
 
-  Future<void> _loadFriendRequests() async {
-    setState(() => isLoadingRequests = true);
-    try {
-      final requests = await _friendsRepo.getFriendRequests(
-        widget.currentUserId,
-      );
-      setState(() {
-        friendRequests = requests;
-        isLoadingRequests = false;
-      });
-    } catch (e) {
-      setState(() => isLoadingRequests = false);
-      _showErrorSnackBar('Failed to load friend requests: $e');
-    }
-  }
-
-  Future<void> _loadSentFriendRequests() async {
-    setState(() => isLoadingSentRequests = true);
-    try {
-      final requests = await _friendsRepo.getSentFriendRequests(
-        widget.currentUserId,
-      );
-      setState(() {
-        sentFriendRequests = requests;
-        isLoadingSentRequests = false;
-      });
-    } catch (e) {
-      setState(() => isLoadingSentRequests = false);
-      _showErrorSnackBar('Failed to load sent friend requests: $e');
-    }
-  }
-
-  Future<void> _loadFriendSuggestions() async {
-    setState(() => isLoadingSuggestions = true);
-    try {
-      final suggestions = await _friendsRepo.getFriendSuggestions(
-        widget.currentUserId,
-      );
-      setState(() {
-        friendSuggestions = suggestions;
-        isLoadingSuggestions = false;
-      });
-    } catch (e) {
-      setState(() => isLoadingSuggestions = false);
-      _showErrorSnackBar('Failed to load friend suggestions: $e');
-    }
-  }
-
-  Future<void> _loadFriends() async {
-    setState(() => isLoadingFriends = true);
-    try {
-      final friendList = await _friendsRepo.getFriends(widget.currentUserId);
-      setState(() {
-        friends = friendList;
-        isLoadingFriends = false;
-      });
-    } catch (e) {
-      setState(() => isLoadingFriends = false);
-      _showErrorSnackBar('Failed to load friends: $e');
-    }
-  }
-
-  Future<void> _searchUsers(String query) async {
-    if (query.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Vui lòng nhập tên người dùng để tìm kiếm'),
-        ),
-      );
-      return;
-    }
-    try {
-      final response = await _apiService.get(
-        'api/friends/search?username=$query&senderId=${widget.currentUserId}',
-      );
-      final List<dynamic> users = response as List<dynamic>;
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder:
-              (context) => SearchUsersScreen(
-                searchResults: users,
-                currentUserId: widget.currentUserId,
-              ),
-        ),
-      );
-    } catch (e) {
-      _showErrorSnackBar('Lỗi khi tìm kiếm người dùng: $e');
-    }
-  }
-
-  Future<void> _acceptFriendRequest(
-    BuildContext context,
-    int requestId,
-    String username,
-    int index,
-  ) async {
-    setState(() => isLoadingRequests = true);
-    try {
-      await _friendsRepo.acceptFriendRequest(requestId);
-      setState(() {
-        friendRequests.removeAt(index);
-        isLoadingRequests = false;
-      });
-      await _loadFriends();
-      _showSuccessSnackBar('Đã chấp nhận lời mời từ $username');
-    } catch (e) {
-      setState(() => isLoadingRequests = false);
-      _showErrorSnackBar('Lỗi khi chấp nhận: $e');
-    }
-  }
-
-  Future<void> _rejectFriendRequest(
-    BuildContext context,
-    int requestId,
-    String username,
-    int index,
-  ) async {
-    setState(() => isLoadingRequests = true);
-    try {
-      await _friendsRepo.rejectFriendRequest(requestId);
-      setState(() {
-        friendRequests.removeAt(index);
-        isLoadingRequests = false;
-      });
-      _showSuccessSnackBar('Đã từ chối lời mời từ $username');
-    } catch (e) {
-      setState(() => isLoadingRequests = false);
-      _showErrorSnackBar('Lỗi khi từ chối: $e');
-    }
-  }
-
-  Future<void> _sendFriendRequest(
-    BuildContext context,
-    int receiverId,
-    String username,
-    String avatarUrl,
-    int index,
-  ) async {
-    try {
-      await _friendsRepo.sendFriendRequest(
-        widget.currentUserId,
-        receiverId,
-        username,
-        avatarUrl,
-      );
-      setState(() {
-        friendSuggestions.removeAt(index);
-      });
-      await _loadSentFriendRequests();
-      _showSuccessSnackBar('Đã gửi lời mời kết bạn đến $username');
-    } catch (e) {
-      _showErrorSnackBar('Lỗi khi gửi lời mời: $e');
-    }
-  }
-
-  Future<void> _cancelFriendRequest(
-    BuildContext context,
-    int requestId,
-    int senderId,
-    int receiverId,
-    String username,
-    int index,
-  ) async {
-    try {
-      await _friendsRepo.cancelFriendRequest(senderId, receiverId);
-      setState(() {
-        sentFriendRequests.removeAt(index);
-      });
-      _showSuccessSnackBar('Đã hủy lời mời gửi đến $username');
-    } catch (e) {
-      _showErrorSnackBar('Lỗi khi hủy lời mời: $e');
-    }
-  }
-
-  Future<void> _unfriend(
-    BuildContext context,
-    int friendId,
-    String username,
-    int index,
-  ) async {
-    try {
-      await _friendsRepo.unfriend(widget.currentUserId, friendId);
-      setState(() {
-        friends.removeAt(index);
-      });
-      _showSuccessSnackBar('Đã xóa $username khỏi danh sách bạn bè');
-    } catch (e) {
-      _showErrorSnackBar('Lỗi khi xóa bạn bè: $e');
-    }
-  }
-
-  void _showSuccessSnackBar(String message) {
+  void _showSuccessSnackBar(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Row(
@@ -274,15 +93,13 @@ class _FriendsScreenState extends State<Friends>
         action: SnackBarAction(
           label: 'Đóng',
           textColor: Colors.white,
-          onPressed: () {
-            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-          },
+          onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),
         ),
       ),
     );
   }
 
-  void _showErrorSnackBar(String message) {
+  void _showErrorSnackBar(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Row(
@@ -310,9 +127,7 @@ class _FriendsScreenState extends State<Friends>
         action: SnackBarAction(
           label: 'Đóng',
           textColor: Colors.white,
-          onPressed: () {
-            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-          },
+          onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),
         ),
       ),
     );
@@ -325,10 +140,7 @@ class _FriendsScreenState extends State<Friends>
     required Color foregroundColor,
     Color? textColor,
     double elevation = 2,
-    EdgeInsets padding = const EdgeInsets.symmetric(
-      horizontal: 16,
-      vertical: 8,
-    ),
+    EdgeInsets padding = const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
   }) {
     return ElevatedButton(
       onPressed: onPressed,
@@ -359,11 +171,7 @@ class _FriendsScreenState extends State<Friends>
     }
   }
 
-  Widget _buildFriendRequestItem(
-    FriendRequestWithDetails item,
-    int index,
-    double screenWidth,
-  ) {
+  Widget _buildFriendRequestItem(BuildContext context, FriendRequestWithDetails item, int index, double screenWidth) {
     return Card(
       elevation: 2,
       margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -373,12 +181,11 @@ class _FriendsScreenState extends State<Friends>
         child: Row(
           children: [
             GestureDetector(
-              onTap: () => _navigateToProfile(item.friend.senderId),
+              onTap: () => _navigateToProfile(context, item.friend.senderId),
               child: CircleAvatar(
                 radius: 30,
                 backgroundImage: NetworkImage(item.friend.avatarUrl),
-                onBackgroundImageError:
-                    (_, __) => const Icon(Icons.person, color: Colors.grey),
+                onBackgroundImageError: (_, __) => const Icon(Icons.person, color: Colors.grey),
               ),
             ),
             const SizedBox(width: 12),
@@ -390,21 +197,15 @@ class _FriendsScreenState extends State<Friends>
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       GestureDetector(
-                        onTap: () => _navigateToProfile(item.friend.senderId),
+                        onTap: () => _navigateToProfile(context, item.friend.senderId),
                         child: Text(
                           item.friend.username,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                       ),
                       Text(
                         _formatRequestTime(item.request.createdAt),
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey,
-                        ),
+                        style: const TextStyle(fontSize: 12, color: Colors.grey),
                       ),
                     ],
                   ),
@@ -419,26 +220,14 @@ class _FriendsScreenState extends State<Friends>
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       _buildStyledButton(
-                        onPressed:
-                            () => _acceptFriendRequest(
-                              context,
-                              item.request.id,
-                              item.friend.username,
-                              index,
-                            ),
+                        onPressed: () => context.read<FriendsBloc>().add(AcceptFriendRequestEvent(item.request.id, item.friend.username, index)),
                         label: 'Chấp nhận',
                         backgroundColor: Colors.blue[600]!,
                         foregroundColor: Colors.blue[800]!,
                       ),
                       const SizedBox(width: 8),
                       _buildStyledButton(
-                        onPressed:
-                            () => _rejectFriendRequest(
-                              context,
-                              item.request.id,
-                              item.friend.username,
-                              index,
-                            ),
+                        onPressed: () => context.read<FriendsBloc>().add(RejectFriendRequestEvent(item.request.id, item.friend.username, index)),
                         label: 'Từ chối',
                         backgroundColor: Colors.grey[300]!,
                         foregroundColor: Colors.grey[500]!,
@@ -455,11 +244,7 @@ class _FriendsScreenState extends State<Friends>
     );
   }
 
-  Widget _buildSentFriendRequestItem(
-    FriendRequestWithDetails item,
-    int index,
-    double screenWidth,
-  ) {
+  Widget _buildSentFriendRequestItem(BuildContext context, FriendRequestWithDetails item, int index, double screenWidth) {
     return Card(
       elevation: 2,
       margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -469,12 +254,11 @@ class _FriendsScreenState extends State<Friends>
         child: Row(
           children: [
             GestureDetector(
-              onTap: () => _navigateToProfile(item.friend.receiverId),
+              onTap: () => _navigateToProfile(context, item.friend.receiverId),
               child: CircleAvatar(
                 radius: 30,
                 backgroundImage: NetworkImage(item.friend.avatarUrl),
-                onBackgroundImageError:
-                    (_, __) => const Icon(Icons.person, color: Colors.grey),
+                onBackgroundImageError: (_, __) => const Icon(Icons.person, color: Colors.grey),
               ),
             ),
             const SizedBox(width: 12),
@@ -486,21 +270,15 @@ class _FriendsScreenState extends State<Friends>
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       GestureDetector(
-                        onTap: () => _navigateToProfile(item.friend.receiverId),
+                        onTap: () => _navigateToProfile(context, item.friend.receiverId),
                         child: Text(
                           item.friend.username,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                       ),
                       Text(
                         _formatRequestTime(item.request.createdAt),
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey,
-                        ),
+                        style: const TextStyle(fontSize: 12, color: Colors.grey),
                       ),
                     ],
                   ),
@@ -519,15 +297,13 @@ class _FriendsScreenState extends State<Friends>
                         style: TextStyle(fontSize: 14, color: Colors.grey),
                       ),
                       _buildStyledButton(
-                        onPressed:
-                            () => _cancelFriendRequest(
-                              context,
-                              item.request.id,
-                              item.request.senderId,
-                              item.request.receiverId,
-                              item.friend.username,
-                              index,
-                            ),
+                        onPressed: () => context.read<FriendsBloc>().add(CancelFriendRequestEvent(
+                          item.request.id,
+                          item.request.senderId,
+                          item.request.receiverId,
+                          item.friend.username,
+                          index,
+                        )),
                         label: 'Hủy',
                         backgroundColor: Colors.grey[300]!,
                         foregroundColor: Colors.grey[500]!,
@@ -544,11 +320,7 @@ class _FriendsScreenState extends State<Friends>
     );
   }
 
-  Widget _buildFriendSuggestionItem(
-    FriendSuggestion suggestion,
-    int index,
-    double screenWidth,
-  ) {
+  Widget _buildFriendSuggestionItem(BuildContext context, FriendSuggestion suggestion, int index, double screenWidth) {
     return Card(
       elevation: 2,
       margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -558,12 +330,11 @@ class _FriendsScreenState extends State<Friends>
         child: Row(
           children: [
             GestureDetector(
-              onTap: () => _navigateToProfile(suggestion.userId),
+              onTap: () => _navigateToProfile(context, suggestion.userId),
               child: CircleAvatar(
                 radius: 30,
                 backgroundImage: NetworkImage(suggestion.avatarUrl),
-                onBackgroundImageError:
-                    (_, __) => const Icon(Icons.person, color: Colors.grey),
+                onBackgroundImageError: (_, __) => const Icon(Icons.person, color: Colors.grey),
               ),
             ),
             const SizedBox(width: 12),
@@ -572,13 +343,10 @@ class _FriendsScreenState extends State<Friends>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   GestureDetector(
-                    onTap: () => _navigateToProfile(suggestion.userId),
+                    onTap: () => _navigateToProfile(context, suggestion.userId),
                     child: Text(
                       suggestion.username,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -591,14 +359,12 @@ class _FriendsScreenState extends State<Friends>
                   Align(
                     alignment: Alignment.centerRight,
                     child: _buildStyledButton(
-                      onPressed:
-                          () => _sendFriendRequest(
-                            context,
-                            suggestion.userId,
-                            suggestion.username,
-                            suggestion.avatarUrl,
-                            index,
-                          ),
+                      onPressed: () => context.read<FriendsBloc>().add(SendFriendRequestEvent(
+                        suggestion.userId,
+                        suggestion.username,
+                        suggestion.avatarUrl,
+                        index,
+                      )),
                       label: 'Thêm bạn',
                       backgroundColor: Colors.blue[600]!,
                       foregroundColor: Colors.blue[800]!,
@@ -613,7 +379,7 @@ class _FriendsScreenState extends State<Friends>
     );
   }
 
-  Widget _buildFriendItem(User friend, int index, double screenWidth) {
+  Widget _buildFriendItem(BuildContext context, User friend, int index, double screenWidth) {
     return Card(
       elevation: 2,
       margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -623,12 +389,11 @@ class _FriendsScreenState extends State<Friends>
         child: Row(
           children: [
             GestureDetector(
-              onTap: () => _navigateToProfile(friend.id),
+              onTap: () => _navigateToProfile(context, friend.id),
               child: CircleAvatar(
                 radius: 30,
                 backgroundImage: NetworkImage(friend.avatarUrl),
-                onBackgroundImageError:
-                    (_, __) => const Icon(Icons.person, color: Colors.grey),
+                onBackgroundImageError: (_, __) => const Icon(Icons.person, color: Colors.grey),
               ),
             ),
             const SizedBox(width: 12),
@@ -637,13 +402,10 @@ class _FriendsScreenState extends State<Friends>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   GestureDetector(
-                    onTap: () => _navigateToProfile(friend.id),
+                    onTap: () => _navigateToProfile(context, friend.id),
                     child: Text(
                       friend.username,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -656,13 +418,7 @@ class _FriendsScreenState extends State<Friends>
                   Align(
                     alignment: Alignment.centerRight,
                     child: _buildStyledButton(
-                      onPressed:
-                          () => _unfriend(
-                            context,
-                            friend.id,
-                            friend.username,
-                            index,
-                          ),
+                      onPressed: () => context.read<FriendsBloc>().add(UnfriendEvent(friend.id, friend.username, index)),
                       label: 'Hủy kết bạn',
                       backgroundColor: Colors.red[600]!,
                       foregroundColor: Colors.red[800]!,
@@ -673,197 +429,6 @@ class _FriendsScreenState extends State<Friends>
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Bạn bè',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 1,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search, color: Colors.black),
-            onPressed: () {
-              showSearch(
-                context: context,
-                delegate: CustomSearchDelegate(onSearch: _searchUsers),
-              );
-            },
-          ),
-        ],
-        bottom: TabBar(
-          controller: _tabController,
-          labelColor: Colors.blue,
-          unselectedLabelColor: Colors.grey,
-          indicatorColor: Colors.blue,
-          labelStyle: const TextStyle(fontWeight: FontWeight.bold),
-          tabs: const [
-            Tab(text: 'Gợi ý'),
-            Tab(text: 'Lời mời'),
-            Tab(text: 'Bạn bè'),
-          ],
-        ),
-      ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          Container(
-            color: Colors.grey[100],
-            height: screenHeight,
-            child:
-                isLoadingSuggestions
-                    ? const Center(
-                      child: CircularProgressIndicator(color: Colors.blue),
-                    )
-                    : friendSuggestions.isEmpty
-                    ? _buildEmptyState('Không có gợi ý kết bạn')
-                    : ListView.builder(
-                      itemCount: friendSuggestions.length,
-                      itemBuilder:
-                          (context, index) => _buildFriendSuggestionItem(
-                            friendSuggestions[index],
-                            index,
-                            screenHeight,
-                          ),
-                    ),
-          ),
-          Container(
-            color: Colors.grey[100],
-            height: screenHeight,
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                    child: Text(
-                      'Lời mời đã gửi (${sentFriendRequests.length})',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  isLoadingSentRequests
-                      ? const Center(
-                        child: CircularProgressIndicator(color: Colors.blue),
-                      )
-                      : sentFriendRequests.isEmpty
-                      ? const Padding(
-                        padding: EdgeInsets.all(16),
-                        child: Text(
-                          'Không có lời mời nào đã gửi',
-                          style: TextStyle(color: Colors.grey),
-                        ),
-                      )
-                      : ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: sentFriendRequests.length,
-                        itemBuilder:
-                            (context, index) => _buildSentFriendRequestItem(
-                              sentFriendRequests[index],
-                              index,
-                              screenHeight,
-                            ),
-                      ),
-                  const Divider(height: 1),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                    child: Text(
-                      'Lời mời đã nhận (${friendRequests.length})',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  isLoadingRequests
-                      ? const Center(
-                        child: CircularProgressIndicator(color: Colors.blue),
-                      )
-                      : friendRequests.isEmpty
-                      ? const Padding(
-                        padding: EdgeInsets.all(16),
-                        child: Text(
-                          'Không có lời mời nào',
-                          style: TextStyle(color: Colors.grey),
-                        ),
-                      )
-                      : ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: friendRequests.length,
-                        itemBuilder:
-                            (context, index) => _buildFriendRequestItem(
-                              friendRequests[index],
-                              index,
-                              screenHeight,
-                            ),
-                      ),
-                ],
-              ),
-            ),
-          ),
-          Container(
-            color: Colors.grey[100],
-            height: screenHeight,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                  child: Text(
-                    'Bạn bè (${friends.length})',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child:
-                      isLoadingFriends
-                          ? const Center(
-                            child: CircularProgressIndicator(
-                              color: Colors.blue,
-                            ),
-                          )
-                          : friends.isEmpty
-                          ? _buildEmptyState('Bạn chưa có bạn bè nào')
-                          : ListView.builder(
-                            itemCount: friends.length,
-                            itemBuilder:
-                                (context, index) => _buildFriendItem(
-                                  friends[index],
-                                  index,
-                                  screenHeight,
-                                ),
-                          ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -883,6 +448,192 @@ class _FriendsScreenState extends State<Friends>
       ),
     );
   }
+
+  @override
+  Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Bạn bè',
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 20),
+        ),
+        backgroundColor: Colors.white,
+        elevation: 1,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search, color: Colors.black),
+            onPressed: () {
+              showSearch(
+                context: context,
+                delegate: CustomSearchDelegate(
+                  onSearch: (query) => context.read<FriendsBloc>().add(SearchUsersEvent(query)),
+                ),
+              );
+            },
+          ),
+        ],
+        bottom: TabBar(
+          controller: _tabController,
+          labelColor: Colors.blue,
+          unselectedLabelColor: Colors.grey,
+          indicatorColor: Colors.blue,
+          labelStyle: const TextStyle(fontWeight: FontWeight.bold),
+          tabs: const [
+            Tab(text: 'Gợi ý'),
+            Tab(text: 'Lời mời'),
+            Tab(text: 'Bạn bè'),
+          ],
+        ),
+      ),
+      body: BlocConsumer<FriendsBloc, FriendsState>(
+        listener: (context, state) {
+          if (state is FriendsError) {
+            _showErrorSnackBar(context, state.message);
+          } else if (state is FriendsSearchSuccess) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SearchUsersScreen(
+                  searchResults: state.searchResults,
+                  currentUserId: widget.currentUserId,
+                ),
+              ),
+            );
+          }
+        },
+        builder: (context, state) {
+          if (state is FriendsLoading) {
+            return const Center(child: CircularProgressIndicator(color: Colors.blue));
+          } else if (state is FriendsError) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(state.message),
+                  const SizedBox(height: 10),
+                  ElevatedButton(
+                    onPressed: () => context.read<FriendsBloc>().add(LoadFriendsDataEvent()),
+                    child: const Text('Thử lại'),
+                  ),
+                ],
+              ),
+            );
+          } else if (state is FriendsLoaded) {
+            return TabBarView(
+              controller: _tabController,
+              children: [
+                Container(
+                  color: Colors.grey[100],
+                  height: screenHeight,
+                  child: state.friendSuggestions.isEmpty
+                      ? _buildEmptyState('Không có gợi ý kết bạn')
+                      : ListView.builder(
+                          itemCount: state.friendSuggestions.length,
+                          itemBuilder: (context, index) => _buildFriendSuggestionItem(
+                            context,
+                            state.friendSuggestions[index],
+                            index,
+                            screenHeight,
+                          ),
+                        ),
+                ),
+                Container(
+                  color: Colors.grey[100],
+                  height: screenHeight,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                          child: Text(
+                            'Lời mời đã gửi (${state.sentFriendRequests.length})',
+                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        state.sentFriendRequests.isEmpty
+                            ? const Padding(
+                                padding: EdgeInsets.all(16),
+                                child: Text('Không có lời mời nào đã gửi', style: TextStyle(color: Colors.grey)),
+                              )
+                            : ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: state.sentFriendRequests.length,
+                                itemBuilder: (context, index) => _buildSentFriendRequestItem(
+                                  context,
+                                  state.sentFriendRequests[index],
+                                  index,
+                                  screenHeight,
+                                ),
+                              ),
+                        const Divider(height: 1),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                          child: Text(
+                            'Lời mời đã nhận (${state.friendRequests.length})',
+                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        state.friendRequests.isEmpty
+                            ? const Padding(
+                                padding: EdgeInsets.all(16),
+                                child: Text('Không có lời mời nào', style: TextStyle(color: Colors.grey)),
+                              )
+                            : ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: state.friendRequests.length,
+                                itemBuilder: (context, index) => _buildFriendRequestItem(
+                                  context,
+                                  state.friendRequests[index],
+                                  index,
+                                  screenHeight,
+                                ),
+                              ),
+                      ],
+                    ),
+                  ),
+                ),
+                Container(
+                  color: Colors.grey[100],
+                  height: screenHeight,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                        child: Text(
+                          'Bạn bè (${state.friends.length})',
+                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Expanded(
+                        child: state.friends.isEmpty
+                            ? _buildEmptyState('Bạn chưa có bạn bè nào')
+                            : ListView.builder(
+                                itemCount: state.friends.length,
+                                itemBuilder: (context, index) => _buildFriendItem(
+                                  context,
+                                  state.friends[index],
+                                  index,
+                                  screenHeight,
+                                ),
+                              ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          }
+          return Container();
+        },
+      ),
+    );
+  }
 }
 
 class CustomSearchDelegate extends SearchDelegate<String> {
@@ -892,9 +643,7 @@ class CustomSearchDelegate extends SearchDelegate<String> {
 
   @override
   List<Widget> buildActions(BuildContext context) {
-    return [
-      IconButton(icon: const Icon(Icons.clear), onPressed: () => query = ''),
-    ];
+    return [IconButton(icon: const Icon(Icons.clear), onPressed: () => query = '')];
   }
 
   @override
