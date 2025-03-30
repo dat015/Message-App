@@ -8,6 +8,7 @@ using server.InjectService;
 using server.Services.ChatService;
 using server.Services.WebSocketService;
 using server.Services;
+using server.Services.UserService; // Thêm namespace cho UserQrService
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -58,8 +59,14 @@ Log.Logger = new LoggerConfiguration()
 
 builder.Host.UseSerilog();
 
-// Đăng ký WebSocketFriendSV
+// Đăng ký các service
 builder.Services.AddSingleton<IWebSocketFriendSV, WebSocketFriendSV>();
+builder.Services.AddScoped<IUserSV, UserSV>(); // Đăng ký IUserSV (giả định UserSV là implementation)
+
+// Đăng ký IMemoryCache (đã được ASP.NET Core cung cấp sẵn)
+builder.Services.AddMemoryCache();
+
+// Đăng ký ILogger (đã được ASP.NET Core cung cấp sẵn, không cần thêm)
 
 var app = builder.Build();
 

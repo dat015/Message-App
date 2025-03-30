@@ -1,3 +1,7 @@
+import 'package:first_app/data/dto/friendrequest_withdetails.dart';
+import 'package:first_app/data/models/friendsuggestion.dart';
+import 'package:first_app/data/models/user.dart';
+
 abstract class FriendsEvent {}
 
 class LoadFriendsDataEvent extends FriendsEvent {}
@@ -43,4 +47,11 @@ class UnfriendEvent extends FriendsEvent {
 class SearchUsersEvent extends FriendsEvent {
   final String query;
   SearchUsersEvent(this.query);
+}
+
+class GenerateUserQrCodeEvent extends FriendsEvent {} // Sự kiện tạo mã QR
+
+class ScanQrCodeEvent extends FriendsEvent {
+  final String qrCodeContent;
+  ScanQrCodeEvent(this.qrCodeContent); // Sự kiện quét mã QR
 }

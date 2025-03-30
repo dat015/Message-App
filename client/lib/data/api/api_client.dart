@@ -3,7 +3,7 @@ import '../../PlatformClient/config.dart';
 
 class ApiClient {
   late Dio _dio;
-  
+
   ApiClient({
     Duration connectTimeout = const Duration(seconds: 30),
     Duration receiveTimeout = const Duration(seconds: 30),
@@ -11,13 +11,12 @@ class ApiClient {
   }) {
     _dio = Dio(
       BaseOptions(
-        baseUrl: Config.baseUrl,  // Sử dụng Config.baseUrl
+        baseUrl: Config.baseUrl, // Sử dụng Config.baseUrl
         connectTimeout: connectTimeout,
         receiveTimeout: receiveTimeout,
-        headers: headers ?? {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
+        headers:
+            headers ??
+            {'Content-Type': 'application/json', 'Accept': 'application/json'},
       ),
     );
 

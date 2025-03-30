@@ -47,6 +47,8 @@ dependencies:
   shared_preferences: ^2.2.0
   universal_html: ^2.2.4
   cached_network_image: ^3.2.3
+  flutter_zxing: ^1.4.0
+  qr_code_scanner: ^1.0.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

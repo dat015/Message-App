@@ -14,7 +14,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<LoginResponse> login(String email, String password) async {
     try {
       final response = await _apiClient.put(
-        '/api/Auth/login', // Đảm bảo khớp với API login của bạn
+        '/api/Auth/login',
         data: {'email': email, 'password': password},
       );
       return LoginResponse.fromJson(response);
