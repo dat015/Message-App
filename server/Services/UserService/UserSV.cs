@@ -213,5 +213,54 @@ namespace server.Services.UserService
                 new HashEntry("avatarUrl", user.avatar_url ?? "")
             });
         }
+
+        public async Task<int> GetMutualFriendsCountAsync(int userId, int currentUserId)
+        {
+            // Lấy danh sách bạn bè của userId
+            var friendsOfUser = await _context.Friends
+                .Where(f => f.UserId1 == userId || f.UserId2 == userId)
+                .Select(f => f.UserId1 == userId ? f.UserId2 : f.UserId1)
+                .ToListAsync();
+
+            // Lấy danh sách bạn bè của currentUserId
+            var friendsOfCurrentUser = await _context.Friends
+                .Where(f => f.UserId1 == currentUserId || f.UserId2 == currentUserId)
+                .Select(f => f.UserId1 == currentUserId ? f.UserId2 : f.UserId1)
+                .ToListAsync();
+
+            // Tìm số bạn chung bằng cách giao hai danh sách
+            var mutualFriendsCount = friendsOfUser.Intersect(friendsOfCurrentUser).Count();
+
+            return mutualFriendsCount;
+        }
+
+        // Hàm mới: Xác định trạng thái quan hệ giữa hai người dùng
+        public async Task<string> GetRelationshipStatusAsync(int userId, int currentUserId)
+        {
+            // Kiểm tra xem có yêu cầu kết bạn nào giữa hai người dùng không
+            var friendRequest = await _context.FriendRequests
+                .FirstOrDefaultAsync(fr => (fr.SenderId == userId && fr.ReceiverId == currentUserId) ||
+                                           (fr.SenderId == currentUserId && fr.ReceiverId == userId));
+
+            if (friendRequest != null)
+            {
+                if (friendRequest.Status == "Accepted") return "Friends";
+                if (friendRequest.Status == "Rejected") return "Rejected";
+                return friendRequest.SenderId == currentUserId ? "PendingSent" : "PendingReceived";
+            }
+
+            // Kiểm tra xem hai người dùng đã là bạn bè chưa
+            var friendship = await _context.Friends
+                .FirstOrDefaultAsync(f => (f.UserId1 == userId && f.UserId2 == currentUserId) ||
+                                          (f.UserId1 == currentUserId && f.UserId2 == userId));
+
+            if (friendship != null)
+            {
+                return "Friends";
+            }
+
+            // Nếu không có yêu cầu kết bạn và chưa là bạn bè
+            return "NotFriends";
+        }
     }
 }

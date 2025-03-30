@@ -1,0 +1,1024 @@
+2025-03-28 08:33:01.662 +07:00 [INF] Executed DbCommand (44ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [u].[id], [u].[username], [u].[avatar_url]
+FROM [Users] AS [u]
+2025-03-28 08:33:07.235 +07:00 [INF] User profile is available. Using 'C:\Users\luong\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-03-28 08:33:07.375 +07:00 [INF] Now listening on: http://localhost:5053
+2025-03-28 08:33:07.378 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-03-28 08:33:07.379 +07:00 [INF] Hosting environment: Development
+2025-03-28 08:33:07.379 +07:00 [INF] Content root path: D:\StudioProject\Message-App\server
+2025-03-28 08:33:08.580 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-03-28 08:33:08.874 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 297.763ms
+2025-03-28 08:33:08.898 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/swagger-ui.css - null null
+2025-03-28 08:33:08.898 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.css - null null
+2025-03-28 08:33:08.916 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/swagger-ui-bundle.js - null null
+2025-03-28 08:33:08.916 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/swagger-ui-standalone-preset.js - null null
+2025-03-28 08:33:08.925 +07:00 [INF] The file /swagger-ui.css was not modified
+2025-03-28 08:33:08.925 +07:00 [INF] The file /swagger-ui-bundle.js was not modified
+2025-03-28 08:33:08.925 +07:00 [INF] The file /swagger-ui-standalone-preset.js was not modified
+2025-03-28 08:33:08.925 +07:00 [INF] The file /index.css was not modified
+2025-03-28 08:33:08.926 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.css - 304 null text/css 29.2006ms
+2025-03-28 08:33:08.927 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/swagger-ui-bundle.js - 304 null text/javascript 9.8819ms
+2025-03-28 08:33:08.926 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/swagger-ui.css - 304 null text/css 29.2021ms
+2025-03-28 08:33:08.927 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/swagger-ui-standalone-preset.js - 304 null text/javascript 9.8951ms
+2025-03-28 08:33:08.942 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-03-28 08:33:08.947 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 4.1978ms
+2025-03-28 08:33:08.989 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-03-28 08:33:08.996 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 6.4466ms
+2025-03-28 08:33:09.354 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-03-28 08:33:09.592 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 238.2286ms
+2025-03-28 08:41:06.371 +07:00 [INF] Request starting HTTP/1.1 PUT http://localhost:5053/api/Auth/login - application/json 75
+2025-03-28 08:41:06.401 +07:00 [INF] CORS policy execution successful.
+2025-03-28 08:41:06.407 +07:00 [WRN] Failed to determine the https port for redirect.
+2025-03-28 08:41:08.056 +07:00 [INF] Executing endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-03-28 08:41:08.089 +07:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(server.DTO.AuthDTO.LoginDTO) on controller Message_app.Controllers.AuthController (Message_app).
+2025-03-28 08:41:08.388 +07:00 [INF] Executed DbCommand (71ms) [Parameters=[@__email_0='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[email] = @__email_0
+2025-03-28 08:41:08.539 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.DTO.AuthDTO.LoginRespose'.
+2025-03-28 08:41:08.579 +07:00 [INF] Executed action Message_app.Controllers.AuthController.Login (Message_app) in 487.4288ms
+2025-03-28 08:41:08.580 +07:00 [INF] Executed endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-03-28 08:41:08.584 +07:00 [INF] Request finished HTTP/1.1 PUT http://localhost:5053/api/Auth/login - 200 null application/json; charset=utf-8 2213.2588ms
+2025-03-28 08:43:30.024 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-03-28 08:43:30.025 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 1.2903ms
+2025-03-28 08:43:30.069 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-03-28 08:43:30.069 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 0.6746ms
+2025-03-28 08:43:30.074 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-03-28 08:43:30.074 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 0.5115ms
+2025-03-28 08:43:30.313 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-03-28 08:43:30.319 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/favicon-32x32.png - null null
+2025-03-28 08:43:30.319 +07:00 [INF] The file /favicon-32x32.png was not modified
+2025-03-28 08:43:30.319 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/favicon-32x32.png - 304 null image/png 0.835ms
+2025-03-28 08:43:30.332 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 18.633ms
+2025-03-28 09:05:24.819 +07:00 [INF] Executed DbCommand (51ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [u].[id], [u].[username], [u].[avatar_url]
+FROM [Users] AS [u]
+2025-03-28 09:05:30.456 +07:00 [INF] User profile is available. Using 'C:\Users\luong\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-03-28 09:05:30.524 +07:00 [INF] Now listening on: http://localhost:5053
+2025-03-28 09:05:30.527 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-03-28 09:05:30.528 +07:00 [INF] Hosting environment: Development
+2025-03-28 09:05:30.528 +07:00 [INF] Content root path: D:\StudioProject\Message-App\server
+2025-03-28 09:05:30.735 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-03-28 09:05:30.839 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 105.6925ms
+2025-03-28 09:05:30.869 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-03-28 09:05:30.871 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 3.1005ms
+2025-03-28 09:05:30.873 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-03-28 09:05:30.875 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 2.5545ms
+2025-03-28 09:05:31.440 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-03-28 09:05:31.601 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 160.4689ms
+2025-03-28 16:43:32.372 +07:00 [INF] Executed DbCommand (44ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [u].[id], [u].[username], [u].[avatar_url]
+FROM [Users] AS [u]
+2025-03-28 16:43:37.924 +07:00 [INF] User profile is available. Using 'C:\Users\luong\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-03-28 16:43:38.108 +07:00 [INF] Now listening on: http://localhost:5053
+2025-03-28 16:43:38.121 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-03-28 16:43:38.124 +07:00 [INF] Hosting environment: Development
+2025-03-28 16:43:38.124 +07:00 [INF] Content root path: D:\StudioProject\Message-App\server
+2025-03-28 16:43:39.075 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-03-28 16:43:39.410 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 343.2867ms
+2025-03-28 16:43:39.467 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-03-28 16:43:39.479 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 12.6009ms
+2025-03-28 16:43:39.481 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-03-28 16:43:39.498 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 16.3129ms
+2025-03-28 16:43:39.908 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-03-28 16:43:40.086 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 178.148ms
+2025-03-28 16:46:48.149 +07:00 [INF] Request starting HTTP/1.1 PUT http://localhost:5053/api/Auth/login - application/json 66
+2025-03-28 16:46:48.678 +07:00 [WRN] Failed to determine the https port for redirect.
+2025-03-28 16:46:50.402 +07:00 [INF] Executing endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-03-28 16:46:50.452 +07:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(server.DTO.AuthDTO.LoginDTO) on controller Message_app.Controllers.AuthController (Message_app).
+2025-03-28 16:46:51.435 +07:00 [INF] Executed DbCommand (189ms) [Parameters=[@__email_0='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[email] = @__email_0
+2025-03-28 16:46:51.826 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.DTO.AuthDTO.LoginRespose'.
+2025-03-28 16:46:52.009 +07:00 [INF] Executed action Message_app.Controllers.AuthController.Login (Message_app) in 1550.9747ms
+2025-03-28 16:46:52.010 +07:00 [INF] Executed endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-03-28 16:46:52.020 +07:00 [INF] Request finished HTTP/1.1 PUT http://localhost:5053/api/Auth/login - 200 null application/json; charset=utf-8 3872.4193ms
+2025-03-28 16:46:52.857 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Conversation/get_conversations/30 - application/json null
+2025-03-28 16:46:52.867 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-03-28 16:46:52.920 +07:00 [INF] Route matched with {action = "GetConversations", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetConversations(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-03-28 16:46:53.302 +07:00 [INF] Executed DbCommand (47ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [c].[id], [c].[created_at], [c].[is_group], [c].[name]
+FROM [Participants] AS [p]
+INNER JOIN [Conversations] AS [c] ON [p].[conversation_id] = [c].[id]
+WHERE [p].[user_id] = @__userId_0
+2025-03-28 16:46:53.303 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.Models.Conversation, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-03-28 16:46:53.306 +07:00 [INF] Executed action server.Controllers.ConversationController.GetConversations (Message_app) in 385.4991ms
+2025-03-28 16:46:53.306 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-03-28 16:46:53.307 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Conversation/get_conversations/30 - 200 null application/json; charset=utf-8 449.6201ms
+2025-03-28 16:46:55.133 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/friends/requests/received/30 - null null
+2025-03-28 16:46:55.138 +07:00 [INF] Executing endpoint 'server.Controllers.FriendsController.GetReceivedFriendRequests (Message_app)'
+2025-03-28 16:46:55.143 +07:00 [INF] Route matched with {action = "GetReceivedFriendRequests", controller = "Friends"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetReceivedFriendRequests(Int32) on controller server.Controllers.FriendsController (Message_app).
+2025-03-28 16:46:55.284 +07:00 [INF] Executed DbCommand (33ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [f].[Id], [f].[SenderId], [f].[ReceiverId], [u].[username] AS [Username], [u].[avatar_url] AS [AvatarUrl], [f].[Status], [f].[CreatedAt], 0 AS [MutualFriendsCount]
+FROM [FriendRequests] AS [f]
+INNER JOIN [Users] AS [u] ON [f].[SenderId] = [u].[id]
+WHERE [f].[ReceiverId] = @__userId_0 AND [f].[Status] = N'Pending'
+2025-03-28 16:46:55.288 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType8`2[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[FriendRequestDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-03-28 16:46:55.301 +07:00 [INF] Executed action server.Controllers.FriendsController.GetReceivedFriendRequests (Message_app) in 158.11ms
+2025-03-28 16:46:55.301 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.GetReceivedFriendRequests (Message_app)'
+2025-03-28 16:46:55.302 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/friends/requests/received/30 - 200 null application/json; charset=utf-8 168.5309ms
+2025-03-28 16:46:55.343 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/friends/get-sent-requests/30 - null null
+2025-03-28 16:46:55.346 +07:00 [INF] Executing endpoint 'server.Controllers.FriendsController.GetSentFriendRequests (Message_app)'
+2025-03-28 16:46:55.354 +07:00 [INF] Route matched with {action = "GetSentFriendRequests", controller = "Friends"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetSentFriendRequests(Int32) on controller server.Controllers.FriendsController (Message_app).
+2025-03-28 16:46:55.423 +07:00 [INF] Executed DbCommand (7ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [f].[Id], [f].[SenderId], [f].[ReceiverId], [u].[username] AS [Username], [u].[avatar_url] AS [AvatarUrl], [f].[Status], [f].[CreatedAt], 0 AS [MutualFriendsCount]
+FROM [FriendRequests] AS [f]
+INNER JOIN [Users] AS [u] ON [f].[ReceiverId] = [u].[id]
+WHERE [f].[SenderId] = @__userId_0 AND [f].[Status] = N'Pending'
+2025-03-28 16:46:55.537 +07:00 [INF] Executed DbCommand (7ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-03-28 16:46:55.584 +07:00 [INF] Executed DbCommand (34ms) [Parameters=[@__request_ReceiverId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__request_ReceiverId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__request_ReceiverId_0 OR [f].[UserId2] = @__request_ReceiverId_0
+2025-03-28 16:46:55.588 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType10`2[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[FriendRequestDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-03-28 16:46:55.604 +07:00 [INF] Executed action server.Controllers.FriendsController.GetSentFriendRequests (Message_app) in 249.5827ms
+2025-03-28 16:46:55.604 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.GetSentFriendRequests (Message_app)'
+2025-03-28 16:46:55.604 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/friends/get-sent-requests/30 - 200 null application/json; charset=utf-8 261.3845ms
+2025-03-28 16:46:55.687 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/friends/suggestions/30 - null null
+2025-03-28 16:46:55.699 +07:00 [INF] Executing endpoint 'server.Controllers.FriendsController.GetFriendSuggestions (Message_app)'
+2025-03-28 16:46:55.730 +07:00 [INF] Route matched with {action = "GetFriendSuggestions", controller = "Friends"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetFriendSuggestions(Int32) on controller server.Controllers.FriendsController (Message_app).
+2025-03-28 16:46:55.842 +07:00 [INF] Executed DbCommand (4ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[id] = @__userId_0
+2025-03-28 16:46:55.892 +07:00 [INF] Executed DbCommand (32ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-03-28 16:46:55.905 +07:00 [INF] Executed DbCommand (5ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [f].[ReceiverId]
+FROM [FriendRequests] AS [f]
+WHERE [f].[SenderId] = @__userId_0
+2025-03-28 16:46:55.949 +07:00 [INF] Executed DbCommand (12ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [f].[SenderId]
+FROM [FriendRequests] AS [f]
+WHERE [f].[ReceiverId] = @__userId_0
+2025-03-28 16:46:55.959 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType9`2[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[FriendSuggestionDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-03-28 16:46:55.995 +07:00 [INF] Executed action server.Controllers.FriendsController.GetFriendSuggestions (Message_app) in 264.9652ms
+2025-03-28 16:46:55.996 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.GetFriendSuggestions (Message_app)'
+2025-03-28 16:46:55.997 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/friends/suggestions/30 - 200 null application/json; charset=utf-8 309.9719ms
+2025-03-28 16:46:56.005 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/friends/list/30 - null null
+2025-03-28 16:46:56.005 +07:00 [INF] Executing endpoint 'server.Controllers.FriendsController.GetFriendsAsync (Message_app)'
+2025-03-28 16:46:56.010 +07:00 [INF] Route matched with {action = "GetFriends", controller = "Friends"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetFriendsAsync(Int32) on controller server.Controllers.FriendsController (Message_app).
+2025-03-28 16:46:56.161 +07:00 [INF] Executed DbCommand (33ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT ~CAST([f].[UserId1] ^ @__userId_0 AS bit), [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username], [u0].[id], [u0].[avatar_url], [u0].[bio], [u0].[birthday], [u0].[created_at], [u0].[email], [u0].[gender], [u0].[interests], [u0].[location], [u0].[password], [u0].[passwordSalt], [u0].[username]
+FROM [Friends] AS [f]
+INNER JOIN [Users] AS [u] ON [f].[UserId2] = [u].[id]
+INNER JOIN [Users] AS [u0] ON [f].[UserId1] = [u0].[id]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-03-28 16:46:56.166 +07:00 [INF] Executed DbCommand (3ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-03-28 16:46:56.166 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType6`2[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[server.Models.User, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-03-28 16:46:56.169 +07:00 [INF] Executed action server.Controllers.FriendsController.GetFriendsAsync (Message_app) in 158.5849ms
+2025-03-28 16:46:56.169 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.GetFriendsAsync (Message_app)'
+2025-03-28 16:46:56.169 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/friends/list/30 - 200 null application/json; charset=utf-8 164.6499ms
+2025-03-28 16:46:58.424 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/UserProfile/view/33?viewerId=30 - null null
+2025-03-28 16:46:58.425 +07:00 [INF] Executing endpoint 'server.Controllers.UserProfileController.GetUserProfileById (Message_app)'
+2025-03-28 16:46:58.437 +07:00 [INF] Route matched with {action = "GetUserProfileById", controller = "UserProfile"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetUserProfileById(Int32, Int32) on controller server.Controllers.UserProfileController (Message_app).
+2025-03-28 16:46:58.757 +07:00 [WRN] Compiling a query which loads related collections for more than one collection navigation, either via 'Include' or through projection, but no 'QuerySplittingBehavior' has been configured. By default, Entity Framework will use 'QuerySplittingBehavior.SingleQuery', which can potentially result in slow query performance. See https://go.microsoft.com/fwlink/?linkid=2134277 for more information. To identify the query that's triggering this warning call 'ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))'.
+2025-03-28 16:46:58.842 +07:00 [INF] Executed DbCommand (10ms) [Parameters=[@__targetUserId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [u0].[id], [u0].[avatar_url], [u0].[bio], [u0].[birthday], [u0].[created_at], [u0].[email], [u0].[gender], [u0].[interests], [u0].[location], [u0].[password], [u0].[passwordSalt], [u0].[username], [f].[Id], [f].[CreatedAt], [f].[UserId1], [f].[UserId2], [f0].[Id], [f0].[CreatedAt], [f0].[UserId1], [f0].[UserId2]
+FROM (
+    SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+    FROM [Users] AS [u]
+    WHERE [u].[id] = @__targetUserId_0
+) AS [u0]
+LEFT JOIN [Friends] AS [f] ON [u0].[id] = [f].[UserId1]
+LEFT JOIN [Friends] AS [f0] ON [u0].[id] = [f0].[UserId2]
+ORDER BY [u0].[id], [f].[Id]
+2025-03-28 16:46:58.892 +07:00 [INF] Executed DbCommand (3ms) [Parameters=[@__viewerId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__viewerId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__viewerId_0 OR [f].[UserId2] = @__viewerId_0
+2025-03-28 16:46:58.901 +07:00 [INF] Executed DbCommand (4ms) [Parameters=[@__targetUserId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__targetUserId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__targetUserId_0 OR [f].[UserId2] = @__targetUserId_0
+2025-03-28 16:46:58.923 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType16`11[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.DateOnly, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.DateTime, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-03-28 16:46:58.938 +07:00 [INF] Executed action server.Controllers.UserProfileController.GetUserProfileById (Message_app) in 500.7669ms
+2025-03-28 16:46:58.938 +07:00 [INF] Executed endpoint 'server.Controllers.UserProfileController.GetUserProfileById (Message_app)'
+2025-03-28 16:46:58.938 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/UserProfile/view/33?viewerId=30 - 200 null application/json; charset=utf-8 514.1261ms
+2025-03-28 16:46:58.947 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/friends/list/30 - null null
+2025-03-28 16:46:58.948 +07:00 [INF] Executing endpoint 'server.Controllers.FriendsController.GetFriendsAsync (Message_app)'
+2025-03-28 16:46:58.948 +07:00 [INF] Route matched with {action = "GetFriends", controller = "Friends"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetFriendsAsync(Int32) on controller server.Controllers.FriendsController (Message_app).
+2025-03-28 16:46:59.005 +07:00 [INF] Executed DbCommand (53ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT ~CAST([f].[UserId1] ^ @__userId_0 AS bit), [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username], [u0].[id], [u0].[avatar_url], [u0].[bio], [u0].[birthday], [u0].[created_at], [u0].[email], [u0].[gender], [u0].[interests], [u0].[location], [u0].[password], [u0].[passwordSalt], [u0].[username]
+FROM [Friends] AS [f]
+INNER JOIN [Users] AS [u] ON [f].[UserId2] = [u].[id]
+INNER JOIN [Users] AS [u0] ON [f].[UserId1] = [u0].[id]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-03-28 16:46:59.049 +07:00 [INF] Executed DbCommand (42ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-03-28 16:46:59.050 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType6`2[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[server.Models.User, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-03-28 16:46:59.051 +07:00 [INF] Executed action server.Controllers.FriendsController.GetFriendsAsync (Message_app) in 102.4244ms
+2025-03-28 16:46:59.051 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.GetFriendsAsync (Message_app)'
+2025-03-28 16:46:59.051 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/friends/list/30 - 200 null application/json; charset=utf-8 103.9817ms
+2025-03-28 16:46:59.146 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/friends/requests/received/30 - null null
+2025-03-28 16:46:59.147 +07:00 [INF] Executing endpoint 'server.Controllers.FriendsController.GetReceivedFriendRequests (Message_app)'
+2025-03-28 16:46:59.148 +07:00 [INF] Route matched with {action = "GetReceivedFriendRequests", controller = "Friends"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetReceivedFriendRequests(Int32) on controller server.Controllers.FriendsController (Message_app).
+2025-03-28 16:46:59.246 +07:00 [INF] Executed DbCommand (71ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [f].[Id], [f].[SenderId], [f].[ReceiverId], [u].[username] AS [Username], [u].[avatar_url] AS [AvatarUrl], [f].[Status], [f].[CreatedAt], 0 AS [MutualFriendsCount]
+FROM [FriendRequests] AS [f]
+INNER JOIN [Users] AS [u] ON [f].[SenderId] = [u].[id]
+WHERE [f].[ReceiverId] = @__userId_0 AND [f].[Status] = N'Pending'
+2025-03-28 16:46:59.247 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType8`2[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[FriendRequestDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-03-28 16:46:59.247 +07:00 [INF] Executed action server.Controllers.FriendsController.GetReceivedFriendRequests (Message_app) in 94.1129ms
+2025-03-28 16:46:59.247 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.GetReceivedFriendRequests (Message_app)'
+2025-03-28 16:46:59.248 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/friends/requests/received/30 - 200 null application/json; charset=utf-8 101.4533ms
+2025-03-28 16:46:59.271 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/friends/get-sent-requests/30 - null null
+2025-03-28 16:46:59.276 +07:00 [INF] Executing endpoint 'server.Controllers.FriendsController.GetSentFriendRequests (Message_app)'
+2025-03-28 16:46:59.276 +07:00 [INF] Route matched with {action = "GetSentFriendRequests", controller = "Friends"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetSentFriendRequests(Int32) on controller server.Controllers.FriendsController (Message_app).
+2025-03-28 16:46:59.313 +07:00 [INF] Executed DbCommand (17ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [f].[Id], [f].[SenderId], [f].[ReceiverId], [u].[username] AS [Username], [u].[avatar_url] AS [AvatarUrl], [f].[Status], [f].[CreatedAt], 0 AS [MutualFriendsCount]
+FROM [FriendRequests] AS [f]
+INNER JOIN [Users] AS [u] ON [f].[ReceiverId] = [u].[id]
+WHERE [f].[SenderId] = @__userId_0 AND [f].[Status] = N'Pending'
+2025-03-28 16:46:59.352 +07:00 [INF] Executed DbCommand (30ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-03-28 16:46:59.357 +07:00 [INF] Executed DbCommand (3ms) [Parameters=[@__request_ReceiverId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__request_ReceiverId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__request_ReceiverId_0 OR [f].[UserId2] = @__request_ReceiverId_0
+2025-03-28 16:46:59.362 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType10`2[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[FriendRequestDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-03-28 16:46:59.362 +07:00 [INF] Executed action server.Controllers.FriendsController.GetSentFriendRequests (Message_app) in 86.0924ms
+2025-03-28 16:46:59.362 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.GetSentFriendRequests (Message_app)'
+2025-03-28 16:46:59.363 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/friends/get-sent-requests/30 - 200 null application/json; charset=utf-8 91.6751ms
+2025-03-28 16:47:38.214 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/friends/search?username=hoa&senderId=30 - application/json null
+2025-03-28 16:47:38.215 +07:00 [INF] Executing endpoint 'server.Controllers.FriendsController.SearchUsers (Message_app)'
+2025-03-28 16:47:38.241 +07:00 [INF] Route matched with {action = "SearchUsers", controller = "Friends"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] SearchUsers(System.String, Int32) on controller server.Controllers.FriendsController (Message_app).
+2025-03-28 16:47:44.641 +07:00 [WRN] The query uses a row limiting operator ('Skip'/'Take') without an 'OrderBy' operator. This may lead to unpredictable results. If the 'Distinct' operator is used after 'OrderBy', then make sure to use the 'OrderBy' operator after 'Distinct' as the ordering would otherwise get erased.
+2025-03-28 16:47:44.680 +07:00 [INF] Executed DbCommand (28ms) [Parameters=[@__p_2='?' (DbType = Int32), @__usernameQuery_0_contains='?' (Size = 200), @__currentUserId_1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(@__p_2) [u].[id], [u].[username], [u].[avatar_url]
+FROM [Users] AS [u]
+WHERE [u].[username] LIKE @__usernameQuery_0_contains ESCAPE N'\' AND [u].[id] <> @__currentUserId_1
+2025-03-28 16:47:44.681 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.Models.User, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-03-28 16:47:44.682 +07:00 [INF] Executed action server.Controllers.FriendsController.SearchUsers (Message_app) in 6440.871ms
+2025-03-28 16:47:44.682 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.SearchUsers (Message_app)'
+2025-03-28 16:47:44.682 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/friends/search?username=hoa&senderId=30 - 200 null application/json; charset=utf-8 6468.7077ms
+2025-03-28 17:08:26.728 +07:00 [INF] Application is shutting down...
+2025-03-28 21:40:07.518 +07:00 [INF] Executed DbCommand (67ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [u].[id], [u].[username], [u].[avatar_url]
+FROM [Users] AS [u]
+2025-03-28 21:40:13.541 +07:00 [INF] User profile is available. Using 'C:\Users\luong\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-03-28 21:40:13.645 +07:00 [INF] Now listening on: http://localhost:5053
+2025-03-28 21:40:13.648 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-03-28 21:40:13.648 +07:00 [INF] Hosting environment: Development
+2025-03-28 21:40:13.648 +07:00 [INF] Content root path: D:\StudioProject\Message-App\server
+2025-03-28 21:40:14.751 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-03-28 21:40:15.093 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 345.3373ms
+2025-03-28 21:40:15.165 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-03-28 21:40:15.169 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 4.705ms
+2025-03-28 21:40:15.180 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-03-28 21:40:15.209 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 29.5143ms
+2025-03-28 21:40:15.483 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-03-28 21:40:15.748 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 265.2052ms
+2025-03-28 23:06:00.288 +07:00 [INF] Request starting HTTP/1.1 PUT http://localhost:5053/api/Auth/login - application/json 75
+2025-03-28 23:06:01.168 +07:00 [INF] CORS policy execution successful.
+2025-03-28 23:06:01.193 +07:00 [WRN] Failed to determine the https port for redirect.
+2025-03-28 23:06:01.491 +07:00 [INF] Executing endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-03-28 23:06:01.583 +07:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(server.DTO.AuthDTO.LoginDTO) on controller Message_app.Controllers.AuthController (Message_app).
+2025-03-28 23:06:03.409 +07:00 [INF] Executed DbCommand (217ms) [Parameters=[@__email_0='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[email] = @__email_0
+2025-03-28 23:06:03.634 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.DTO.AuthDTO.LoginRespose'.
+2025-03-28 23:06:03.802 +07:00 [INF] Executed action Message_app.Controllers.AuthController.Login (Message_app) in 2214.9023ms
+2025-03-28 23:06:03.802 +07:00 [INF] Executed endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-03-28 23:06:03.880 +07:00 [INF] Request finished HTTP/1.1 PUT http://localhost:5053/api/Auth/login - 200 null application/json; charset=utf-8 3601.1721ms
+2025-03-28 23:22:11.157 +07:00 [INF] Request starting HTTP/1.1 PUT http://localhost:5053/api/Auth/login - application/json 66
+2025-03-28 23:22:11.264 +07:00 [INF] Executing endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-03-28 23:22:11.297 +07:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(server.DTO.AuthDTO.LoginDTO) on controller Message_app.Controllers.AuthController (Message_app).
+2025-03-28 23:22:12.549 +07:00 [INF] Executed DbCommand (43ms) [Parameters=[@__email_0='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[email] = @__email_0
+2025-03-28 23:22:12.664 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.DTO.AuthDTO.LoginRespose'.
+2025-03-28 23:22:12.668 +07:00 [INF] Executed action Message_app.Controllers.AuthController.Login (Message_app) in 1370.0901ms
+2025-03-28 23:22:12.669 +07:00 [INF] Executed endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-03-28 23:22:12.670 +07:00 [INF] Request finished HTTP/1.1 PUT http://localhost:5053/api/Auth/login - 200 null application/json; charset=utf-8 1517.1662ms
+2025-03-28 23:22:13.511 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Conversation/get_conversations/30 - application/json null
+2025-03-28 23:22:13.714 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-03-28 23:22:13.780 +07:00 [INF] Route matched with {action = "GetConversations", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetConversations(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-03-28 23:22:14.449 +07:00 [INF] Executed DbCommand (142ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [c].[id], [c].[created_at], [c].[is_group], [c].[name]
+FROM [Participants] AS [p]
+INNER JOIN [Conversations] AS [c] ON [p].[conversation_id] = [c].[id]
+WHERE [p].[user_id] = @__userId_0
+2025-03-28 23:22:14.484 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.Models.Conversation, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-03-28 23:22:14.818 +07:00 [INF] Executed action server.Controllers.ConversationController.GetConversations (Message_app) in 1036.9818ms
+2025-03-28 23:22:14.820 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-03-28 23:22:14.820 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Conversation/get_conversations/30 - 200 null application/json; charset=utf-8 1308.4767ms
+2025-03-28 23:22:19.631 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/friends/requests/received/30 - null null
+2025-03-28 23:22:19.634 +07:00 [INF] Executing endpoint 'server.Controllers.FriendsController.GetReceivedFriendRequests (Message_app)'
+2025-03-28 23:22:19.681 +07:00 [INF] Route matched with {action = "GetReceivedFriendRequests", controller = "Friends"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetReceivedFriendRequests(Int32) on controller server.Controllers.FriendsController (Message_app).
+2025-03-28 23:22:20.203 +07:00 [INF] Executed DbCommand (97ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [f].[Id], [f].[SenderId], [f].[ReceiverId], [u].[username] AS [Username], [u].[avatar_url] AS [AvatarUrl], [f].[Status], [f].[CreatedAt], 0 AS [MutualFriendsCount]
+FROM [FriendRequests] AS [f]
+INNER JOIN [Users] AS [u] ON [f].[SenderId] = [u].[id]
+WHERE [f].[ReceiverId] = @__userId_0 AND [f].[Status] = N'Pending'
+2025-03-28 23:22:20.208 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType8`2[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[FriendRequestDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-03-28 23:22:20.383 +07:00 [INF] Executed action server.Controllers.FriendsController.GetReceivedFriendRequests (Message_app) in 702.0762ms
+2025-03-28 23:22:20.383 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.GetReceivedFriendRequests (Message_app)'
+2025-03-28 23:22:20.384 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/friends/requests/received/30 - 200 null application/json; charset=utf-8 753.1397ms
+2025-03-28 23:22:20.645 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/friends/get-sent-requests/30 - null null
+2025-03-28 23:22:20.669 +07:00 [INF] Executing endpoint 'server.Controllers.FriendsController.GetSentFriendRequests (Message_app)'
+2025-03-28 23:22:20.696 +07:00 [INF] Route matched with {action = "GetSentFriendRequests", controller = "Friends"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetSentFriendRequests(Int32) on controller server.Controllers.FriendsController (Message_app).
+2025-03-28 23:22:20.854 +07:00 [INF] Executed DbCommand (135ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [f].[Id], [f].[SenderId], [f].[ReceiverId], [u].[username] AS [Username], [u].[avatar_url] AS [AvatarUrl], [f].[Status], [f].[CreatedAt], 0 AS [MutualFriendsCount]
+FROM [FriendRequests] AS [f]
+INNER JOIN [Users] AS [u] ON [f].[ReceiverId] = [u].[id]
+WHERE [f].[SenderId] = @__userId_0 AND [f].[Status] = N'Pending'
+2025-03-28 23:22:21.007 +07:00 [INF] Executed DbCommand (14ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-03-28 23:22:21.094 +07:00 [INF] Executed DbCommand (42ms) [Parameters=[@__request_ReceiverId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__request_ReceiverId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__request_ReceiverId_0 OR [f].[UserId2] = @__request_ReceiverId_0
+2025-03-28 23:22:21.103 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType10`2[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[FriendRequestDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-03-28 23:22:21.108 +07:00 [INF] Executed action server.Controllers.FriendsController.GetSentFriendRequests (Message_app) in 411.5965ms
+2025-03-28 23:22:21.108 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.GetSentFriendRequests (Message_app)'
+2025-03-28 23:22:21.109 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/friends/get-sent-requests/30 - 200 null application/json; charset=utf-8 463.4643ms
+2025-03-28 23:22:21.377 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/friends/suggestions/30 - null null
+2025-03-28 23:22:21.378 +07:00 [INF] Executing endpoint 'server.Controllers.FriendsController.GetFriendSuggestions (Message_app)'
+2025-03-28 23:22:21.389 +07:00 [INF] Route matched with {action = "GetFriendSuggestions", controller = "Friends"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetFriendSuggestions(Int32) on controller server.Controllers.FriendsController (Message_app).
+2025-03-28 23:22:21.621 +07:00 [INF] Executed DbCommand (60ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[id] = @__userId_0
+2025-03-28 23:22:21.759 +07:00 [INF] Executed DbCommand (132ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-03-28 23:22:21.824 +07:00 [INF] Executed DbCommand (58ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [f].[ReceiverId]
+FROM [FriendRequests] AS [f]
+WHERE [f].[SenderId] = @__userId_0
+2025-03-28 23:22:21.840 +07:00 [INF] Executed DbCommand (5ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [f].[SenderId]
+FROM [FriendRequests] AS [f]
+WHERE [f].[ReceiverId] = @__userId_0
+2025-03-28 23:22:21.887 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType9`2[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[FriendSuggestionDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-03-28 23:22:21.891 +07:00 [INF] Executed action server.Controllers.FriendsController.GetFriendSuggestions (Message_app) in 501.261ms
+2025-03-28 23:22:21.891 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.GetFriendSuggestions (Message_app)'
+2025-03-28 23:22:21.891 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/friends/suggestions/30 - 200 null application/json; charset=utf-8 515.0859ms
+2025-03-28 23:22:21.911 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/friends/list/30 - null null
+2025-03-28 23:22:21.913 +07:00 [INF] Executing endpoint 'server.Controllers.FriendsController.GetFriendsAsync (Message_app)'
+2025-03-28 23:22:21.955 +07:00 [INF] Route matched with {action = "GetFriends", controller = "Friends"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetFriendsAsync(Int32) on controller server.Controllers.FriendsController (Message_app).
+2025-03-28 23:22:22.134 +07:00 [INF] Executed DbCommand (11ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT ~CAST([f].[UserId1] ^ @__userId_0 AS bit), [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username], [u0].[id], [u0].[avatar_url], [u0].[bio], [u0].[birthday], [u0].[created_at], [u0].[email], [u0].[gender], [u0].[interests], [u0].[location], [u0].[password], [u0].[passwordSalt], [u0].[username]
+FROM [Friends] AS [f]
+INNER JOIN [Users] AS [u] ON [f].[UserId2] = [u].[id]
+INNER JOIN [Users] AS [u0] ON [f].[UserId1] = [u0].[id]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-03-28 23:22:22.138 +07:00 [INF] Executed DbCommand (3ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-03-28 23:22:22.139 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType6`2[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[server.Models.User, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-03-28 23:22:22.150 +07:00 [INF] Executed action server.Controllers.FriendsController.GetFriendsAsync (Message_app) in 194.9613ms
+2025-03-28 23:22:22.151 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.GetFriendsAsync (Message_app)'
+2025-03-28 23:22:22.151 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/friends/list/30 - 200 null application/json; charset=utf-8 240.1583ms
+2025-03-28 23:22:24.968 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/UserProfile/view/33?viewerId=30 - null null
+2025-03-28 23:22:24.969 +07:00 [INF] Executing endpoint 'server.Controllers.UserProfileController.GetUserProfileById (Message_app)'
+2025-03-28 23:22:24.974 +07:00 [INF] Route matched with {action = "GetUserProfileById", controller = "UserProfile"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetUserProfileById(Int32, Int32) on controller server.Controllers.UserProfileController (Message_app).
+2025-03-28 23:22:25.278 +07:00 [WRN] Compiling a query which loads related collections for more than one collection navigation, either via 'Include' or through projection, but no 'QuerySplittingBehavior' has been configured. By default, Entity Framework will use 'QuerySplittingBehavior.SingleQuery', which can potentially result in slow query performance. See https://go.microsoft.com/fwlink/?linkid=2134277 for more information. To identify the query that's triggering this warning call 'ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))'.
+2025-03-28 23:22:25.389 +07:00 [INF] Executed DbCommand (46ms) [Parameters=[@__targetUserId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [u0].[id], [u0].[avatar_url], [u0].[bio], [u0].[birthday], [u0].[created_at], [u0].[email], [u0].[gender], [u0].[interests], [u0].[location], [u0].[password], [u0].[passwordSalt], [u0].[username], [f].[Id], [f].[CreatedAt], [f].[UserId1], [f].[UserId2], [f0].[Id], [f0].[CreatedAt], [f0].[UserId1], [f0].[UserId2]
+FROM (
+    SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+    FROM [Users] AS [u]
+    WHERE [u].[id] = @__targetUserId_0
+) AS [u0]
+LEFT JOIN [Friends] AS [f] ON [u0].[id] = [f].[UserId1]
+LEFT JOIN [Friends] AS [f0] ON [u0].[id] = [f0].[UserId2]
+ORDER BY [u0].[id], [f].[Id]
+2025-03-28 23:22:25.442 +07:00 [INF] Executed DbCommand (3ms) [Parameters=[@__viewerId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__viewerId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__viewerId_0 OR [f].[UserId2] = @__viewerId_0
+2025-03-28 23:22:25.519 +07:00 [INF] Executed DbCommand (70ms) [Parameters=[@__targetUserId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__targetUserId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__targetUserId_0 OR [f].[UserId2] = @__targetUserId_0
+2025-03-28 23:22:25.521 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType16`11[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.DateOnly, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.DateTime, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-03-28 23:22:25.549 +07:00 [INF] Executed action server.Controllers.UserProfileController.GetUserProfileById (Message_app) in 575.1023ms
+2025-03-28 23:22:25.549 +07:00 [INF] Executed endpoint 'server.Controllers.UserProfileController.GetUserProfileById (Message_app)'
+2025-03-28 23:22:25.599 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/UserProfile/view/33?viewerId=30 - 200 null application/json; charset=utf-8 631.4831ms
+2025-03-28 23:22:25.660 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/friends/list/30 - null null
+2025-03-28 23:22:25.660 +07:00 [INF] Executing endpoint 'server.Controllers.FriendsController.GetFriendsAsync (Message_app)'
+2025-03-28 23:22:25.661 +07:00 [INF] Route matched with {action = "GetFriends", controller = "Friends"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetFriendsAsync(Int32) on controller server.Controllers.FriendsController (Message_app).
+2025-03-28 23:22:25.766 +07:00 [INF] Executed DbCommand (22ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT ~CAST([f].[UserId1] ^ @__userId_0 AS bit), [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username], [u0].[id], [u0].[avatar_url], [u0].[bio], [u0].[birthday], [u0].[created_at], [u0].[email], [u0].[gender], [u0].[interests], [u0].[location], [u0].[password], [u0].[passwordSalt], [u0].[username]
+FROM [Friends] AS [f]
+INNER JOIN [Users] AS [u] ON [f].[UserId2] = [u].[id]
+INNER JOIN [Users] AS [u0] ON [f].[UserId1] = [u0].[id]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-03-28 23:22:25.773 +07:00 [INF] Executed DbCommand (2ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-03-28 23:22:25.823 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType6`2[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[server.Models.User, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-03-28 23:22:25.823 +07:00 [INF] Executed action server.Controllers.FriendsController.GetFriendsAsync (Message_app) in 162.6156ms
+2025-03-28 23:22:25.824 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.GetFriendsAsync (Message_app)'
+2025-03-28 23:22:25.824 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/friends/list/30 - 200 null application/json; charset=utf-8 164.3421ms
+2025-03-28 23:22:25.907 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/friends/requests/received/30 - null null
+2025-03-28 23:22:25.909 +07:00 [INF] Executing endpoint 'server.Controllers.FriendsController.GetReceivedFriendRequests (Message_app)'
+2025-03-28 23:22:25.909 +07:00 [INF] Route matched with {action = "GetReceivedFriendRequests", controller = "Friends"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetReceivedFriendRequests(Int32) on controller server.Controllers.FriendsController (Message_app).
+2025-03-28 23:22:25.994 +07:00 [INF] Executed DbCommand (56ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [f].[Id], [f].[SenderId], [f].[ReceiverId], [u].[username] AS [Username], [u].[avatar_url] AS [AvatarUrl], [f].[Status], [f].[CreatedAt], 0 AS [MutualFriendsCount]
+FROM [FriendRequests] AS [f]
+INNER JOIN [Users] AS [u] ON [f].[SenderId] = [u].[id]
+WHERE [f].[ReceiverId] = @__userId_0 AND [f].[Status] = N'Pending'
+2025-03-28 23:22:25.995 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType8`2[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[FriendRequestDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-03-28 23:22:25.995 +07:00 [INF] Executed action server.Controllers.FriendsController.GetReceivedFriendRequests (Message_app) in 85.9874ms
+2025-03-28 23:22:25.995 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.GetReceivedFriendRequests (Message_app)'
+2025-03-28 23:22:25.995 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/friends/requests/received/30 - 200 null application/json; charset=utf-8 87.9695ms
+2025-03-28 23:22:26.019 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/friends/get-sent-requests/30 - null null
+2025-03-28 23:22:26.035 +07:00 [INF] Executing endpoint 'server.Controllers.FriendsController.GetSentFriendRequests (Message_app)'
+2025-03-28 23:22:26.036 +07:00 [INF] Route matched with {action = "GetSentFriendRequests", controller = "Friends"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetSentFriendRequests(Int32) on controller server.Controllers.FriendsController (Message_app).
+2025-03-28 23:22:26.586 +07:00 [INF] Executed DbCommand (425ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [f].[Id], [f].[SenderId], [f].[ReceiverId], [u].[username] AS [Username], [u].[avatar_url] AS [AvatarUrl], [f].[Status], [f].[CreatedAt], 0 AS [MutualFriendsCount]
+FROM [FriendRequests] AS [f]
+INNER JOIN [Users] AS [u] ON [f].[ReceiverId] = [u].[id]
+WHERE [f].[SenderId] = @__userId_0 AND [f].[Status] = N'Pending'
+2025-03-28 23:22:26.598 +07:00 [INF] Executed DbCommand (10ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-03-28 23:22:26.821 +07:00 [INF] Executed DbCommand (222ms) [Parameters=[@__request_ReceiverId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__request_ReceiverId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__request_ReceiverId_0 OR [f].[UserId2] = @__request_ReceiverId_0
+2025-03-28 23:22:26.825 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType10`2[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[FriendRequestDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-03-28 23:22:26.825 +07:00 [INF] Executed action server.Controllers.FriendsController.GetSentFriendRequests (Message_app) in 789.6856ms
+2025-03-28 23:22:26.826 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.GetSentFriendRequests (Message_app)'
+2025-03-28 23:22:26.827 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/friends/get-sent-requests/30 - 200 null application/json; charset=utf-8 806.9426ms
+2025-03-28 23:22:34.271 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/friends/search?username=hoa&senderId=30 - application/json null
+2025-03-28 23:22:34.272 +07:00 [INF] Executing endpoint 'server.Controllers.FriendsController.SearchUsers (Message_app)'
+2025-03-28 23:22:34.276 +07:00 [INF] Route matched with {action = "SearchUsers", controller = "Friends"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] SearchUsers(System.String, Int32) on controller server.Controllers.FriendsController (Message_app).
+2025-03-28 23:22:40.025 +07:00 [WRN] The query uses a row limiting operator ('Skip'/'Take') without an 'OrderBy' operator. This may lead to unpredictable results. If the 'Distinct' operator is used after 'OrderBy', then make sure to use the 'OrderBy' operator after 'Distinct' as the ordering would otherwise get erased.
+2025-03-28 23:22:40.063 +07:00 [INF] Executed DbCommand (26ms) [Parameters=[@__p_2='?' (DbType = Int32), @__usernameQuery_0_contains='?' (Size = 200), @__currentUserId_1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(@__p_2) [u].[id], [u].[username], [u].[avatar_url]
+FROM [Users] AS [u]
+WHERE [u].[username] LIKE @__usernameQuery_0_contains ESCAPE N'\' AND [u].[id] <> @__currentUserId_1
+2025-03-28 23:22:40.064 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.Models.User, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-03-28 23:22:40.064 +07:00 [INF] Executed action server.Controllers.FriendsController.SearchUsers (Message_app) in 5787.7477ms
+2025-03-28 23:22:40.064 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.SearchUsers (Message_app)'
+2025-03-28 23:22:40.064 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/friends/search?username=hoa&senderId=30 - 200 null application/json; charset=utf-8 5793.0539ms
+2025-03-28 23:22:40.132 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/ws?userId=30 - null null
+2025-03-28 23:22:40.160 +07:00 [INF] CORS policy execution successful.
+2025-03-28 23:22:40.161 +07:00 [INF] Executing endpoint '/ws'
+2025-03-28 23:22:40.412 +07:00 [INF] User 30 connected to friend WebSocket.
+2025-03-28 23:22:44.306 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/user/generate-qr/30 - application/json null
+2025-03-28 23:22:44.309 +07:00 [INF] Executing endpoint 'server.Controllers.UserController.GenerateQRCode (Message_app)'
+2025-03-28 23:22:44.325 +07:00 [INF] Route matched with {action = "GenerateQRCode", controller = "User"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GenerateQRCode(Int32) on controller server.Controllers.UserController (Message_app).
+2025-03-28 23:22:45.013 +07:00 [WRN] User 0 attempted to generate QR for user 30
+2025-03-28 23:22:45.015 +07:00 [INF] Executing ForbidResult with authentication schemes (["You can only generate QR for yourself"]).
+2025-03-28 23:22:45.020 +07:00 [INF] Executed action server.Controllers.UserController.GenerateQRCode (Message_app) in 694.6785ms
+2025-03-28 23:22:45.021 +07:00 [INF] Executed endpoint 'server.Controllers.UserController.GenerateQRCode (Message_app)'
+2025-03-28 23:22:45.025 +07:00 [ERR] An unhandled exception has occurred while executing the request.
+System.InvalidOperationException: No authentication handler is registered for the scheme 'You can only generate QR for yourself'. The registered schemes are: Bearer. Did you forget to call AddAuthentication().Add[SomeAuthHandler]("You can only generate QR for yourself",...)?
+   at Microsoft.AspNetCore.Authentication.AuthenticationService.ForbidAsync(HttpContext context, String scheme, AuthenticationProperties properties)
+   at Microsoft.AspNetCore.Mvc.ForbidResult.ExecuteResultAsync(ActionContext context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResultFilterAsync>g__Awaited|30_0[TFilter,TFilterAsync](ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResultExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.ResultNext[TFilter,TFilterAsync](State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.InvokeResultFilters()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-03-28 23:22:45.118 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/user/generate-qr/30 - 500 null text/plain; charset=utf-8 811.8492ms
+2025-03-28 23:23:18.890 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/31 - null null
+2025-03-28 23:23:18.891 +07:00 [INF] Executing endpoint 'server.Controllers.UserController.GenerateQRCode (Message_app)'
+2025-03-28 23:23:18.891 +07:00 [INF] Route matched with {action = "GenerateQRCode", controller = "User"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GenerateQRCode(Int32) on controller server.Controllers.UserController (Message_app).
+2025-03-28 23:23:18.893 +07:00 [WRN] User 0 attempted to generate QR for user 31
+2025-03-28 23:23:18.894 +07:00 [INF] Executing ForbidResult with authentication schemes (["You can only generate QR for yourself"]).
+2025-03-28 23:23:18.895 +07:00 [INF] Executed action server.Controllers.UserController.GenerateQRCode (Message_app) in 3.737ms
+2025-03-28 23:23:18.895 +07:00 [INF] Executed endpoint 'server.Controllers.UserController.GenerateQRCode (Message_app)'
+2025-03-28 23:23:18.896 +07:00 [ERR] An unhandled exception has occurred while executing the request.
+System.InvalidOperationException: No authentication handler is registered for the scheme 'You can only generate QR for yourself'. The registered schemes are: Bearer. Did you forget to call AddAuthentication().Add[SomeAuthHandler]("You can only generate QR for yourself",...)?
+   at Microsoft.AspNetCore.Authentication.AuthenticationService.ForbidAsync(HttpContext context, String scheme, AuthenticationProperties properties)
+   at Microsoft.AspNetCore.Mvc.ForbidResult.ExecuteResultAsync(ActionContext context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResultFilterAsync>g__Awaited|30_0[TFilter,TFilterAsync](ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResultExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.ResultNext[TFilter,TFilterAsync](State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.InvokeResultFilters()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-03-28 23:23:18.899 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/31 - 500 null text/plain; charset=utf-8 9.421ms
+2025-03-28 23:30:37.243 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-03-28 23:30:37.249 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 6.2999ms
+2025-03-28 23:30:37.353 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-03-28 23:30:37.354 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 1.5611ms
+2025-03-28 23:30:37.389 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-03-28 23:30:37.390 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 1.5291ms
+2025-03-28 23:30:38.650 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-03-28 23:30:38.835 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 184.4779ms
+2025-03-28 23:30:45.344 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-03-28 23:30:45.346 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 1.8372ms
+2025-03-28 23:30:45.389 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-03-28 23:30:45.391 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 1.8714ms
+2025-03-28 23:30:45.393 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-03-28 23:30:45.393 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 0.558ms
+2025-03-28 23:30:45.658 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-03-28 23:30:45.674 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 16.7355ms
+2025-03-28 23:31:17.080 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-03-28 23:31:17.080 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 0.561ms
+2025-03-28 23:31:17.116 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-03-28 23:31:17.116 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-03-28 23:31:17.116 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 0.2612ms
+2025-03-28 23:31:17.116 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 0.4192ms
+2025-03-28 23:31:17.291 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-03-28 23:31:17.304 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 12.6321ms
+2025-03-28 23:31:27.114 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-03-28 23:31:27.114 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 0.7424ms
+2025-03-28 23:31:27.190 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-03-28 23:31:27.190 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 0.5561ms
+2025-03-28 23:31:27.191 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-03-28 23:31:27.191 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 0.1913ms
+2025-03-28 23:31:27.395 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-03-28 23:31:27.407 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 11.5093ms
+2025-03-28 23:34:51.311 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-03-28 23:34:51.312 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 0.7826ms
+2025-03-28 23:34:51.323 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-03-28 23:34:51.323 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-03-28 23:34:51.323 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 0.3402ms
+2025-03-28 23:34:51.323 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 0.4735ms
+2025-03-28 23:34:51.467 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-03-28 23:34:51.482 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 14.7083ms
+2025-03-28 23:34:58.838 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/32 - null null
+2025-03-28 23:34:58.860 +07:00 [INF] Authorization failed. These requirements were not met:
+DenyAnonymousAuthorizationRequirement: Requires an authenticated user.
+2025-03-28 23:34:58.997 +07:00 [INF] AuthenticationScheme: Bearer was challenged.
+2025-03-28 23:34:58.997 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/32 - 401 0 null 158.3856ms
+2025-03-28 23:35:22.050 +07:00 [INF] Request starting HTTP/1.1 PUT http://localhost:5053/api/Auth/login - application/json 75
+2025-03-28 23:35:22.055 +07:00 [INF] CORS policy execution successful.
+2025-03-28 23:35:22.066 +07:00 [INF] Executing endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-03-28 23:35:22.123 +07:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(server.DTO.AuthDTO.LoginDTO) on controller Message_app.Controllers.AuthController (Message_app).
+2025-03-28 23:35:22.912 +07:00 [INF] Executed DbCommand (40ms) [Parameters=[@__email_0='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[email] = @__email_0
+2025-03-28 23:35:22.931 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.DTO.AuthDTO.LoginRespose'.
+2025-03-28 23:35:22.991 +07:00 [INF] Executed action Message_app.Controllers.AuthController.Login (Message_app) in 510.9284ms
+2025-03-28 23:35:22.991 +07:00 [INF] Executed endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-03-28 23:35:22.991 +07:00 [INF] Request finished HTTP/1.1 PUT http://localhost:5053/api/Auth/login - 200 null application/json; charset=utf-8 941.1883ms
+2025-03-28 23:35:26.224 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/32 - null null
+2025-03-28 23:35:26.227 +07:00 [INF] Authorization failed. These requirements were not met:
+DenyAnonymousAuthorizationRequirement: Requires an authenticated user.
+2025-03-28 23:35:26.227 +07:00 [INF] AuthenticationScheme: Bearer was challenged.
+2025-03-28 23:35:26.227 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/32 - 401 0 null 3.302ms
+2025-03-28 23:35:30.156 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/30 - null null
+2025-03-28 23:35:30.157 +07:00 [INF] Authorization failed. These requirements were not met:
+DenyAnonymousAuthorizationRequirement: Requires an authenticated user.
+2025-03-28 23:35:30.158 +07:00 [INF] AuthenticationScheme: Bearer was challenged.
+2025-03-28 23:35:30.158 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/30 - 401 0 null 1.7851ms
+2025-03-28 23:35:40.248 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/30 - null null
+2025-03-28 23:35:40.248 +07:00 [INF] Authorization failed. These requirements were not met:
+DenyAnonymousAuthorizationRequirement: Requires an authenticated user.
+2025-03-28 23:35:40.248 +07:00 [INF] AuthenticationScheme: Bearer was challenged.
+2025-03-28 23:35:40.248 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/30 - 401 0 null 0.6ms
+2025-03-28 23:35:50.773 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/3 - null null
+2025-03-28 23:35:50.773 +07:00 [INF] Authorization failed. These requirements were not met:
+DenyAnonymousAuthorizationRequirement: Requires an authenticated user.
+2025-03-28 23:35:50.773 +07:00 [INF] AuthenticationScheme: Bearer was challenged.
+2025-03-28 23:35:50.773 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/3 - 401 0 null 0.4978ms
+2025-03-28 23:35:53.660 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/1 - null null
+2025-03-28 23:35:53.660 +07:00 [INF] Authorization failed. These requirements were not met:
+DenyAnonymousAuthorizationRequirement: Requires an authenticated user.
+2025-03-28 23:35:53.661 +07:00 [INF] AuthenticationScheme: Bearer was challenged.
+2025-03-28 23:35:53.661 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/1 - 401 0 null 0.8232ms
+2025-03-28 23:35:56.208 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/30 - null null
+2025-03-28 23:35:56.208 +07:00 [INF] Authorization failed. These requirements were not met:
+DenyAnonymousAuthorizationRequirement: Requires an authenticated user.
+2025-03-28 23:35:56.208 +07:00 [INF] AuthenticationScheme: Bearer was challenged.
+2025-03-28 23:35:56.208 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/30 - 401 0 null 0.7801ms
+2025-03-28 23:36:13.661 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/30 - null null
+2025-03-28 23:36:13.662 +07:00 [INF] Authorization failed. These requirements were not met:
+DenyAnonymousAuthorizationRequirement: Requires an authenticated user.
+2025-03-28 23:36:13.662 +07:00 [INF] AuthenticationScheme: Bearer was challenged.
+2025-03-28 23:36:13.662 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/30 - 401 0 null 0.4074ms
+2025-03-28 23:36:15.821 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-03-28 23:36:15.822 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 0.6969ms
+2025-03-28 23:36:15.845 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-03-28 23:36:15.850 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-03-28 23:36:15.851 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 0.5498ms
+2025-03-28 23:36:15.851 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 5.3383ms
+2025-03-28 23:36:16.102 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-03-28 23:36:16.114 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 11.9369ms
+2025-03-28 23:36:23.244 +07:00 [INF] Application is shutting down...
+2025-03-28 23:37:19.181 +07:00 [INF] Executed DbCommand (76ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [u].[id], [u].[username], [u].[avatar_url]
+FROM [Users] AS [u]
+2025-03-28 23:37:24.870 +07:00 [INF] User profile is available. Using 'C:\Users\luong\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-03-28 23:37:25.043 +07:00 [INF] Now listening on: http://localhost:5053
+2025-03-28 23:37:25.046 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-03-28 23:37:25.046 +07:00 [INF] Hosting environment: Development
+2025-03-28 23:37:25.047 +07:00 [INF] Content root path: D:\StudioProject\Message-App\server
+2025-03-28 23:37:26.066 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-03-28 23:37:26.496 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 433.5974ms
+2025-03-28 23:37:26.637 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-03-28 23:37:26.663 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 26.094ms
+2025-03-28 23:37:26.794 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-03-28 23:37:26.799 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 5.4121ms
+2025-03-28 23:37:27.758 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-03-28 23:37:27.950 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 191.8237ms
+2025-03-28 23:37:58.060 +07:00 [INF] Request starting HTTP/1.1 PUT http://localhost:5053/api/Auth/login - application/json 75
+2025-03-28 23:37:58.113 +07:00 [INF] CORS policy execution successful.
+2025-03-28 23:37:58.115 +07:00 [WRN] Failed to determine the https port for redirect.
+2025-03-28 23:38:00.009 +07:00 [INF] Executing endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-03-28 23:38:00.071 +07:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(server.DTO.AuthDTO.LoginDTO) on controller Message_app.Controllers.AuthController (Message_app).
+2025-03-28 23:38:00.427 +07:00 [INF] Executed DbCommand (111ms) [Parameters=[@__email_0='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[email] = @__email_0
+2025-03-28 23:38:00.603 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.DTO.AuthDTO.LoginRespose'.
+2025-03-28 23:38:00.655 +07:00 [INF] Executed action Message_app.Controllers.AuthController.Login (Message_app) in 581.0065ms
+2025-03-28 23:38:00.655 +07:00 [INF] Executed endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-03-28 23:38:00.660 +07:00 [INF] Request finished HTTP/1.1 PUT http://localhost:5053/api/Auth/login - 200 null application/json; charset=utf-8 2599.9061ms
+2025-03-28 23:38:10.138 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/30 - null null
+2025-03-28 23:38:10.147 +07:00 [INF] Authorization failed. These requirements were not met:
+DenyAnonymousAuthorizationRequirement: Requires an authenticated user.
+2025-03-28 23:38:10.161 +07:00 [INF] AuthenticationScheme: Bearer was challenged.
+2025-03-28 23:38:10.162 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/30 - 401 0 null 23.88ms
+2025-03-28 23:39:06.794 +07:00 [INF] Application is shutting down...
+2025-03-28 23:39:30.407 +07:00 [INF] Executed DbCommand (33ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [u].[id], [u].[username], [u].[avatar_url]
+FROM [Users] AS [u]
+2025-03-28 23:39:36.352 +07:00 [INF] User profile is available. Using 'C:\Users\luong\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-03-28 23:39:36.431 +07:00 [INF] Now listening on: http://localhost:5053
+2025-03-28 23:39:36.434 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-03-28 23:39:36.435 +07:00 [INF] Hosting environment: Development
+2025-03-28 23:39:36.435 +07:00 [INF] Content root path: D:\StudioProject\Message-App\server
+2025-03-28 23:39:36.673 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-03-28 23:39:36.854 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 181.8354ms
+2025-03-28 23:39:36.861 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-03-28 23:39:36.861 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-03-28 23:39:36.900 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 40.4719ms
+2025-03-28 23:39:36.924 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 64.3079ms
+2025-03-28 23:39:37.163 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-03-28 23:39:37.348 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 185.7294ms
+2025-03-28 23:40:15.654 +07:00 [INF] Request starting HTTP/1.1 PUT http://localhost:5053/api/Auth/login - application/json 75
+2025-03-28 23:40:15.703 +07:00 [INF] CORS policy execution successful.
+2025-03-28 23:40:15.704 +07:00 [WRN] Failed to determine the https port for redirect.
+2025-03-28 23:40:15.733 +07:00 [INF] Executing endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-03-28 23:40:15.758 +07:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(server.DTO.AuthDTO.LoginDTO) on controller Message_app.Controllers.AuthController (Message_app).
+2025-03-28 23:40:16.005 +07:00 [INF] Executed DbCommand (28ms) [Parameters=[@__email_0='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[email] = @__email_0
+2025-03-28 23:40:16.150 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.DTO.AuthDTO.LoginRespose'.
+2025-03-28 23:40:16.194 +07:00 [INF] Executed action Message_app.Controllers.AuthController.Login (Message_app) in 432.6036ms
+2025-03-28 23:40:16.195 +07:00 [INF] Executed endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-03-28 23:40:16.199 +07:00 [INF] Request finished HTTP/1.1 PUT http://localhost:5053/api/Auth/login - 200 null application/json; charset=utf-8 545.474ms
+2025-03-28 23:40:22.125 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/30 - null null
+2025-03-28 23:40:22.190 +07:00 [INF] Authorization failed. These requirements were not met:
+DenyAnonymousAuthorizationRequirement: Requires an authenticated user.
+2025-03-28 23:40:22.194 +07:00 [INF] AuthenticationScheme: Bearer was challenged.
+2025-03-28 23:40:22.195 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/30 - 401 0 null 69.2218ms
+2025-03-28 23:40:46.738 +07:00 [INF] Application is shutting down...
+2025-03-28 23:41:10.951 +07:00 [INF] Executed DbCommand (33ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [u].[id], [u].[username], [u].[avatar_url]
+FROM [Users] AS [u]
+2025-03-28 23:41:16.842 +07:00 [INF] User profile is available. Using 'C:\Users\luong\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-03-28 23:41:17.015 +07:00 [INF] Now listening on: http://localhost:5053
+2025-03-28 23:41:17.021 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-03-28 23:41:17.022 +07:00 [INF] Hosting environment: Development
+2025-03-28 23:41:17.022 +07:00 [INF] Content root path: D:\StudioProject\Message-App\server
+2025-03-28 23:41:17.802 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-03-28 23:41:18.001 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 199.0785ms
+2025-03-28 23:41:18.037 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-03-28 23:41:18.037 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-03-28 23:41:18.040 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 3.8261ms
+2025-03-28 23:41:18.042 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 5.2536ms
+2025-03-28 23:41:18.387 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-03-28 23:41:18.567 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 180.0718ms
+2025-03-28 23:41:42.357 +07:00 [INF] Request starting HTTP/1.1 PUT http://localhost:5053/api/Auth/login - application/json 75
+2025-03-28 23:41:42.391 +07:00 [INF] CORS policy execution successful.
+2025-03-28 23:41:42.392 +07:00 [WRN] Failed to determine the https port for redirect.
+2025-03-28 23:41:42.422 +07:00 [INF] Executing endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-03-28 23:41:42.453 +07:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(server.DTO.AuthDTO.LoginDTO) on controller Message_app.Controllers.AuthController (Message_app).
+2025-03-28 23:41:42.614 +07:00 [INF] Executed DbCommand (24ms) [Parameters=[@__email_0='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[email] = @__email_0
+2025-03-28 23:41:42.725 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.DTO.AuthDTO.LoginRespose'.
+2025-03-28 23:41:42.769 +07:00 [INF] Executed action Message_app.Controllers.AuthController.Login (Message_app) in 311.7431ms
+2025-03-28 23:41:42.770 +07:00 [INF] Executed endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-03-28 23:41:42.774 +07:00 [INF] Request finished HTTP/1.1 PUT http://localhost:5053/api/Auth/login - 200 null application/json; charset=utf-8 417.2483ms
+2025-03-28 23:41:50.922 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/30 - null null
+2025-03-28 23:41:50.930 +07:00 [INF] Authorization failed. These requirements were not met:
+DenyAnonymousAuthorizationRequirement: Requires an authenticated user.
+2025-03-28 23:41:50.943 +07:00 [INF] AuthenticationScheme: Bearer was challenged.
+2025-03-28 23:41:50.944 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/30 - 401 0 null 21.6336ms
+2025-03-28 23:41:52.433 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/30 - null null
+2025-03-28 23:41:52.436 +07:00 [INF] Authorization failed. These requirements were not met:
+DenyAnonymousAuthorizationRequirement: Requires an authenticated user.
+2025-03-28 23:41:52.437 +07:00 [INF] AuthenticationScheme: Bearer was challenged.
+2025-03-28 23:41:52.437 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/30 - 401 0 null 4.0785ms
+2025-03-28 23:41:57.284 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/30 - null null
+2025-03-28 23:41:57.296 +07:00 [INF] Authorization failed. These requirements were not met:
+DenyAnonymousAuthorizationRequirement: Requires an authenticated user.
+2025-03-28 23:41:57.296 +07:00 [INF] AuthenticationScheme: Bearer was challenged.
+2025-03-28 23:41:57.296 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/30 - 401 0 null 12.1649ms
+2025-03-28 23:41:58.090 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/30 - null null
+2025-03-28 23:41:58.091 +07:00 [INF] Authorization failed. These requirements were not met:
+DenyAnonymousAuthorizationRequirement: Requires an authenticated user.
+2025-03-28 23:41:58.091 +07:00 [INF] AuthenticationScheme: Bearer was challenged.
+2025-03-28 23:41:58.091 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/30 - 401 0 null 1.0041ms
+2025-03-28 23:41:58.471 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/30 - null null
+2025-03-28 23:41:58.472 +07:00 [INF] Authorization failed. These requirements were not met:
+DenyAnonymousAuthorizationRequirement: Requires an authenticated user.
+2025-03-28 23:41:58.473 +07:00 [INF] AuthenticationScheme: Bearer was challenged.
+2025-03-28 23:41:58.473 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/30 - 401 0 null 2.3568ms
+2025-03-28 23:41:58.656 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/30 - null null
+2025-03-28 23:41:58.657 +07:00 [INF] Authorization failed. These requirements were not met:
+DenyAnonymousAuthorizationRequirement: Requires an authenticated user.
+2025-03-28 23:41:58.657 +07:00 [INF] AuthenticationScheme: Bearer was challenged.
+2025-03-28 23:41:58.657 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/30 - 401 0 null 1.0163ms
+2025-03-28 23:41:58.797 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/30 - null null
+2025-03-28 23:41:58.797 +07:00 [INF] Authorization failed. These requirements were not met:
+DenyAnonymousAuthorizationRequirement: Requires an authenticated user.
+2025-03-28 23:41:58.797 +07:00 [INF] AuthenticationScheme: Bearer was challenged.
+2025-03-28 23:41:58.798 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/30 - 401 0 null 0.7977ms
+2025-03-28 23:41:58.935 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/30 - null null
+2025-03-28 23:41:58.935 +07:00 [INF] Authorization failed. These requirements were not met:
+DenyAnonymousAuthorizationRequirement: Requires an authenticated user.
+2025-03-28 23:41:58.935 +07:00 [INF] AuthenticationScheme: Bearer was challenged.
+2025-03-28 23:41:58.935 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/30 - 401 0 null 0.5161ms
+2025-03-28 23:42:47.771 +07:00 [INF] Application is shutting down...
+2025-03-28 23:43:27.159 +07:00 [INF] Executed DbCommand (45ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [u].[id], [u].[username], [u].[avatar_url]
+FROM [Users] AS [u]
+2025-03-28 23:43:33.096 +07:00 [INF] User profile is available. Using 'C:\Users\luong\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-03-28 23:43:33.265 +07:00 [INF] Now listening on: http://localhost:5053
+2025-03-28 23:43:33.268 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-03-28 23:43:33.269 +07:00 [INF] Hosting environment: Development
+2025-03-28 23:43:33.269 +07:00 [INF] Content root path: D:\StudioProject\Message-App\server
+2025-03-28 23:43:33.733 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-03-28 23:43:34.019 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 290.3764ms
+2025-03-28 23:43:34.049 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-03-28 23:43:34.055 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 6.8072ms
+2025-03-28 23:43:34.394 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-03-28 23:43:34.586 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 192.5111ms
+2025-03-28 23:43:47.036 +07:00 [INF] Request starting HTTP/1.1 PUT http://localhost:5053/api/Auth/login - application/json 75
+2025-03-28 23:43:47.067 +07:00 [INF] CORS policy execution successful.
+2025-03-28 23:43:47.069 +07:00 [WRN] Failed to determine the https port for redirect.
+2025-03-28 23:43:47.316 +07:00 [INF] Executing endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-03-28 23:43:47.346 +07:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(server.DTO.AuthDTO.LoginDTO) on controller Message_app.Controllers.AuthController (Message_app).
+2025-03-28 23:43:47.547 +07:00 [INF] Executed DbCommand (25ms) [Parameters=[@__email_0='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[email] = @__email_0
+2025-03-28 23:43:47.706 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.DTO.AuthDTO.LoginRespose'.
+2025-03-28 23:43:47.779 +07:00 [INF] Executed action Message_app.Controllers.AuthController.Login (Message_app) in 428.3445ms
+2025-03-28 23:43:47.779 +07:00 [INF] Executed endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-03-28 23:43:47.786 +07:00 [INF] Request finished HTTP/1.1 PUT http://localhost:5053/api/Auth/login - 200 null application/json; charset=utf-8 749.9297ms
+2025-03-28 23:43:55.121 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/30 - null null
+2025-03-28 23:43:55.148 +07:00 [INF] Authorization failed. These requirements were not met:
+DenyAnonymousAuthorizationRequirement: Requires an authenticated user.
+2025-03-28 23:43:55.156 +07:00 [INF] AuthenticationScheme: Bearer was challenged.
+2025-03-28 23:43:55.156 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/30 - 401 0 null 34.6519ms
+2025-03-28 23:43:56.429 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/30 - null null
+2025-03-28 23:43:56.433 +07:00 [INF] Authorization failed. These requirements were not met:
+DenyAnonymousAuthorizationRequirement: Requires an authenticated user.
+2025-03-28 23:43:56.434 +07:00 [INF] AuthenticationScheme: Bearer was challenged.
+2025-03-28 23:43:56.434 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/30 - 401 0 null 5.2325ms
+2025-03-28 23:44:58.715 +07:00 [INF] Executed DbCommand (91ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [u].[id], [u].[username], [u].[avatar_url]
+FROM [Users] AS [u]
+2025-03-28 23:45:05.686 +07:00 [INF] User profile is available. Using 'C:\Users\luong\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-03-28 23:45:06.060 +07:00 [INF] Now listening on: http://localhost:5053
+2025-03-28 23:45:06.068 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-03-28 23:45:06.069 +07:00 [INF] Hosting environment: Development
+2025-03-28 23:45:06.070 +07:00 [INF] Content root path: D:\StudioProject\Message-App\server
+2025-03-28 23:45:06.843 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-03-28 23:45:07.220 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 388.7044ms
+2025-03-28 23:45:07.257 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-03-28 23:45:07.267 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 11.1504ms
+2025-03-28 23:45:07.661 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-03-28 23:45:08.010 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 363.4741ms
+2025-03-28 23:45:15.225 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/30 - null null
+2025-03-28 23:45:15.262 +07:00 [WRN] Failed to determine the https port for redirect.
+2025-03-28 23:45:15.595 +07:00 [INF] Executing endpoint 'server.Controllers.UserController.GenerateQRCode (Message_app)'
+2025-03-28 23:45:15.632 +07:00 [INF] Route matched with {action = "GenerateQRCode", controller = "User"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GenerateQRCode(Int32) on controller server.Controllers.UserController (Message_app).
+2025-03-28 23:46:39.257 +07:00 [INF] Executed DbCommand (33ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [u].[id], [u].[username], [u].[avatar_url]
+FROM [Users] AS [u]
+2025-03-28 23:46:45.174 +07:00 [INF] User profile is available. Using 'C:\Users\luong\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-03-28 23:46:45.380 +07:00 [INF] Now listening on: http://localhost:5053
+2025-03-28 23:46:45.383 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-03-28 23:46:45.384 +07:00 [INF] Hosting environment: Development
+2025-03-28 23:46:45.384 +07:00 [INF] Content root path: D:\StudioProject\Message-App\server
+2025-03-28 23:46:45.918 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-03-28 23:46:46.217 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 304.6349ms
+2025-03-28 23:46:46.224 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-03-28 23:46:46.229 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 6.0381ms
+2025-03-28 23:46:46.231 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-03-28 23:46:46.339 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 108.3241ms
+2025-03-28 23:46:46.639 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-03-28 23:46:46.906 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 266.5297ms
+2025-03-28 23:46:55.640 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/30 - null null
+2025-03-28 23:46:55.674 +07:00 [WRN] Failed to determine the https port for redirect.
+2025-03-28 23:46:55.877 +07:00 [INF] Executing endpoint 'server.Controllers.UserController.GenerateQRCode (Message_app)'
+2025-03-28 23:46:55.909 +07:00 [INF] Route matched with {action = "GenerateQRCode", controller = "User"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GenerateQRCode(Int32) on controller server.Controllers.UserController (Message_app).
+2025-03-28 23:46:56.037 +07:00 [WRN] User 0 attempted to generate QR for user 30
+2025-03-28 23:46:56.039 +07:00 [INF] Executing ForbidResult with authentication schemes (["Bearer"]).
+2025-03-28 23:46:56.047 +07:00 [INF] AuthenticationScheme: Bearer was forbidden.
+2025-03-28 23:46:56.064 +07:00 [INF] Executed action server.Controllers.UserController.GenerateQRCode (Message_app) in 138.634ms
+2025-03-28 23:46:56.065 +07:00 [INF] Executed endpoint 'server.Controllers.UserController.GenerateQRCode (Message_app)'
+2025-03-28 23:46:56.067 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/30 - 403 0 null 426.4095ms
+2025-03-28 23:50:54.927 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-03-28 23:50:54.930 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 2.4592ms
+2025-03-28 23:50:55.021 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-03-28 23:50:55.021 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-03-28 23:50:55.021 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 0.565ms
+2025-03-28 23:50:55.021 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 0.5347ms
+2025-03-28 23:50:56.193 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-03-28 23:50:56.217 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 23.9017ms
+2025-03-28 23:51:28.034 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-03-28 23:51:28.035 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 0.7341ms
+2025-03-28 23:51:28.060 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-03-28 23:51:28.060 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-03-28 23:51:28.061 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 0.6352ms
+2025-03-28 23:51:28.061 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 0.6592ms
+2025-03-28 23:51:28.234 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-03-28 23:51:28.243 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 9.1613ms
+2025-03-28 23:51:54.588 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-03-28 23:51:54.589 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 0.5645ms
+2025-03-28 23:51:54.636 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-03-28 23:51:54.637 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-03-28 23:51:54.638 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 1.6013ms
+2025-03-28 23:51:54.638 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 0.6101ms
+2025-03-28 23:51:54.757 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-03-28 23:51:54.765 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 7.8886ms
+2025-03-28 23:51:57.308 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-03-28 23:51:57.309 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 0.8935ms
+2025-03-28 23:51:57.319 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-03-28 23:51:57.319 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-03-28 23:51:57.320 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 0.494ms
+2025-03-28 23:51:57.320 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 0.7557ms
+2025-03-28 23:51:57.452 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-03-28 23:51:57.461 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 9.1779ms
+2025-03-28 23:54:45.504 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-03-28 23:54:45.504 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 0.6891ms
+2025-03-28 23:54:45.535 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-03-28 23:54:45.536 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 0.9508ms
+2025-03-28 23:54:45.538 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-03-28 23:54:45.539 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 0.4378ms
+2025-03-28 23:54:45.939 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-03-28 23:54:45.956 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 16.5381ms
+2025-03-28 23:54:49.831 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-03-28 23:54:49.832 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 0.6517ms
+2025-03-28 23:54:49.909 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-03-28 23:54:49.909 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-03-28 23:54:49.910 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 0.643ms
+2025-03-28 23:54:49.911 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 1.7493ms
+2025-03-28 23:54:49.980 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-03-28 23:54:49.988 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 8.7757ms
+2025-03-28 23:54:58.263 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/30 - null null
+2025-03-28 23:54:58.272 +07:00 [INF] Authorization failed. These requirements were not met:
+DenyAnonymousAuthorizationRequirement: Requires an authenticated user.
+2025-03-28 23:54:58.274 +07:00 [INF] AuthenticationScheme: Bearer was challenged.
+2025-03-28 23:54:58.275 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/30 - 401 0 null 11.6716ms
+2025-03-28 23:55:12.120 +07:00 [INF] Request starting HTTP/1.1 PUT http://localhost:5053/api/Auth/login - application/json 75
+2025-03-28 23:55:12.124 +07:00 [INF] CORS policy execution successful.
+2025-03-28 23:55:12.127 +07:00 [INF] Executing endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-03-28 23:55:12.146 +07:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(server.DTO.AuthDTO.LoginDTO) on controller Message_app.Controllers.AuthController (Message_app).
+2025-03-28 23:55:12.715 +07:00 [INF] Executed DbCommand (75ms) [Parameters=[@__email_0='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[email] = @__email_0
+2025-03-28 23:55:12.901 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.DTO.AuthDTO.LoginRespose'.
+2025-03-28 23:55:12.992 +07:00 [INF] Executed action Message_app.Controllers.AuthController.Login (Message_app) in 845.3146ms
+2025-03-28 23:55:12.992 +07:00 [INF] Executed endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-03-28 23:55:12.998 +07:00 [INF] Request finished HTTP/1.1 PUT http://localhost:5053/api/Auth/login - 200 null application/json; charset=utf-8 878.2204ms
+2025-03-28 23:55:16.305 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/30 - null null
+2025-03-28 23:55:16.307 +07:00 [INF] Authorization failed. These requirements were not met:
+DenyAnonymousAuthorizationRequirement: Requires an authenticated user.
+2025-03-28 23:55:16.308 +07:00 [INF] AuthenticationScheme: Bearer was challenged.
+2025-03-28 23:55:16.308 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/30 - 401 0 null 3.7117ms
+2025-03-28 23:55:27.090 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/12 - null null
+2025-03-28 23:55:27.092 +07:00 [INF] Authorization failed. These requirements were not met:
+DenyAnonymousAuthorizationRequirement: Requires an authenticated user.
+2025-03-28 23:55:27.092 +07:00 [INF] AuthenticationScheme: Bearer was challenged.
+2025-03-28 23:55:27.092 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/12 - 401 0 null 2.3213ms
+2025-03-28 23:55:31.384 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/30 - null null
+2025-03-28 23:55:31.384 +07:00 [INF] Authorization failed. These requirements were not met:
+DenyAnonymousAuthorizationRequirement: Requires an authenticated user.
+2025-03-28 23:55:31.384 +07:00 [INF] AuthenticationScheme: Bearer was challenged.
+2025-03-28 23:55:31.384 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/30 - 401 0 null 0.5856ms
+2025-03-28 23:57:36.579 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-03-28 23:57:36.581 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 2.1636ms
+2025-03-28 23:57:36.671 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-03-28 23:57:36.673 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 1.3903ms
+2025-03-28 23:57:36.677 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-03-28 23:57:36.678 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 0.4312ms
+2025-03-28 23:57:37.747 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-03-28 23:57:37.759 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 11.855ms
+2025-03-28 23:57:42.461 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-03-28 23:57:42.462 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 0.7635ms
+2025-03-28 23:57:42.534 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-03-28 23:57:42.535 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 0.8158ms
+2025-03-28 23:57:42.546 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-03-28 23:57:42.546 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 0.3077ms
+2025-03-28 23:57:42.688 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-03-28 23:57:42.703 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 14.1559ms
+2025-03-28 23:57:57.220 +07:00 [INF] Request starting HTTP/1.1 PUT http://localhost:5053/api/Auth/login - application/json 75
+2025-03-28 23:57:57.221 +07:00 [INF] CORS policy execution successful.
+2025-03-28 23:57:57.222 +07:00 [INF] Executing endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-03-28 23:57:57.228 +07:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(server.DTO.AuthDTO.LoginDTO) on controller Message_app.Controllers.AuthController (Message_app).
+2025-03-28 23:57:57.564 +07:00 [INF] Executed DbCommand (43ms) [Parameters=[@__email_0='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[email] = @__email_0
+2025-03-28 23:57:57.567 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.DTO.AuthDTO.LoginRespose'.
+2025-03-28 23:57:57.601 +07:00 [INF] Executed action Message_app.Controllers.AuthController.Login (Message_app) in 372.8182ms
+2025-03-28 23:57:57.601 +07:00 [INF] Executed endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-03-28 23:57:57.602 +07:00 [INF] Request finished HTTP/1.1 PUT http://localhost:5053/api/Auth/login - 200 null application/json; charset=utf-8 382.2737ms
+2025-03-28 23:58:06.161 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/30 - null null
+2025-03-28 23:58:06.164 +07:00 [INF] Authorization failed. These requirements were not met:
+DenyAnonymousAuthorizationRequirement: Requires an authenticated user.
+2025-03-28 23:58:06.165 +07:00 [INF] AuthenticationScheme: Bearer was challenged.
+2025-03-28 23:58:06.165 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/User/generate-qr/30 - 401 0 null 3.9015ms
