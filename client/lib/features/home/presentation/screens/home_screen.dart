@@ -17,11 +17,11 @@ class _HomeScreenState extends State<HomeScreen> {
   final ApiClient _apiService = ApiClient();
   late Future<List<Conversation>> _conversationsFuture;
   late int userId;
-  
 
   @override
   void initState() {
     userId = widget.user.user!.id; // Lấy userId từ widget.user
+    print('User ID: $userId');
     super.initState();
     _conversationsFuture = _fetchConversations();
   }
@@ -29,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<List<Conversation>> _fetchConversations() async {
     try {
       final response = await _apiService.get(
-          'api/Conversation/get_conversations/$userId',
+        'api/Conversation/get_conversations/$userId',
       );
       print(response.toString());
       return (response as List).map((e) => Conversation.fromJson(e)).toList();
@@ -148,10 +148,29 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
               onTap: () {
+                print('chat.id: ${chat.id}, kiểu: ${chat.id.runtimeType}');
+                print('userId: $userId, kiểu: ${userId.runtimeType}');
+
+                final int? finalConversationId =
+                    chat.id != null
+                        ? (chat.id is int
+                            ? chat.id
+                            : int.parse(chat.id.toString()))
+                        : 0;
+                final int finalUserId =
+                    userId != null
+                        ? (userId is int
+                            ? userId
+                            : int.parse(userId.toString()))
+                        : 0;
+
                 Navigator.pushNamed(
                   context,
                   AppRoutes.chat,
-                  arguments: chat.id,
+                  arguments: {
+                    'conversationId': finalConversationId,
+                    'user_id': finalUserId,
+                  },
                 );
               },
             );

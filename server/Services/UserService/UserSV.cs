@@ -65,7 +65,7 @@ namespace server.Services.UserService
             }
         }
 
-        
+
 
         public Task<User> GetUserByIdAsync(int id)
         {
@@ -162,6 +162,20 @@ namespace server.Services.UserService
             _context.Users.Update(user);
 
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<User> ExistUser(int id)
+        {
+            try
+            {
+                var ExistUser = await _context.Users.FindAsync(id);
+                return ExistUser;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw e;
+            }
         }
     }
 }

@@ -13,14 +13,22 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<LoginResponse> login(String email, String password) async {
     try {
-      final response = await _apiClient.put(
-        '/api/Auth/login', // Đảm bảo khớp với API login của bạn
+      print('Attempting login with email: $email');
+      final response = await _apiClient.post(
+        '/api/Auth/login',
         data: {'email': email, 'password': password},
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+        ),
       );
+      print('Login response received: $response');
       return LoginResponse.fromJson(response);
     } catch (e) {
-      print('Login error: $e');
-      throw Exception('Login failed: $e');
+      print('Login error details: $e');
+      rethrow;
     }
   }
 
@@ -40,26 +48,27 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
- Future<OTPsResponse> forgetPass(String email) async {
-  try {
-    final response = await _apiClient.post(
-      '/api/ForgetPassword/ForgetPass', // Đường dẫn API để gửi OTP
-      data: {'email': email},
-    );
+  Future<OTPsResponse> forgetPass(String email) async {
+    try {
+      final response = await _apiClient.post(
+        '/api/ForgetPassword/ForgetPass', // Đường dẫn API để gửi OTP
+        data: {'email': email},
+      );
 
-    // Giả định response là Map<String, dynamic>
-    // Kiểm tra thành công dựa trên trường trong JSON
-    if (response['OTPCode'] != "") { // Hoặc dùng trường khác như 'success'
-       return OTPsResponse.fromJson(response);
-    } else {
-      final errorMessage = response['message'] ?? 'Unknown error';
-      throw Exception('Failed to send OTP: $errorMessage');
+      // Giả định response là Map<String, dynamic>
+      // Kiểm tra thành công dựa trên trường trong JSON
+      if (response['OTPCode'] != "") {
+        // Hoặc dùng trường khác như 'success'
+        return OTPsResponse.fromJson(response);
+      } else {
+        final errorMessage = response['message'] ?? 'Unknown error';
+        throw Exception('Failed to send OTP: $errorMessage');
+      }
+    } catch (e) {
+      print('Forget password error: $e');
+      throw Exception('Failed to send OTP: $e');
     }
-  } catch (e) {
-    print('Forget password error: $e');
-    throw Exception('Failed to send OTP: $e');
   }
-}
 
   @override
   Future<OTPsResponse> verifyOtp(String email, String otp) async {
@@ -74,7 +83,8 @@ class AuthRepositoryImpl implements AuthRepository {
       );
 
       if (response.containsKey('errors')) {
-        final errorMessage = response['errors']['OTPCode']?.join(', ') ?? 'Unknown error';
+        final errorMessage =
+            response['errors']['OTPCode']?.join(', ') ?? 'Unknown error';
         throw Exception('Failed to verify OTP: $errorMessage');
       }
 
@@ -86,14 +96,14 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Map<String, dynamic>> changePassword(String email, String newPassword) async {
+  Future<Map<String, dynamic>> changePassword(
+    String email,
+    String newPassword,
+  ) async {
     try {
       final response = await _apiClient.post(
         '/api/ForgetPassword/ChangePassword',
-        data: {
-          'email': email,
-          'newPassword': newPassword,
-        },
+        data: {'email': email, 'newPassword': newPassword},
       );
       return response;
     } catch (e) {

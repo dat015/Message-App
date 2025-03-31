@@ -1,0 +1,551 @@
+2025-03-24 01:16:55.936 +07:00 [INF] User profile is available. Using 'C:\Users\Thao\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-03-24 01:16:56.085 +07:00 [ERR] Hosting failed to start
+System.IO.IOException: Failed to bind to address http://127.0.0.1:5053: address already in use.
+ ---> Microsoft.AspNetCore.Connections.AddressInUseException: Only one usage of each socket address (protocol/network address/port) is normally permitted.
+ ---> System.Net.Sockets.SocketException (10048): Only one usage of each socket address (protocol/network address/port) is normally permitted.
+   at System.Net.Sockets.Socket.UpdateStatusAfterSocketErrorAndThrowException(SocketError error, Boolean disconnectOnFailure, String callerName)
+   at System.Net.Sockets.Socket.DoBind(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.Sockets.Socket.Bind(EndPoint localEP)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportOptions.CreateDefaultBoundListenSocket(EndPoint endpoint)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportFactory.BindAsync(EndPoint endpoint, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure.TransportManager.BindAsync(EndPoint endPoint, ConnectionDelegate connectionDelegate, EndpointConfig endpointConfig, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.<>c__DisplayClass28_0`1.<<StartAsync>g__OnBind|0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.LocalhostListenOptions.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.AddressesStrategy.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindAsync(ListenOptions[] listenOptions, AddressBindContext context, Func`2 useHttps, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.BindAsync(CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.StartAsync[TContext](IHttpApplication`1 application, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__15_1(IHostedService service, CancellationToken token)
+   at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
+2025-03-24 01:19:39.548 +07:00 [INF] User profile is available. Using 'C:\Users\Thao\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-03-24 01:19:39.630 +07:00 [INF] Now listening on: http://localhost:5053
+2025-03-24 01:19:39.631 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-03-24 01:19:39.632 +07:00 [INF] Hosting environment: Development
+2025-03-24 01:19:39.632 +07:00 [INF] Content root path: C:\Users\Thao\source\Flutter\Message_app\server
+2025-03-24 01:19:39.760 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-03-24 01:19:39.848 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 89.3784ms
+2025-03-24 01:19:39.851 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-03-24 01:19:39.852 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-03-24 01:19:39.853 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 2.9331ms
+2025-03-24 01:19:39.855 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 2.9517ms
+2025-03-24 01:19:39.930 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-03-24 01:19:40.014 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 84.1868ms
+2025-03-24 01:19:45.966 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Message/getMessages/1 - null null
+2025-03-24 01:19:45.979 +07:00 [WRN] Failed to determine the https port for redirect.
+2025-03-24 01:19:45.994 +07:00 [INF] Executing endpoint 'server.Controllers.MessageController.getMessages (Message_app)'
+2025-03-24 01:19:46.009 +07:00 [INF] Route matched with {action = "getMessages", controller = "Message"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] getMessages(Int32) on controller server.Controllers.MessageController (Message_app).
+2025-03-24 01:19:46.199 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.Models.Message, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-03-24 01:19:46.210 +07:00 [INF] Executed action server.Controllers.MessageController.getMessages (Message_app) in 199.1916ms
+2025-03-24 01:19:46.210 +07:00 [INF] Executed endpoint 'server.Controllers.MessageController.getMessages (Message_app)'
+2025-03-24 01:19:46.213 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Message/getMessages/1 - 200 null application/json; charset=utf-8 246.8802ms
+2025-03-24 01:23:42.788 +07:00 [INF] User profile is available. Using 'C:\Users\Thao\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-03-24 01:23:42.869 +07:00 [INF] Now listening on: http://localhost:5053
+2025-03-24 01:23:42.870 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-03-24 01:23:42.871 +07:00 [INF] Hosting environment: Development
+2025-03-24 01:23:42.871 +07:00 [INF] Content root path: C:\Users\Thao\source\Flutter\Message_app\server
+2025-03-24 01:23:42.925 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-03-24 01:23:43.046 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 125.9133ms
+2025-03-24 01:23:43.049 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-03-24 01:23:43.049 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-03-24 01:23:43.051 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 1.6652ms
+2025-03-24 01:23:43.051 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 1.9663ms
+2025-03-24 01:23:43.341 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-03-24 01:23:43.411 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 69.5065ms
+2025-03-24 01:23:43.447 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/favicon-32x32.png - null null
+2025-03-24 01:23:43.457 +07:00 [INF] Sending file. Request path: '/favicon-32x32.png'. Physical path: 'N/A'
+2025-03-24 01:23:43.457 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/favicon-32x32.png - 200 628 image/png 9.5849ms
+2025-03-24 01:23:56.155 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-03-24 01:23:56.156 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 1.1277ms
+2025-03-24 01:23:56.170 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-03-24 01:23:56.170 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 0.7381ms
+2025-03-24 01:23:56.172 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-03-24 01:23:56.172 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 0.4413ms
+2025-03-24 01:23:56.375 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-03-24 01:23:56.380 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 4.6819ms
+2025-03-24 01:24:03.153 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-03-24 01:24:03.154 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 0.4805ms
+2025-03-24 01:24:03.187 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-03-24 01:24:03.188 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 0.7137ms
+2025-03-24 01:24:03.188 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-03-24 01:24:03.188 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 0.1796ms
+2025-03-24 01:24:03.311 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-03-24 01:24:03.315 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 3.7333ms
+2025-03-24 01:24:13.890 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Message/getMessages/1 - null null
+2025-03-24 01:24:13.933 +07:00 [WRN] Failed to determine the https port for redirect.
+2025-03-24 01:24:13.984 +07:00 [INF] Executing endpoint 'server.Controllers.MessageController.getMessages (Message_app)'
+2025-03-24 01:24:14.027 +07:00 [INF] Route matched with {action = "getMessages", controller = "Message"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] getMessages(Int32) on controller server.Controllers.MessageController (Message_app).
+2025-03-24 01:24:14.427 +07:00 [INF] Executing BadRequestObjectResult, writing value of type 'System.String'.
+2025-03-24 01:24:14.432 +07:00 [INF] Executed action server.Controllers.MessageController.getMessages (Message_app) in 400.1946ms
+2025-03-24 01:24:14.433 +07:00 [INF] Executed endpoint 'server.Controllers.MessageController.getMessages (Message_app)'
+2025-03-24 01:24:14.436 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Message/getMessages/1 - 400 null text/plain; charset=utf-8 545.93ms
+2025-03-24 01:25:01.137 +07:00 [INF] User profile is available. Using 'C:\Users\Thao\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-03-24 01:25:01.219 +07:00 [INF] Now listening on: http://localhost:5053
+2025-03-24 01:25:01.222 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-03-24 01:25:01.223 +07:00 [INF] Hosting environment: Development
+2025-03-24 01:25:01.223 +07:00 [INF] Content root path: C:\Users\Thao\source\Flutter\Message_app\server
+2025-03-24 01:25:01.253 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-03-24 01:25:01.318 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 66.6617ms
+2025-03-24 01:25:01.325 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-03-24 01:25:01.325 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-03-24 01:25:01.326 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 1.8281ms
+2025-03-24 01:25:01.327 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 2.0015ms
+2025-03-24 01:25:01.536 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-03-24 01:25:01.608 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 72.1194ms
+2025-03-24 01:25:13.166 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Message/getMessages/1 - null null
+2025-03-24 01:25:13.184 +07:00 [WRN] Failed to determine the https port for redirect.
+2025-03-24 01:25:13.199 +07:00 [INF] Executing endpoint 'server.Controllers.MessageController.getMessages (Message_app)'
+2025-03-24 01:25:13.213 +07:00 [INF] Route matched with {action = "getMessages", controller = "Message"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] getMessages(Int32) on controller server.Controllers.MessageController (Message_app).
+2025-03-24 01:25:13.695 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.Models.Message, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-03-24 01:25:13.739 +07:00 [INF] Executed action server.Controllers.MessageController.getMessages (Message_app) in 520.8911ms
+2025-03-24 01:25:13.740 +07:00 [INF] Executed endpoint 'server.Controllers.MessageController.getMessages (Message_app)'
+2025-03-24 01:25:13.745 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Message/getMessages/1 - 200 null application/json; charset=utf-8 579.3442ms
+2025-03-24 01:31:18.839 +07:00 [INF] User profile is available. Using 'C:\Users\Thao\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-03-24 01:31:18.921 +07:00 [INF] Now listening on: http://localhost:5053
+2025-03-24 01:31:18.923 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-03-24 01:31:18.924 +07:00 [INF] Hosting environment: Development
+2025-03-24 01:31:18.924 +07:00 [INF] Content root path: C:\Users\Thao\source\Flutter\Message_app\server
+2025-03-24 01:31:18.975 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-03-24 01:31:19.039 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 65.0346ms
+2025-03-24 01:31:19.050 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-03-24 01:31:19.050 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-03-24 01:31:19.052 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 2.5141ms
+2025-03-24 01:31:19.052 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 2.6926ms
+2025-03-24 01:31:19.182 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-03-24 01:31:19.251 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 68.9341ms
+2025-03-24 01:31:28.514 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Message/getMessages/1 - null null
+2025-03-24 01:31:28.561 +07:00 [WRN] Failed to determine the https port for redirect.
+2025-03-24 01:31:28.600 +07:00 [INF] Executing endpoint 'server.Controllers.MessageController.getMessages (Message_app)'
+2025-03-24 01:31:28.639 +07:00 [INF] Route matched with {action = "getMessages", controller = "Message"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] getMessages(Int32) on controller server.Controllers.MessageController (Message_app).
+2025-03-24 01:31:29.334 +07:00 [INF] Executing BadRequestObjectResult, writing value of type 'System.String'.
+2025-03-24 01:31:29.345 +07:00 [INF] Executed action server.Controllers.MessageController.getMessages (Message_app) in 696.4156ms
+2025-03-24 01:31:29.347 +07:00 [INF] Executed endpoint 'server.Controllers.MessageController.getMessages (Message_app)'
+2025-03-24 01:31:29.356 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Message/getMessages/1 - 400 null text/plain; charset=utf-8 842.0189ms
+2025-03-24 01:33:21.393 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-03-24 01:33:21.393 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 0.7033ms
+2025-03-24 01:33:21.457 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-03-24 01:33:21.458 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-03-24 01:33:21.459 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 1.9246ms
+2025-03-24 01:33:21.459 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 0.8569ms
+2025-03-24 01:33:21.627 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-03-24 01:33:21.634 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 7.7186ms
+2025-03-24 01:33:22.812 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-03-24 01:33:22.812 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 0.4825ms
+2025-03-24 01:33:22.855 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-03-24 01:33:22.856 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 0.5766ms
+2025-03-24 01:33:22.856 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-03-24 01:33:22.857 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 0.5129ms
+2025-03-24 01:33:22.948 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-03-24 01:33:22.956 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 8.5438ms
+2025-03-24 01:33:29.876 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-03-24 01:33:29.877 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 0.6037ms
+2025-03-24 01:33:29.891 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-03-24 01:33:29.892 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 0.7162ms
+2025-03-24 01:33:29.892 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-03-24 01:33:29.892 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 0.2049ms
+2025-03-24 01:33:29.945 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-03-24 01:33:29.947 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 2.7539ms
+2025-03-24 01:33:39.368 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Message/getMessages/1 - null null
+2025-03-24 01:33:39.369 +07:00 [INF] Executing endpoint 'server.Controllers.MessageController.getMessages (Message_app)'
+2025-03-24 01:33:39.372 +07:00 [INF] Route matched with {action = "getMessages", controller = "Message"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] getMessages(Int32) on controller server.Controllers.MessageController (Message_app).
+2025-03-24 01:33:39.405 +07:00 [INF] Executing BadRequestObjectResult, writing value of type 'System.String'.
+2025-03-24 01:33:39.406 +07:00 [INF] Executed action server.Controllers.MessageController.getMessages (Message_app) in 33.6258ms
+2025-03-24 01:33:39.406 +07:00 [INF] Executed endpoint 'server.Controllers.MessageController.getMessages (Message_app)'
+2025-03-24 01:33:39.406 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Message/getMessages/1 - 400 null text/plain; charset=utf-8 38.2083ms
+2025-03-24 01:34:14.227 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-03-24 01:34:14.227 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 0.5058ms
+2025-03-24 01:34:14.242 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-03-24 01:34:14.245 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 3.1082ms
+2025-03-24 01:34:14.245 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-03-24 01:34:14.246 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 0.1891ms
+2025-03-24 01:34:14.556 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-03-24 01:34:14.559 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 3.2071ms
+2025-03-24 01:34:16.708 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-03-24 01:34:16.708 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 0.5033ms
+2025-03-24 01:34:16.734 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-03-24 01:34:16.735 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 0.774ms
+2025-03-24 01:34:16.737 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-03-24 01:34:16.737 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 0.1713ms
+2025-03-24 01:34:16.962 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-03-24 01:34:16.968 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 5.6737ms
+2025-03-24 01:34:25.573 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Message/getMessages/1 - null null
+2025-03-24 01:34:25.577 +07:00 [INF] Executing endpoint 'server.Controllers.MessageController.getMessages (Message_app)'
+2025-03-24 01:34:25.598 +07:00 [INF] Route matched with {action = "getMessages", controller = "Message"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] getMessages(Int32) on controller server.Controllers.MessageController (Message_app).
+2025-03-24 01:34:25.612 +07:00 [INF] Executing BadRequestObjectResult, writing value of type 'System.String'.
+2025-03-24 01:34:25.613 +07:00 [INF] Executed action server.Controllers.MessageController.getMessages (Message_app) in 14.6631ms
+2025-03-24 01:34:25.613 +07:00 [INF] Executed endpoint 'server.Controllers.MessageController.getMessages (Message_app)'
+2025-03-24 01:34:25.613 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Message/getMessages/1 - 400 null text/plain; charset=utf-8 39.7918ms
+2025-03-24 01:40:51.329 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Auth/login - null null
+2025-03-24 01:40:51.332 +07:00 [INF] CORS policy execution successful.
+2025-03-24 01:40:51.334 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Auth/login - 204 null null 4.4292ms
+2025-03-24 01:40:51.335 +07:00 [INF] Request starting HTTP/1.1 PUT http://localhost:5053/api/Auth/login - application/json 57
+2025-03-24 01:40:51.337 +07:00 [INF] CORS policy execution successful.
+2025-03-24 01:40:51.337 +07:00 [INF] Executing endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-03-24 01:40:51.341 +07:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(server.DTO.AuthDTO.LoginDTO) on controller Message_app.Controllers.AuthController (Message_app).
+2025-03-24 01:40:52.322 +07:00 [INF] Executed DbCommand (40ms) [Parameters=[@__email_0='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[email] = @__email_0
+2025-03-24 01:40:52.394 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.DTO.AuthDTO.LoginRespose'.
+2025-03-24 01:40:52.413 +07:00 [INF] Executed action Message_app.Controllers.AuthController.Login (Message_app) in 1072.0976ms
+2025-03-24 01:40:52.413 +07:00 [INF] Executed endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-03-24 01:40:52.416 +07:00 [INF] Request finished HTTP/1.1 PUT http://localhost:5053/api/Auth/login - 200 null application/json; charset=utf-8 1080.8918ms
+2025-03-24 01:40:52.590 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_conversations/6 - null null
+2025-03-24 01:40:52.591 +07:00 [INF] CORS policy execution successful.
+2025-03-24 01:40:52.591 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_conversations/6 - 204 null null 0.4684ms
+2025-03-24 01:40:52.592 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Conversation/get_conversations/6 - application/json null
+2025-03-24 01:40:52.593 +07:00 [INF] CORS policy execution successful.
+2025-03-24 01:40:52.593 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-03-24 01:40:52.599 +07:00 [INF] Route matched with {action = "GetConversations", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetConversations(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-03-24 01:40:52.690 +07:00 [INF] Executed DbCommand (10ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [c].[id], [c].[created_at], [c].[is_group], [c].[name]
+FROM [Participants] AS [p]
+INNER JOIN [Conversations] AS [c] ON [p].[conversation_id] = [c].[id]
+WHERE [p].[user_id] = @__userId_0
+2025-03-24 01:40:52.702 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.Models.Conversation, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-03-24 01:40:52.705 +07:00 [INF] Executed action server.Controllers.ConversationController.GetConversations (Message_app) in 105.7256ms
+2025-03-24 01:40:52.705 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-03-24 01:40:52.705 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Conversation/get_conversations/6 - 200 null application/json; charset=utf-8 113.1397ms
+2025-03-24 01:40:54.904 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/ws - null null
+2025-03-24 01:40:54.905 +07:00 [INF] CORS policy execution successful.
+2025-03-24 01:40:54.905 +07:00 [INF] Executing endpoint '/ws'
+2025-03-24 01:40:54.986 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Message/getMessages/1 - null null
+2025-03-24 01:40:54.987 +07:00 [INF] CORS policy execution successful.
+2025-03-24 01:40:54.987 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Message/getMessages/1 - 204 null null 0.9331ms
+2025-03-24 01:40:54.988 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Message/getMessages/1 - application/json null
+2025-03-24 01:40:54.988 +07:00 [INF] CORS policy execution successful.
+2025-03-24 01:40:54.988 +07:00 [INF] Executing endpoint 'server.Controllers.MessageController.getMessages (Message_app)'
+2025-03-24 01:40:54.988 +07:00 [INF] Route matched with {action = "getMessages", controller = "Message"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] getMessages(Int32) on controller server.Controllers.MessageController (Message_app).
+2025-03-24 01:40:54.990 +07:00 [INF] Executing BadRequestObjectResult, writing value of type 'System.String'.
+2025-03-24 01:40:54.992 +07:00 [INF] Executed action server.Controllers.MessageController.getMessages (Message_app) in 3.1713ms
+2025-03-24 01:40:54.992 +07:00 [INF] Executed endpoint 'server.Controllers.MessageController.getMessages (Message_app)'
+2025-03-24 01:40:54.992 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Message/getMessages/1 - 400 null application/json; charset=utf-8 3.9073ms
+2025-03-24 01:40:55.010 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_first_conversation/1 - null null
+2025-03-24 01:40:55.010 +07:00 [INF] CORS policy execution successful.
+2025-03-24 01:40:55.010 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_first_conversation/1 - 204 null null 0.3456ms
+2025-03-24 01:40:55.012 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Conversation/get_first_conversation/1 - application/json null
+2025-03-24 01:40:55.012 +07:00 [INF] CORS policy execution successful.
+2025-03-24 01:40:55.012 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetFirstConversation (Message_app)'
+2025-03-24 01:40:55.015 +07:00 [INF] Route matched with {action = "GetFirstConversation", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetFirstConversation(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-03-24 01:40:55.060 +07:00 [INF] Executed DbCommand (3ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [c].[id], [c].[created_at], [c].[is_group], [c].[name]
+FROM [Conversations] AS [c]
+WHERE [c].[id] = @__p_0
+2025-03-24 01:40:55.061 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.Models.Conversation'.
+2025-03-24 01:40:55.061 +07:00 [INF] Executed action server.Controllers.ConversationController.GetFirstConversation (Message_app) in 46.4051ms
+2025-03-24 01:40:55.061 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetFirstConversation (Message_app)'
+2025-03-24 01:40:55.062 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Conversation/get_first_conversation/1 - 200 null application/json; charset=utf-8 50.0077ms
+2025-03-24 01:40:55.067 +07:00 [INF] Executed DbCommand (4ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[conversation_id]
+FROM [Participants] AS [p]
+WHERE [p].[user_id] = @__userId_0 AND [p].[is_deleted] = CAST(0 AS bit)
+2025-03-24 01:40:55.077 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Participant/get_participants/1 - null null
+2025-03-24 01:40:55.078 +07:00 [INF] CORS policy execution successful.
+2025-03-24 01:40:55.078 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Participant/get_participants/1 - 204 null null 0.9216ms
+2025-03-24 01:40:55.079 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Participant/get_participants/1 - application/json null
+2025-03-24 01:40:55.079 +07:00 [INF] CORS policy execution successful.
+2025-03-24 01:40:55.079 +07:00 [INF] Executing endpoint 'server.Controllers.ParticipantController.GetParticipants (Message_app)'
+2025-03-24 01:40:55.083 +07:00 [INF] Route matched with {action = "GetParticipants", controller = "Participant"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetParticipants(Int32) on controller server.Controllers.ParticipantController (Message_app).
+2025-03-24 01:40:55.092 +07:00 [INF] Executed DbCommand (3ms) [Parameters=[@__conversation_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[id], [p].[conversation_id], [p].[is_deleted], [p].[joined_at], [p].[user_id]
+FROM [Participants] AS [p]
+WHERE [p].[conversation_id] = @__conversation_id_0
+2025-03-24 01:40:55.101 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType7`1[[System.Collections.Generic.List`1[[server.Models.Participants, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-03-24 01:40:55.102 +07:00 [INF] Executed action server.Controllers.ParticipantController.GetParticipants (Message_app) in 18.9692ms
+2025-03-24 01:40:55.102 +07:00 [INF] Executed endpoint 'server.Controllers.ParticipantController.GetParticipants (Message_app)'
+2025-03-24 01:40:55.102 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Participant/get_participants/1 - 200 null application/json; charset=utf-8 23.0113ms
+2025-03-24 01:41:06.985 +07:00 [INF] Executed DbCommand (26ms) [Parameters=[@p0='?' (Size = 500), @p1='?' (DbType = Int32), @p2='?' (DbType = DateTime2), @p3='?' (DbType = Boolean), @p4='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [Messages] ([content], [conversation_id], [created_at], [is_read], [sender_id])
+OUTPUT INSERTED.[id]
+VALUES (@p0, @p1, @p2, @p3, @p4);
+2025-03-24 01:41:10.707 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/ws - null null
+2025-03-24 01:41:10.707 +07:00 [INF] CORS policy execution successful.
+2025-03-24 01:41:10.707 +07:00 [INF] Executing endpoint '/ws'
+2025-03-24 01:41:10.781 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Message/getMessages/1 - null null
+2025-03-24 01:41:10.782 +07:00 [INF] CORS policy execution successful.
+2025-03-24 01:41:10.782 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Message/getMessages/1 - 204 null null 0.4568ms
+2025-03-24 01:41:10.783 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Message/getMessages/1 - application/json null
+2025-03-24 01:41:10.783 +07:00 [INF] CORS policy execution successful.
+2025-03-24 01:41:10.783 +07:00 [INF] Executing endpoint 'server.Controllers.MessageController.getMessages (Message_app)'
+2025-03-24 01:41:10.783 +07:00 [INF] Route matched with {action = "getMessages", controller = "Message"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] getMessages(Int32) on controller server.Controllers.MessageController (Message_app).
+2025-03-24 01:41:10.785 +07:00 [INF] Executing BadRequestObjectResult, writing value of type 'System.String'.
+2025-03-24 01:41:10.785 +07:00 [INF] Executed action server.Controllers.MessageController.getMessages (Message_app) in 1.6958ms
+2025-03-24 01:41:10.785 +07:00 [INF] Executed endpoint 'server.Controllers.MessageController.getMessages (Message_app)'
+2025-03-24 01:41:10.785 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Message/getMessages/1 - 400 null application/json; charset=utf-8 2.345ms
+2025-03-24 01:41:10.802 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_first_conversation/1 - null null
+2025-03-24 01:41:10.802 +07:00 [INF] CORS policy execution successful.
+2025-03-24 01:41:10.802 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_first_conversation/1 - 204 null null 0.3318ms
+2025-03-24 01:41:10.803 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Conversation/get_first_conversation/1 - application/json null
+2025-03-24 01:41:10.804 +07:00 [INF] CORS policy execution successful.
+2025-03-24 01:41:10.804 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetFirstConversation (Message_app)'
+2025-03-24 01:41:10.804 +07:00 [INF] Route matched with {action = "GetFirstConversation", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetFirstConversation(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-03-24 01:41:10.812 +07:00 [INF] Executed DbCommand (3ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [c].[id], [c].[created_at], [c].[is_group], [c].[name]
+FROM [Conversations] AS [c]
+WHERE [c].[id] = @__p_0
+2025-03-24 01:41:10.813 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.Models.Conversation'.
+2025-03-24 01:41:10.813 +07:00 [INF] Executed action server.Controllers.ConversationController.GetFirstConversation (Message_app) in 8.9063ms
+2025-03-24 01:41:10.813 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetFirstConversation (Message_app)'
+2025-03-24 01:41:10.813 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Conversation/get_first_conversation/1 - 200 null application/json; charset=utf-8 9.546ms
+2025-03-24 01:41:10.828 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Participant/get_participants/1 - null null
+2025-03-24 01:41:10.828 +07:00 [INF] CORS policy execution successful.
+2025-03-24 01:41:10.829 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Participant/get_participants/1 - 204 null null 0.5694ms
+2025-03-24 01:41:10.830 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Participant/get_participants/1 - application/json null
+2025-03-24 01:41:10.830 +07:00 [INF] CORS policy execution successful.
+2025-03-24 01:41:10.830 +07:00 [INF] Executing endpoint 'server.Controllers.ParticipantController.GetParticipants (Message_app)'
+2025-03-24 01:41:10.831 +07:00 [INF] Route matched with {action = "GetParticipants", controller = "Participant"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetParticipants(Int32) on controller server.Controllers.ParticipantController (Message_app).
+2025-03-24 01:41:10.835 +07:00 [INF] Executed DbCommand (3ms) [Parameters=[@__conversation_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[id], [p].[conversation_id], [p].[is_deleted], [p].[joined_at], [p].[user_id]
+FROM [Participants] AS [p]
+WHERE [p].[conversation_id] = @__conversation_id_0
+2025-03-24 01:41:10.837 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType7`1[[System.Collections.Generic.List`1[[server.Models.Participants, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-03-24 01:41:10.837 +07:00 [INF] Executed action server.Controllers.ParticipantController.GetParticipants (Message_app) in 6.1131ms
+2025-03-24 01:41:10.837 +07:00 [INF] Executed endpoint 'server.Controllers.ParticipantController.GetParticipants (Message_app)'
+2025-03-24 01:41:10.837 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Participant/get_participants/1 - 200 null application/json; charset=utf-8 7.1843ms
+2025-03-24 01:41:11.735 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/ws - null null
+2025-03-24 01:41:11.735 +07:00 [INF] CORS policy execution successful.
+2025-03-24 01:41:11.735 +07:00 [INF] Executing endpoint '/ws'
+2025-03-24 01:41:26.255 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/ws - null null
+2025-03-24 01:41:26.255 +07:00 [INF] CORS policy execution successful.
+2025-03-24 01:41:26.256 +07:00 [INF] Executing endpoint '/ws'
+2025-03-24 01:41:26.324 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Message/getMessages/1 - null null
+2025-03-24 01:41:26.324 +07:00 [INF] CORS policy execution successful.
+2025-03-24 01:41:26.325 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Message/getMessages/1 - 204 null null 0.4463ms
+2025-03-24 01:41:26.326 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Message/getMessages/1 - application/json null
+2025-03-24 01:41:26.326 +07:00 [INF] CORS policy execution successful.
+2025-03-24 01:41:26.326 +07:00 [INF] Executing endpoint 'server.Controllers.MessageController.getMessages (Message_app)'
+2025-03-24 01:41:26.326 +07:00 [INF] Route matched with {action = "getMessages", controller = "Message"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] getMessages(Int32) on controller server.Controllers.MessageController (Message_app).
+2025-03-24 01:41:26.327 +07:00 [INF] Executing BadRequestObjectResult, writing value of type 'System.String'.
+2025-03-24 01:41:26.327 +07:00 [INF] Executed action server.Controllers.MessageController.getMessages (Message_app) in 1.127ms
+2025-03-24 01:41:26.328 +07:00 [INF] Executed endpoint 'server.Controllers.MessageController.getMessages (Message_app)'
+2025-03-24 01:41:26.328 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Message/getMessages/1 - 400 null application/json; charset=utf-8 1.8688ms
+2025-03-24 01:41:26.345 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_first_conversation/1 - null null
+2025-03-24 01:41:26.346 +07:00 [INF] CORS policy execution successful.
+2025-03-24 01:41:26.346 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_first_conversation/1 - 204 null null 0.6784ms
+2025-03-24 01:41:26.348 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Conversation/get_first_conversation/1 - application/json null
+2025-03-24 01:41:26.348 +07:00 [INF] CORS policy execution successful.
+2025-03-24 01:41:26.348 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetFirstConversation (Message_app)'
+2025-03-24 01:41:26.348 +07:00 [INF] Route matched with {action = "GetFirstConversation", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetFirstConversation(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-03-24 01:41:26.352 +07:00 [INF] Executed DbCommand (3ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [c].[id], [c].[created_at], [c].[is_group], [c].[name]
+FROM [Conversations] AS [c]
+WHERE [c].[id] = @__p_0
+2025-03-24 01:41:26.352 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.Models.Conversation'.
+2025-03-24 01:41:26.352 +07:00 [INF] Executed action server.Controllers.ConversationController.GetFirstConversation (Message_app) in 4.6083ms
+2025-03-24 01:41:26.353 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetFirstConversation (Message_app)'
+2025-03-24 01:41:26.353 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Conversation/get_first_conversation/1 - 200 null application/json; charset=utf-8 5.1393ms
+2025-03-24 01:41:26.367 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Participant/get_participants/1 - null null
+2025-03-24 01:41:26.367 +07:00 [INF] CORS policy execution successful.
+2025-03-24 01:41:26.367 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Participant/get_participants/1 - 204 null null 0.2361ms
+2025-03-24 01:41:26.368 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Participant/get_participants/1 - application/json null
+2025-03-24 01:41:26.368 +07:00 [INF] CORS policy execution successful.
+2025-03-24 01:41:26.368 +07:00 [INF] Executing endpoint 'server.Controllers.ParticipantController.GetParticipants (Message_app)'
+2025-03-24 01:41:26.368 +07:00 [INF] Route matched with {action = "GetParticipants", controller = "Participant"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetParticipants(Int32) on controller server.Controllers.ParticipantController (Message_app).
+2025-03-24 01:41:26.372 +07:00 [INF] Executed DbCommand (3ms) [Parameters=[@__conversation_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[id], [p].[conversation_id], [p].[is_deleted], [p].[joined_at], [p].[user_id]
+FROM [Participants] AS [p]
+WHERE [p].[conversation_id] = @__conversation_id_0
+2025-03-24 01:41:26.373 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType7`1[[System.Collections.Generic.List`1[[server.Models.Participants, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-03-24 01:41:26.373 +07:00 [INF] Executed action server.Controllers.ParticipantController.GetParticipants (Message_app) in 4.7425ms
+2025-03-24 01:41:26.373 +07:00 [INF] Executed endpoint 'server.Controllers.ParticipantController.GetParticipants (Message_app)'
+2025-03-24 01:41:26.373 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Participant/get_participants/1 - 200 null application/json; charset=utf-8 5.4943ms
+2025-03-24 01:41:26.669 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/ws - null null
+2025-03-24 01:41:26.670 +07:00 [INF] CORS policy execution successful.
+2025-03-24 01:41:26.670 +07:00 [INF] Executing endpoint '/ws'
+2025-03-24 01:42:34.707 +07:00 [INF] Executed DbCommand (8ms) [Parameters=[@p0='?' (Size = 500), @p1='?' (DbType = Int32), @p2='?' (DbType = DateTime2), @p3='?' (DbType = Boolean), @p4='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [Messages] ([content], [conversation_id], [created_at], [is_read], [sender_id])
+OUTPUT INSERTED.[id]
+VALUES (@p0, @p1, @p2, @p3, @p4);
+2025-03-24 01:42:56.291 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/ws - null null
+2025-03-24 01:42:56.292 +07:00 [INF] CORS policy execution successful.
+2025-03-24 01:42:56.292 +07:00 [INF] Executing endpoint '/ws'
+2025-03-24 01:42:56.362 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Message/getMessages/1 - null null
+2025-03-24 01:42:56.362 +07:00 [INF] CORS policy execution successful.
+2025-03-24 01:42:56.362 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Message/getMessages/1 - 204 null null 0.2472ms
+2025-03-24 01:42:56.363 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Message/getMessages/1 - application/json null
+2025-03-24 01:42:56.363 +07:00 [INF] CORS policy execution successful.
+2025-03-24 01:42:56.363 +07:00 [INF] Executing endpoint 'server.Controllers.MessageController.getMessages (Message_app)'
+2025-03-24 01:42:56.364 +07:00 [INF] Route matched with {action = "getMessages", controller = "Message"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] getMessages(Int32) on controller server.Controllers.MessageController (Message_app).
+2025-03-24 01:42:56.366 +07:00 [INF] Executing BadRequestObjectResult, writing value of type 'System.String'.
+2025-03-24 01:42:56.366 +07:00 [INF] Executed action server.Controllers.MessageController.getMessages (Message_app) in 2.5729ms
+2025-03-24 01:42:56.366 +07:00 [INF] Executed endpoint 'server.Controllers.MessageController.getMessages (Message_app)'
+2025-03-24 01:42:56.366 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Message/getMessages/1 - 400 null application/json; charset=utf-8 3.3062ms
+2025-03-24 01:42:56.380 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_first_conversation/1 - null null
+2025-03-24 01:42:56.381 +07:00 [INF] CORS policy execution successful.
+2025-03-24 01:42:56.381 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_first_conversation/1 - 204 null null 0.4868ms
+2025-03-24 01:42:56.382 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Conversation/get_first_conversation/1 - application/json null
+2025-03-24 01:42:56.382 +07:00 [INF] CORS policy execution successful.
+2025-03-24 01:42:56.382 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetFirstConversation (Message_app)'
+2025-03-24 01:42:56.382 +07:00 [INF] Route matched with {action = "GetFirstConversation", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetFirstConversation(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-03-24 01:42:56.386 +07:00 [INF] Executed DbCommand (3ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [c].[id], [c].[created_at], [c].[is_group], [c].[name]
+FROM [Conversations] AS [c]
+WHERE [c].[id] = @__p_0
+2025-03-24 01:42:56.387 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.Models.Conversation'.
+2025-03-24 01:42:56.387 +07:00 [INF] Executed action server.Controllers.ConversationController.GetFirstConversation (Message_app) in 4.4408ms
+2025-03-24 01:42:56.387 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetFirstConversation (Message_app)'
+2025-03-24 01:42:56.387 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Conversation/get_first_conversation/1 - 200 null application/json; charset=utf-8 4.8155ms
+2025-03-24 01:42:56.402 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Participant/get_participants/1 - null null
+2025-03-24 01:42:56.402 +07:00 [INF] CORS policy execution successful.
+2025-03-24 01:42:56.403 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Participant/get_participants/1 - 204 null null 0.5595ms
+2025-03-24 01:42:56.405 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Participant/get_participants/1 - application/json null
+2025-03-24 01:42:56.405 +07:00 [INF] CORS policy execution successful.
+2025-03-24 01:42:56.405 +07:00 [INF] Executing endpoint 'server.Controllers.ParticipantController.GetParticipants (Message_app)'
+2025-03-24 01:42:56.405 +07:00 [INF] Route matched with {action = "GetParticipants", controller = "Participant"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetParticipants(Int32) on controller server.Controllers.ParticipantController (Message_app).
+2025-03-24 01:42:56.410 +07:00 [INF] Executed DbCommand (3ms) [Parameters=[@__conversation_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[id], [p].[conversation_id], [p].[is_deleted], [p].[joined_at], [p].[user_id]
+FROM [Participants] AS [p]
+WHERE [p].[conversation_id] = @__conversation_id_0
+2025-03-24 01:42:56.410 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType7`1[[System.Collections.Generic.List`1[[server.Models.Participants, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-03-24 01:42:56.410 +07:00 [INF] Executed action server.Controllers.ParticipantController.GetParticipants (Message_app) in 4.9535ms
+2025-03-24 01:42:56.410 +07:00 [INF] Executed endpoint 'server.Controllers.ParticipantController.GetParticipants (Message_app)'
+2025-03-24 01:42:56.410 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Participant/get_participants/1 - 200 null application/json; charset=utf-8 5.6642ms
+2025-03-24 01:42:57.632 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/ws - null null
+2025-03-24 01:42:57.632 +07:00 [INF] CORS policy execution successful.
+2025-03-24 01:42:57.633 +07:00 [INF] Executing endpoint '/ws'
+2025-03-24 01:43:04.411 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/ws - null null
+2025-03-24 01:43:04.411 +07:00 [INF] CORS policy execution successful.
+2025-03-24 01:43:04.411 +07:00 [INF] Executing endpoint '/ws'
+2025-03-24 01:43:04.475 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Message/getMessages/1 - null null
+2025-03-24 01:43:04.475 +07:00 [INF] CORS policy execution successful.
+2025-03-24 01:43:04.475 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Message/getMessages/1 - 204 null null 0.2798ms
+2025-03-24 01:43:04.476 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Message/getMessages/1 - application/json null
+2025-03-24 01:43:04.477 +07:00 [INF] CORS policy execution successful.
+2025-03-24 01:43:04.477 +07:00 [INF] Executing endpoint 'server.Controllers.MessageController.getMessages (Message_app)'
+2025-03-24 01:43:04.477 +07:00 [INF] Route matched with {action = "getMessages", controller = "Message"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] getMessages(Int32) on controller server.Controllers.MessageController (Message_app).
+2025-03-24 01:43:04.478 +07:00 [INF] Executing BadRequestObjectResult, writing value of type 'System.String'.
+2025-03-24 01:43:04.479 +07:00 [INF] Executed action server.Controllers.MessageController.getMessages (Message_app) in 1.678ms
+2025-03-24 01:43:04.479 +07:00 [INF] Executed endpoint 'server.Controllers.MessageController.getMessages (Message_app)'
+2025-03-24 01:43:04.479 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Message/getMessages/1 - 400 null application/json; charset=utf-8 2.6822ms
+2025-03-24 01:43:04.495 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_first_conversation/1 - null null
+2025-03-24 01:43:04.495 +07:00 [INF] CORS policy execution successful.
+2025-03-24 01:43:04.495 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_first_conversation/1 - 204 null null 0.2093ms
+2025-03-24 01:43:04.496 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Conversation/get_first_conversation/1 - application/json null
+2025-03-24 01:43:04.496 +07:00 [INF] CORS policy execution successful.
+2025-03-24 01:43:04.496 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetFirstConversation (Message_app)'
+2025-03-24 01:43:04.496 +07:00 [INF] Route matched with {action = "GetFirstConversation", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetFirstConversation(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-03-24 01:43:04.498 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [c].[id], [c].[created_at], [c].[is_group], [c].[name]
+FROM [Conversations] AS [c]
+WHERE [c].[id] = @__p_0
+2025-03-24 01:43:04.499 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.Models.Conversation'.
+2025-03-24 01:43:04.499 +07:00 [INF] Executed action server.Controllers.ConversationController.GetFirstConversation (Message_app) in 2.8169ms
+2025-03-24 01:43:04.499 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetFirstConversation (Message_app)'
+2025-03-24 01:43:04.500 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Conversation/get_first_conversation/1 - 200 null application/json; charset=utf-8 3.3232ms
+2025-03-24 01:43:04.513 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Participant/get_participants/1 - null null
+2025-03-24 01:43:04.513 +07:00 [INF] CORS policy execution successful.
+2025-03-24 01:43:04.513 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Participant/get_participants/1 - 204 null null 0.2167ms
+2025-03-24 01:43:04.515 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Participant/get_participants/1 - application/json null
+2025-03-24 01:43:04.515 +07:00 [INF] CORS policy execution successful.
+2025-03-24 01:43:04.515 +07:00 [INF] Executing endpoint 'server.Controllers.ParticipantController.GetParticipants (Message_app)'
+2025-03-24 01:43:04.515 +07:00 [INF] Route matched with {action = "GetParticipants", controller = "Participant"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetParticipants(Int32) on controller server.Controllers.ParticipantController (Message_app).
+2025-03-24 01:43:04.517 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__conversation_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[id], [p].[conversation_id], [p].[is_deleted], [p].[joined_at], [p].[user_id]
+FROM [Participants] AS [p]
+WHERE [p].[conversation_id] = @__conversation_id_0
+2025-03-24 01:43:04.518 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType7`1[[System.Collections.Generic.List`1[[server.Models.Participants, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-03-24 01:43:04.518 +07:00 [INF] Executed action server.Controllers.ParticipantController.GetParticipants (Message_app) in 2.7981ms
+2025-03-24 01:43:04.518 +07:00 [INF] Executed endpoint 'server.Controllers.ParticipantController.GetParticipants (Message_app)'
+2025-03-24 01:43:04.518 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Participant/get_participants/1 - 200 null application/json; charset=utf-8 3.5825ms
+2025-03-24 01:43:05.725 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/ws - null null
+2025-03-24 01:43:05.725 +07:00 [INF] CORS policy execution successful.
+2025-03-24 01:43:05.726 +07:00 [INF] Executing endpoint '/ws'
+2025-03-24 01:48:26.686 +07:00 [INF] Application is shutting down...
+2025-03-24 02:05:46.995 +07:00 [INF] User profile is available. Using 'C:\Users\Thao\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-03-24 02:05:47.091 +07:00 [INF] Now listening on: http://localhost:5053
+2025-03-24 02:05:47.095 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-03-24 02:05:47.096 +07:00 [INF] Hosting environment: Development
+2025-03-24 02:05:47.097 +07:00 [INF] Content root path: C:\Users\Thao\source\Flutter\Message_app\server
+2025-03-24 02:05:47.330 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/ws - null null
+2025-03-24 02:05:47.331 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/ws - null null
+2025-03-24 02:05:47.355 +07:00 [INF] CORS policy execution successful.
+2025-03-24 02:05:47.355 +07:00 [INF] CORS policy execution successful.
+2025-03-24 02:05:47.357 +07:00 [WRN] Failed to determine the https port for redirect.
+2025-03-24 02:05:47.375 +07:00 [INF] Executing endpoint '/ws'
+2025-03-24 02:05:47.375 +07:00 [INF] Executing endpoint '/ws'
+2025-03-24 02:05:47.397 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/ws - null null
+2025-03-24 02:05:47.401 +07:00 [INF] CORS policy execution successful.
+2025-03-24 02:05:47.405 +07:00 [INF] Executing endpoint '/ws'
+2025-03-24 02:05:48.125 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/ws - null null
+2025-03-24 02:05:48.128 +07:00 [INF] CORS policy execution successful.
+2025-03-24 02:05:48.129 +07:00 [INF] Executing endpoint '/ws'
+2025-03-24 02:05:48.402 +07:00 [INF] Executed DbCommand (36ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[conversation_id]
+FROM [Participants] AS [p]
+WHERE [p].[user_id] = @__userId_0 AND [p].[is_deleted] = CAST(0 AS bit)
+2025-03-24 02:05:48.402 +07:00 [INF] Executed DbCommand (36ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[conversation_id]
+FROM [Participants] AS [p]
+WHERE [p].[user_id] = @__userId_0 AND [p].[is_deleted] = CAST(0 AS bit)
+2025-03-24 02:05:48.402 +07:00 [INF] Executed DbCommand (36ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[conversation_id]
+FROM [Participants] AS [p]
+WHERE [p].[user_id] = @__userId_0 AND [p].[is_deleted] = CAST(0 AS bit)
+2025-03-24 02:05:48.402 +07:00 [INF] Executed DbCommand (36ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[conversation_id]
+FROM [Participants] AS [p]
+WHERE [p].[user_id] = @__userId_0 AND [p].[is_deleted] = CAST(0 AS bit)
+2025-03-24 02:05:50.279 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/ws - null null
+2025-03-24 02:05:50.281 +07:00 [INF] CORS policy execution successful.
+2025-03-24 02:05:50.282 +07:00 [INF] Executing endpoint '/ws'
+2025-03-24 02:06:04.416 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/ - null null
+2025-03-24 02:06:04.421 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/ - 404 0 null 4.8517ms
+2025-03-24 02:06:04.426 +07:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5053/, Response status code: 404
+2025-03-24 02:06:08.267 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-03-24 02:06:08.329 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 62.0594ms
+2025-03-24 02:06:08.337 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-03-24 02:06:08.342 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 4.7949ms
+2025-03-24 02:06:08.415 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-03-24 02:06:08.478 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 63.0356ms
+2025-03-24 02:06:16.201 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Message/getMessages/1 - null null
+2025-03-24 02:06:16.213 +07:00 [INF] Executing endpoint 'server.Controllers.MessageController.getMessages (Message_app)'
+2025-03-24 02:06:16.278 +07:00 [INF] Route matched with {action = "getMessages", controller = "Message"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] getMessages(Int32) on controller server.Controllers.MessageController (Message_app).
+2025-03-24 02:06:16.334 +07:00 [INF] Executing BadRequestObjectResult, writing value of type 'System.String'.
+2025-03-24 02:06:16.345 +07:00 [INF] Executed action server.Controllers.MessageController.getMessages (Message_app) in 52.5071ms
+2025-03-24 02:06:16.349 +07:00 [INF] Executed endpoint 'server.Controllers.MessageController.getMessages (Message_app)'
+2025-03-24 02:06:16.361 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Message/getMessages/1 - 400 null text/plain; charset=utf-8 159.267ms
+2025-03-24 02:24:29.800 +07:00 [INF] Executed DbCommand (11ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-03-24 02:24:29.835 +07:00 [INF] Acquiring an exclusive lock for migration application. See https://aka.ms/efcore-docs-migrations-lock for more information if this takes too long.
+2025-03-24 02:24:29.863 +07:00 [INF] Executed DbCommand (26ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+DECLARE @result int;
+EXEC @result = sp_getapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session', @LockMode = 'Exclusive';
+SELECT @result
+2025-03-24 02:24:29.918 +07:00 [INF] Executed DbCommand (9ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+IF OBJECT_ID(N'[__EFMigrationsHistory]') IS NULL
+BEGIN
+    CREATE TABLE [__EFMigrationsHistory] (
+        [MigrationId] nvarchar(150) NOT NULL,
+        [ProductVersion] nvarchar(32) NOT NULL,
+        CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY ([MigrationId])
+    );
+END;
+2025-03-24 02:24:29.925 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-03-24 02:24:29.927 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT OBJECT_ID(N'[__EFMigrationsHistory]');
+2025-03-24 02:24:29.942 +07:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [MigrationId], [ProductVersion]
+FROM [__EFMigrationsHistory]
+ORDER BY [MigrationId];
+2025-03-24 02:24:29.952 +07:00 [INF] Applying migration '20250323192411_updateMessage'.
+2025-03-24 02:24:29.986 +07:00 [INF] Executed DbCommand (18ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+ALTER TABLE [Messages] ADD [type] nvarchar(max) NULL;
+2025-03-24 02:24:29.993 +07:00 [INF] Executed DbCommand (5ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20250323192411_updateMessage', N'9.0.2');
+2025-03-24 02:24:29.998 +07:00 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+DECLARE @result int;
+EXEC @result = sp_releaseapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session';
+SELECT @result

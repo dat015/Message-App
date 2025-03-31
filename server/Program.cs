@@ -6,7 +6,6 @@ using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using server.Data;
 using server.InjectService;
-using server.Services.ChatService;
 using server.Services.WebSocketService;
 using server.Services.UserService;
 
@@ -42,16 +41,8 @@ builder.Services.AddAuthentication(option =>
     };
 });
 
+
 builder.Services.Inject(builder.Configuration);
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAll", policy =>
-    {
-        policy.AllowAnyOrigin() // Cho phép tất cả nguồn gốc (thử nghiệm)
-              .AllowAnyMethod()
-              .AllowAnyHeader();
-    });
-});
 
 // Log setting
 Log.Logger = new LoggerConfiguration()
@@ -68,34 +59,29 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseCors("AllowAll");
 app.MapControllers();
 app.UseRouting();
-app.MapHub<ChatHub>("/chatHub");
-app.UseWebSockets(new WebSocketOptions
+app.UseWebSockets();
+app.UseEndpoints(endpoints =>
 {
-    KeepAliveInterval = TimeSpan.FromMinutes(2)
-});
-// Config WebSocket
-// Khi client kết nối đến đường dẫn /ws thì sẽ gọi đến hàm HandleWebSocket trong WebSocketService
-app.Map("/ws", async (HttpContext context, WebSocketService webSocketService, IServiceProvider serviceProvider) =>
-{
-    if (context.WebSockets.IsWebSocketRequest)
+    endpoints.MapControllers();
+    endpoints.Map("/ws", async context =>
     {
-        Console.WriteLine("WebSocket request received");
-        using var webSocket = await context.WebSockets.AcceptWebSocketAsync();
-        Console.WriteLine("WebSocket connection accepted");
-        await webSocketService.HandleWebSocket(webSocket, serviceProvider);
-        Console.WriteLine("WebSocket connection closed");
-    }
-    else
-    {
-        Console.WriteLine("Non-WebSocket request, returning 400");
-        context.Response.StatusCode = 400;
-    }
+        var webSocketService = context.RequestServices.GetRequiredService<webSocket>();
+        if (context.WebSockets.IsWebSocketRequest)
+        {
+            Console.WriteLine("WebSocket request received");
+            await webSocketService.HandleWebSocket(context);
+        }
+        else
+        {
+            Console.WriteLine("Received non-WebSocket request");
+            Console.WriteLine($"Request Headers: {string.Join(", ", context.Request.Headers.Select(h => $"{h.Key}: {h.Value}"))}");
+            context.Response.StatusCode = StatusCodes.Status400BadRequest;
+        }
+    });
 });
-
-app.UseCors("AllowAll");
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

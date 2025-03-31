@@ -6,7 +6,7 @@ class ApiClient {
   late Dio _dio;
   String baseUrl = Config.baseUrl;
   ApiClient({
-    String baseUrl = 'http://localhost:5053/', 
+    String baseUrl = 'http://localhost:5053/',
     Duration connectTimeout = const Duration(seconds: 30),
     Duration receiveTimeout = const Duration(seconds: 30),
     Map<String, String>? headers,
@@ -16,17 +16,29 @@ class ApiClient {
         baseUrl: baseUrl,
         connectTimeout: connectTimeout,
         receiveTimeout: receiveTimeout,
-        headers: headers ?? {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
+        headers:
+            headers ??
+            {'Content-Type': 'application/json', 'Accept': 'application/json'},
+        validateStatus: (status) {
+          return status! < 500;
         },
       ),
     );
 
+    // Thêm interceptor để xử lý CORS
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) {
+          // Thêm headers CORS vào mỗi request
+          options.headers['Access-Control-Allow-Origin'] = '*';
+          options.headers['Access-Control-Allow-Methods'] =
+              'GET, POST, PUT, DELETE, OPTIONS';
+          options.headers['Access-Control-Allow-Headers'] =
+              'Origin, Content-Type, Accept, Authorization';
+          options.headers['Access-Control-Allow-Credentials'] = 'true';
+
           print('Request: ${options.method} ${options.uri}');
+          print('Request headers: ${options.headers}');
           print('Request data: ${options.data}');
           return handler.next(options);
         },

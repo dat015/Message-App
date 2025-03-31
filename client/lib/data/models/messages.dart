@@ -1,38 +1,43 @@
 class Message {
-  int? id; // Nullable vì là auto-increment trong database
+  int? id;
   String content;
+  String type;
   int senderId;
   bool isRead;
   DateTime createdAt;
-  int conversationId; // Khóa ngoại tới Conversation
+  int conversationId;
 
-  // Constructor với các thuộc tính bắt buộc và giá trị mặc định
   Message({
     this.id,
     required this.content,
     required this.senderId,
+    this.type = 'text',
     this.isRead = false,
     DateTime? createdAt,
     required this.conversationId,
   }) : createdAt = createdAt ?? DateTime.now();
 
-  // Factory constructor để tạo từ JSON
+  // ✅ Sửa lỗi khi nhận dữ liệu từ JSON
   factory Message.fromJson(Map<String, dynamic> json) {
     return Message(
       id: json['id'] as int?, // Có thể null
-      content: json['content'] as String, // Bắt buộc, giả định không null
-      senderId: json['sender_id'] as int, // Bắt buộc
-      isRead: json['is_read'] as bool, // Bắt buộc, có giá trị mặc định là false
-      createdAt: DateTime.parse(json['created_at'] as String), // Chuyển từ String sang DateTime
-      conversationId: json['conversation_id'] as int, // Bắt buộc
+      content: json['content'] ?? "", // Nếu null, dùng chuỗi rỗng
+      senderId: json['sender_id'] as int? ?? 0, // Nếu null, mặc định 0
+      isRead: json['is_read'] as bool? ?? false, // Nếu null, mặc định false
+      createdAt: json['created_at'] != null
+          ? DateTime.tryParse(json['created_at']) ?? DateTime.now()
+          : DateTime.now(), // Nếu null hoặc parse lỗi, dùng DateTime.now()
+      conversationId: json['conversation_id'] as int? ?? 0, // Nếu null, mặc định 0
+      type: json['type'] as String? ?? 'text', // Nếu null, mặc định 'text'
     );
   }
 
-  // Chuyển đối tượng thành JSON
+  // Chuyển đổi đối tượng thành JSON
   Map<String, dynamic> toJson() {
     return {
       'id': id,
       'content': content,
+      'type': type,
       'sender_id': senderId,
       'is_read': isRead,
       'created_at': createdAt.toIso8601String(),
@@ -40,9 +45,8 @@ class Message {
     };
   }
 
-  // Validation cơ bản dựa trên các ràng buộc
+  // Kiểm tra hợp lệ
   bool validate() {
-    // Kiểm tra content: độ dài từ 1 đến 500 ký tự
     if (content.isEmpty || content.length > 500) {
       print('Validation failed: Content must be between 1 and 500 characters');
       return false;
@@ -52,7 +56,7 @@ class Message {
 
   @override
   String toString() {
-    return 'Message(id: $id, content: $content, senderId: $senderId, isRead: $isRead, '
+    return 'Message(id: $id, content: $content, type: $type, senderId: $senderId, isRead: $isRead, '
         'createdAt: $createdAt, conversationId: $conversationId)';
   }
 }

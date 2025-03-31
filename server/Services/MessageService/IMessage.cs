@@ -8,7 +8,7 @@ namespace server.Services.MessageService
 {
     public interface IMessage
     {
-        Task<List<Message>> getMessages(int conversation_id);
+        Task<List<Message>> getMessages(int conversation_id, DateTime? fromDate = null);
         Task addNewMessage(Message message);
     }
 }

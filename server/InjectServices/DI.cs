@@ -20,6 +20,15 @@ namespace server.InjectService
     {
         public static void Inject(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", builder =>
+                {
+                    builder.AllowAnyOrigin() // Cho phép tất cả origin (thay bằng origin cụ thể trong production)
+                        .AllowAnyMethod() // Cho phép tất cả phương thức (GET, POST, OPTIONS, v.v.)
+                        .AllowAnyHeader(); // Cho phép tất cả header
+                });
+            });
             services.AddControllers();
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
@@ -34,11 +43,15 @@ namespace server.InjectService
                 return ConnectionMultiplexer.Connect(redisConfiguration);
             });
             //cấu hình cors
-           
-           
 
-            //singleton: tạo ra intance hết vòng đời của ứng dụng
-            services.AddSingleton<WebSocketService>();
+            // Đăng ký WebSocketService
+            services.AddSingleton<webSocket>(); // Singleton vì dịch vụ này quản lý trạng thái client
+            services.Configure<Services.WebSocketService.WebSocketOptions>(options =>
+            {
+                options.MaxBufferSize = 8192; // 8KB
+                options.HeartbeatInterval = 15; // 15 giây
+            });
+            services.AddHttpContextAccessor();
             services.AddSingleton<IRedisService, RedisService>();
             services.AddSingleton<DiffieHellman>();
             services.AddSignalR();
@@ -47,7 +60,7 @@ namespace server.InjectService
             services.AddScoped<IUserSV, UserSV>();
             services.AddScoped<IConversation, ConversationSV>();
             services.AddScoped<IParticipant, ParticipantSV>();
-            services.AddScoped<IMessage,MessagesV>();
+            services.AddScoped<IMessage, MessagesV>();
             services.AddScoped<IOTPsSV, OTPsSV>();
             services.AddScoped<AuthorizationJWT>();
         }

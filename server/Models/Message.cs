@@ -19,14 +19,15 @@ namespace server.Models
         public int sender_id { get; set; }
         [Required]
         public bool is_read { get; set; } = false;
+        public string? type { get; set; } 
         public DateTime created_at { get; set; } = DateTime.Now;
         [Required]
         public int conversation_id { get; set; }
         [ForeignKey("sender_id")]
-        public User sender { get; set; }
+        public User? sender { get; set; }
       
         [ForeignKey("conversation_id")]
-        public Conversation conversation { get; set; }
+        public Conversation? conversation { get; set; }
 
 
     }

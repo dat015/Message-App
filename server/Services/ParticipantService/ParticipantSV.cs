@@ -15,6 +15,32 @@ namespace server.Services.ParticipantService
         {
             _context = context;
         }
+
+        public async Task<List<Participants>> AddParticipantRangeAsync(int conversation_id, List<int> user_id)
+        {
+            if(conversation_id == 0 || user_id.Count == 0){
+                return null;
+            }
+            try{
+                var participants = new List<Participants>();
+                foreach(var id in user_id){
+                    var participant = new Participants
+                    {
+                        conversation_id = conversation_id,
+                        user_id = id
+                    };
+                    participants.Add(participant);
+                }
+                await _context.Participants.AddRangeAsync(participants);
+                await _context.SaveChangesAsync();
+                return participants;
+            }
+            catch(Exception e){
+                Console.WriteLine(e.Message);
+                throw e;
+            }
+        }
+
         public async Task<List<Participants>> GetParticipants(int conversation_id)
         {
             try

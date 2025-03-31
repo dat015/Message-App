@@ -20,7 +20,8 @@ namespace server.Models
         [Required]
         public DateTime created_at {get; set;}
 
-        public ICollection<Message> Messages {get; set;}
-        public ICollection<GroupSettings> GroupSettings {get; set;}
+        public ICollection<Message>? Messages {get; set;}
+        public ICollection<GroupSettings>? GroupSettings {get; set;}
+        public ICollection<Participants>? Participants {get; set;}
     }
 }

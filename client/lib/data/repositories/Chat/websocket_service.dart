@@ -1,70 +1,159 @@
 import 'dart:convert';
+import 'package:first_app/data/models/messages.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
-import 'package:web_socket_channel/status.dart' as status;
 
 class WebSocketService {
   WebSocketChannel? _channel;
-  final String url;
-  final Function(String) onMessageReceived;
-  String? _sessionId;
+  final String _url;
+  final Function(Message) onMessageReceived;
   bool _isConnected = false;
-  late int user_id;
 
-  WebSocketService({required this.user_id, required this.url, required this.onMessageReceived});
+  WebSocketService({required String url, required this.onMessageReceived})
+    : _url = url;
 
-  bool get isConnected => _isConnected;
-  String? get sessionId => _sessionId;
+  void connect(int userId, int conversationId) {
+    if (_isConnected) {
+      print("WebSocket already connected to $_url");
+      return;
+    }
 
-  void connect() {
-    _channel = WebSocketChannel.connect(Uri.parse(url));
-    _channel!.stream.listen(
-      _onData,
-      onError: _onError,
-      onDone: _onDone,
-    );
-  }
-
-  void _onData(dynamic data) {
-    print('Raw data received: $data');
-    final message = jsonDecode(data as String);
-    if (message['session_id'] != null) {
-      _sessionId = message['session_id'];
+    try {
+      print("Attempting to connect to WebSocket at: $_url");
+      _channel = WebSocketChannel.connect(Uri.parse(_url));
       _isConnected = true;
-      send({'user_id': '$user_id'});
-      print('Connected with session ID: $_sessionId');
-    } else {
-      onMessageReceived(data);
+      print("WebSocket connection established");
+
+      _sendBootupMessage(userId, conversationId);
+
+      _channel!.stream.listen(
+        (data) {
+          try {
+            // Kiểm tra nếu message là "ping" thì bỏ qua
+            if (data == "ping") {
+              print("Received ping message, ignoring...");
+              return;
+            }
+
+            final decodedMessage = jsonDecode(data) as Map<String, dynamic>;
+            final message = Message.fromJson(decodedMessage);
+            print("Received message: $data");
+            onMessageReceived(message);
+          } catch (e) {
+            print("Error processing message: $e | Data received: $data");
+          }
+        },
+        onError: (error) {
+          print("WebSocket error: $error");
+          _isConnected = false;
+          _channel = null;
+          _reconnect(userId, conversationId);
+        },
+        onDone: () {
+          print(
+            "WebSocket closed by server with code: ${_channel?.closeCode}, reason: ${_channel?.closeReason}",
+          );
+          _isConnected = false;
+          _channel = null;
+          _reconnect(userId, conversationId);
+        },
+      );
+    } catch (e) {
+      print("Error connecting to WebSocket: $e");
+      _isConnected = false;
+      _channel = null;
+      _reconnect(userId, conversationId);
     }
   }
 
-  void _onError(error) {
-    print('WebSocket error: $error');
-    _isConnected = false;
-  }
-
-  void _onDone() {
-    print('WebSocket closed');
-    _isConnected = false;
-    Future.delayed(Duration(seconds: 2), () {
-      print('Reconnecting...');
-      connect();
+  void _reconnect(int userId, int conversationId) {
+    Future.delayed(Duration(seconds: 5), () {
+      if (!_isConnected) {
+        print("Attempting to reconnect to $_url...");
+        connect(userId, conversationId);
+      }
     });
   }
 
-  void send(Map<String, dynamic> message) {
-    if (_isConnected && _channel != null) {
-      print('Sending message: ${jsonEncode(message)}');
-      _channel!.sink.add(jsonEncode(message));
-    } else {
-      print('Cannot send message: WebSocket is not connected');
+  void _sendBootupMessage(int userId, int conversationId) {
+    if (!_isConnected || _channel == null) {
+      print("Cannot send bootup message: Not connected");
+      return;
+    }
+
+    try {
+      final bootupMessage = {
+        "type": "bootup",
+        "sender_id": userId,
+        "conversation_id": conversationId,
+      };
+      final jsonMessage = jsonEncode(bootupMessage);
+      _channel!.sink.add(jsonMessage);
+      print("Sent bootup message: $jsonMessage");
+    } catch (e) {
+      print("Error sending bootup message: $e");
+    }
+  }
+
+  void sendMessage(int userId, int conversationId, String content) {
+    if (!_isConnected || _channel == null) {
+      print("Cannot send message: Not connected");
+      return;
+    }
+
+    try {
+      final message = {
+        "type": "message",
+        "sender_id": userId,
+        "conversation_id": conversationId,
+        "content": content,
+        "created_at": DateTime.now().toIso8601String(),
+      };
+      final jsonMessage = jsonEncode(message);
+      _channel!.sink.add(jsonMessage);
+      print("Sent group message: $jsonMessage");
+    } catch (e) {
+      print("Error sending message: $e");
+    }
+  }
+
+  void sendPrivateMessage(
+    int userId,
+    int conversationId,
+    int recipientId,
+    String content,
+  ) {
+    if (!_isConnected || _channel == null) {
+      print("Cannot send private message: Not connected");
+      return;
+    }
+
+    try {
+      final message = {
+        "type": "private",
+        "sender_id": userId,
+        "conversation_id": conversationId,
+        "content": "recipient_id:$recipientId,$content",
+        "created_at": DateTime.now().toIso8601String(),
+      };
+      final jsonMessage = jsonEncode(message);
+      _channel!.sink.add(jsonMessage);
+      print("Sent private message: $jsonMessage");
+    } catch (e) {
+      print("Error sending private message: $e");
     }
   }
 
   void disconnect() {
-    if (_channel != null) {
-      _channel!.sink.close(status.goingAway);
-      _channel = null;
-      _isConnected = false;
+    if (_isConnected && _channel != null) {
+      try {
+        _channel!.sink.close();
+        print("WebSocket connection closed");
+      } catch (e) {
+        print("Error closing WebSocket: $e");
+      } finally {
+        _isConnected = false;
+        _channel = null;
+      }
     }
   }
 }
