@@ -172,6 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return MainLayout(
       currentUserId: userId,
+      currentUserName: widget.user.user!.username,
       selectedIndex: _selectedIndex,
       onItemTapped: _onItemTapped,
       body: Column(

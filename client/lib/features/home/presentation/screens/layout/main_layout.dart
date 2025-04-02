@@ -1,3 +1,4 @@
+import 'package:first_app/features/home/presentation/diary/diary.dart';
 import 'package:first_app/features/home/presentation/friends/friends.dart';
 import 'package:flutter/material.dart';
 
@@ -5,7 +6,8 @@ class MainLayout extends StatelessWidget {
   final Widget body;
   final int selectedIndex;
   final Function(int) onItemTapped;
-  final int currentUserId; // Thêm currentUserId để truyền vào Friends
+  final int currentUserId; 
+  final String currentUserName;
 
   const MainLayout({
     super.key,
@@ -13,6 +15,7 @@ class MainLayout extends StatelessWidget {
     required this.selectedIndex,
     required this.onItemTapped,
     required this.currentUserId,
+    required this.currentUserName,
   });
 
   void _handleNavigation(BuildContext context, int index) {
@@ -23,7 +26,16 @@ class MainLayout extends StatelessWidget {
           builder: (context) => Friends(currentUserId: currentUserId),
         ),
       );
-    } else {
+    } 
+    else if (index == 2) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => Diary(currentUserId: currentUserId, currentUserName: currentUserName),
+      ),
+    );
+  }
+    else {
       // Gọi hàm onItemTapped cho các tab khác
       onItemTapped(index);
     }
@@ -63,6 +75,10 @@ class MainLayout extends StatelessWidget {
           BottomNavigationBarItem(
             icon: Icon(Icons.people),
             label: 'Bạn bè',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.people),
+            label: 'Nhật ký',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.menu),
