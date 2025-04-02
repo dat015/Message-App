@@ -61,12 +61,10 @@ builder.Host.UseSerilog();
 
 // Đăng ký các service
 builder.Services.AddSingleton<IWebSocketFriendSV, WebSocketFriendSV>();
-builder.Services.AddScoped<IUserSV, UserSV>(); // Đăng ký IUserSV (giả định UserSV là implementation)
+builder.Services.AddScoped<IUserSV, UserSV>();
 
-// Đăng ký IMemoryCache (đã được ASP.NET Core cung cấp sẵn)
 builder.Services.AddMemoryCache();
 
-// Đăng ký ILogger (đã được ASP.NET Core cung cấp sẵn, không cần thêm)
 
 var app = builder.Build();
 

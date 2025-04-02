@@ -112,14 +112,14 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
                 ),
-                SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (BuildContext context, int index) {
-                      return PostCard(post: posts[index]); // Giữ nguyên posts tĩnh hoặc tích hợp API sau
-                    },
-                    childCount: posts.length,
-                  ),
-                ),
+                // SliverList(
+                //   delegate: SliverChildBuilderDelegate(
+                //     (BuildContext context, int index) {
+                //       return PostCard(post: posts[index]); // Giữ nguyên posts tĩnh hoặc tích hợp API sau
+                //     },
+                //     childCount: posts.length,
+                //   ),
+                // ),
               ],
             );
           }
@@ -129,24 +129,24 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  final List<Post> posts = [
-    Post(
-      username: 'Nguyễn Văn A',
-      avatarUrl: 'https://randomuser.me/api/portraits/men/1.jpg',
-      imageUrl: 'https://picsum.photos/600/400',
-      caption: 'Chuyến du lịch tuyệt vời!',
-      likes: 128,
-      comments: 24,
-    ),
-    Post(
-      username: 'Nguyễn Văn A',
-      avatarUrl: 'https://randomuser.me/api/portraits/men/1.jpg',
-      imageUrl: 'https://picsum.photos/600/401',
-      caption: 'Khoảnh khắc đáng nhớ',
-      likes: 256,
-      comments: 45,
-    ),
-  ];
+  // final List<Post> posts = [
+  //   Post(
+  //     username: 'Nguyễn Văn A',
+  //     avatarUrl: 'https://randomuser.me/api/portraits/men/1.jpg',
+  //     imageUrl: 'https://picsum.photos/600/400',
+  //     caption: 'Chuyến du lịch tuyệt vời!',
+  //     likes: 128,
+  //     comments: 24,
+  //   ),
+  //   Post(
+  //     username: 'Nguyễn Văn A',
+  //     avatarUrl: 'https://randomuser.me/api/portraits/men/1.jpg',
+  //     imageUrl: 'https://picsum.photos/600/401',
+  //     caption: 'Khoảnh khắc đáng nhớ',
+  //     likes: 256,
+  //     comments: 45,
+  //   ),
+  // ];
 }
 
 class ProfileStatistics extends StatelessWidget {
@@ -266,56 +266,12 @@ class AboutSection extends StatelessWidget {
 }
 
 class PostCard extends StatelessWidget {
-  final Post post;
-
-  const PostCard({Key? key, required this.post}) : super(key: key);
+  const PostCard({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ListTile(
-            leading: CircleAvatar(
-              backgroundImage: NetworkImage(post.avatarUrl),
-            ),
-            title: Text(post.username),
-            subtitle: Text('Hôm nay'),
-            trailing: IconButton(
-              icon: Icon(Icons.more_horiz),
-              onPressed: () {},
-            ),
-          ),
-          // if (post.imageUrl.isNotEmpty)
-          //   CachedNetworkImage(
-          //     imageUrl: post.imageUrl,
-          //     width: double.infinity,
-          //     height: 250,
-          //     fit: BoxFit.cover,
-          //   ),
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Text(
-              post.caption,
-              style: TextStyle(fontSize: 16),
-            ),
-          ),
-          Divider(),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _buildInteractionButton(Icons.thumb_up_alt_outlined, 'Thích', post.likes),
-                _buildInteractionButton(Icons.comment_outlined, 'Bình luận', post.comments),
-                _buildInteractionButton(Icons.share_outlined, 'Chia sẻ', 0),
-              ],
-            ),
-          ),
-        ],
-      ),
+      
     );
   }
 
@@ -331,22 +287,4 @@ class PostCard extends StatelessWidget {
       ],
     );
   }
-}
-
-class Post {
-  final String username;
-  final String avatarUrl;
-  final String imageUrl;
-  final String caption;
-  final int likes;
-  final int comments;
-
-  Post({
-    required this.username,
-    required this.avatarUrl,
-    required this.imageUrl,
-    required this.caption,
-    required this.likes,
-    required this.comments,
-  });
 }
