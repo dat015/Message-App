@@ -1,11 +1,12 @@
 import 'dart:convert';
+import 'package:first_app/data/dto/message_response.dart';
 import 'package:first_app/data/models/messages.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class WebSocketService {
   WebSocketChannel? _channel;
   final String _url;
-  final Function(Message) onMessageReceived;
+  final Function(MessageWithAttachment) onMessageReceived;
   bool _isConnected = false;
 
   WebSocketService({required String url, required this.onMessageReceived})
@@ -28,16 +29,25 @@ class WebSocketService {
       _channel!.stream.listen(
         (data) {
           try {
-            // Kiểm tra nếu message là "ping" thì bỏ qua
             if (data == "ping") {
               print("Received ping message, ignoring...");
               return;
             }
 
-            final decodedMessage = jsonDecode(data) as Map<String, dynamic>;
-            final message = Message.fromJson(decodedMessage);
+            final rawJson = jsonDecode(data) as Map<String, dynamic>;
+
+            // Chuyển đổi key viết hoa sang viết thường để khớp với class
+            final normalizedJson = {
+              'message': rawJson['Message'],
+              'attachment': rawJson['Attachment'],
+            };
+
+            final messageWithAttachment = MessageWithAttachment.fromJson(
+              normalizedJson,
+            );
+
             print("Received message: $data");
-            onMessageReceived(message);
+            onMessageReceived(messageWithAttachment);
           } catch (e) {
             print("Error processing message: $e | Data received: $data");
           }
@@ -94,12 +104,16 @@ class WebSocketService {
     }
   }
 
-  void sendMessage(int userId, int conversationId, String content) {
+  void sendMessage(
+    int userId,
+    int conversationId,
+    String content,
+    int? fileID,
+  ) {
     if (!_isConnected || _channel == null) {
       print("Cannot send message: Not connected");
       return;
     }
-
     try {
       final message = {
         "type": "message",
@@ -107,6 +121,7 @@ class WebSocketService {
         "conversation_id": conversationId,
         "content": content,
         "created_at": DateTime.now().toIso8601String(),
+        "fileID": fileID,
       };
       final jsonMessage = jsonEncode(message);
       _channel!.sink.add(jsonMessage);
@@ -121,12 +136,12 @@ class WebSocketService {
     int conversationId,
     int recipientId,
     String content,
+    int? fileID,
   ) {
     if (!_isConnected || _channel == null) {
       print("Cannot send private message: Not connected");
       return;
     }
-
     try {
       final message = {
         "type": "private",
@@ -134,6 +149,7 @@ class WebSocketService {
         "conversation_id": conversationId,
         "content": "recipient_id:$recipientId,$content",
         "created_at": DateTime.now().toIso8601String(),
+        "fileID": fileID,
       };
       final jsonMessage = jsonEncode(message);
       _channel!.sink.add(jsonMessage);

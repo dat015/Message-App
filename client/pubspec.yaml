@@ -42,10 +42,18 @@ dependencies:
   web_socket_channel: ^2.4.0
   pointycastle: ^3.7.3  # Dùng cho Diffie-Hellman
   encrypt: ^5.0.1       # Dùng cho mã hóa AES
-  provider: ^6.1.2
+  provider: ^6.0.5
   shared_preferences: ^2.2.0
   universal_html: ^2.2.4
   redis: ^3.1.0
+  file_picker: ^10.0.0
+  http: ^1.1.0
+  path: ^1.8.3
+  mime: ^1.0.4
+  image_picker: ^1.1.2
+  cached_network_image: ^3.3.1
+  url_launcher: ^6.3.0
+  emoji_picker_flutter: ^1.6.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

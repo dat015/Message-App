@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using server.Data;
 
@@ -11,9 +12,11 @@ using server.Data;
 namespace Message_app.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250401114052_AddAttachmentsFeture")]
+    partial class AddAttachmentsFeture
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,10 +46,7 @@ namespace Message_app.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<bool>("is_temporary")
-                        .HasColumnType("bit");
-
-                    b.Property<int?>("message_id")
+                    b.Property<int>("message_id")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("uploaded_at")
@@ -465,7 +465,9 @@ namespace Message_app.Migrations
                 {
                     b.HasOne("server.Models.Message", "message")
                         .WithMany("Attachments")
-                        .HasForeignKey("message_id");
+                        .HasForeignKey("message_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("message");
                 });

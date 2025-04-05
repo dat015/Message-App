@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Mvc;
 using server.DTO;
 using server.Models;
 using server.Services.MessageService;
 using server.Services.ParticipantService;
 using server.Services.RedisService;
+using server.Services.UploadService;
 using server.Services.WebSocketService;
 
 namespace server.Controllers
@@ -21,21 +24,56 @@ namespace server.Controllers
         private readonly webSocket _webSocketService;
         private readonly IServiceProvider _serviceProvider;
         private readonly IParticipant _participantSV;
+        private readonly IUploadFileService _uploadFileSV;
 
         public MessageController(
             IMessage messageSV,
             webSocket webSocketService,
             IServiceProvider serviceProvider,
-            IParticipant participantSV
+            IParticipant participantSV,
+            IUploadFileService uploadFileService
             )
         {
             _messageSV = messageSV;
             _webSocketService = webSocketService;
             _serviceProvider = serviceProvider;
             _participantSV = participantSV;
-            
-        }
+            _uploadFileSV = uploadFileService;
 
+        }
+        [HttpPost("uploadFile")]
+        public async Task<IActionResult> UploadFile([FromForm] IFormFile file)
+        {
+            try
+            {
+                if (file == null || file.Length == 0)
+                {
+                    return BadRequest(new { Error = "No file uploaded." });
+                }
+
+                using var stream = file.OpenReadStream();
+                var uploadResult = await _uploadFileSV.UploadFileAsync(stream, file.ContentType);
+
+                // Thêm log để kiểm tra uploadResult
+                Console.WriteLine($"Upload result: ID = {uploadResult.id}, URL = {uploadResult.file_url}");
+
+                if (uploadResult == null || string.IsNullOrEmpty(uploadResult.file_url))
+                {
+                    return BadRequest(new { Error = "Failed to upload file to Cloudinary." });
+                }
+
+                return Ok(new
+                {
+                    fileID = uploadResult.id,
+                    fileUrl = uploadResult.file_url,
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in UploadFile: {ex.Message}");
+                return BadRequest(new { Error = ex.Message });
+            }
+        }
         [HttpGet("getMessages/{conversation_id}")]
         public async Task<IActionResult> GetMessages(int conversation_id)
         {

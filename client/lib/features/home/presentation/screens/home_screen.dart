@@ -1,6 +1,7 @@
 import 'package:first_app/data/api/api_client.dart';
 import 'package:first_app/data/dto/login_response.dart';
 import 'package:first_app/data/models/conversation.dart';
+import 'package:first_app/data/repositories/Conversations_repo/conversations_repository.dart';
 import 'package:flutter/material.dart';
 import '../../../routes/routes.dart';
 import 'layout/main_layout.dart';
@@ -17,6 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final ApiClient _apiService = ApiClient();
   late Future<List<Conversation>> _conversationsFuture;
   late int userId;
+  ConversationRepo conversationRepo = ConversationRepo();
 
   @override
   void initState() {
@@ -27,16 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<List<Conversation>> _fetchConversations() async {
-    try {
-      final response = await _apiService.get(
-        'api/Conversation/get_conversations/$userId',
-      );
-      print(response.toString());
-      return (response as List).map((e) => Conversation.fromJson(e)).toList();
-    } catch (e) {
-      print('Lỗi khi tải cuộc trò chuyện: $e');
-      return [];
-    }
+    return await conversationRepo.getConversations(userId);
   }
 
   void _onItemTapped(int index) {

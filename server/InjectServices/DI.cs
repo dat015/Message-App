@@ -13,6 +13,9 @@ using server.Services.OTPsService;
 using server.Services.UserService;
 using server.Services.WebSocketService;
 using StackExchange.Redis;
+using CloudinaryDotNet;
+using server.Services.UploadService;
+using System.Text.Json.Serialization;
 
 namespace server.InjectService
 {
@@ -29,7 +32,10 @@ namespace server.InjectService
                         .AllowAnyHeader(); // Cho phép tất cả header
                 });
             });
-            services.AddControllers();
+            services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+            }); // Thêm JsonOptions để xử lý vòng lặp tham chiếu
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
             //config sqlserver
@@ -51,11 +57,22 @@ namespace server.InjectService
                 options.MaxBufferSize = 8192; // 8KB
                 options.HeartbeatInterval = 15; // 15 giây
             });
+
+            var cloudinaryConfig = configuration.GetSection("Cloudinary");
+            var account = new Account(
+                            cloudinaryConfig["CloudName"],
+                            cloudinaryConfig["ApiKey"],
+                            cloudinaryConfig["ApiSecret"]
+                        );
+            var cloudinary = new Cloudinary(account);
+
+            services.AddSingleton(cloudinary);
             services.AddHttpContextAccessor();
             services.AddSingleton<IRedisService, RedisService>();
             services.AddSingleton<DiffieHellman>();
             services.AddSignalR();
             //scoped: tạo ra 1 instance cho mỗi request
+            services.AddScoped<IUploadFileService, UploadFileService>();
             services.AddScoped<IAuthSV, AuthSV>();
             services.AddScoped<IUserSV, UserSV>();
             services.AddScoped<IConversation, ConversationSV>();

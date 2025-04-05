@@ -1,6 +1,8 @@
 import 'package:first_app/data/providers.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 
 class MessageInput extends StatefulWidget {
   const MessageInput({super.key});
@@ -12,6 +14,11 @@ class MessageInput extends StatefulWidget {
 class _MessageInputState extends State<MessageInput> {
   final TextEditingController _controller = TextEditingController();
   bool _isTextFieldFocused = false;
+  bool _isComposing = false;
+  bool _showEmojiPicker = false; // Thêm biến để điều khiển hiển thị emoji picker
+  XFile? _selectedFile;
+
+  final ImagePicker _picker = ImagePicker();
 
   @override
   void dispose() {
@@ -19,78 +26,324 @@ class _MessageInputState extends State<MessageInput> {
     super.dispose();
   }
 
+  Future<void> _pickFile() async {
+    try {
+      final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+      if (pickedFile != null) {
+        setState(() {
+          _selectedFile = pickedFile;
+          _isComposing = true;
+        });
+        _handleSubmitted("FILE");
+      }
+    } catch (e) {
+      print("Error picking file: $e");
+    }
+  }
+
+  void _handleSubmitted(String text) {
+    if (text.trim().isEmpty && _selectedFile == null) return;
+    final provider = Provider.of<ChatProvider>(context, listen: false);
+    provider.sendGroupMessage(text.trim(), _selectedFile);
+    _controller.clear();
+    setState(() {
+      _isComposing = false;
+      _selectedFile = null;
+    });
+  }
+
+  void _handleTextChange(String text) {
+    setState(() {
+      _isComposing = text.trim().isNotEmpty || _selectedFile != null;
+    });
+  }
+
+  void _toggleEmojiPicker() {
+    setState(() {
+      _showEmojiPicker = !_showEmojiPicker;
+      _isTextFieldFocused = false; // Ẩn bàn phím khi mở emoji picker
+      FocusScope.of(context).unfocus(); // Ẩn bàn phím
+    });
+  }
+
+  void _onEmojiSelected(Emoji emoji) {
+    _controller.text += emoji.emoji;
+    _handleTextChange(_controller.text); // Cập nhật trạng thái khi thêm emoji
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<ChatProvider>(context);
 
-    return Container(
-      padding: const EdgeInsets.all(8.0),
-      color: Colors.grey[200],
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _controller,
-                  decoration: InputDecoration(
-                    hintText: 'Nhập tin nhắn...',
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
-                  ),
-                  onTap: () => setState(() => _isTextFieldFocused = true),
-                  onEditingComplete: () => setState(() => _isTextFieldFocused = false),
-                ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.send),
-                onPressed: () {
-                  if (_controller.text.trim().isNotEmpty) {
-                    provider.sendGroupMessage(_controller.text.trim());
-                    _controller.clear();
-                  }
-                },
-              ),
-              PopupMenuButton<int>(
-                icon: const Icon(Icons.person),
-                onSelected: (recipientId) {
-                  if (_controller.text.trim().isNotEmpty) {
-                    provider.sendPrivateMessage(_controller.text.trim(), recipientId);
-                    _controller.clear();
-                  }
-                },
-                itemBuilder: (context) => provider.participants
-                    .where((p) => p.userId != provider.userId)
-                    .map((p) => PopupMenuItem<int>(
-                          value: p.userId,
-                          child: Text('User ${p.userId}'),
-                        ))
-                    .toList(),
-                tooltip: 'Send private message',
+    return Column(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 5,
+                offset: const Offset(0, -2),
               ),
             ],
           ),
-          if (!_isTextFieldFocused)
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.image, color: Colors.blue),
-                    onPressed: () => print('Nút gửi ảnh được nhấn'),
-                    tooltip: 'Gửi Ảnh',
+          child: SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (_isTextFieldFocused)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 8.0,
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.person, color: Colors.grey[600]),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Gửi tin nhắn riêng',
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.attach_file, color: Colors.blue),
-                    onPressed: () => print('Nút gửi file được nhấn'),
-                    tooltip: 'Gửi File',
+                if (_selectedFile != null)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 8.0,
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.attach_file, color: Colors.blue),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            _selectedFile!.name,
+                            style: TextStyle(color: Colors.blue),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.close, color: Colors.grey[600]),
+                          onPressed: () {
+                            setState(() {
+                              _selectedFile = null;
+                              _isComposing = false;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
                   ),
-                ],
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                    vertical: 8.0,
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.grey[100],
+                            borderRadius: BorderRadius.circular(24),
+                            border: Border.all(
+                              color:
+                                  _isTextFieldFocused
+                                      ? Colors.blue
+                                      : Colors.transparent,
+                              width: 1,
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: TextField(
+                                  controller: _controller,
+                                  decoration: const InputDecoration(
+                                    hintText: 'Nhập tin nhắn...',
+                                    border: InputBorder.none,
+                                    contentPadding: EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 12,
+                                    ),
+                                  ),
+                                  onChanged: _handleTextChange,
+                                  onTap:
+                                      () => setState(() {
+                                        _isTextFieldFocused = true;
+                                        _showEmojiPicker =
+                                            false; // Ẩn emoji picker khi nhập
+                                      }),
+                                  onEditingComplete:
+                                      () => setState(() {
+                                        _isTextFieldFocused = false;
+                                      }),
+                                ),
+                              ),
+                              if (_isComposing)
+                                IconButton(
+                                  icon: const Icon(
+                                    Icons.send,
+                                    color: Colors.blue,
+                                  ),
+                                  onPressed:
+                                      () => _handleSubmitted(_controller.text),
+                                )
+                              else
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    IconButton(
+                                      icon: Icon(
+                                        Icons.emoji_emotions_outlined,
+                                        color: Colors.grey[600],
+                                      ),
+                                      onPressed:
+                                          _toggleEmojiPicker, // Hiển thị emoji picker
+                                    ),
+                                    IconButton(
+                                      icon: Icon(
+                                        Icons.image,
+                                        color: Colors.grey[600],
+                                      ),
+                                      onPressed: _pickFile,
+                                    ),
+                                    // IconButton(
+                                    //   icon: Icon(
+                                    //     Icons.person,
+                                    //     color: Colors.grey[600],
+                                    //   ),
+                                    //   onPressed: () {
+                                    //     showModalBottomSheet(
+                                    //       context: context,
+                                    //       builder:
+                                    //           (context) => Container(
+                                    //             padding: const EdgeInsets.all(
+                                    //               16,
+                                    //             ),
+                                    //             child: Column(
+                                    //               mainAxisSize:
+                                    //                   MainAxisSize.min,
+                                    //               crossAxisAlignment:
+                                    //                   CrossAxisAlignment.start,
+                                    //               children: [
+                                    //                 Text(
+                                    //                   'Gửi tin nhắn riêng',
+                                    //                   style: TextStyle(
+                                    //                     fontSize: 18,
+                                    //                     fontWeight:
+                                    //                         FontWeight.bold,
+                                    //                     color: Colors.grey[800],
+                                    //                   ),
+                                    //                 ),
+                                    //                 const SizedBox(height: 16),
+                                    //                 ...provider.participants
+                                    //                     .where(
+                                    //                       (p) =>
+                                    //                           p.userId !=
+                                    //                           provider.userId,
+                                    //                     )
+                                    //                     .map(
+                                    //                       (p) => ListTile(
+                                    //                         leading: CircleAvatar(
+                                    //                           backgroundImage:
+                                    //                               NetworkImage(
+                                    //                                 'https://ui-avatars.com/api/?name=User+${p.userId}&background=random',
+                                    //                               ),
+                                    //                         ),
+                                    //                         title: Text(
+                                    //                           'User ${p.userId}',
+                                    //                         ),
+                                    //                         onTap: () {
+                                    //                           Navigator.pop(
+                                    //                             context,
+                                    //                           );
+                                    //                           if (_controller
+                                    //                                   .text
+                                    //                                   .trim()
+                                    //                                   .isNotEmpty ||
+                                    //                               _selectedFile !=
+                                    //                                   null) {
+                                    //                             provider.sendPrivateMessage(
+                                    //                               _controller
+                                    //                                   .text
+                                    //                                   .trim(),
+                                    //                               p.userId,
+                                    //                               _selectedFile,
+                                    //                             );
+                                    //                             _controller
+                                    //                                 .clear();
+                                    //                             setState(() {
+                                    //                               _selectedFile =
+                                    //                                   null;
+                                    //                               _isComposing =
+                                    //                                   false;
+                                    //                             });
+                                    //                           }
+                                    //                         },
+                                    //                       ),
+                                    //                     )
+                                    //                     .toList(),
+                                    //               ],
+                                    //             ),
+                                    //           ),
+                                    //     );
+                                    //   },
+                                    // ),
+                                  ],
+                                ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        // Hiển thị Emoji Picker khi _showEmojiPicker = true
+        if (_showEmojiPicker)
+          SizedBox(
+            height: 250,
+            child: EmojiPicker(
+              onEmojiSelected: (category, emoji) => _onEmojiSelected(emoji),
+              config: const Config(
+                columns: 7,
+                emojiSizeMax: 28,
+                verticalSpacing: 0,
+                horizontalSpacing: 0,
+                gridPadding: EdgeInsets.zero,
+                initCategory: Category.RECENT,
+                bgColor: Color(0xFFF2F2F2),
+                indicatorColor: Colors.blue,
+                iconColorSelected: Colors.blue,
+                iconColor: Colors.grey,
+                backspaceColor: Colors.blue,
+                skinToneDialogBgColor: Colors.white,
+                skinToneIndicatorColor: Colors.grey,
+                enableSkinTones: true,
+                recentsLimit: 28,
+                noRecents: Text(
+                  'No Recents',
+                  style: TextStyle(fontSize: 20, color: Colors.black26),
+                  textAlign: TextAlign.center,
+                ),
+                tabIndicatorAnimDuration: kTabScrollDuration,
+                categoryIcons: CategoryIcons(),
+                buttonMode: ButtonMode.MATERIAL,
               ),
             ),
-        ],
-      ),
+          ),
+      ],
     );
   }
 }

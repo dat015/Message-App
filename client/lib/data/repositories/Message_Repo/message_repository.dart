@@ -1,50 +1,90 @@
+import 'package:dio/dio.dart';
 import 'package:first_app/data/api/api_client.dart';
+import 'package:first_app/data/dto/AttachmentDTO.dart';
+import 'package:first_app/data/dto/message_response.dart';
 import 'package:first_app/data/models/messages.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../Chat/websocket_service.dart';
 
 class MessageRepo {
   var api_client = ApiClient();
-  Future<List<Message>> getMessages(int conversationId) async {
+  Future<List<MessageWithAttachment>> getMessages(int conversationId) async {
     try {
-      var response = await api_client.get(
+      final response = await api_client.get(
         '/api/Message/getMessages/$conversationId',
       );
+      print("Response: $response"); // Debug
 
-      // Debug response
-      print("Response: $response"); // Kiểm tra nội dung của response
+      List<MessageWithAttachment> messagesWithAttachments = [];
 
-      List<Message> messages = [];
+      // ✅ Sửa chỗ này: lấy response['\$values'] để parse
+      if (response != null &&
+          response is Map<String, dynamic> &&
+          response[r'$values'] is List) {
+        final values = response[r'$values'] as List;
 
-      if (response is List) {
-        messages = response.map((json) => Message.fromJson(json)).toList();
-      } else if (response is Map<String, dynamic> &&
-          response.containsKey("data")) {
-        // Nếu API trả về dạng {"data": [...]}, lấy danh sách từ key "data"
-        var data = response["data"];
-        if (data is List) {
-          messages = data.map((json) => Message.fromJson(json)).toList();
-        }
+        messagesWithAttachments =
+            values
+                .where((json) => json != null)
+                .map(
+                  (json) => MessageWithAttachment.fromJson(
+                    json as Map<String, dynamic>,
+                  ),
+                )
+                .toList();
+      } else {
+        print("Unexpected response format: $response");
       }
 
-      // Sắp xếp tin nhắn theo thời gian (theo trường created_at)
-      messages.sort((a, b) => a.createdAt.compareTo(b.createdAt));
+      // Sắp xếp theo thời gian tạo
+      messagesWithAttachments.sort(
+        (a, b) => a.message.createdAt.compareTo(b.message.createdAt),
+      );
 
-      return messages;
-    } catch (e) {
-      print("Error fetching messages: $e"); // In lỗi chi tiết
-      throw Exception('Failed to fetch messages');
+      return messagesWithAttachments;
+    } catch (e, stacktrace) {
+      print("Error fetching messages: $e");
+      print("Stacktrace: $stacktrace");
+      throw Exception('Failed to fetch messages: $e');
     }
   }
 
-  Future<void> sendMessage(Message message) async {
+  Future<Map<String, dynamic>> uploadFile(XFile? file) async {
+    if (file == null) {
+      return {'fileId': 0, 'fileUrl': ''};
+    }
+
     try {
-      final response = await api_client.post(
-        '/api/Message/sendMessage',
-        data: message.toJson(),
+      String fileName = file.path.split('/').last;
+
+      // Tạo FormData để gửi file
+      FormData formData = FormData.fromMap({
+        "file": await MultipartFile.fromFile(file.path, filename: fileName),
+      });
+
+      // Gửi request lên API
+      var response = await api_client.post(
+        '/api/Message/uploadFile', // Endpoint API
+        data: formData,
+        options: Options(headers: {'Content-Type': 'multipart/form-data'}),
       );
+
+      // Kiểm tra response và lấy fileId, fileUrl
+      if (response != null &&
+          response['fileID'] != null &&
+          response['fileUrl'] != null) {
+        int fileId = response['fileID']; // Lấy ID của file từ API
+        String fileUrl = response['fileUrl']; // Lấy URL của file từ API
+        print("Upload success: File ID = $fileId, File URL = $fileUrl");
+        return {'fileId': fileId, 'fileUrl': fileUrl};
+      } else {
+        print("Upload failed: $response");
+        return {'fileId': 0, 'fileUrl': ''};
+      }
     } catch (e) {
-      throw Exception('Failed to send message');
+      print("Error uploading file: $e");
+      return {'fileId': 0, 'fileUrl': ''};
     }
   }
 }
