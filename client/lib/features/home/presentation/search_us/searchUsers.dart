@@ -1,3 +1,4 @@
+import 'package:first_app/PlatformClient/config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:first_app/data/api/api_client.dart';
@@ -22,10 +23,10 @@ class SearchUsersScreen extends StatelessWidget {
       create: (context) => SearchUsersBloc(
         apiClient: ApiClient(),
         webSocketService: WebSocketService(
-          userId: currentUserId,
-          url: 'ws://localhost:5053/ws',
+          // userId: currentUserId,
+          url: Config.baseUrlWSFriend,
           onMessageReceived: (message) {},
-          onConnectionStateChanged: (isConnected) {},
+          // onConnectionStateChanged: (isConnected) {},
         ),
         currentUserId: currentUserId,
         initialSearchResults: searchResults,

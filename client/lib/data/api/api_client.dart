@@ -3,27 +3,33 @@ import '../../PlatformClient/config.dart';
 
 class ApiClient {
   late Dio _dio;
-
   ApiClient({
+    String? baseUrl,
     Duration connectTimeout = const Duration(seconds: 30),
     Duration receiveTimeout = const Duration(seconds: 30),
     Map<String, String>? headers,
   }) {
     _dio = Dio(
       BaseOptions(
-        baseUrl: Config.baseUrl, // Sử dụng Config.baseUrl
-        connectTimeout: connectTimeout,
+        baseUrl: Config.baseUrl,
         receiveTimeout: receiveTimeout,
-        headers:
-            headers ??
-            {'Content-Type': 'application/json', 'Accept': 'application/json'},
       ),
     );
 
+    // Thêm interceptor để xử lý CORS
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) {
+          // Thêm headers CORS vào mỗi request
+          options.headers['Access-Control-Allow-Origin'] = '*';
+          options.headers['Access-Control-Allow-Methods'] =
+              'GET, POST, PUT, DELETE, OPTIONS';
+          options.headers['Access-Control-Allow-Headers'] =
+              'Origin, Content-Type, Accept, Authorization';
+          options.headers['Access-Control-Allow-Credentials'] = 'true';
+
           print('Request: ${options.method} ${options.uri}');
+          print('Request headers: ${options.headers}');
           print('Request data: ${options.data}');
           return handler.next(options);
         },

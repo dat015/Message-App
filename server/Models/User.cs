@@ -36,16 +36,16 @@ namespace server.Models
         public bool gender {get; set;}
 
         [StringLength(500, ErrorMessage = "Interests cannot exceed 500 characters.")]
-        public string interests { get; set; }
+        public string? interests { get; set; }
 
         [StringLength(100, ErrorMessage = "Location cannot exceed 100 characters.")]
-        public string location { get; set; } 
+        public string? location { get; set; } 
 
         [StringLength(500, ErrorMessage = "Bio cannot exceed 500 characters.")]
-        public string bio { get; set; } 
+        public string? bio { get; set; } 
         
         [NotMapped]
-        public int MutualFriendsCount { get; set; }
+        public int? MutualFriendsCount { get; set; }
 
         public ICollection<Story>? stories { get; set; }
         public ICollection<StoryReaction>? storyReactions { get; set; }

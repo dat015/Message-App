@@ -1,344 +1,58 @@
-import 'dart:convert';
-import 'package:first_app/data/dto/message_dto.dart';
-import 'package:first_app/data/models/conversation.dart';
-import 'package:first_app/data/models/messages.dart';
 import 'package:first_app/data/models/participants.dart';
-import 'package:first_app/data/repositories/Message_Repo/message_repository.dart';
-import 'package:first_app/data/repositories/Conversations_repo/conversations_repository.dart';
-import 'package:first_app/data/repositories/Participants_Repo/participants_repo.dart';
+import 'package:first_app/data/providers.dart';
+import 'package:first_app/features/home/presentation/widgets/message_input.dart';
+import 'package:first_app/features/home/presentation/widgets/message_list.dart'
+    show MessageList;
 import 'package:flutter/material.dart';
-import '../../../../data/repositories/Chat/websocket_service.dart';
-import '../../../../data/repositories/User_Repo/user_repo.dart';
+import 'package:provider/provider.dart';
 
-class ChatScreen extends StatefulWidget {
+class ChatScreen extends StatelessWidget {
   final int conversationId;
-  final int user_id;
+  final int userId;
 
   const ChatScreen({
     super.key,
     required this.conversationId,
-    required this.user_id,
+    required this.userId,
   });
 
   @override
-  _ChatScreenState createState() => _ChatScreenState();
-}
-
-class _ChatScreenState extends State<ChatScreen> {
-  final MessageRepo messageRepo = MessageRepo();
-  final ConversationRepo conversationRepo = ConversationRepo();
-  final ParticipantsRepo participantsRepo = ParticipantsRepo();
-  final UserRepo userRepo = UserRepo();
-  late WebSocketService _webSocketService;
-
-  List<Message> messages = [];
-  Conversation? conversation;
-  List<Participants> participants = [];
-  bool isTextFieldFocused = false;
-  final TextEditingController _messageController = TextEditingController();
-  final ScrollController _scrollController = ScrollController();
-  late int currentUserId;
-
-  @override
-  void initState() {
-    currentUserId = widget.user_id;
-    super.initState();
-    _loadData();
-    _webSocketService = WebSocketService(
-      url: 'ws://localhost:5053/ws',
-      onMessageReceived: _onMessageReceived,
-      userId: currentUserId,
-      onConnectionStateChanged: (isConnected) {
-    setState(() {
-      // Cập nhật trạng thái kết nối nếu cần
-      print('WebSocket connection state changed: $isConnected');
-    });
-    },
-    );
-    _webSocketService.connect();
-  }
-
-  Future<void> _loadData() async {
-    try {
-      final fetchedMessages = await messageRepo.getMessages(widget.conversationId).catchError((e) {
-        print('Failed to fetch messages: $e');
-        return <Message>[];
-      });
-      final fetchedConversation = await conversationRepo.getConversation(widget.conversationId).catchError((e) {
-        print('Failed to fetch conversation: $e');
-        return null;
-      });
-      final fetchedParticipants = await participantsRepo.getParticipants(widget.conversationId).catchError((e) {
-        print('Failed to fetch participants: $e');
-        return <Participants>[];
-      });
-
-      setState(() {
-        messages = fetchedMessages ?? [];
-        conversation = fetchedConversation;
-        participants = fetchedParticipants ?? [];
-        WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
-      });
-    } catch (e) {
-      print('Error loading data: $e');
-      setState(() {
-        messages = [];
-        conversation = null;
-        participants = [];
-      });
-    }
-  }
-
-  void _onMessageReceived(Map<String, dynamic> message) {
-  print('Received message: $message');
-  try {
-    if (message['sender_id'] == null || message['message'] == null || message['conversation_id'] == null) {
-      print('Invalid message format: Missing required fields');
-      return;
-    }
-
-    final receivedConversationId = int.parse(message['conversation_id'].toString());
-    if (receivedConversationId != widget.conversationId) {
-      print('Received message for a different conversation: $receivedConversationId');
-      return;
-    }
-
-    final newMessage = Message(
-      id: 0,
-      senderId: int.parse(message['sender_id'].toString()),
-      content: message['message'].toString(),
-      createdAt: message['created_at'] != null
-          ? DateTime.parse(message['created_at'].toString())
-          : DateTime.now(),
-      conversationId: receivedConversationId,
-      isRead: false,
-    );
-
-    setState(() {
-      messages.add(newMessage);
-      _scrollToBottom();
-    });
-  } catch (e) {
-    print('Error parsing message: $e');
-  }
-}
-
-  void _sendMessage() {
-    final text = _messageController.text;
-    if (text.isNotEmpty && _webSocketService.isConnected) {
-      _webSocketService.send({
-        'session_id': _webSocketService.sessionId,
-        'message': text,
-        'sender_id': currentUserId.toString(),
-        'conversation_id': widget.conversationId.toString(),
-      });
-      _messageController.clear();
-    } else {
-      print('Cannot send message: WebSocket is not fully connected');
-    }
-  }
-
-  void _scrollToBottom() {
-    if (_scrollController.hasClients) {
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
-    }
-  }
-
-  String getChatTitle() {
-    if (conversation == null) return 'Loading...';
-    if (conversation!.isGroup) {
-      return conversation!.name ?? 'Group Chat';
-    } else {
-      if (participants.isEmpty) return 'Chat';
-      final otherParticipant = participants.firstWhere(
-        (p) => p.userId != currentUserId,
-        orElse: () => Participants(
-          id: 0,
-          conversationId: widget.conversationId,
-          userId: 0,
-          joinedAt: DateTime.now(),
-          isDeleted: false,
-        ),
-      );
-      return 'User ${otherParticipant.userId}';
-    }
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    _webSocketService.disconnect();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          getChatTitle(),
-          style: const TextStyle(color: Colors.white),
-        ),
-        backgroundColor: Colors.blue,
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: messages.isEmpty
-                ? const Center(child: Text('No messages yet'))
-                : ListView.builder(
-                    controller: _scrollController,
-                    padding: const EdgeInsets.all(16.0),
-                    itemCount: messages.length,
-                    itemBuilder: (context, index) {
-                      return ChatBubble(
-                        message: messages[index],
-                        currentUserId: currentUserId,
-                        participants: participants,
-                      );
-                    },
-                  ),
-          ),
-          Container(
-            padding: const EdgeInsets.all(8.0),
-            color: Colors.grey[200],
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: _messageController,
-                        decoration: InputDecoration(
-                          hintText: 'Nhập tin nhắn...',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                        ),
-                        onTap: () {
-                          setState(() {
-                            isTextFieldFocused = true;
-                          });
-                        },
-                        onEditingComplete: () {
-                          setState(() {
-                            isTextFieldFocused = false;
-                          });
-                        },
+    return ChangeNotifierProvider(
+      create:
+          (_) => ChatProvider(userId: userId, conversationId: conversationId),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Consumer<ChatProvider>(
+            builder: (context, provider, child) {
+              final conversation = provider.conversation;
+              if (conversation == null) return const Text('Loading...');
+              if (conversation.isGroup) {
+                return Text(conversation.name ?? 'Group Chat');
+              } else {
+                final participants = provider.participants;
+                if (participants.isEmpty) return const Text('Chat');
+                final other = participants.firstWhere(
+                  (p) => p.userId != userId,
+                  orElse:
+                      () => Participants(
+                        id: 0,
+                        conversationId: conversationId,
+                        userId: 0,
+                        joinedAt: DateTime.now(),
+                        isDeleted: false,
                       ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.send),
-                      onPressed: _sendMessage,
-                    ),
-                  ],
-                ),
-                if (!isTextFieldFocused)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.image, color: Colors.blue),
-                          onPressed: () {
-                            print('Nút gửi ảnh được nhấn');
-                          },
-                          tooltip: 'Gửi Ảnh',
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.attach_file, color: Colors.blue),
-                          onPressed: () {
-                            print('Nút gửi file được nhấn');
-                          },
-                          tooltip: 'Gửi File',
-                        ),
-                      ],
-                    ),
-                  ),
-              ],
-            ),
+                );
+                return Text('User ${other.userId}');
+              }
+            },
           ),
-        ],
-      ),
-    );
-  }
-}
-
-class ChatBubble extends StatelessWidget {
-  final Message message;
-  final int currentUserId;
-  final List<Participants> participants;
-
-  const ChatBubble({
-    super.key,
-    required this.message,
-    required this.currentUserId,
-    required this.participants,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final bool isSentByMe = message.senderId == currentUserId;
-    print('Message Sender ID: ${message.senderId}, Current User ID: $currentUserId, isSentByMe: $isSentByMe');
-
-    final sender = participants.firstWhere(
-      (p) => p.userId == message.senderId,
-      orElse: () => Participants(
-        id: 0,
-        conversationId: message.conversationId,
-        userId: message.senderId,
-        joinedAt: DateTime.now(),
-        isDeleted: false,
-      ),
-    );
-
-    return Row(
-      mainAxisAlignment: isSentByMe ? MainAxisAlignment.start : MainAxisAlignment.end,
-      children: [
-        if (isSentByMe) // Current user's avatar on the left
-          CircleAvatar(
-            backgroundImage: NetworkImage('https://example.com/avatar_$currentUserId.png'),
-            radius: 15,
-          ),
-        const SizedBox(width: 8.0),
-        Flexible(
-          child: Container(
-            padding: const EdgeInsets.all(12.0),
-            margin: const EdgeInsets.symmetric(vertical: 4.0),
-            decoration: BoxDecoration(
-              color: isSentByMe ? Colors.blue[200] : Colors.grey[300],
-              borderRadius: BorderRadius.circular(12.0),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  message.content,
-                  style: TextStyle(
-                    color: isSentByMe ? Colors.black : Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 4.0),
-                Text(
-                  message.createdAt.toString().substring(11, 16),
-                  style: TextStyle(fontSize: 10.0, color: Colors.grey[600]),
-                ),
-              ],
-            ),
-          ),
+          backgroundColor: Colors.blue,
         ),
-        if (!isSentByMe) // Other user's avatar on the right
-          CircleAvatar(
-            backgroundImage: NetworkImage('https://example.com/avatar_${sender.userId}.png'),
-            radius: 15,
-          ),
-      ],
+        body: Column(
+          children: [Expanded(child: MessageList()), MessageInput()],
+        ),
+      ),
     );
   }
 }

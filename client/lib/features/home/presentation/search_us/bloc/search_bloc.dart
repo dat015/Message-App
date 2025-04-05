@@ -26,17 +26,17 @@ class SearchUsersBloc extends Bloc<SearchUsersEvent, SearchUsersState> {
   }
 
   void _setupWebSocketListeners() {
-    if (!webSocketService.isConnected) {
-      webSocketService.connect();
-    }
+    // if (!webSocketService.isConnected) {
+    //   webSocketService.connect(currentUserId, 0);
+    // }
 
-    _messageSubscription = webSocketService.onMessage.listen((message) {
-      add(UpdateWebSocketMessageEvent(message));
-    });
+    // _messageSubscription = webSocketService.onMessage.listen((message) {
+    //   add(UpdateWebSocketMessageEvent(message));
+    // });
 
-    _connectionSubscription = webSocketService.onConnectionState.listen((isConnected) {
-      add(UpdateConnectionStateEvent(isConnected));
-    });
+    // _connectionSubscription = webSocketService.onConnectionState.listen((isConnected) {
+    //   add(UpdateConnectionStateEvent(isConnected));
+    // });
   }
 
   Future<void> _onSendFriendRequest(SendFriendRequestEvent event, Emitter<SearchUsersState> emit) async {

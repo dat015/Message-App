@@ -23,8 +23,9 @@ namespace server.Models
         public string file_type { get; set; }
         [Required]
         public DateTime uploaded_at { get; set; } = DateTime.Now;
-        public int message_id {get; set;}
+        public bool is_temporary {get; set;} = true;
+        public int? message_id {get; set;}
         [ForeignKey("message_id")]
-        public Message message {get; set;}
+        public Message? message {get; set;}
     }
 }

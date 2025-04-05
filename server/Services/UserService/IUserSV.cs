@@ -22,6 +22,7 @@ namespace server.Services.UserService
         Task<OTPs> GetLatestOTPByUserIdAsync(int userId);
         Task UpdateOTPAsync(OTPs otp);
         Task UpdatePassword(string email, string password);
+        Task<User> ExistUser(int id);
         Task<int> GetMutualFriendsCountAsync(int userId, int currentUserId);
         Task<string> GetRelationshipStatusAsync(int userId, int currentUserId);
     }

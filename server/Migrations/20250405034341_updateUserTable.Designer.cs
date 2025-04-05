@@ -12,15 +12,15 @@ using server.Data;
 namespace Message_app.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250323070502_AddUserProfileFields")]
-    partial class AddUserProfileFields
+    [Migration("20250405034341_updateUserTable")]
+    partial class updateUserTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.2")
+                .HasAnnotation("ProductVersion", "8.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -46,7 +46,10 @@ namespace Message_app.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<int>("message_id")
+                    b.Property<bool>("is_temporary")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("message_id")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("uploaded_at")
@@ -209,11 +212,17 @@ namespace Message_app.Migrations
                     b.Property<DateTime>("created_at")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("isFile")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("is_read")
                         .HasColumnType("bit");
 
                     b.Property<int>("sender_id")
                         .HasColumnType("int");
+
+                    b.Property<string>("type")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("id");
 
@@ -489,7 +498,6 @@ namespace Message_app.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("bio")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
@@ -507,12 +515,10 @@ namespace Message_app.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("interests")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("location")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
@@ -537,10 +543,8 @@ namespace Message_app.Migrations
             modelBuilder.Entity("server.Models.Attachment", b =>
                 {
                     b.HasOne("server.Models.Message", "message")
-                        .WithMany()
-                        .HasForeignKey("message_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("Attachments")
+                        .HasForeignKey("message_id");
 
                     b.Navigation("message");
                 });
@@ -653,7 +657,7 @@ namespace Message_app.Migrations
             modelBuilder.Entity("server.Models.Participants", b =>
                 {
                     b.HasOne("server.Models.Conversation", "conversation")
-                        .WithMany()
+                        .WithMany("Participants")
                         .HasForeignKey("conversation_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -742,6 +746,13 @@ namespace Message_app.Migrations
                     b.Navigation("GroupSettings");
 
                     b.Navigation("Messages");
+
+                    b.Navigation("Participants");
+                });
+
+            modelBuilder.Entity("server.Models.Message", b =>
+                {
+                    b.Navigation("Attachments");
                 });
 
             modelBuilder.Entity("server.Models.Role", b =>

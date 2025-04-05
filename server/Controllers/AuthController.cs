@@ -37,7 +37,7 @@ namespace Message_app.Controllers
             return Ok(user);
         }
 
-        [HttpPut("login")]
+        [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO model)
         {
             if (model == null)

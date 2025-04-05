@@ -12,15 +12,15 @@ using server.Data;
 namespace Message_app.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250316134208_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250405033430_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.2")
+                .HasAnnotation("ProductVersion", "8.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -46,7 +46,10 @@ namespace Message_app.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<int>("message_id")
+                    b.Property<bool>("is_temporary")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("message_id")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("uploaded_at")
@@ -81,6 +84,70 @@ namespace Message_app.Migrations
                     b.HasKey("id");
 
                     b.ToTable("Conversations");
+                });
+
+            modelBuilder.Entity("server.Models.Friend", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId1")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId2")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId2");
+
+                    b.HasIndex("UserId1", "UserId2")
+                        .IsUnique();
+
+                    b.ToTable("Friends", t =>
+                        {
+                            t.HasCheckConstraint("CK_Friends_User1User2", "[UserId1] != [UserId2]");
+                        });
+                });
+
+            modelBuilder.Entity("server.Models.FriendRequest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ReceiverId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SenderId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReceiverId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("FriendRequests", t =>
+                        {
+                            t.HasCheckConstraint("CK_FriendRequest_SenderReceiver", "[SenderId] != [ReceiverId]");
+                        });
                 });
 
             modelBuilder.Entity("server.Models.GroupSettings", b =>
@@ -145,11 +212,17 @@ namespace Message_app.Migrations
                     b.Property<DateTime>("created_at")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("isFile")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("is_read")
                         .HasColumnType("bit");
 
                     b.Property<int>("sender_id")
                         .HasColumnType("int");
+
+                    b.Property<string>("type")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("id");
 
@@ -424,6 +497,11 @@ namespace Message_app.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("bio")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
                     b.Property<DateOnly>("birthday")
                         .HasColumnType("date");
 
@@ -436,6 +514,16 @@ namespace Message_app.Migrations
 
                     b.Property<bool>("gender")
                         .HasColumnType("bit");
+
+                    b.Property<string>("interests")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("location")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("password")
                         .IsRequired()
@@ -458,12 +546,48 @@ namespace Message_app.Migrations
             modelBuilder.Entity("server.Models.Attachment", b =>
                 {
                     b.HasOne("server.Models.Message", "message")
-                        .WithMany()
-                        .HasForeignKey("message_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("Attachments")
+                        .HasForeignKey("message_id");
 
                     b.Navigation("message");
+                });
+
+            modelBuilder.Entity("server.Models.Friend", b =>
+                {
+                    b.HasOne("server.Models.User", "User1")
+                        .WithMany("FriendshipsAsUser1")
+                        .HasForeignKey("UserId1")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("server.Models.User", "User2")
+                        .WithMany("FriendshipsAsUser2")
+                        .HasForeignKey("UserId2")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("User1");
+
+                    b.Navigation("User2");
+                });
+
+            modelBuilder.Entity("server.Models.FriendRequest", b =>
+                {
+                    b.HasOne("server.Models.User", "Receiver")
+                        .WithMany("ReceivedFriendRequests")
+                        .HasForeignKey("ReceiverId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("server.Models.User", "Sender")
+                        .WithMany("SentFriendRequests")
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Receiver");
+
+                    b.Navigation("Sender");
                 });
 
             modelBuilder.Entity("server.Models.GroupSettings", b =>
@@ -536,7 +660,7 @@ namespace Message_app.Migrations
             modelBuilder.Entity("server.Models.Participants", b =>
                 {
                     b.HasOne("server.Models.Conversation", "conversation")
-                        .WithMany()
+                        .WithMany("Participants")
                         .HasForeignKey("conversation_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -625,6 +749,13 @@ namespace Message_app.Migrations
                     b.Navigation("GroupSettings");
 
                     b.Navigation("Messages");
+
+                    b.Navigation("Participants");
+                });
+
+            modelBuilder.Entity("server.Models.Message", b =>
+                {
+                    b.Navigation("Attachments");
                 });
 
             modelBuilder.Entity("server.Models.Role", b =>
@@ -639,6 +770,14 @@ namespace Message_app.Migrations
 
             modelBuilder.Entity("server.Models.User", b =>
                 {
+                    b.Navigation("FriendshipsAsUser1");
+
+                    b.Navigation("FriendshipsAsUser2");
+
+                    b.Navigation("ReceivedFriendRequests");
+
+                    b.Navigation("SentFriendRequests");
+
                     b.Navigation("groupSettings");
 
                     b.Navigation("messageStatuses");

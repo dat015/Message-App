@@ -262,5 +262,19 @@ namespace server.Services.UserService
             // Nếu không có yêu cầu kết bạn và chưa là bạn bè
             return "NotFriends";
         }
+
+        public async Task<User> ExistUser(int id)
+        {
+            try
+            {
+                var ExistUser = await _context.Users.FindAsync(id);
+                return ExistUser;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw e;
+            }
+        }
     }
 }

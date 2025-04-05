@@ -5,7 +5,6 @@ using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using server.Data;
 using server.InjectService;
-using server.Services.ChatService;
 using server.Services.WebSocketService;
 using server.Services;
 using server.Services.UserService; // Thêm namespace cho UserQrService
@@ -42,14 +41,8 @@ builder.Services.AddAuthentication(option =>
     };
 });
 
+
 builder.Services.Inject(builder.Configuration);
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAll", policy =>
-    {
-        policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
-    });
-});
 
 // Logging
 Log.Logger = new LoggerConfiguration()
@@ -67,6 +60,7 @@ builder.Services.AddMemoryCache();
 
 
 var app = builder.Build();
+app.UseWebSockets();
 
 using (var scope = app.Services.CreateScope())
 {
@@ -79,26 +73,16 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.UseWebSockets(new WebSocketOptions
-{
-    KeepAliveInterval = TimeSpan.FromMinutes(2)
-});
-
-// Endpoint WebSocket cho kết bạn
-app.Map("/ws", async (HttpContext context, IWebSocketFriendSV webSocketFriendSV) =>
+app.UseCors("AllowAll");
+app.MapControllers();
+app.UseRouting();
+// Chat websocket
+app.Map("/ws/chat", async context =>
 {
     if (context.WebSockets.IsWebSocketRequest)
     {
-        var userIdStr = context.Request.Query["userId"].ToString();
-        if (!int.TryParse(userIdStr, out int userId))
-        {
-            context.Response.StatusCode = 400; // Bad Request nếu không có userId
-            return;
-        }
-
-        using var webSocket = await context.WebSockets.AcceptWebSocketAsync();
-        await webSocketFriendSV.HandleFriendWebSocket(webSocket, userId);
+        var handler = context.RequestServices.GetRequiredService<webSocket>();
+        await handler.HandleWebSocket(context);
     }
     else
     {
@@ -106,8 +90,30 @@ app.Map("/ws", async (HttpContext context, IWebSocketFriendSV webSocketFriendSV)
     }
 });
 
+// Friend websocket
+app.Map("/ws/friend", async context =>
+{
+    if (context.WebSockets.IsWebSocketRequest)
+    {
+        var userIdStr = context.Request.Query["userId"];
+        if (!int.TryParse(userIdStr, out int userId))
+        {
+            context.Response.StatusCode = 400;
+            return;
+        }
+
+        var webSocket = await context.WebSockets.AcceptWebSocketAsync();
+        var handler = context.RequestServices.GetRequiredService<IWebSocketFriendSV>();
+        await handler.HandleFriendWebSocket(webSocket, userId);
+    }
+    else
+    {
+        context.Response.StatusCode = 400;
+    }
+});
+
+
 app.UseRouting();
-app.MapHub<ChatHub>("/chatHub");
 app.MapControllers();
 
 app.UseCors("AllowAll");
