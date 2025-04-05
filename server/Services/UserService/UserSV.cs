@@ -7,13 +7,21 @@ using server.Data;
 using server.DTO;
 using server.Helper;
 using Microsoft.EntityFrameworkCore;
+using StackExchange.Redis;
 
 
 namespace server.Services.UserService
 {
-    public class UserSV(ApplicationDbContext context) : IUserSV
+    public class UserSV : IUserSV
     {
-        private readonly ApplicationDbContext _context = context;
+        private readonly ApplicationDbContext _context;
+        private readonly IConnectionMultiplexer _redis;
+
+        public UserSV(ApplicationDbContext context, IConnectionMultiplexer redis)
+        {
+            _context = context;
+            _redis = redis;
+        }
 
         public bool VerifyUser(UserDTO model)
         {
@@ -57,6 +65,14 @@ namespace server.Services.UserService
                 };
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
+                var db = _redis.GetDatabase();
+                var userKey = $"user:by_username:{user.username}";
+                await db.HashSetAsync(userKey, new HashEntry[]
+                {
+                    new HashEntry("id", user.id),
+                    new HashEntry("username", user.username),
+                    new HashEntry("avatarUrl", user.avatar_url ?? "")
+                });
                 return user;
             }
             catch (Exception ex)
@@ -64,8 +80,6 @@ namespace server.Services.UserService
                 throw new Exception(ex.Message);
             }
         }
-
-
 
         public Task<User> GetUserByIdAsync(int id)
         {
@@ -77,9 +91,37 @@ namespace server.Services.UserService
             throw new NotImplementedException();
         }
 
-        public Task<User> UpdateUserAsync(int id, UserDTO model)
+        public async Task<User> UpdateUserAsync(int id, UserDTO model)
         {
             throw new NotImplementedException();
+            // var user = await _context.Users.FindAsync(id);
+            // if (user == null) throw new Exception("User not found");
+
+            // if (!string.IsNullOrEmpty(model.username)) user.username = model.username;
+            // if (!string.IsNullOrEmpty(model.email)) user.email = model.email;
+            // if (!string.IsNullOrEmpty(model.avatar_url)) user.avatar_url = model.avatar_url;
+            // if (model.birthday != default) user.birthday = model.birthday;
+            // if (model.gender.HasValue) user.gender = model.gender.Value;
+
+            // _context.Users.Update(user);
+            // await _context.SaveChangesAsync();
+
+            // // Đồng bộ với Redis
+            // var db = _redis.GetDatabase();
+            // var oldUserKey = $"user:by_username:{user.username}"; 
+            // var newUserKey = $"user:by_username:{model.username ?? user.username}";
+            // if (model.username != null && model.username != user.username)
+            // {
+            //     await db.KeyDeleteAsync(oldUserKey);
+            // }
+            // await db.HashSetAsync(newUserKey, new HashEntry[]
+            // {
+            //     new HashEntry("id", user.id),
+            //     new HashEntry("username", user.username),
+            //     new HashEntry("avatarUrl", user.avatar_url ?? "")
+            // });
+
+            // return user;
         }
 
         public Task<User> LockUserAsync(int id)
@@ -162,6 +204,63 @@ namespace server.Services.UserService
             _context.Users.Update(user);
 
             await _context.SaveChangesAsync();
+            var db = _redis.GetDatabase();
+            var userKey = $"user:by_username:{user.username}";
+            await db.HashSetAsync(userKey, new HashEntry[]
+            {
+                new HashEntry("id", user.id),
+                new HashEntry("username", user.username),
+                new HashEntry("avatarUrl", user.avatar_url ?? "")
+            });
+        }
+
+        public async Task<int> GetMutualFriendsCountAsync(int userId, int currentUserId)
+        {
+            // Lấy danh sách bạn bè của userId
+            var friendsOfUser = await _context.Friends
+                .Where(f => f.UserId1 == userId || f.UserId2 == userId)
+                .Select(f => f.UserId1 == userId ? f.UserId2 : f.UserId1)
+                .ToListAsync();
+
+            // Lấy danh sách bạn bè của currentUserId
+            var friendsOfCurrentUser = await _context.Friends
+                .Where(f => f.UserId1 == currentUserId || f.UserId2 == currentUserId)
+                .Select(f => f.UserId1 == currentUserId ? f.UserId2 : f.UserId1)
+                .ToListAsync();
+
+            // Tìm số bạn chung bằng cách giao hai danh sách
+            var mutualFriendsCount = friendsOfUser.Intersect(friendsOfCurrentUser).Count();
+
+            return mutualFriendsCount;
+        }
+
+        // Hàm mới: Xác định trạng thái quan hệ giữa hai người dùng
+        public async Task<string> GetRelationshipStatusAsync(int userId, int currentUserId)
+        {
+            // Kiểm tra xem có yêu cầu kết bạn nào giữa hai người dùng không
+            var friendRequest = await _context.FriendRequests
+                .FirstOrDefaultAsync(fr => (fr.SenderId == userId && fr.ReceiverId == currentUserId) ||
+                                           (fr.SenderId == currentUserId && fr.ReceiverId == userId));
+
+            if (friendRequest != null)
+            {
+                if (friendRequest.Status == "Accepted") return "Friends";
+                if (friendRequest.Status == "Rejected") return "Rejected";
+                return friendRequest.SenderId == currentUserId ? "PendingSent" : "PendingReceived";
+            }
+
+            // Kiểm tra xem hai người dùng đã là bạn bè chưa
+            var friendship = await _context.Friends
+                .FirstOrDefaultAsync(f => (f.UserId1 == userId && f.UserId2 == currentUserId) ||
+                                          (f.UserId1 == currentUserId && f.UserId2 == userId));
+
+            if (friendship != null)
+            {
+                return "Friends";
+            }
+
+            // Nếu không có yêu cầu kết bạn và chưa là bạn bè
+            return "NotFriends";
         }
 
         public async Task<User> ExistUser(int id)

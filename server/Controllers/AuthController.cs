@@ -52,7 +52,5 @@ namespace Message_app.Controllers
             Console.Write("ok");
             return Ok(user);
         }
-
-
     }
 }

@@ -54,6 +54,9 @@ class _HomeScreenState extends State<HomeScreen> {
             border: InputBorder.none,
             contentPadding: const EdgeInsets.symmetric(vertical: 14.0),
           ),
+          onFieldSubmitted: (value) {
+
+          },
         ),
       ),
     );
@@ -174,8 +177,15 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MainLayout(
+      currentUserId: userId,
+      currentUserName: widget.user.user!.username,
       selectedIndex: _selectedIndex,
       onItemTapped: _onItemTapped,
       body: Column(

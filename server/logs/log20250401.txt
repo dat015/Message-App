@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 2025-04-01 07:38:51.040 +07:00 [INF] User profile is available. Using 'C:\Users\Thao\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
 2025-04-01 07:38:51.144 +07:00 [INF] Now listening on: http://localhost:5053
 2025-04-01 07:38:51.147 +07:00 [INF] Application started. Press Ctrl+C to shut down.
@@ -337,3 +338,75 @@ ALTER TABLE [Messages] ADD [isFile] bit NOT NULL DEFAULT CAST(0 AS bit);
 2025-04-01 18:43:08.200 +07:00 [INF] Executed DbCommand (7ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
 INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
 VALUES (N'20250401114052_AddAttachmentsFeture', N'8.0.4');
+=======
+2025-04-01 00:02:25.376 +07:00 [INF] Request starting HTTP/1.1 PUT http://localhost:5053/api/Auth/login - application/json 66
+2025-04-01 00:02:25.735 +07:00 [INF] Executing endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-04-01 00:02:25.742 +07:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(server.DTO.AuthDTO.LoginDTO) on controller Message_app.Controllers.AuthController (Message_app).
+2025-04-01 00:02:26.489 +07:00 [INF] Executed DbCommand (151ms) [Parameters=[@__email_0='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[email] = @__email_0
+2025-04-01 00:02:26.627 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.DTO.AuthDTO.LoginRespose'.
+2025-04-01 00:02:26.634 +07:00 [INF] Executed action Message_app.Controllers.AuthController.Login (Message_app) in 891.7096ms
+2025-04-01 00:02:26.634 +07:00 [INF] Executed endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-04-01 00:02:26.640 +07:00 [INF] Request finished HTTP/1.1 PUT http://localhost:5053/api/Auth/login - 200 null application/json; charset=utf-8 1265.6795ms
+2025-04-01 00:02:27.773 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Conversation/get_conversations/30 - application/json null
+2025-04-01 00:02:27.817 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-04-01 00:02:27.818 +07:00 [INF] Route matched with {action = "GetConversations", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetConversations(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-04-01 00:02:28.179 +07:00 [INF] Executed DbCommand (276ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [c].[id], [c].[created_at], [c].[is_group], [c].[name]
+FROM [Participants] AS [p]
+INNER JOIN [Conversations] AS [c] ON [p].[conversation_id] = [c].[id]
+WHERE [p].[user_id] = @__userId_0
+2025-04-01 00:02:28.180 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.Models.Conversation, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-04-01 00:02:28.180 +07:00 [INF] Executed action server.Controllers.ConversationController.GetConversations (Message_app) in 362.6723ms
+2025-04-01 00:02:28.181 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-04-01 00:02:28.181 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Conversation/get_conversations/30 - 200 null application/json; charset=utf-8 407.7874ms
+2025-04-01 00:20:23.614 +07:00 [INF] Request starting HTTP/1.1 PUT http://localhost:5053/api/Auth/login - application/json 66
+2025-04-01 00:20:23.701 +07:00 [INF] Executing endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-04-01 00:20:23.716 +07:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(server.DTO.AuthDTO.LoginDTO) on controller Message_app.Controllers.AuthController (Message_app).
+2025-04-01 00:20:24.500 +07:00 [INF] Executed DbCommand (105ms) [Parameters=[@__email_0='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[email] = @__email_0
+2025-04-01 00:20:24.549 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.DTO.AuthDTO.LoginRespose'.
+2025-04-01 00:20:24.601 +07:00 [INF] Executed action Message_app.Controllers.AuthController.Login (Message_app) in 883.6688ms
+2025-04-01 00:20:24.616 +07:00 [INF] Executed endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-04-01 00:20:24.634 +07:00 [INF] Request finished HTTP/1.1 PUT http://localhost:5053/api/Auth/login - 200 null application/json; charset=utf-8 1027.5748ms
+2025-04-01 00:20:25.482 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Conversation/get_conversations/30 - application/json null
+2025-04-01 00:20:25.877 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-04-01 00:20:25.877 +07:00 [INF] Route matched with {action = "GetConversations", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetConversations(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-04-01 00:20:26.227 +07:00 [INF] Executed DbCommand (195ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [c].[id], [c].[created_at], [c].[is_group], [c].[name]
+FROM [Participants] AS [p]
+INNER JOIN [Conversations] AS [c] ON [p].[conversation_id] = [c].[id]
+WHERE [p].[user_id] = @__userId_0
+2025-04-01 00:20:26.227 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.Models.Conversation, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-04-01 00:20:26.230 +07:00 [INF] Executed action server.Controllers.ConversationController.GetConversations (Message_app) in 351.9582ms
+2025-04-01 00:20:26.230 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-04-01 00:20:26.231 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Conversation/get_conversations/30 - 200 null application/json; charset=utf-8 750.325ms
+2025-04-01 00:29:57.521 +07:00 [INF] Request starting HTTP/1.1 PUT http://localhost:5053/api/Auth/login - application/json 66
+2025-04-01 00:29:57.640 +07:00 [INF] Executing endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-04-01 00:29:57.647 +07:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(server.DTO.AuthDTO.LoginDTO) on controller Message_app.Controllers.AuthController (Message_app).
+2025-04-01 00:29:58.363 +07:00 [INF] Executed DbCommand (157ms) [Parameters=[@__email_0='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[email] = @__email_0
+2025-04-01 00:29:58.377 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.DTO.AuthDTO.LoginRespose'.
+2025-04-01 00:29:58.389 +07:00 [INF] Executed action Message_app.Controllers.AuthController.Login (Message_app) in 733.382ms
+2025-04-01 00:29:58.389 +07:00 [INF] Executed endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-04-01 00:29:58.390 +07:00 [INF] Request finished HTTP/1.1 PUT http://localhost:5053/api/Auth/login - 200 null application/json; charset=utf-8 869.2254ms
+2025-04-01 00:29:59.071 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Conversation/get_conversations/30 - application/json null
+2025-04-01 00:29:59.073 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-04-01 00:29:59.073 +07:00 [INF] Route matched with {action = "GetConversations", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetConversations(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-04-01 00:29:59.209 +07:00 [INF] Executed DbCommand (100ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [c].[id], [c].[created_at], [c].[is_group], [c].[name]
+FROM [Participants] AS [p]
+INNER JOIN [Conversations] AS [c] ON [p].[conversation_id] = [c].[id]
+WHERE [p].[user_id] = @__userId_0
+2025-04-01 00:29:59.209 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.Models.Conversation, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-04-01 00:29:59.210 +07:00 [INF] Executed action server.Controllers.ConversationController.GetConversations (Message_app) in 112.2522ms
+2025-04-01 00:29:59.210 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-04-01 00:29:59.211 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Conversation/get_conversations/30 - 200 null application/json; charset=utf-8 139.3802ms
+2025-04-01 00:31:12.483 +07:00 [INF] Application is shutting down...
+>>>>>>> 1204d389b56d0b7a77b1df86ded233a469e3935f

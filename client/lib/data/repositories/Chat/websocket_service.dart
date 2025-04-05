@@ -34,18 +34,10 @@ class WebSocketService {
               return;
             }
 
-            final rawJson = jsonDecode(data) as Map<String, dynamic>;
-
-            // Chuyển đổi key viết hoa sang viết thường để khớp với class
-            final normalizedJson = {
-              'message': rawJson['Message'],
-              'attachment': rawJson['Attachment'],
-            };
-
+            final decodedMessage = jsonDecode(data) as Map<String, dynamic>;
             final messageWithAttachment = MessageWithAttachment.fromJson(
-              normalizedJson,
+              decodedMessage,
             );
-
             print("Received message: $data");
             onMessageReceived(messageWithAttachment);
           } catch (e) {

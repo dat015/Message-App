@@ -32,16 +32,28 @@ class Config {
       return 'localhost:6379,abortConnect=false';
     }
   }
+   
 
   static String get baseUrlWS {
     if (kIsWeb) {
-      return 'ws://localhost:5053/ws';
+      return 'ws://localhost:5053/ws/chat';
     } else if (Platform.isAndroid) {
       return _isPhysicalDevice()
-          ? 'ws://$localNetworkIP:5053/ws'
-          : 'ws://10.0.2.2:5053/ws';
+          ? 'ws://$localNetworkIP:5053/ws/chat'
+          : 'ws://10.0.2.2:5053/ws/chat';
     } else {
-      return 'ws://localhost:5053/ws';
+      return 'ws://localhost:5053/ws/chat';
+    }
+  }
+    static String get baseUrlWSFriend {
+    if (kIsWeb) {
+      return 'ws://localhost:5053/ws/friend';
+    } else if (Platform.isAndroid) {
+      return _isPhysicalDevice()
+          ? 'ws://$localNetworkIP:5053/ws/friend'
+          : 'ws://10.0.2.2:5053/ws/friend'; 
+    } else {
+      return 'ws://localhost:5053/ws/friend';
     }
   }
 

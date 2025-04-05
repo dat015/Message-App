@@ -35,6 +35,18 @@ namespace server.Models
         [Required]
         public bool gender {get; set;}
 
+        [StringLength(500, ErrorMessage = "Interests cannot exceed 500 characters.")]
+        public string? interests { get; set; }
+
+        [StringLength(100, ErrorMessage = "Location cannot exceed 100 characters.")]
+        public string? location { get; set; } 
+
+        [StringLength(500, ErrorMessage = "Bio cannot exceed 500 characters.")]
+        public string? bio { get; set; } 
+        
+        [NotMapped]
+        public int? MutualFriendsCount { get; set; }
+
         public ICollection<Story>? stories { get; set; }
         public ICollection<StoryReaction>? storyReactions { get; set; }
         public ICollection<Notification>? notifications { get; set; }
@@ -44,6 +56,16 @@ namespace server.Models
         public ICollection<StoryViewers>? storyViewers { get; set; }
         public ICollection<GroupSettings>? groupSettings { get; set; }
         public ICollection<MessageStatus>? messageStatuses { get; set; }
+        [InverseProperty("Sender")]
+        public ICollection<FriendRequest>? SentFriendRequests { get; set; }
 
+        [InverseProperty("Receiver")]
+        public ICollection<FriendRequest>? ReceivedFriendRequests { get; set; }
+
+        [InverseProperty("User1")]
+        public ICollection<Friend>? FriendshipsAsUser1 { get; set; }
+
+        [InverseProperty("User2")]
+        public ICollection<Friend>? FriendshipsAsUser2 { get; set; }
     }
 }

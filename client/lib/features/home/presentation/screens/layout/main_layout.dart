@@ -1,22 +1,50 @@
+import 'package:first_app/features/home/presentation/diary/diary.dart';
+import 'package:first_app/features/home/presentation/friends/friends.dart';
 import 'package:flutter/material.dart';
 
 class MainLayout extends StatelessWidget {
   final Widget body;
   final int selectedIndex;
   final Function(int) onItemTapped;
+  final int currentUserId; 
+  final String currentUserName;
 
   const MainLayout({
     super.key,
     required this.body,
     required this.selectedIndex,
     required this.onItemTapped,
+    required this.currentUserId,
+    required this.currentUserName,
   });
+
+  void _handleNavigation(BuildContext context, int index) {
+    if (index == 1) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Friends(currentUserId: currentUserId),
+        ),
+      );
+    } 
+    else if (index == 2) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => Diary(currentUserId: currentUserId, currentUserName: currentUserName),
+      ),
+    );
+  }
+    else {
+      // Gọi hàm onItemTapped cho các tab khác
+      onItemTapped(index);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // Nền trắng giống Messenger
-
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -49,6 +77,10 @@ class MainLayout extends StatelessWidget {
             label: 'Bạn bè',
           ),
           BottomNavigationBarItem(
+            icon: Icon(Icons.people),
+            label: 'Nhật ký',
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.menu),
             label: 'Menu',
           ),
@@ -57,7 +89,7 @@ class MainLayout extends StatelessWidget {
         selectedItemColor: Colors.blueAccent,
         unselectedItemColor: Colors.grey,
         backgroundColor: Colors.white,
-        onTap: onItemTapped,
+        onTap: (index) => _handleNavigation(context, index),
         showUnselectedLabels: true,
         selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
         unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.normal),

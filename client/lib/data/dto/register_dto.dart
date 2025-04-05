@@ -51,7 +51,7 @@ class RegisterDTO {
       'password': password,
       'email': email,
       'avatar_url': avatarUrl,
-      'birthday': birthday?.toIso8601String().split('T')[0], // Chỉ lấy phần ngày
+      'birthday': birthday?.toIso8601String().split('T')[0],
       'gender': gender,
     };
   }

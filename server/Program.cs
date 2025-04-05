@@ -1,13 +1,13 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using server.Data;
 using server.InjectService;
 using server.Services.WebSocketService;
-using server.Services.UserService;
+using server.Services;
+using server.Services.UserService; // Thêm namespace cho UserQrService
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +15,7 @@ builder.Configuration
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
 
-// Get JWT setting from appsettings.json
+// JWT configuration
 var jwtSetting = builder.Configuration.GetSection("JwtSettings");
 var secretKey = jwtSetting.GetValue<string>("SecretKey");
 
@@ -37,14 +37,14 @@ builder.Services.AddAuthentication(option =>
         ValidateAudience = true,
         ValidAudience = jwtSetting["Audience"],
         ValidateLifetime = true,
-        ClockSkew = TimeSpan.Zero // Không cho phép trễ thời gian
+        ClockSkew = TimeSpan.Zero
     };
 });
 
 
 builder.Services.Inject(builder.Configuration);
 
-// Log setting
+// Logging
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day)
@@ -52,7 +52,21 @@ Log.Logger = new LoggerConfiguration()
 
 builder.Host.UseSerilog();
 
+// Đăng ký các service
+builder.Services.AddSingleton<IWebSocketFriendSV, WebSocketFriendSV>();
+builder.Services.AddScoped<IUserSV, UserSV>();
+
+builder.Services.AddMemoryCache();
+
+
 var app = builder.Build();
+app.UseWebSockets();
+
+using (var scope = app.Services.CreateScope())
+{
+    var friendService = scope.ServiceProvider.GetRequiredService<IFriendSV>();
+    await friendService.SyncUsersToRedisAsync();
+}
 
 if (app.Environment.IsDevelopment())
 {
@@ -62,27 +76,49 @@ if (app.Environment.IsDevelopment())
 app.UseCors("AllowAll");
 app.MapControllers();
 app.UseRouting();
-app.UseWebSockets();
-app.UseEndpoints(endpoints =>
+// Chat websocket
+app.Map("/ws/chat", async context =>
 {
-    endpoints.MapControllers();
-    endpoints.Map("/ws", async context =>
+    if (context.WebSockets.IsWebSocketRequest)
     {
-        var webSocketService = context.RequestServices.GetRequiredService<webSocket>();
-        if (context.WebSockets.IsWebSocketRequest)
-        {
-            Console.WriteLine("WebSocket request received");
-            await webSocketService.HandleWebSocket(context);
-        }
-        else
-        {
-            Console.WriteLine("Received non-WebSocket request");
-            Console.WriteLine($"Request Headers: {string.Join(", ", context.Request.Headers.Select(h => $"{h.Key}: {h.Value}"))}");
-            context.Response.StatusCode = StatusCodes.Status400BadRequest;
-        }
-    });
+        var handler = context.RequestServices.GetRequiredService<webSocket>();
+        await handler.HandleWebSocket(context);
+    }
+    else
+    {
+        context.Response.StatusCode = 400;
+    }
 });
+
+// Friend websocket
+app.Map("/ws/friend", async context =>
+{
+    if (context.WebSockets.IsWebSocketRequest)
+    {
+        var userIdStr = context.Request.Query["userId"];
+        if (!int.TryParse(userIdStr, out int userId))
+        {
+            context.Response.StatusCode = 400;
+            return;
+        }
+
+        var webSocket = await context.WebSockets.AcceptWebSocketAsync();
+        var handler = context.RequestServices.GetRequiredService<IWebSocketFriendSV>();
+        await handler.HandleFriendWebSocket(webSocket, userId);
+    }
+    else
+    {
+        context.Response.StatusCode = 400;
+    }
+});
+
+
+app.UseRouting();
+app.MapControllers();
+
+app.UseCors("AllowAll");
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.Run();

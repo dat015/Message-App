@@ -16,6 +16,7 @@ using StackExchange.Redis;
 using CloudinaryDotNet;
 using server.Services.UploadService;
 using System.Text.Json.Serialization;
+using server.Services;
 
 namespace server.InjectService
 {
@@ -70,6 +71,11 @@ namespace server.InjectService
             services.AddHttpContextAccessor();
             services.AddSingleton<IRedisService, RedisService>();
             services.AddSingleton<DiffieHellman>();
+            services.AddSingleton<IConnectionMultiplexer>(sp =>
+            {
+                var redisConfiguration = ConfigurationOptions.Parse(configuration["Redis:ConnectionString"]);
+                return ConnectionMultiplexer.Connect(redisConfiguration);
+            });
             services.AddSignalR();
             //scoped: tạo ra 1 instance cho mỗi request
             services.AddScoped<IUploadFileService, UploadFileService>();
@@ -79,6 +85,10 @@ namespace server.InjectService
             services.AddScoped<IParticipant, ParticipantSV>();
             services.AddScoped<IMessage, MessagesV>();
             services.AddScoped<IOTPsSV, OTPsSV>();
+            services.AddScoped<IFriendSV, FriendSV>();
+            services.AddScoped<IUserQrService, UserQrService>();
+            services.AddScoped<IUserProfileSV, UserProfileSV>();
+            services.AddScoped<IWebSocketFriendSV, WebSocketFriendSV>();
             services.AddScoped<AuthorizationJWT>();
         }
 

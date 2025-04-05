@@ -60,7 +60,7 @@ class _ChangePasswordState extends State<ChangePassword> {
       }
 
       final AuthRepository authRepository = AuthRepositoryImpl(
-        ApiClient(baseUrl: Config.baseUrl),
+        ApiClient(),
       );
 
       try {

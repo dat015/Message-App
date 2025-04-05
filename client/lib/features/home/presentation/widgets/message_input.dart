@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:first_app/data/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
+import 'dart:io' show Platform;
 
 class MessageInput extends StatefulWidget {
   const MessageInput({super.key});
@@ -15,7 +18,8 @@ class _MessageInputState extends State<MessageInput> {
   final TextEditingController _controller = TextEditingController();
   bool _isTextFieldFocused = false;
   bool _isComposing = false;
-  bool _showEmojiPicker = false; // Thêm biến để điều khiển hiển thị emoji picker
+  bool _showEmojiPicker =
+      false; // Thêm biến để điều khiển hiển thị emoji picker
   XFile? _selectedFile;
 
   final ImagePicker _picker = ImagePicker();
@@ -316,30 +320,29 @@ class _MessageInputState extends State<MessageInput> {
             height: 250,
             child: EmojiPicker(
               onEmojiSelected: (category, emoji) => _onEmojiSelected(emoji),
-              config: const Config(
-                columns: 7,
-                emojiSizeMax: 28,
-                verticalSpacing: 0,
-                horizontalSpacing: 0,
-                gridPadding: EdgeInsets.zero,
-                initCategory: Category.RECENT,
-                bgColor: Color(0xFFF2F2F2),
-                indicatorColor: Colors.blue,
-                iconColorSelected: Colors.blue,
-                iconColor: Colors.grey,
-                backspaceColor: Colors.blue,
-                skinToneDialogBgColor: Colors.white,
-                skinToneIndicatorColor: Colors.grey,
-                enableSkinTones: true,
-                recentsLimit: 28,
-                noRecents: Text(
-                  'No Recents',
-                  style: TextStyle(fontSize: 20, color: Colors.black26),
-                  textAlign: TextAlign.center,
+              config: Config(
+                height: 250,
+                checkPlatformCompatibility: true,
+                emojiViewConfig: EmojiViewConfig(
+                  columns: 7,
+                  backgroundColor: const Color(0xFFF2F2F2),
+                  buttonMode: ButtonMode.MATERIAL,
                 ),
-                tabIndicatorAnimDuration: kTabScrollDuration,
-                categoryIcons: CategoryIcons(),
-                buttonMode: ButtonMode.MATERIAL,
+                skinToneConfig: const SkinToneConfig(
+                  enabled: true,
+                  dialogBackgroundColor: Colors.white,
+                  indicatorColor: Colors.grey,
+                ),
+                categoryViewConfig: CategoryViewConfig(
+                  backgroundColor: const Color(0xFFF2F2F2),
+                  iconColor: Colors.grey,
+                  iconColorSelected: Colors.blue,
+                  backspaceColor: Colors.blue,
+                ),
+                searchViewConfig: const SearchViewConfig(
+                  backgroundColor: Color(0xFFF2F2F2),
+                  buttonIconColor: Colors.blue,
+                ),
               ),
             ),
           ),

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 2025-04-03 09:11:15.522 +07:00 [INF] User profile is available. Using 'C:\Users\Thao\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
 2025-04-03 09:11:15.637 +07:00 [INF] Now listening on: http://localhost:5053
 2025-04-03 09:11:15.639 +07:00 [INF] Application started. Press Ctrl+C to shut down.
@@ -2427,3 +2428,6 @@ WHERE [p].[conversation_id] = @__conversation_id_0
 2025-04-03 15:58:00.168 +07:00 [INF] Executed action server.Controllers.ParticipantController.GetParticipants (Message_app) in 5.2894ms
 2025-04-03 15:58:00.169 +07:00 [INF] Executed endpoint 'server.Controllers.ParticipantController.GetParticipants (Message_app)'
 2025-04-03 15:58:00.169 +07:00 [INF] Request finished HTTP/1.1 GET http://10.0.2.2:5053/api/Participant/get_participants/1 - 200 null application/json; charset=utf-8 6.4389ms
+=======
+2025-04-03 00:00:18.139 +07:00 [INF] Application is shutting down...
+>>>>>>> 1204d389b56d0b7a77b1df86ded233a469e3935f

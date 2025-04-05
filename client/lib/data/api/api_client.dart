@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-
 import '../../PlatformClient/config.dart';
 
 class ApiClient {
@@ -13,14 +12,7 @@ class ApiClient {
     _dio = Dio(
       BaseOptions(
         baseUrl: Config.baseUrl,
-        connectTimeout: connectTimeout,
         receiveTimeout: receiveTimeout,
-        headers:
-            headers ??
-            {'Content-Type': 'application/json', 'Accept': 'application/json'},
-        validateStatus: (status) {
-          return status! < 500;
-        },
       ),
     );
 
@@ -56,7 +48,6 @@ class ApiClient {
     );
   }
 
-  // GET request
   Future<dynamic> get(
     String path, {
     Map<String, dynamic>? queryParameters,
@@ -74,7 +65,6 @@ class ApiClient {
     }
   }
 
-  // POST request
   Future<dynamic> post(
     String path, {
     dynamic data,
@@ -94,7 +84,6 @@ class ApiClient {
     }
   }
 
-  // PUT request
   Future<dynamic> put(
     String path, {
     dynamic data,
@@ -114,7 +103,6 @@ class ApiClient {
     }
   }
 
-  // DELETE request
   Future<dynamic> delete(
     String path, {
     dynamic data,
@@ -134,12 +122,11 @@ class ApiClient {
     }
   }
 
-  // Xử lý phản hồi
   dynamic _handleResponse(Response response) {
     switch (response.statusCode) {
-      case 200: // OK
-      case 201: // Created
-        return response.data; // Trả về dữ liệu thô từ server
+      case 200:
+      case 201:
+        return response.data;
       case 400:
         throw Exception('Bad Request: ${response.data}');
       case 401:
@@ -155,7 +142,6 @@ class ApiClient {
     }
   }
 
-  // Xử lý lỗi từ DioException
   Exception _handleError(DioException e) {
     if (e.type == DioExceptionType.connectionTimeout) {
       return Exception('Connection timeout. Please check your network.');
