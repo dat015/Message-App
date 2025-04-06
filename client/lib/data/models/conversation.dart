@@ -1,14 +1,19 @@
 import 'group_settings.dart';
 import 'messages.dart';
+import 'participants.dart';
 
 class Conversation {
   int? id; // Nullable vì là auto-increment trong database
   String name;
   bool isGroup;
   DateTime createdAt;
+  DateTime? lastMessageTime;
+  String? lastMessage;
+  String? lastMessageSender;
   List<Message>? messages; // Tương ứng với ICollection<Message>
   List<GroupSettings>?
   groupSettings; // Tương ứng với ICollection<GroupSettings>
+  List<Participants>? participants; // Tương ứng với ICollection<Participants>
 
   // Constructor với các thuộc tính bắt buộc và giá trị mặc định
   Conversation({
@@ -16,8 +21,12 @@ class Conversation {
     required this.name,
     this.isGroup = false, // Giá trị mặc định là false
     required this.createdAt,
+    this.lastMessageTime,
+    this.lastMessage,
+    this.lastMessageSender,
     this.messages,
     this.groupSettings,
+    this.participants,
   });
 
   // Factory constructor để tạo từ JSON
@@ -27,6 +36,12 @@ class Conversation {
       name: json['name'] as String,
       isGroup: json['is_group'] as bool,
       createdAt: DateTime.parse(json['created_at'] as String),
+      lastMessageTime:
+          json['lastMessageTime'] != null
+              ? DateTime.parse(json['lastMessageTime'] as String)
+              : null,
+      lastMessage: json['lastMessage'] as String?,
+      lastMessageSender: json['lastMessageSender'] as String?,
       messages:
           json['messages'] != null
               ? (json['messages'] as List)
@@ -42,6 +57,15 @@ class Conversation {
                   )
                   .toList()
               : null,
+      participants:
+          json['participants'] != null
+              ? (json['participants'] as List)
+                  .map(
+                    (item) =>
+                        Participants.fromJson(item as Map<String, dynamic>),
+                  )
+                  .toList()
+              : null,
     );
   }
 
@@ -52,9 +76,14 @@ class Conversation {
       'name': name,
       'is_group': isGroup,
       'created_at': createdAt.toIso8601String(),
+      'lastMessageTime': lastMessageTime?.toIso8601String(),
+      'lastMessage': lastMessage,
+      'lastMessageSender': lastMessageSender,
       'Messages': messages?.map((message) => message.toJson()).toList(),
       'GroupSettings':
           groupSettings?.map((settings) => settings.toJson()).toList(),
+      'Participants':
+          participants?.map((participant) => participant.toJson()).toList(),
     };
   }
 
@@ -71,6 +100,6 @@ class Conversation {
 
   @override
   String toString() {
-    return 'Conversation(id: $id, name: $name, isGroup: $isGroup, createdAt: $createdAt, messages: ${messages?.length ?? 0}, groupSettings: ${groupSettings?.length ?? 0})';
+    return 'Conversation(id: $id, name: $name, isGroup: $isGroup, createdAt: $createdAt, lastMessageTime: $lastMessageTime, lastMessage: $lastMessage, lastMessageSender: $lastMessageSender, messages: ${messages?.length ?? 0}, groupSettings: ${groupSettings?.length ?? 0}, participants: ${participants?.length ?? 0})';
   }
 }

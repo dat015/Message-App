@@ -34,9 +34,15 @@ class WebSocketService {
               return;
             }
 
+            // Decode JSON từ WebSocket
             final decodedMessage = jsonDecode(data) as Map<String, dynamic>;
+
+            // Chuyển đổi tất cả key thành lowercase
+            final lowercaseMessage = _convertKeysToLowercase(decodedMessage);
+
+            // Parse dữ liệu với key lowercase
             final messageWithAttachment = MessageWithAttachment.fromJson(
-              decodedMessage,
+              lowercaseMessage,
             );
             print("Received message: $data");
             onMessageReceived(messageWithAttachment);
@@ -65,6 +71,17 @@ class WebSocketService {
       _channel = null;
       _reconnect(userId, conversationId);
     }
+  }
+
+  Map<String, dynamic> _convertKeysToLowercase(Map<String, dynamic> input) {
+    return input.map((key, value) {
+      if (value is Map<String, dynamic>) {
+        // Đệ quy nếu value là một Map khác (như "Message" hoặc "Attachment")
+        return MapEntry(key.toLowerCase(), _convertKeysToLowercase(value));
+      }
+      // Trả về key lowercase và giữ nguyên value nếu không phải Map
+      return MapEntry(key.toLowerCase(), value);
+    });
   }
 
   void _reconnect(int userId, int conversationId) {

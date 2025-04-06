@@ -6796,3 +6796,59 @@ WHERE [p].[user_id] = @__client_UserId_0 AND [p].[is_deleted] = CAST(0 AS bit)
 2025-04-05 16:51:43.987 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.2:5053/ws/chat - 101 null null 95884.8624ms
 2025-04-05 16:51:43.991 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.2:5053/ws/chat - 101 null null 95889.3548ms
 2025-04-05 16:51:43.996 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.2:5053/ws/chat - 101 null null 94234.5388ms
+2025-04-05 17:08:09.312 +07:00 [INF] Executed DbCommand (23ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [u].[id], [u].[username], [u].[avatar_url]
+FROM [Users] AS [u]
+2025-04-05 17:08:09.452 +07:00 [INF] User profile is available. Using 'C:\Users\Thao\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-04-05 17:08:09.492 +07:00 [INF] Now listening on: http://0.0.0.0:5053
+2025-04-05 17:08:09.494 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-04-05 17:08:09.495 +07:00 [INF] Hosting environment: Development
+2025-04-05 17:08:09.496 +07:00 [INF] Content root path: C:\Users\Thao\source\Flutter\Message_app\server
+2025-04-05 17:12:16.250 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.2:5053/swagger - null null
+2025-04-05 17:12:16.308 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.2:5053/swagger - 301 0 null 62.333ms
+2025-04-05 17:12:16.316 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.2:5053/swagger/index.html - null null
+2025-04-05 17:12:16.453 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.2:5053/swagger/index.html - 200 null text/html;charset=utf-8 137.3987ms
+2025-04-05 17:12:16.464 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.2:5053/swagger/swagger-ui-bundle.js - null null
+2025-04-05 17:12:16.464 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.2:5053/swagger/index.css - null null
+2025-04-05 17:12:16.465 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.2:5053/swagger/swagger-ui.css - null null
+2025-04-05 17:12:16.465 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.2:5053/swagger/swagger-ui-standalone-preset.js - null null
+2025-04-05 17:12:16.466 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.2:5053/swagger/index.js - null null
+2025-04-05 17:12:16.495 +07:00 [INF] Sending file. Request path: '/index.css'. Physical path: 'N/A'
+2025-04-05 17:12:16.503 +07:00 [INF] Sending file. Request path: '/swagger-ui.css'. Physical path: 'N/A'
+2025-04-05 17:12:16.505 +07:00 [INF] Sending file. Request path: '/swagger-ui-standalone-preset.js'. Physical path: 'N/A'
+2025-04-05 17:12:16.509 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.2:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 42.6448ms
+2025-04-05 17:12:16.510 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.2:5053/swagger/index.css - 200 202 text/css 45.4318ms
+2025-04-05 17:12:16.513 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.2:5053/swagger/swagger-ui.css - 200 152035 text/css 47.7037ms
+2025-04-05 17:12:16.514 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.2:5053/swagger/swagger-ui-standalone-preset.js - 200 230007 text/javascript 48.5129ms
+2025-04-05 17:12:16.529 +07:00 [INF] Sending file. Request path: '/swagger-ui-bundle.js'. Physical path: 'N/A'
+2025-04-05 17:12:16.537 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.2:5053/swagger/swagger-ui-bundle.js - 200 1457477 text/javascript 73.5364ms
+2025-04-05 17:12:17.327 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.2:5053/swagger/v1/swagger.json - null null
+2025-04-05 17:12:17.387 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.2:5053/swagger/favicon-32x32.png - null null
+2025-04-05 17:12:17.391 +07:00 [INF] Sending file. Request path: '/favicon-32x32.png'. Physical path: 'N/A'
+2025-04-05 17:12:17.394 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.2:5053/swagger/favicon-32x32.png - 200 628 image/png 7.6926ms
+2025-04-05 17:12:17.476 +07:00 [ERR] An unhandled exception has occurred while executing the request.
+Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorException: Failed to generate Operation for action - server.Controllers.MessageController.UploadFile (Message_app). See inner exception
+ ---> Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorException: Error reading parameter(s) for action server.Controllers.MessageController.UploadFile (Message_app) as [FromForm] attribute used with IFormFile. Please refer to https://github.com/domaindrivendev/Swashbuckle.AspNetCore#handle-forms-and-file-uploads for more information
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateParametersAsync(ApiDescription apiDescription, SchemaRepository schemaRespository, Func`3 parameterGenerator)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateParametersAsync(ApiDescription apiDescription, SchemaRepository schemaRespository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationAsync(ApiDescription apiDescription, SchemaRepository schemaRepository, Func`3 parametersGenerator, Func`3 bodyGenerator, Func`3 applyFilters)
+   --- End of inner exception stack trace ---
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationAsync(ApiDescription apiDescription, SchemaRepository schemaRepository, Func`3 parametersGenerator, Func`3 bodyGenerator, Func`3 applyFilters)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationAsync(ApiDescription apiDescription, SchemaRepository schemaRepository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationsAsync(IEnumerable`1 apiDescriptions, SchemaRepository schemaRepository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GeneratePathsAsync(IEnumerable`1 apiDescriptions, SchemaRepository schemaRepository, Func`3 operationsGenerator)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GeneratePathsAsync(IEnumerable`1 apiDescriptions, SchemaRepository schemaRepository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GetSwaggerAsync(String documentName, String host, String basePath)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-04-05 17:12:17.505 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.2:5053/swagger/v1/swagger.json - 500 null text/plain; charset=utf-8 177.9839ms
+2025-04-05 17:15:30.257 +07:00 [INF] Application is shutting down...
+2025-04-05 17:15:35.443 +07:00 [INF] Executed DbCommand (30ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [u].[id], [u].[username], [u].[avatar_url]
+FROM [Users] AS [u]
+2025-04-05 17:15:35.575 +07:00 [INF] User profile is available. Using 'C:\Users\Thao\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-04-05 17:15:35.621 +07:00 [WRN] Overriding address(es) 'http://0.0.0.0:5053'. Binding to endpoints defined via IConfiguration and/or UseKestrel() instead.
+2025-04-05 17:15:35.632 +07:00 [INF] Now listening on: http://[::]:5053
+2025-04-05 17:15:35.633 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-04-05 17:15:35.634 +07:00 [INF] Hosting environment: Development
+2025-04-05 17:15:35.635 +07:00 [INF] Content root path: C:\Users\Thao\source\Flutter\Message_app\server

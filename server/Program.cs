@@ -41,6 +41,10 @@ builder.Services.AddAuthentication(option =>
     };
 });
 
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.ListenAnyIP(5053); // 👈 Cho phép từ mọi IP
+});
 
 builder.Services.Inject(builder.Configuration);
 

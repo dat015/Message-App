@@ -71,7 +71,7 @@ class AttachmentDTOForAttachment {
     return AttachmentDTOForAttachment(
       id: json['id'],
       fileUrl: json['file_url'],
-      fileSize: (json['fileSize'] as num).toDouble(),
+      fileSize: (json['fileSize'] != null ? (json['fileSize'] as num).toDouble() : 0.0),
       fileType: json['file_type'],
       uploadedAt: DateTime.parse(json['uploaded_at']),
       isTemporary: json['is_temporary'] ?? true,

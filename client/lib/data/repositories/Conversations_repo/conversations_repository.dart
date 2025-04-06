@@ -1,3 +1,4 @@
+import 'package:first_app/data/dto/message_response.dart';
 import 'package:first_app/data/models/conversation.dart';
 
 import '../../api/api_client.dart';
@@ -30,6 +31,7 @@ class ConversationRepo {
     throw Exception('Failed to fetch conversations');
   }
 }
+
 
 
 

@@ -1,3 +1,4 @@
+import 'package:first_app/PlatformClient/config.dart';
 import 'package:first_app/features/auth/presentation/screens/login.dart';
 import 'package:first_app/theme/theme.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +10,6 @@ import 'features/routes/routes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   // Khởi tạo Supabase
   await Supabase.initialize(
     url: 'https://hqpglsqigydjqafpvshl.supabase.co',

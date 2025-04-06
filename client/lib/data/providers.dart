@@ -147,8 +147,8 @@ class ChatProvider with ChangeNotifier {
           attachment: attachment,
         );
 
-        _messages.add(messageWithAttachment);
-        notifyListeners(); // 🚀 Cập nhật UI ngay
+        // _messages.add(messageWithAttachment);
+        // notifyListeners(); // 🚀 Cập nhật UI ngay
         _webSocketService.sendMessage(userId, conversationId, content, fileID);
         return;
       }
@@ -168,8 +168,8 @@ class ChatProvider with ChangeNotifier {
       message: newMessage,
       attachment: null,
     );
-    _messages.add(messageWithAttachment);
-    notifyListeners(); // 🚀 Cập nhật UI ngay
+    //_messages.add(messageWithAttachment);
+    // notifyListeners(); // 🚀 Cập nhật UI ngay
     _webSocketService.sendMessage(userId, conversationId, content, fileID);
   }
   
@@ -209,8 +209,8 @@ class ChatProvider with ChangeNotifier {
           message: newMessage,
           attachment: attachment,
         );
-        _messages.add(messageWithAttachment);
-        notifyListeners(); // 🚀 Cập nhật UI ngay
+        // _messages.add(messageWithAttachment);
+        // notifyListeners(); // 🚀 Cập nhật UI ngay
         print(fileID);
         //gửi tin nhắn
         _webSocketService.sendPrivateMessage(
@@ -237,8 +237,8 @@ class ChatProvider with ChangeNotifier {
       message: newMessage,
       attachment: null,
     );
-    _messages.add(messageWithAttachment);
-    notifyListeners(); // 🚀 Cập nhật UI ngay
+    // _messages.add(messageWithAttachment);
+    // notifyListeners(); // 🚀 Cập nhật UI ngay
     _webSocketService.sendPrivateMessage(
       userId,
       conversationId,

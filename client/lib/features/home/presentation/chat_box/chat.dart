@@ -48,6 +48,20 @@ class ChatScreen extends StatelessWidget {
             },
           ),
           backgroundColor: Colors.blue,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.call),
+              onPressed: () {
+                // TODO: Implement call functionality
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.settings),
+              onPressed: () {
+                // TODO: Implement settings functionality
+              },
+            ),
+          ],
         ),
         body: Column(
           children: [Expanded(child: MessageList()), MessageInput()],

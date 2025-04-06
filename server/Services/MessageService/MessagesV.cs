@@ -51,7 +51,6 @@ namespace server.Services.MessageService
         {
             var db = _redis.GetDatabase();
             var conversationKey = $"conversation:{conversation_id}:recent";
-
             // Xử lý Redis key không đúng kiểu
             var keyType = await db.KeyTypeAsync(conversationKey);
             if (keyType != RedisType.List && keyType != RedisType.None)
@@ -122,7 +121,7 @@ namespace server.Services.MessageService
                         {
                             id = m.Attachments.First().id,
                             file_url = m.Attachments.First().file_url,
-                            FileSize = m.Attachments.First().FileSize,
+                            fileSize = m.Attachments.First().FileSize,
                             file_type = m.Attachments.First().file_type,
                             uploaded_at = m.Attachments.First().uploaded_at,
                             is_temporary = m.Attachments.First().is_temporary,

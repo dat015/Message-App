@@ -204,6 +204,12 @@ namespace server.Services.WebSocketService
 
             using var scope = _serviceProvider.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            var conversation = await dbContext.Conversations.FindAsync(message.conversation_id);
+            if (conversation == null)
+            {
+                _logger.LogWarning($"Conversation with ID {message.conversation_id} not found!");
+                return;
+            }
             using var transaction = await dbContext.Database.BeginTransactionAsync();
 
             try
@@ -220,6 +226,10 @@ namespace server.Services.WebSocketService
                 dbContext.Messages.Add(new_message);
                 await dbContext.SaveChangesAsync();
                 _logger.LogInformation($"Message saved to DB: {new_message.id}");
+
+                //Lưu thời gian tin nhắn mới nhất
+                conversation.lastMessageTime = new_message.created_at;
+                conversation.lastMessage = message.content;
 
                 if (message.fileID != null)
                 {
@@ -266,7 +276,7 @@ namespace server.Services.WebSocketService
                     {
                         id = existing_attachment.id,
                         file_url = existing_attachment.file_url,
-                        FileSize = existing_attachment.FileSize,
+                        fileSize = existing_attachment.FileSize,
                         file_type = existing_attachment.file_type,
                         uploaded_at = existing_attachment.uploaded_at,
                         is_temporary = existing_attachment.is_temporary,

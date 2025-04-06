@@ -96,26 +96,7 @@ class _MessageInputState extends State<MessageInput> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (_isTextFieldFocused)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0,
-                      vertical: 8.0,
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.person, color: Colors.grey[600]),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Gửi tin nhắn riêng',
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                
                 if (_selectedFile != null)
                   Container(
                     padding: const EdgeInsets.symmetric(
