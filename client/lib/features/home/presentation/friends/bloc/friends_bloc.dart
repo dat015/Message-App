@@ -1,3 +1,4 @@
+import 'package:first_app/data/dto/scanned_user.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:first_app/data/api/api_client.dart';
 import 'package:first_app/data/dto/friendrequest_withdetails.dart';
@@ -140,17 +141,19 @@ class FriendsBloc extends Bloc<FriendsEvent, FriendsState> {
   }
 
   Future<void> _onScanQrCode(ScanQrCodeEvent event, Emitter<FriendsState> emit) async {
-    if (state is FriendsLoaded) {
-      final currentState = state as FriendsLoaded;
-      try {
-        final userData = await apiClient.post(
-          'api/user/find-user-by-qr',
-          data: {'qrCodeContent': event.qrCodeContent, 'currentUserId': currentUserId,},
-        );
-        emit(currentState.copyWith(scannedUser: userData));
-      } catch (e) {
-        emit(FriendsError('Failed to scan QR code: $e'));
-      }
+  if (state is FriendsLoaded) {
+    final currentState = state as FriendsLoaded;
+    try {
+      final userData = await apiClient.post(
+        'api/user/find-user-by-qr',
+        data: {'qrCodeContent': event.qrCodeContent, 'currentUserId': currentUserId},
+      );
+      // Convert the API response to a ScannedUser object
+      final scannedUser = ScannedUser.fromJson(userData as Map<String, dynamic>);
+      emit(currentState.copyWith(scannedUser: scannedUser));
+    } catch (e) {
+      emit(FriendsError('Không tìm thấy người dùng từ mã QR: $e'));
     }
   }
+}
 }

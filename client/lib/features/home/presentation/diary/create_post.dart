@@ -1,22 +1,21 @@
 import 'dart:io';
 
 import 'package:first_app/data/repositories/Post_repo/post_repo.dart';
-import 'package:flutter/foundation.dart'
-    show Uint8List, kIsWeb; // Để kiểm tra nếu đang chạy trên web
+import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io'
-    if (dart.library.html) 'dart:html'
-    as html; // Điều kiện import cho web
+import 'dart:io' if (dart.library.html) 'dart:html' as html;
 
 class CreatePostScreen extends StatefulWidget {
   final int currentUserId;
   final String currentUserName;
+  final String currentUserAvatar;
 
   const CreatePostScreen({
     Key? key,
     required this.currentUserId,
     required this.currentUserName,
+    required this.currentUserAvatar,
   }) : super(key: key);
 
   @override
@@ -30,6 +29,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   String? _selectedMusicUrl;
   List<String> _taggedFriends = [];
   bool _isEditing = false;
+  bool _isPosting = false;
 
   @override
   void dispose() {
@@ -39,7 +39,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
   Future<void> _pickImage() async {
     final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    final pickedFile = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 80,
+    );
     if (pickedFile != null) {
       setState(() {
         _selectedImage = pickedFile;
@@ -47,22 +50,57 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     }
   }
 
+  Future<void> _takePhoto() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(
+      source: ImageSource.camera,
+      imageQuality: 80,
+    );
+    if (pickedFile != null) {
+      setState(() {
+        _selectedImage = pickedFile;
+      });
+    }
+  }
+
+  Future<void> _removeImage() async {
+    setState(() {
+      _selectedImage = null;
+    });
+  }
+
   Future<void> _selectMusic() async {
     // Giả lập chọn nhạc (bạn có thể tích hợp với SelectMusicScreen)
     setState(() {
-      _selectedMusicUrl =
-          'https://example.com/music.mp3'; // Thay bằng URL thực tế
+      _selectedMusicUrl = 'https://example.com/music.mp3';
+    });
+  }
+
+  Future<void> _removeMusic() async {
+    setState(() {
+      _selectedMusicUrl = null;
     });
   }
 
   Future<void> _tagFriends() async {
-    // Giả lập tag bạn bè (bạn có thể mở một màn hình để chọn bạn bè)
+    // Giả lập tag bạn bè (có thể mở một màn hình để chọn bạn bè)
     setState(() {
-      _taggedFriends = ['friend1', 'friend2']; // Thay bằng danh sách thực tế
+      _taggedFriends = ['Nguyễn Văn A', 'Trần Thị B'];
     });
   }
 
   Future<void> _createPost() async {
+    if (_postController.text.isEmpty && _selectedImage == null && _selectedMusicUrl == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Vui lòng thêm nội dung, ảnh hoặc nhạc vào bài viết')),
+      );
+      return;
+    }
+
+    setState(() {
+      _isPosting = true;
+    });
+
     try {
       await _postService.createPost(
         content: _postController.text,
@@ -72,11 +110,32 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         currentUserId: widget.currentUserId.toString(),
         authorName: widget.currentUserName,
       );
-      Navigator.pop(context);
+      
+      // Hiển thị thông báo thành công
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Đăng bài viết thành công!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        Navigator.pop(context);
+      }
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Lỗi: $e')));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Lỗi khi đăng bài: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isPosting = false;
+        });
+      }
     }
   }
 
@@ -84,14 +143,28 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
+    final theme = Theme.of(context);
 
     return Scaffold(
+      backgroundColor: theme.brightness == Brightness.dark 
+          ? Colors.black 
+          : Colors.grey[50],
       appBar: AppBar(
+        elevation: 0,
+        backgroundColor: theme.brightness == Brightness.dark 
+            ? Colors.black 
+            : Colors.white,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.close),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text('Tất cả bạn bè'),
+        title: Text(
+          'Tạo bài viết', 
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: screenWidth * 0.045,
+          ),
+        ),
         actions: [
           Padding(
             padding: EdgeInsets.symmetric(
@@ -99,138 +172,323 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               vertical: screenHeight * 0.01,
             ),
             child: ElevatedButton(
-              onPressed: _isEditing ? _createPost : null,
+              onPressed: (_isEditing || _selectedImage != null || _selectedMusicUrl != null) && !_isPosting 
+                  ? _createPost 
+                  : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: _isEditing ? Colors.blue : Colors.grey,
+                backgroundColor: (_isEditing || _selectedImage != null || _selectedMusicUrl != null) 
+                    ? theme.colorScheme.primary 
+                    : Colors.grey[300],
+                foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                elevation: 0,
+                padding: EdgeInsets.symmetric(
+                  horizontal: screenWidth * 0.04,
+                  vertical: screenHeight * 0.005,
                 ),
               ),
-              child: const Text('Đăng', style: TextStyle(color: Colors.white)),
+              child: _isPosting 
+                  ? SizedBox(
+                      width: screenWidth * 0.04, 
+                      height: screenWidth * 0.04,
+                      child: const CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                  : const Text(
+                      'Đăng',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
             ),
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Post input area
-            Padding(
-              padding: EdgeInsets.all(screenWidth * 0.04),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CircleAvatar(
-                    radius: screenWidth * 0.05,
-                    backgroundImage: const AssetImage('/images/apple.png'),
-                  ),
-                  SizedBox(width: screenWidth * 0.03),
-                  Expanded(
-                    child: TextField(
-                      controller: _postController,
-                      maxLines: null,
-                      decoration: const InputDecoration(
-                        hintText: 'Bạn đang nghĩ gì?',
-                        border: InputBorder.none,
-                      ),
-                      style: TextStyle(fontSize: screenWidth * 0.04),
-                      onChanged: (value) {
-                        setState(() {
-                          _isEditing = value.isNotEmpty;
-                        });
-                      },
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Divider
+              Divider(height: 1, thickness: 0.5, color: Colors.grey[300]),
+              
+              // User info and post input area
+              Padding(
+                padding: EdgeInsets.all(screenWidth * 0.04),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // User avatar
+                    CircleAvatar(
+                      radius: screenWidth * 0.06,
+                      backgroundImage: NetworkImage(widget.currentUserAvatar),
                     ),
-                  ),
-                ],
+                    SizedBox(width: screenWidth * 0.03),
+                    
+                    // Post text field and user info
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // User name and tagged friends
+                          Row(
+                            children: [
+                              Text(
+                                widget.currentUserName,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: screenWidth * 0.04,
+                                ),
+                              ),
+                              if (_taggedFriends.isNotEmpty) ...[
+                                Text(
+                                  ' cùng với ',
+                                  style: TextStyle(fontSize: screenWidth * 0.035),
+                                ),
+                                Text(
+                                  '${_taggedFriends.length} người khác',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: screenWidth * 0.035,
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.close, size: 16),
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(),
+                                  onPressed: () {
+                                    setState(() {
+                                      _taggedFriends = [];
+                                    });
+                                  },
+                                ),
+                              ],
+                            ],
+                          ),
+                          
+                          // Text field for post content
+                          TextField(
+                            controller: _postController,
+                            maxLines: null,
+                            keyboardType: TextInputType.multiline,
+                            decoration: InputDecoration(
+                              hintText: 'Bạn đang nghĩ gì?',
+                              hintStyle: TextStyle(
+                                color: Colors.grey,
+                                fontSize: screenWidth * 0.045,
+                              ),
+                              border: InputBorder.none,
+                              contentPadding: EdgeInsets.symmetric(vertical: screenWidth * 0.02),
+                            ),
+                            style: TextStyle(fontSize: screenWidth * 0.045),
+                            onChanged: (value) {
+                              setState(() {
+                                _isEditing = value.isNotEmpty;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
 
-            // Preview selected image
-            if (_selectedImage != null)
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
-                child:
-                    kIsWeb
-                        ? FutureBuilder<Uint8List>(
-                          future: _selectedImage!.readAsBytes(),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return const Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            }
-                            if (snapshot.hasError) {
-                              return const Icon(Icons.error, color: Colors.red);
-                            }
-                            if (snapshot.hasData) {
-                              return Image.memory(
-                                snapshot.data!,
-                                width: double.infinity,
-                                height: screenHeight * 0.3,
-                                fit: BoxFit.cover,
-                              );
-                            }
-                            return const SizedBox.shrink();
-                          },
-                        )
-                        : Image.file(
-                          File(_selectedImage!.path),
-                          width: double.infinity,
-                          height: screenHeight * 0.3,
-                          fit: BoxFit.cover,
+              // Preview selected image
+              if (_selectedImage != null)
+                Stack(
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      height: screenHeight * 0.35,
+                      margin: EdgeInsets.symmetric(
+                        horizontal: screenWidth * 0.04,
+                        vertical: screenWidth * 0.02,
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      clipBehavior: Clip.antiAlias,
+                      child: kIsWeb
+                          ? FutureBuilder<Uint8List>(
+                              future: _selectedImage!.readAsBytes(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return Center(
+                                    child: CircularProgressIndicator(
+                                      color: theme.colorScheme.primary,
+                                    ),
+                                  );
+                                }
+                                if (snapshot.hasError) {
+                                  return const Center(
+                                    child: Icon(Icons.error, color: Colors.red),
+                                  );
+                                }
+                                if (snapshot.hasData) {
+                                  return Image.memory(
+                                    snapshot.data!,
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                    fit: BoxFit.cover,
+                                  );
+                                }
+                                return const SizedBox.shrink();
+                              },
+                            )
+                          : Image.file(
+                              File(_selectedImage!.path),
+                              width: double.infinity,
+                              height: double.infinity,
+                              fit: BoxFit.cover,
+                            ),
+                    ),
+                    // Remove image button
+                    Positioned(
+                      top: screenWidth * 0.04,
+                      right: screenWidth * 0.06,
+                      child: GestureDetector(
+                        onTap: _removeImage,
+                        child: Container(
+                          padding: EdgeInsets.all(screenWidth * 0.01),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.6),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.close,
+                            color: Colors.white,
+                            size: screenWidth * 0.05,
+                          ),
                         ),
-              ),
+                      ),
+                    ),
+                  ],
+                ),
 
-            // Preview selected music
-            if (_selectedMusicUrl != null)
+              // Preview selected music
+              if (_selectedMusicUrl != null)
+                Container(
+                  margin: EdgeInsets.symmetric(
+                    horizontal: screenWidth * 0.04,
+                    vertical: screenWidth * 0.02,
+                  ),
+                  padding: EdgeInsets.all(screenWidth * 0.03),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.music_note,
+                        color: theme.colorScheme.primary,
+                        size: screenWidth * 0.06,
+                      ),
+                      SizedBox(width: screenWidth * 0.02),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Đang phát nhạc',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: screenWidth * 0.035,
+                              ),
+                            ),
+                            Text(
+                              _selectedMusicUrl!.split('/').last,
+                              style: TextStyle(
+                                fontSize: screenWidth * 0.03,
+                                color: Colors.grey[600],
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(
+                          Icons.close,
+                          size: screenWidth * 0.05,
+                        ),
+                        onPressed: _removeMusic,
+                      ),
+                    ],
+                  ),
+                ),
+
+              SizedBox(height: screenWidth * 0.04),
+              
+              // Divider before media options
+              Divider(height: 1, thickness: 0.5, color: Colors.grey[300]),
+
+              // Media options
               Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: screenWidth * 0.04,
-                  vertical: 8,
-                ),
-                child: Text(
-                  'Nhạc: $_selectedMusicUrl',
-                  style: TextStyle(
-                    fontSize: screenWidth * 0.035,
-                    color: Colors.grey,
-                  ),
+                padding: EdgeInsets.all(screenWidth * 0.04),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Thêm vào bài viết',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: screenWidth * 0.04,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    SizedBox(height: screenWidth * 0.03),
+                    Wrap(
+                      spacing: screenWidth * 0.03,
+                      runSpacing: screenWidth * 0.03,
+                      children: [
+                        _buildOptionButton(
+                          icon: Icons.photo_library,
+                          label: 'Ảnh/Video',
+                          color: Colors.green,
+                          onTap: _pickImage,
+                          screenWidth: screenWidth,
+                        ),
+                        _buildOptionButton(
+                          icon: Icons.camera_alt,
+                          label: 'Chụp ảnh',
+                          color: Colors.blue,
+                          onTap: _takePhoto,
+                          screenWidth: screenWidth,
+                        ),
+                        _buildOptionButton(
+                          icon: Icons.music_note,
+                          label: 'Âm nhạc',
+                          color: Colors.purple,
+                          onTap: _selectMusic,
+                          screenWidth: screenWidth,
+                        ),
+                        _buildOptionButton(
+                          icon: Icons.tag,
+                          label: 'Gắn thẻ bạn bè',
+                          color: Colors.orange,
+                          onTap: _tagFriends,
+                          screenWidth: screenWidth,
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
-
-            // Media options
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
-              child: Wrap(
-                spacing: screenWidth * 0.02,
-                runSpacing: screenHeight * 0.01,
-                children: [
-                  _buildOptionButton(
-                    icon: Icons.music_note,
-                    label: 'Thêm nhạc',
-                    color: Colors.purple,
-                    onTap: _selectMusic,
-                    screenWidth: screenWidth,
-                  ),
-                  _buildOptionButton(
-                    icon: Icons.photo,
-                    label: 'Thêm vào album',
-                    color: Colors.green,
-                    onTap: _pickImage,
-                    screenWidth: screenWidth,
-                  ),
-                  _buildOptionButton(
-                    icon: Icons.tag,
-                    label: 'Với bạn bè',
-                    color: Colors.grey,
-                    onTap: _tagFriends,
-                    screenWidth: screenWidth,
-                  ),
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -246,22 +504,29 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        width: screenWidth * 0.28,
         padding: EdgeInsets.symmetric(
-          horizontal: screenWidth * 0.04,
-          vertical: screenWidth * 0.02,
+          horizontal: screenWidth * 0.03,
+          vertical: screenWidth * 0.03,
         ),
         decoration: BoxDecoration(
           color: color.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(screenWidth * 0.05),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: color.withOpacity(0.3), width: 1),
         ),
-        child: Row(
+        child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: color, size: screenWidth * 0.05),
-            SizedBox(width: screenWidth * 0.02),
+            Icon(icon, color: color, size: screenWidth * 0.06),
+            SizedBox(height: screenWidth * 0.02),
             Text(
               label,
-              style: TextStyle(color: color, fontSize: screenWidth * 0.035),
+              style: TextStyle(
+                color: color,
+                fontSize: screenWidth * 0.035,
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
             ),
           ],
         ),

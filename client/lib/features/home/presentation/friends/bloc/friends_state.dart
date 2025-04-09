@@ -30,7 +30,7 @@ class FriendsLoaded extends FriendsState {
     List<FriendSuggestion>? friendSuggestions,
     List<User>? friends,
     List<int>? qrCodeData,
-    dynamic scannedUser,
+    ScannedUser? scannedUser,
   }) {
     return FriendsLoaded(
       friendRequests: friendRequests ?? this.friendRequests,

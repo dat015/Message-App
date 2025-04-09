@@ -77,6 +77,7 @@ class PostRepo {
         authorId: currentUserId,
         authorName: authorName,
         taggedFriends: taggedFriends ?? [],
+        likes: [],
       );
 
       await _firestore.collection('posts').add(post.toMap());
@@ -84,6 +85,30 @@ class PostRepo {
     } catch (e) {
       print('Error in createPost: $e');
       throw Exception('Lỗi khi tạo bài viết: $e');
+    }
+  }
+
+  Future<void> toggleLike(String postId, String userId) async {
+    try {
+      final postRef = _firestore.collection('posts').doc(postId);
+      final postDoc = await postRef.get();
+
+      if (!postDoc.exists) {
+        throw Exception('Bài viết không tồn tại');
+      }
+
+      final post = Post.fromMap(postId, postDoc.data()!);
+      final List<String> updatedLikes = List.from(post.likes);
+
+      if (updatedLikes.contains(userId)) {
+        updatedLikes.remove(userId);
+      } else {
+        updatedLikes.add(userId);
+      }
+
+      await postRef.update({'likes': updatedLikes});
+    } catch (e) {
+      throw Exception('Lỗi khi thích/bỏ thích bài viết: $e');
     }
   }
 

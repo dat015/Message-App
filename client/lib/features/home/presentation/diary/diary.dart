@@ -1,17 +1,24 @@
 import 'package:first_app/data/models/post.dart';
+import 'package:first_app/data/models/story.dart'; // Thêm import cho Story
 import 'package:first_app/data/repositories/Post_repo/post_repo.dart';
+import 'package:first_app/data/repositories/Story_repo/story_repo.dart'; // Thêm import cho StoryRepository
 import 'package:first_app/features/home/presentation/diary/create_post.dart';
+import 'package:first_app/features/home/presentation/diary/comment_screen.dart';
+import 'package:first_app/features/home/presentation/story/create_story_screen.dart'; // Thêm import cho CreateStoryScreen
+import 'package:first_app/features/home/presentation/story/story_screen.dart'; // Thêm import cho StoryScreen
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Diary extends StatefulWidget {
   final int currentUserId;
   final String currentUserName;
+  final String userAvatar;
 
   const Diary({
     Key? key,
     required this.currentUserId,
     required this.currentUserName,
+    required this.userAvatar,
   }) : super(key: key);
 
   @override
@@ -20,6 +27,7 @@ class Diary extends StatefulWidget {
 
 class _DiaryState extends State<Diary> {
   final PostRepo _postService = PostRepo();
+  final StoryRepository _storyRepo = StoryRepository(); // Khởi tạo StoryRepository
 
   @override
   Widget build(BuildContext context) {
@@ -104,11 +112,11 @@ class _DiaryState extends State<Diary> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder:
-                              (context) => CreatePostScreen(
-                                currentUserId: widget.currentUserId,
-                                currentUserName: widget.currentUserName,
-                              ),
+                          builder: (context) => CreatePostScreen(
+                            currentUserId: widget.currentUserId,
+                            currentUserName: widget.currentUserName,
+                            currentUserAvatar: widget.userAvatar,
+                          ),
                         ),
                       );
                     },
@@ -116,7 +124,7 @@ class _DiaryState extends State<Diary> {
                       children: [
                         CircleAvatar(
                           radius: screenWidth * 0.05,
-                          backgroundImage: const AssetImage('/images/avt.jpg'),
+                          backgroundImage: NetworkImage(widget.userAvatar),
                         ),
                         SizedBox(width: screenWidth * 0.04),
                         Text(
@@ -174,40 +182,146 @@ class _DiaryState extends State<Diary> {
                     horizontal: screenWidth * 0.04,
                     vertical: screenHeight * 0.01,
                   ),
-                  child: Text(
-                    'Khoảnh khắc',
-                    style: TextStyle(
-                      fontSize: screenWidth * 0.045,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Khoảnh khắc',
+                        style: TextStyle(
+                          fontSize: screenWidth * 0.045,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => StreamBuilder<List<Story>>(
+                                stream: _storyRepo.getAllStories(widget.currentUserId.toString()),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasError) {
+                                    return Center(child: Text('Lỗi: ${snapshot.error}'));
+                                  }
+                                  if (!snapshot.hasData) {
+                                    return const Center(child: CircularProgressIndicator());
+                                  }
+                                  final stories = snapshot.data!;
+                                  print('Stories in "Xem tất cả": ${stories.length}');
+                                  if (stories.isEmpty) {
+                                    return const Center(child: Text('Không có story nào'));
+                                  }
+                                  return StoryScreen(
+                                    currentUserId: widget.currentUserId.toString(),
+                                    stories: stories,
+                                  );
+                                },
+                              ),
+                            ),
+                          );
+                        },
+                        child: Text(
+                          'Xem tất cả',
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontSize: screenWidth * 0.035,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
 
                 // Moments/Stories
                 SizedBox(
                   height: screenHeight * 0.3,
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: screenWidth * 0.04,
-                    ),
-                    children: [
-                      _buildStoryCard(
-                        'Tạo mới',
-                        '/images/avt.jpg',
-                        isCreateNew: true,
-                        width: screenWidth,
-                        height: screenHeight,
-                      ),
-                      SizedBox(width: screenWidth * 0.025),
-                      _buildStoryCard(
-                        'Đức Quý',
-                        '/images/illustration-3.png',
-                        isCreateNew: false,
-                        width: screenWidth,
-                        height: screenHeight,
-                      ),
-                    ],
+                  child: StreamBuilder<List<Story>>(
+                    stream: _storyRepo.getAllStories(widget.currentUserId.toString()),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return Center(child: Text('Lỗi: ${snapshot.error}'));
+                      }
+
+                      if (!snapshot.hasData) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+
+                      final stories = snapshot.data!;
+                      if (stories.isEmpty) {
+                        return ListView(
+                          scrollDirection: Axis.horizontal,
+                          padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
+                          children: [
+                            _buildStoryCard(
+                              'Tạo mới',
+                              '/images/avt.jpg',
+                              isCreateNew: true,
+                              width: screenWidth,
+                              height: screenHeight,
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => CreateStoryScreen(
+                                      currentUserId: widget.currentUserId.toString(),
+                                      currentUserName: widget.currentUserName,
+                                      currentUserAvatar: widget.userAvatar,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        );
+                      }
+
+                      return ListView(
+                        scrollDirection: Axis.horizontal,
+                        padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
+                        children: [
+                          _buildStoryCard(
+                            'Tạo mới',
+                              widget.userAvatar,
+                            isCreateNew: true,
+                            width: screenWidth,
+                            height: screenHeight,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => CreateStoryScreen(
+                                    currentUserId: widget.currentUserId.toString(),
+                                    currentUserName: widget.currentUserName,
+                                    currentUserAvatar: widget.userAvatar,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                          ...stories.map((story) => Padding(
+                                padding: EdgeInsets.only(left: screenWidth * 0.025),
+                                child: _buildStoryCard(
+                                  story.authorName,
+                                  story.isImage ? story.imageUrl! : '/images/illustration-3.png',
+                                  isCreateNew: false,
+                                  width: screenWidth,
+                                  height: screenHeight,
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => StoryScreen(
+                                          currentUserId: widget.currentUserId.toString(),
+                                          stories: [story],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              )).toList(),
+                        ],
+                      );
+                    },
                   ),
                 ),
 
@@ -220,20 +334,17 @@ class _DiaryState extends State<Diary> {
                 ),
 
                 // Posts section
-                // Thay thế phần StreamBuilder hiện tại
                 StreamBuilder<QuerySnapshot>(
-                  stream:
-                      FirebaseFirestore.instance
-                          .collection('posts')
-                          .where(
-                            'authorId',
-                            isEqualTo: widget.currentUserId.toString(),
-                          )
-                          .orderBy('createdAt', descending: true)
-                          .snapshots(),
+                  stream: FirebaseFirestore.instance
+                      .collection('posts')
+                      .where(
+                        'authorId',
+                        isEqualTo: widget.currentUserId.toString(),
+                      )
+                      .orderBy('createdAt', descending: true)
+                      .snapshots(),
                   builder: (context, snapshot) {
                     if (snapshot.hasError) {
-                      // Kiểm tra nếu lỗi là do thiếu index
                       if (snapshot.error.toString().contains(
                         'The query requires an index',
                       )) {
@@ -264,23 +375,22 @@ class _DiaryState extends State<Diary> {
                     }
 
                     return Column(
-                      children:
-                          snapshot.data!.docs.map((doc) {
-                            final postData = doc.data() as Map<String, dynamic>;
-                            final post = Post.fromMap(doc.id, postData);
+                      children: snapshot.data!.docs.map((doc) {
+                        final postData = doc.data() as Map<String, dynamic>;
+                        final post = Post.fromMap(doc.id, postData);
 
-                            return _buildPostItem(
-                              profileImage: '/images/loginill.png',
-                              username: post.authorName ?? 'Unknown',
-                              action: post.content ?? '',
-                              timeAgo: _formatTimeAgo(post.createdAt),
-                              postImage:
-                                  post.imageUrl ?? '/images/register.png',
-                              likeCount: 13,
-                              commentCount: 1,
-                              screenWidth: screenWidth,
-                            );
-                          }).toList(),
+                        return _buildPostItem(
+                          profileImage: widget.userAvatar,
+                          username: post.authorName ?? 'Unknown',
+                          timeAgo: _formatTimeAgo(post.createdAt),
+                          action: post.content ?? '',
+                          postImage: post.imageUrl ?? '/images/register.png',
+                          likeCount: 13,
+                          commentCount: 1,
+                          screenWidth: screenWidth,
+                          postId: doc.id,
+                        );
+                      }).toList(),
                     );
                   },
                 ),
@@ -349,72 +459,76 @@ class _DiaryState extends State<Diary> {
     required bool isCreateNew,
     required double width,
     required double height,
+    required VoidCallback onTap, // Thêm callback để xử lý onTap
   }) {
-    return Container(
-      width: width * 0.4,
-      height: height * 0.3,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(width * 0.03),
-        image: DecorationImage(image: AssetImage(imagePath), fit: BoxFit.cover),
-      ),
-      child: Stack(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(width * 0.03),
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Colors.transparent, Colors.black.withOpacity(0.7)],
+    return GestureDetector(
+      onTap: onTap, // Sử dụng callback để điều hướng
+      child: Container(
+        width: width * 0.4,
+        height: height * 0.3,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(width * 0.03),
+          image: DecorationImage(image: NetworkImage(imagePath), fit: BoxFit.cover),
+        ),
+        child: Stack(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(width * 0.03),
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Colors.transparent, Colors.black.withOpacity(0.7)],
+                ),
               ),
             ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(width * 0.03),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (isCreateNew)
-                  Container(
-                    padding: EdgeInsets.all(width * 0.025),
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Colors.blue, Colors.purple],
+            Padding(
+              padding: EdgeInsets.all(width * 0.03),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (isCreateNew)
+                    Container(
+                      padding: EdgeInsets.all(width * 0.025),
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [Colors.blue, Colors.purple],
+                        ),
+                        shape: BoxShape.circle,
                       ),
-                      shape: BoxShape.circle,
+                      child: Icon(
+                        Icons.add,
+                        color: Colors.white,
+                        size: width * 0.06,
+                      ),
+                    )
+                  else
+                    Container(
+                      padding: EdgeInsets.all(width * 0.005),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.white, width: 2),
+                        shape: BoxShape.circle,
+                      ),
+                      child: CircleAvatar(
+                        radius: width * 0.04,
+                        backgroundImage: NetworkImage(widget.userAvatar),
+                      ),
                     ),
-                    child: Icon(
-                      Icons.add,
+                  SizedBox(height: width * 0.02),
+                  Text(
+                    name,
+                    style: TextStyle(
                       color: Colors.white,
-                      size: width * 0.06,
-                    ),
-                  )
-                else
-                  Container(
-                    padding: EdgeInsets.all(width * 0.005),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.white, width: 2),
-                      shape: BoxShape.circle,
-                    ),
-                    child: CircleAvatar(
-                      radius: width * 0.04,
-                      backgroundImage: const AssetImage('/images/apple.png'),
+                      fontWeight: FontWeight.bold,
+                      fontSize: width * 0.04,
                     ),
                   ),
-                SizedBox(height: width * 0.02),
-                Text(
-                  name,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: width * 0.04,
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -428,6 +542,7 @@ class _DiaryState extends State<Diary> {
     required int likeCount,
     required int commentCount,
     required double screenWidth,
+    required String postId,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -440,7 +555,7 @@ class _DiaryState extends State<Diary> {
             children: [
               CircleAvatar(
                 radius: screenWidth * 0.05,
-                backgroundImage: AssetImage(profileImage),
+                backgroundImage: NetworkImage(profileImage),
               ),
               SizedBox(width: screenWidth * 0.03),
               Expanded(
@@ -483,20 +598,20 @@ class _DiaryState extends State<Diary> {
         ),
 
         // Post image
-        Image.network(
-          postImage,
-          width: double.infinity,
-          fit: BoxFit.cover,
-          errorBuilder:
-              (context, error, stackTrace) => Image.asset(
-                '/images/face.png',
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
-        ),
+        if (postImage != '/images/register.png')
+          Image.network(
+            postImage,
+            width: double.infinity,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) => Image.asset(
+              '/images/face.png',
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
+          ),
 
         // Post actions
-        Padding(
+        Container(
           padding: EdgeInsets.symmetric(
             horizontal: screenWidth * 0.04,
             vertical: screenWidth * 0.02,
@@ -504,78 +619,89 @@ class _DiaryState extends State<Diary> {
           child: Row(
             children: [
               Expanded(
-                child: TextButton.icon(
-                  onPressed: () {},
-                  icon: Icon(
-                    Icons.thumb_up_alt_outlined,
-                    color: Colors.grey,
-                    size: screenWidth * 0.05,
-                  ),
-                  label: Text(
-                    'Thích',
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: screenWidth * 0.035,
-                    ),
-                  ),
-                  style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                child: StreamBuilder<DocumentSnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection('posts')
+                      .doc(postId)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) return const SizedBox();
+
+                    final post = Post.fromMap(
+                      postId,
+                      snapshot.data!.data() as Map<String, dynamic>,
+                    );
+                    final isLiked = post.likes.contains(
+                      widget.currentUserId.toString(),
+                    );
+
+                    return TextButton.icon(
+                      onPressed: () async {
+                        try {
+                          await _postService.toggleLike(
+                            postId,
+                            widget.currentUserId.toString(),
+                          );
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Lỗi: $e')),
+                          );
+                        }
+                      },
+                      icon: Icon(
+                        isLiked ? Icons.favorite : Icons.favorite_border,
+                        color: isLiked ? Colors.red : Colors.grey,
+                        size: screenWidth * 0.05,
+                      ),
+                      label: Text(
+                        '${post.likes.length}',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: screenWidth * 0.035,
+                        ),
+                      ),
+                      style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                    );
+                  },
                 ),
               ),
-              Row(
-                children: [
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: screenWidth * 0.02,
-                      vertical: screenWidth * 0.01,
+              TextButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CommentScreen(
+                        postId: postId,
+                        currentUserId: widget.currentUserId.toString(),
+                        currentUserName: widget.currentUserName,
+                        currentUserAvatar: widget.userAvatar,
+                      ),
                     ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.favorite,
-                          color: Colors.red,
-                          size: screenWidth * 0.05,
-                        ),
-                        Icon(
-                          Icons.emoji_emotions,
-                          color: Colors.amber,
-                          size: screenWidth * 0.05,
-                        ),
-                        SizedBox(width: screenWidth * 0.01),
-                        Text(
-                          '$likeCount',
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: screenWidth * 0.035,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(width: screenWidth * 0.02),
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: screenWidth * 0.02,
-                      vertical: screenWidth * 0.01,
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.chat_bubble_outline,
-                          color: Colors.grey[600],
-                          size: screenWidth * 0.05,
-                        ),
-                        SizedBox(width: screenWidth * 0.01),
-                        Text(
-                          '$commentCount',
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: screenWidth * 0.035,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                  );
+                },
+                icon: Icon(
+                  Icons.chat_bubble_outline,
+                  color: Colors.grey[600],
+                  size: screenWidth * 0.05,
+                ),
+                label: StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection('comments')
+                      .where('postId', isEqualTo: postId)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    final commentCount =
+                        snapshot.hasData ? snapshot.data!.docs.length : 0;
+                    return Text(
+                      '$commentCount',
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: screenWidth * 0.035,
+                      ),
+                    );
+                  },
+                ),
+                style: TextButton.styleFrom(padding: EdgeInsets.zero),
               ),
             ],
           ),
