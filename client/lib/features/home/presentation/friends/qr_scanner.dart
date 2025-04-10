@@ -2,7 +2,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:first_app/features/home/presentation/users_profile/other_us_profile.dart'; // Import trang profile
+import 'package:first_app/features/home/presentation/users_profile/other_us_profile.dart';
 import 'bloc/friends_bloc.dart';
 import 'bloc/friends_event.dart';
 import 'bloc/friends_state.dart';
@@ -46,28 +46,6 @@ class _NewQrScannerScreenState extends State<NewQrScannerScreen> {
     });
   }
 
-  void _navigateToProfile(int targetUserId) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => OtherProfilePage(
-          viewerId: widget.friendsBloc.currentUserId,
-          targetUserId: targetUserId,
-        ),
-      ),
-    ).then((_) {
-      setState(() {
-        isScanned = false;
-        scannedResult = null;
-      });
-      controller?.resumeCamera();
-      if (widget.friendsBloc.state is FriendsLoaded) {
-        final currentState = widget.friendsBloc.state as FriendsLoaded;
-        widget.friendsBloc.emit(currentState.copyWith(scannedUser: null));
-      }
-    });
-  }
-
   void _toggleFlash() {
     setState(() {
       isFlashOn = !isFlashOn;
@@ -80,9 +58,21 @@ class _NewQrScannerScreenState extends State<NewQrScannerScreen> {
     return BlocListener<FriendsBloc, FriendsState>(
       bloc: widget.friendsBloc,
       listener: (context, state) {
+        print('BlocListener State: $state');
         if (state is FriendsLoaded && state.scannedUser != null) {
-          _navigateToProfile(state.scannedUser!.id);
+          print('User found: ${state.scannedUser!.id}, ${state.scannedUser!.username}');
+          // Navigate to OtherProfilePage and replace NewQrScannerScreen in the stack
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => OtherProfilePage(
+                viewerId: widget.friendsBloc.currentUserId,
+                targetUserId: state.scannedUser!.id,
+              ),
+            ),
+          );
         } else if (state is FriendsError && isScanned) {
+          print('Error state: ${state.message}');
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(state.message)),
           );
@@ -90,7 +80,7 @@ class _NewQrScannerScreenState extends State<NewQrScannerScreen> {
             isScanned = false;
             scannedResult = null;
           });
-          controller?.resumeCamera();
+          // Do not resume the camera automatically
         }
       },
       child: Scaffold(
@@ -154,11 +144,22 @@ class _NewQrScannerScreenState extends State<NewQrScannerScreen> {
                           ),
                         ),
                         const SizedBox(height: 8),
-                        if (scannedResult != null)
-                          Text(
-                            'Đã quét: $scannedResult',
-                            style: const TextStyle(color: Colors.white70, fontSize: 14),
+                        if (isScanned)
+                          const Text(
+                            'Đang xử lý...',
+                            style: TextStyle(color: Colors.white70, fontSize: 14),
                             textAlign: TextAlign.center,
+                          ),
+                        if (!isScanned && scannedResult == null)
+                          ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                isScanned = false;
+                                scannedResult = null;
+                              });
+                              controller?.resumeCamera();
+                            },
+                            child: const Text('Thử lại'),
                           ),
                       ],
                     ),

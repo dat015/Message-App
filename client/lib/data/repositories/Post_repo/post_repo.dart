@@ -111,6 +111,29 @@ class PostRepo {
       throw Exception('Lỗi khi thích/bỏ thích bài viết: $e');
     }
   }
+  
+  Future<void> updatePost(String postId, String content) async {
+    final postRef = _firestore.collection('posts').doc(postId);
+    await postRef.update({
+      'content': content,
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  // Delete post
+  Future<void> deletePost(String postId) async {
+    final postRef = _firestore.collection('posts').doc(postId);
+    // Delete all comments associated with the post
+    final commentsSnapshot = await _firestore
+        .collection('comments')
+        .where('postId', isEqualTo: postId)
+        .get();
+    for (var doc in commentsSnapshot.docs) {
+      await doc.reference.delete();
+    }
+    // Delete the post
+    await postRef.delete();
+  }
 
   Future<List<Post>> getPosts() async {
     try {

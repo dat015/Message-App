@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 
 class Config {
   // Địa chỉ IP của máy tính trong mạng LAN
-  static const String localNetworkIP = '192.168.1.14'; // 👈 sửa IP ở đây nếu thay đổi
+  static const String localNetworkIP = '192.168.1.23'; // 👈 sửa IP ở đây nếu thay đổi
 
   static String get baseUrl {
     if (kIsWeb) {
