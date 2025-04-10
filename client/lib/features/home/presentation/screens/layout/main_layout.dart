@@ -6,8 +6,9 @@ class MainLayout extends StatelessWidget {
   final Widget body;
   final int selectedIndex;
   final Function(int) onItemTapped;
-  final int currentUserId; 
+  final int currentUserId;
   final String currentUserName;
+  final String userAvatar;
 
   const MainLayout({
     super.key,
@@ -15,7 +16,8 @@ class MainLayout extends StatelessWidget {
     required this.selectedIndex,
     required this.onItemTapped,
     required this.currentUserId,
-    required this.currentUserName,
+    required this.currentUserName, 
+    required this.userAvatar,
   });
 
   void _handleNavigation(BuildContext context, int index) {
@@ -26,16 +28,19 @@ class MainLayout extends StatelessWidget {
           builder: (context) => Friends(currentUserId: currentUserId),
         ),
       );
-    } 
-    else if (index == 2) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => Diary(currentUserId: currentUserId, currentUserName: currentUserName),
-      ),
-    );
-  }
-    else {
+    } else if (index == 2) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder:
+              (context) => Diary(
+                currentUserId: currentUserId,
+                currentUserName: currentUserName,
+                userAvatar: userAvatar,
+              ),
+        ),
+      );
+    } else {
       // Gọi hàm onItemTapped cho các tab khác
       onItemTapped(index);
     }
@@ -72,18 +77,9 @@ class MainLayout extends StatelessWidget {
             icon: Icon(Icons.chat_bubble),
             label: 'Đoạn chat',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.people),
-            label: 'Bạn bè',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.people),
-            label: 'Nhật ký',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.menu),
-            label: 'Menu',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Bạn bè'),
+          BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Nhật ký'),
+          BottomNavigationBarItem(icon: Icon(Icons.menu), label: 'Menu'),
         ],
         currentIndex: selectedIndex,
         selectedItemColor: Colors.blueAccent,

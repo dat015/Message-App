@@ -27,17 +27,17 @@ class ScannedUser {
 
   factory ScannedUser.fromJson(Map<String, dynamic> json) {
     return ScannedUser(
-      id: json['Id'] as int,
-      username: json['Username'] as String,
-      email: json['Email'] as String,
-      avatarUrl: json['AvatarUrl'] as String?,
-      birthday: json['Birthday'] as String,
-      gender: json['Gender'] as bool,
-      interests: json['Interests'] as String?,
-      location: json['Location'] as String?,
-      bio: json['Bio'] as String?,
-      mutualFriendsCount: json['MutualFriendsCount'] as int,
-      relationshipStatus: json['RelationshipStatus'] as String,
+      id: json['id'] as int? ?? 0, // Use camelCase and provide a default value
+      username: json['username'] as String? ?? '', // Use camelCase
+      email: json['email'] as String? ?? '', // Use camelCase
+      avatarUrl: json['avatarUrl'] as String?, // Use camelCase
+      birthday: json['birthday'] as String? ?? '', // Use camelCase
+      gender: json['gender'] as bool? ?? false, // Use camelCase
+      interests: json['interests'] as String?, // Use camelCase
+      location: json['location'] as String?, // Use camelCase
+      bio: json['bio'] as String?, // Use camelCase
+      mutualFriendsCount: json['mutualFriendsCount'] as int? ?? 0, // Use camelCase
+      relationshipStatus: json['relationshipStatus'] as String? ?? '', // Use camelCase
     );
   }
 }

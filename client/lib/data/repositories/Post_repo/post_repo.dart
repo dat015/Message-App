@@ -77,6 +77,7 @@ class PostRepo {
         authorId: currentUserId,
         authorName: authorName,
         taggedFriends: taggedFriends ?? [],
+        likes: [],
       );
 
       await _firestore.collection('posts').add(post.toMap());
@@ -85,6 +86,53 @@ class PostRepo {
       print('Error in createPost: $e');
       throw Exception('Lỗi khi tạo bài viết: $e');
     }
+  }
+
+  Future<void> toggleLike(String postId, String userId) async {
+    try {
+      final postRef = _firestore.collection('posts').doc(postId);
+      final postDoc = await postRef.get();
+
+      if (!postDoc.exists) {
+        throw Exception('Bài viết không tồn tại');
+      }
+
+      final post = Post.fromMap(postId, postDoc.data()!);
+      final List<String> updatedLikes = List.from(post.likes);
+
+      if (updatedLikes.contains(userId)) {
+        updatedLikes.remove(userId);
+      } else {
+        updatedLikes.add(userId);
+      }
+
+      await postRef.update({'likes': updatedLikes});
+    } catch (e) {
+      throw Exception('Lỗi khi thích/bỏ thích bài viết: $e');
+    }
+  }
+  
+  Future<void> updatePost(String postId, String content) async {
+    final postRef = _firestore.collection('posts').doc(postId);
+    await postRef.update({
+      'content': content,
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  // Delete post
+  Future<void> deletePost(String postId) async {
+    final postRef = _firestore.collection('posts').doc(postId);
+    // Delete all comments associated with the post
+    final commentsSnapshot = await _firestore
+        .collection('comments')
+        .where('postId', isEqualTo: postId)
+        .get();
+    for (var doc in commentsSnapshot.docs) {
+      await doc.reference.delete();
+    }
+    // Delete the post
+    await postRef.delete();
   }
 
   Future<List<Post>> getPosts() async {

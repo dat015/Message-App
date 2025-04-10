@@ -7,6 +7,7 @@ class Post {
   final String? authorId;
   final String? authorName;
   final List<String> taggedFriends;
+  final List<String> likes;
 
   Post({
     this.id,
@@ -17,6 +18,7 @@ class Post {
     this.authorId,
     this.authorName,
     required this.taggedFriends,
+    required this.likes,
   });
 
   // Phương thức toMap để chuyển đổi Post thành Map
@@ -29,6 +31,7 @@ class Post {
       'authorId': authorId,
       'authorName': authorName,
       'taggedFriends': taggedFriends,
+      'likes': likes,
     };
   }
 
@@ -43,6 +46,7 @@ class Post {
       authorId: map['authorId'],
       authorName: map['authorName'],
       taggedFriends: List<String>.from(map['taggedFriends'] ?? []),
+      likes: List<String>.from(map['likes'] ?? []),
     );
   }
 }

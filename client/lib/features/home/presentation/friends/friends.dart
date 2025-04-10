@@ -607,16 +607,22 @@ class _FriendsScreenState extends State<FriendsScreen>
               _showQrCodeDialog(context);
             },
           ),
-          IconButton(
-            icon: const Icon(Icons.qr_code_scanner, color: Colors.black),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const NewQrScannerScreen(),
+          Builder(
+            builder:
+                (context) => IconButton(
+                  icon: const Icon(Icons.qr_code_scanner, color: Colors.black),
+                  onPressed: () {
+                    final friendsBloc = context.read<FriendsBloc>();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder:
+                            (context) =>
+                                NewQrScannerScreen(friendsBloc: friendsBloc),
+                      ),
+                    );
+                  },
                 ),
-              );
-            },
           ),
         ],
         bottom: TabBar(
