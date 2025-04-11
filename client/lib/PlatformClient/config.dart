@@ -3,7 +3,8 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 
 class Config {
   // Địa chỉ IP của máy tính trong mạng LAN
-  static const String localNetworkIP = '192.168.1.23'; // 👈 sửa IP ở đây nếu thay đổi
+  static const String localNetworkIP =
+      '192.168.1.21'; // 👈 sửa IP ở đây nếu thay đổi
 
   static String get baseUrl {
     if (kIsWeb) {
@@ -13,7 +14,7 @@ class Config {
       // Nếu là thiết bị thật thì dùng IP LAN
       return _isPhysicalDevice()
           ? 'http://$localNetworkIP:5053/' // 👈 Điện thoại thật
-          : 'http://10.0.2.2:5053/';       // 👈 Emulator
+          : 'http://10.0.2.2:5053/'; // 👈 Emulator
     } else if (Platform.isWindows) {
       return 'http://localhost:5053/';
     } else {
@@ -32,7 +33,6 @@ class Config {
       return 'localhost:6379,abortConnect=false';
     }
   }
-   
 
   static String get baseUrlWS {
     if (kIsWeb) {
@@ -45,13 +45,14 @@ class Config {
       return 'ws://localhost:5053/ws/chat';
     }
   }
-    static String get baseUrlWSFriend {
+
+  static String get baseUrlWSFriend {
     if (kIsWeb) {
       return 'ws://localhost:5053/ws/friend';
     } else if (Platform.isAndroid) {
       return _isPhysicalDevice()
           ? 'ws://$localNetworkIP:5053/ws/friend'
-          : 'ws://10.0.2.2:5053/ws/friend'; 
+          : 'ws://10.0.2.2:5053/ws/friend';
     } else {
       return 'ws://localhost:5053/ws/friend';
     }

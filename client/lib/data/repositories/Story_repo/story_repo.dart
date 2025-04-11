@@ -11,13 +11,15 @@ class StoryRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final SupabaseClient _supabase = Supabase.instance.client;
 
-  // Tạo story mới
   Future<String> createStory({
     required String authorId,
     required String authorName,
     required String authorAvatar,
     XFile? imageFile,
     XFile? videoFile,
+    String? musicUrl,
+    int? musicStartTime,
+    int? musicDuration,
     Duration duration = const Duration(hours: 24),
   }) async {
     try {
@@ -44,7 +46,6 @@ class StoryRepository {
       // Tạo story trong Firestore
       final now = DateTime.now();
       final expiresAt = now.add(duration);
-      print('Creating story - now: $now, expiresAt: $expiresAt'); // Debug
       final story = Story(
         id: '',
         authorId: authorId,
@@ -52,6 +53,9 @@ class StoryRepository {
         authorAvatar: authorAvatar,
         imageUrl: imageUrl,
         videoUrl: videoUrl,
+        musicUrl: musicUrl,
+        musicStartTime: musicStartTime,
+        musicDuration: musicDuration,
         createdAt: now,
         expiresAt: expiresAt,
         viewers: [],
@@ -66,7 +70,7 @@ class StoryRepository {
     }
   }
 
-  // Upload media lên Supabase
+  // Phương thức uploadMedia không thay đổi
   Future<String> _uploadMedia({
     required XFile file,
     required String userId,
@@ -80,7 +84,7 @@ class StoryRepository {
       final filePath = 'stories/$userId/$fileName';
 
       if (kIsWeb) {
-        final bytes = await file.readAsBytes(); // Xử lý cho web
+        final bytes = await file.readAsBytes();
         await _supabase.storage
             .from('media')
             .uploadBinary(
@@ -92,7 +96,7 @@ class StoryRepository {
               ),
             );
       } else {
-        final io.File ioFile = io.File(file.path); // Xử lý cho mobile
+        final io.File ioFile = io.File(file.path);
         await _supabase.storage
             .from('media')
             .upload(
@@ -120,25 +124,37 @@ class StoryRepository {
     return _firestore
         .collection('stories')
         .where('expiresAt', isGreaterThan: Timestamp.now())
-        .orderBy('expiresAt', descending: false) // Sắp xếp theo expiresAt tăng dần
+        .orderBy(
+          'expiresAt',
+          descending: false,
+        ) // Sắp xếp theo expiresAt tăng dần
         .snapshots()
         .map((snapshot) {
-          print('Raw documents from Firestore: ${snapshot.docs.length}'); // Debug số lượng document
+          print(
+            'Raw documents from Firestore: ${snapshot.docs.length}',
+          ); // Debug số lượng document
 
-          final stories = snapshot.docs.map((doc) {
-            final story = Story.fromMap(doc.id, doc.data());
-            print('Story: ${story.id}, expiresAt: ${story.expiresAt}'); // Debug từng story
-            return story;
-          }).toList();
+          final stories =
+              snapshot.docs.map((doc) {
+                final story = Story.fromMap(doc.id, doc.data());
+                print(
+                  'Story: ${story.id}, expiresAt: ${story.expiresAt}',
+                ); // Debug từng story
+                return story;
+              }).toList();
 
           // Sắp xếp trên client-side để ưu tiên story của người dùng hiện tại
           stories.sort((a, b) {
-            if (a.authorId == currentUserId && b.authorId != currentUserId) return -1;
-            if (a.authorId != currentUserId && b.authorId == currentUserId) return 1;
+            if (a.authorId == currentUserId && b.authorId != currentUserId)
+              return -1;
+            if (a.authorId != currentUserId && b.authorId == currentUserId)
+              return 1;
             return 0;
           });
 
-          print('Final stories in getAllStories: ${stories.length}'); // Debug số lượng story sau sắp xếp
+          print(
+            'Final stories in getAllStories: ${stories.length}',
+          ); // Debug số lượng story sau sắp xếp
           return stories;
         });
   }
@@ -151,15 +167,42 @@ class StoryRepository {
         .orderBy('expiresAt', descending: false)
         .snapshots()
         .map((snapshot) {
-          final stories = snapshot.docs.map((doc) {
-            final story = Story.fromMap(doc.id, doc.data());
-            print('Friend story: ${story.id}, expiresAt: ${story.expiresAt}'); // Debug
-            return story;
-          }).toList();
+          final stories =
+              snapshot.docs.map((doc) {
+                final story = Story.fromMap(doc.id, doc.data());
+                print(
+                  'Friend story: ${story.id}, expiresAt: ${story.expiresAt}',
+                ); // Debug
+                return story;
+              }).toList();
           print('Friend stories: ${stories.length}'); // Debug
           return stories;
         });
   }
+
+  Future<Map<String, dynamic>> getUserInfo(String userId) async {
+  try {
+    final query = await _firestore
+        .collection('stories')
+        .where('authorId', isEqualTo: userId)
+        .limit(1)
+        .get();
+
+    if (query.docs.isNotEmpty) {
+      final data = query.docs.first.data();
+      return {
+        'name': data['authorName'] ?? 'Người dùng',
+        'avatar': data['authorAvatar'] ?? '',
+      };
+    } else {
+      return {'name': 'Người dùng', 'avatar': ''};
+    }
+  } catch (e) {
+    print('Error fetching user info from stories: $e');
+    return {'name': 'Người dùng', 'avatar': ''};
+  }
+}
+
 
   // Đánh dấu story đã xem
   Future<void> markStoryAsViewed(String storyId, String userId) async {
@@ -174,7 +217,11 @@ class StoryRepository {
   }
 
   // Thêm hoặc cập nhật cảm xúc
-  Future<void> addReaction(String storyId, String userId, String reaction) async {
+  Future<void> addReaction(
+    String storyId,
+    String userId,
+    String reaction,
+  ) async {
     try {
       await _firestore.collection('stories').doc(storyId).update({
         'reactions.$userId': reaction,
@@ -200,10 +247,11 @@ class StoryRepository {
   // Xóa story đã hết hạn
   Future<void> deleteExpiredStories() async {
     try {
-      final expiredStories = await _firestore
-          .collection('stories')
-          .where('expiresAt', isLessThan: Timestamp.now())
-          .get();
+      final expiredStories =
+          await _firestore
+              .collection('stories')
+              .where('expiresAt', isLessThan: Timestamp.now())
+              .get();
 
       for (final doc in expiredStories.docs) {
         await doc.reference.delete();

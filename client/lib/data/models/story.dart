@@ -7,6 +7,9 @@ class Story {
   final String authorAvatar;
   final String? imageUrl;
   final String? videoUrl;
+  final String? musicUrl;
+  final int? musicStartTime;
+  final int? musicDuration;
   final DateTime createdAt;
   final DateTime expiresAt;
   final List<String> viewers;
@@ -19,6 +22,9 @@ class Story {
     required this.authorAvatar,
     this.imageUrl,
     this.videoUrl,
+    this.musicUrl,
+    this.musicStartTime,
+    this.musicDuration,
     required this.createdAt,
     required this.expiresAt,
     this.viewers = const [],
@@ -34,8 +40,11 @@ class Story {
         authorAvatar: map['authorAvatar'] ?? '',
         imageUrl: map['imageUrl'],
         videoUrl: map['videoUrl'],
-        createdAt: (map['createdAt'] as Timestamp).toDate(), // Parse từ Timestamp
-        expiresAt: (map['expiresAt'] as Timestamp).toDate(), // Parse từ Timestamp
+        musicUrl: map['musicUrl'],
+        musicStartTime: map['musicStartTime'],
+        musicDuration: map['musicDuration'],
+        createdAt: (map['createdAt'] as Timestamp).toDate(),
+        expiresAt: (map['expiresAt'] as Timestamp).toDate(),
         viewers: List<String>.from(map['viewers'] ?? []),
         reactions: Map<String, String>.from(map['reactions'] ?? {}),
       );
@@ -52,8 +61,11 @@ class Story {
       'authorAvatar': authorAvatar,
       'imageUrl': imageUrl,
       'videoUrl': videoUrl,
-      'createdAt': Timestamp.fromDate(createdAt), // Lưu dưới dạng Timestamp
-      'expiresAt': Timestamp.fromDate(expiresAt), // Lưu dưới dạng Timestamp
+      'createdAt': Timestamp.fromDate(createdAt),
+      'expiresAt': Timestamp.fromDate(expiresAt),
+      'musicUrl': musicUrl,
+      'musicStartTime': musicStartTime,
+      'musicDuration': musicDuration,
       'viewers': viewers,
       'reactions': reactions,
     };
@@ -62,4 +74,5 @@ class Story {
   bool get isExpired => DateTime.now().isAfter(expiresAt);
   bool get isImage => imageUrl != null;
   bool get isVideo => videoUrl != null;
+  bool get hasMusic => musicUrl != null;
 }
