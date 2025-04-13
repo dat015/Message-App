@@ -2,7 +2,13 @@ import 'package:first_app/data/api/api_client.dart';
 import 'package:first_app/data/dto/login_response.dart';
 import 'package:first_app/data/models/conversation.dart';
 import 'package:first_app/data/repositories/Conversations_repo/conversations_repository.dart';
+import 'package:first_app/data/repositories/Friends_repo/friends_repo.dart';
+import 'package:first_app/features/home/presentation/diary/diary.dart';
+import 'package:first_app/features/home/presentation/friends/bloc/friends_bloc.dart';
+import 'package:first_app/features/home/presentation/friends/bloc/friends_event.dart';
+import 'package:first_app/features/home/presentation/friends/friends.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../routes/routes.dart';
 import 'layout/main_layout.dart';
 
@@ -39,33 +45,6 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  Widget _buildSearchBar() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.grey[200],
-          borderRadius: BorderRadius.circular(30.0),
-        ),
-        child: TextFormField(
-          decoration: InputDecoration(
-            hintText: 'Hỏi GroqCloud AI hoặc tìm kiếm',
-            hintStyle: TextStyle(color: Colors.grey[600], fontSize: 16),
-            prefixIcon: const Icon(Icons.circle, color: Colors.blueAccent),
-            border: InputBorder.none,
-            contentPadding: const EdgeInsets.symmetric(vertical: 14.0),
-          ),
-          onFieldSubmitted: (value) {},
-        ),
-      ),
-    );
-  }
-
-  List<Conversation> getListBoxChat(int userId) {
-    // Có thể tái sử dụng _conversationsFuture nếu cần
-    return [];
-  }
-
   Widget _buildChatList() {
     return FutureBuilder<List<Conversation>>(
       future: _conversationsFuture,
@@ -94,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     radius: 25,
                     backgroundImage: NetworkImage(
                       'https://via.placeholder.com/150',
-                    ), // Thay bằng avatar thực tế từ API
+                    ),
                     backgroundColor: Colors.grey[200],
                   ),
                   if (!chat.isGroup)
@@ -121,7 +100,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               subtitle: Text(
-                'Last message placeholder', // Cần thêm trường từ API nếu có (xem dưới)
+                'Last message placeholder',
                 style: const TextStyle(
                   color: Colors.grey,
                   fontWeight: FontWeight.normal,
@@ -134,18 +113,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    chat.createdAt.toString().substring(11, 16), // Lấy giờ:phút
+                    chat.createdAt.toString().substring(11, 16),
                     style: TextStyle(color: Colors.grey[600], fontSize: 12),
                   ),
-                  // Thêm logic hiển thị unread count nếu API trả về
-                  // Ví dụ: nếu API trả về unread count trong Conversation
-                  // if (chat.unread > 0) ...
                 ],
               ),
               onTap: () {
-                print('chat.id: ${chat.id}, kiểu: ${chat.id.runtimeType}');
-                print('userId: $userId, kiểu: ${userId.runtimeType}');
-
                 final int? finalConversationId =
                     chat.id != null
                         ? (chat.id is int
@@ -175,6 +148,26 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  // Hàm chọn nội dung body dựa trên selectedIndex
+  Widget _getBodyContent() {
+    switch (_selectedIndex) {
+      case 0: // Đoạn chat
+        return Column(children: [Expanded(child: _buildChatList())]);
+      case 1: // Bạn bè
+        return Friends(
+          currentUserId: userId,
+        );
+      case 2: // Bảng tin
+        return Diary(
+          currentUserId: userId,
+          currentUserName: widget.user.user!.username,
+          userAvatar: widget.user.user!.avatarUrl,
+        );
+      default:
+        return const Center(child: Text('Chưa triển khai'));
+    }
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -182,15 +175,20 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return MainLayout(
-      currentUserId: userId,
-      currentUserName: widget.user.user!.username,
-      userAvatar: widget.user.user!.avatarUrl,
-      selectedIndex: _selectedIndex,
-      onItemTapped: _onItemTapped,
-      body: Column(
-        children: [_buildSearchBar(), Expanded(child: _buildChatList())],
-      ),
+    return BlocProvider(
+      create: (context) => FriendsBloc(
+        friendsRepo: FriendsRepo(),
+        apiClient: ApiClient(),
+        currentUserId: userId,
+      )..add(LoadFriendsDataEvent()),
+      child: MainLayout(
+        body: _getBodyContent(),
+        selectedIndex: _selectedIndex,
+        onItemTapped: _onItemTapped,
+        currentUserId: userId,
+        currentUserName: widget.user.user!.username,
+        userAvatar: widget.user.user!.avatarUrl,
+      )
     );
   }
 }

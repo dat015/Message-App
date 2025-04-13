@@ -147,7 +147,8 @@ namespace server.Services
             {
                 var db = _redis.GetDatabase();
 
-                var query = $"%{usernameQuery}% -@id:{currentUserId}";
+                var query = $"@username:*{usernameQuery.ToLower()}* -@id:[{currentUserId} {currentUserId}]";
+
                 var result = await db.ExecuteAsync("FT.SEARCH", "user_idx", query, "SORTBY", "username", "ASC", "LIMIT", "0", "10");
 
                 var users = new List<User>();

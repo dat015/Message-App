@@ -469,15 +469,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                           screenWidth: screenWidth,
                         ),
                         _buildOptionButton(
-                          icon: Icons.music_note,
-                          label: 'Âm nhạc',
-                          color: Colors.purple,
-                          onTap: _selectMusic,
-                          screenWidth: screenWidth,
-                        ),
-                        _buildOptionButton(
                           icon: Icons.tag,
-                          label: 'Gắn thẻ bạn bè',
+                          label: 'Gắn thẻ',
                           color: Colors.orange,
                           onTap: _tagFriends,
                           screenWidth: screenWidth,

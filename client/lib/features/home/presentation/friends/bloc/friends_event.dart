@@ -44,14 +44,16 @@ class UnfriendEvent extends FriendsEvent {
   UnfriendEvent(this.friendId, this.username, this.index);
 }
 
-class SearchUsersEvent extends FriendsEvent {
-  final String query;
-  SearchUsersEvent(this.query);
-}
-
 class GenerateUserQrCodeEvent extends FriendsEvent {} // Sự kiện tạo mã QR
 
 class ScanQrCodeEvent extends FriendsEvent {
   final String qrCodeContent;
   ScanQrCodeEvent(this.qrCodeContent); // Sự kiện quét mã QR
 }
+
+class SearchUsersEvent extends FriendsEvent {
+  final String query;
+  SearchUsersEvent(this.query);
+}
+
+class ResetSearchEvent extends FriendsEvent {}
