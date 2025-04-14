@@ -1,5 +1,6 @@
 import 'dart:io' as io if (dart.library.html) 'dart:html';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:first_app/data/repositories/Friends_repo/friends_repo.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:first_app/data/models/post.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -9,14 +10,16 @@ import 'package:path/path.dart' as path;
 class PostRepo {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final SupabaseClient _supabase = Supabase.instance.client;
-
+final FriendsRepo _friendRepo = FriendsRepo();
   Future<void> createPost({
     required String currentUserId,
     required String content,
     required String authorName,
+    required String authorAvatar,
     XFile? image,
     String? musicUrl,
     List<String>? taggedFriends,
+    String visibility = 'public',
   }) async {
     try {
       if (currentUserId.isEmpty) {
@@ -30,7 +33,6 @@ class PostRepo {
           final originalFileName = path.basename(image.path);
           final fileExtension = path.extension(originalFileName).toLowerCase();
           final fileName = 'image_${timestamp}${fileExtension}';
-
           final filePath = 'posts/$currentUserId/$fileName';
 
           if (kIsWeb) {
@@ -60,7 +62,6 @@ class PostRepo {
           }
 
           imageUrl = _supabase.storage.from('media').getPublicUrl(filePath);
-
           print('Upload success, image URL: $imageUrl');
         } catch (e) {
           print('Error uploading image: $e');
@@ -74,10 +75,12 @@ class PostRepo {
         imageUrl: imageUrl,
         musicUrl: musicUrl,
         createdAt: DateTime.now(),
+        authorAvatar: authorAvatar,
         authorId: currentUserId,
         authorName: authorName,
         taggedFriends: taggedFriends ?? [],
         likes: [],
+        visibility: visibility,
       );
 
       await _firestore.collection('posts').add(post.toMap());
@@ -135,17 +138,40 @@ class PostRepo {
     await postRef.delete();
   }
 
-  Future<List<Post>> getPosts() async {
+  Future<List<Object>> _getFriends(String userId) async {
     try {
-      final snapshot =
-          await _firestore
-              .collection('posts')
-              .orderBy('createdAt', descending: true)
-              .get();
-      return snapshot.docs
-          .map((doc) => Post.fromMap(doc.id, doc.data()))
-          .toList();
+      return await _friendRepo.getFriends(int.parse(userId));
     } catch (e) {
+      print('Error fetching friends: $e');
+      return [];
+    }
+  }
+
+  Future<List<Post>> getPosts(String currentUserId) async {
+    try {
+      final snapshot = await _firestore
+          .collection('posts')
+          .orderBy('createdAt', descending: true)
+          .get();
+
+      // Lấy danh sách bạn bè
+      final friends = await _getFriends(currentUserId);
+      final friendIds = friends.map((friend) => friend.toString()).toList();
+
+      final posts = snapshot.docs.map((doc) => Post.fromMap(doc.id, doc.data())).toList();
+
+      // Lọc bài viết dựa trên visibility
+      return posts.where((post) {
+        if (post.visibility == 'public') {
+          return true; // Bài viết công khai
+        } else if (post.visibility == 'friends') {
+          // Chỉ bạn bè hoặc chính người đăng mới thấy
+          return friendIds.contains(post.authorId) || post.authorId == currentUserId;
+        }
+        return false;
+      }).toList();
+    } catch (e) {
+      print('Error in getPosts: $e');
       throw Exception('Lỗi khi lấy bài viết: $e');
     }
   }

@@ -30,6 +30,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   List<String> _taggedFriends = [];
   bool _isEditing = false;
   bool _isPosting = false;
+  String _visibility = 'public';
 
   @override
   void dispose() {
@@ -108,7 +109,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         musicUrl: _selectedMusicUrl,
         taggedFriends: _taggedFriends,
         currentUserId: widget.currentUserId.toString(),
+        authorAvatar: widget.currentUserAvatar,
         authorName: widget.currentUserName,
+        visibility: _visibility,
       );
       
       // Hiển thị thông báo thành công
@@ -268,6 +271,27 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                 ),
                               ],
                             ],
+                          ),
+
+                          DropdownButton<String>(
+                            value: _visibility,
+                            items: const [
+                              DropdownMenuItem(
+                                value: 'public',
+                                child: Text('Công khai'),
+                              ),
+                              DropdownMenuItem(
+                                value: 'friends',
+                                child: Text('Bạn bè'),
+                              ),
+                            ],
+                            onChanged: (value) {
+                              if (value != null) {
+                                setState(() {
+                                  _visibility = value;
+                                });
+                              }
+                            },
                           ),
                           
                           // Text field for post content

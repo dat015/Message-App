@@ -1,5 +1,6 @@
 import 'dart:io' as io if (dart.library.html) 'dart:html';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:first_app/data/repositories/Friends_repo/friends_repo.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:first_app/data/models/story.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -10,7 +11,7 @@ import 'package:path/path.dart' as path;
 class StoryRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final SupabaseClient _supabase = Supabase.instance.client;
-
+final FriendsRepo _friendRepo = FriendsRepo();
   Future<String> createStory({
     required String authorId,
     required String authorName,
@@ -21,6 +22,7 @@ class StoryRepository {
     int? musicStartTime,
     int? musicDuration,
     Duration duration = const Duration(hours: 24),
+    String visibility = 'public',
   }) async {
     try {
       String? imageUrl;
@@ -60,6 +62,7 @@ class StoryRepository {
         expiresAt: expiresAt,
         viewers: [],
         reactions: {},
+        visibility: visibility,
       );
 
       final docRef = await _firestore.collection('stories').add(story.toMap());
@@ -116,46 +119,48 @@ class StoryRepository {
     }
   }
 
+  Future<List<Object>> _getFriends(String userId) async {
+    try {
+      return await _friendRepo.getFriends(int.parse(userId));
+    } catch (e) {
+      print('Error fetching friends: $e');
+      return [];
+    }
+  }
+
   // Lấy tất cả story
   Stream<List<Story>> getAllStories(String currentUserId) {
-    final now = DateTime.now();
-    print('Current time in getAllStories: $now'); // Debug thời gian hiện tại
-
     return _firestore
         .collection('stories')
         .where('expiresAt', isGreaterThan: Timestamp.now())
-        .orderBy(
-          'expiresAt',
-          descending: false,
-        ) // Sắp xếp theo expiresAt tăng dần
+        .orderBy('expiresAt', descending: false)
         .snapshots()
-        .map((snapshot) {
-          print(
-            'Raw documents from Firestore: ${snapshot.docs.length}',
-          ); // Debug số lượng document
+        .asyncMap((snapshot) async {
+          // Lấy danh sách bạn bè
+          final friends = await _getFriends(currentUserId);
+          final friendIds = friends.map((friend) => friend..toString()).toList();
 
-          final stories =
-              snapshot.docs.map((doc) {
-                final story = Story.fromMap(doc.id, doc.data());
-                print(
-                  'Story: ${story.id}, expiresAt: ${story.expiresAt}',
-                ); // Debug từng story
-                return story;
-              }).toList();
+          final stories = snapshot.docs.map((doc) => Story.fromMap(doc.id, doc.data())).toList();
 
-          // Sắp xếp trên client-side để ưu tiên story của người dùng hiện tại
-          stories.sort((a, b) {
-            if (a.authorId == currentUserId && b.authorId != currentUserId)
-              return -1;
-            if (a.authorId != currentUserId && b.authorId == currentUserId)
-              return 1;
+          // Lọc story dựa trên visibility
+          final filteredStories = stories.where((story) {
+            if (story.visibility == 'public') {
+              return true; // Story công khai
+            } else if (story.visibility == 'friends') {
+              // Chỉ bạn bè hoặc chính người đăng mới thấy
+              return friendIds.contains(story.authorId) || story.authorId == currentUserId;
+            }
+            return false;
+          }).toList();
+
+          // Sắp xếp để ưu tiên story của người dùng hiện tại
+          filteredStories.sort((a, b) {
+            if (a.authorId == currentUserId && b.authorId != currentUserId) return -1;
+            if (a.authorId != currentUserId && b.authorId == currentUserId) return 1;
             return 0;
           });
 
-          print(
-            'Final stories in getAllStories: ${stories.length}',
-          ); // Debug số lượng story sau sắp xếp
-          return stories;
+          return filteredStories;
         });
   }
 

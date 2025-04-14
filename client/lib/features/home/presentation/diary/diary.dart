@@ -246,38 +246,10 @@ class _DiaryState extends State<Diary> {
           ),
 
           // Posts List
-          StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance
-                .collection('posts')
-                .where(
-                  'authorId',
-                  isEqualTo: widget.currentUserId.toString(),
-                )
-                .orderBy('createdAt', descending: true)
-                .snapshots(),
+          StreamBuilder<List<Post>>(
+            stream: Stream.fromFuture(_postService.getPosts(widget.currentUserId.toString())),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
-                if (snapshot.error.toString().contains(
-                      'The query requires an index',
-                    )) {
-                  return SliverToBoxAdapter(
-                    child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          children: [
-                            const CircularProgressIndicator(),
-                            const SizedBox(height: 16),
-                            const Text(
-                              'Đang cấu hình hệ thống...\nVui lòng đợi trong giây lát và thử lại.',
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                }
                 return SliverToBoxAdapter(
                   child: Center(child: Text('Lỗi: ${snapshot.error}')),
                 );
@@ -289,7 +261,7 @@ class _DiaryState extends State<Diary> {
                 );
               }
 
-              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+              if (!snapshot.hasData || snapshot.data!.isEmpty) {
                 return SliverToBoxAdapter(
                   child: Center(
                     child: Padding(
@@ -343,21 +315,18 @@ class _DiaryState extends State<Diary> {
               return SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (context, index) {
-                    final doc = snapshot.data!.docs[index];
-                    final postData = doc.data() as Map<String, dynamic>;
-                    final post = Post.fromMap(doc.id, postData);
-
+                    final post = snapshot.data![index];
                     return _buildPostItem(
                       profileImage: widget.userAvatar,
                       username: post.authorName ?? 'Unknown',
                       timeAgo: _formatTimeAgo(post.createdAt),
                       content: post.content ?? '',
                       postImage: post.imageUrl ?? '/images/register.png',
-                      postId: doc.id,
+                      postId: post.id!,
                       post: post,
                     );
                   },
-                  childCount: snapshot.data!.docs.length,
+                  childCount: snapshot.data!.length,
                 ),
               );
             },
@@ -541,6 +510,8 @@ class _DiaryState extends State<Diary> {
     required String postId,
     required Post post,
   }) {
+    final isOwnPost = post.authorId == widget.currentUserId;
+    final authorAvatars = post.authorAvatar;
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
       elevation: 1,
@@ -558,7 +529,7 @@ class _DiaryState extends State<Diary> {
               children: [
                 CircleAvatar(
                   radius: 20,
-                  backgroundImage: NetworkImage(profileImage),
+                  backgroundImage: NetworkImage(authorAvatars),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -583,6 +554,7 @@ class _DiaryState extends State<Diary> {
                     ],
                   ),
                 ),
+                if (isOwnPost)
                 IconButton(
                   icon: Icon(
                     Icons.more_horiz,

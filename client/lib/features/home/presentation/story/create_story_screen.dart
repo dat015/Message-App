@@ -35,6 +35,7 @@ class _CreateStoryScreenState extends State<CreateStoryScreen> with SingleTicker
   VideoPlayerController? _videoController;
   TextEditingController _captionController = TextEditingController();
   AudioPlayer _audioPlayer = AudioPlayer();
+  String _visibility = 'public';
 
   // Animation and state variables
   late AnimationController _loadingController;
@@ -173,6 +174,7 @@ class _CreateStoryScreenState extends State<CreateStoryScreen> with SingleTicker
         musicUrl: _selectedMusicUrl,
         musicStartTime: _startTime.inSeconds,
         musicDuration: _maxMusicDuration.inSeconds,
+        visibility: _visibility,
       );
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -669,6 +671,33 @@ class _CreateStoryScreenState extends State<CreateStoryScreen> with SingleTicker
                   Positioned.fill(
                     child: Center(
                       child: _buildEmptyState(),
+                    ),
+                  ),
+
+                  if (_imageFile != null || _videoFile != null)
+                  Positioned(
+                    top: 80,
+                    left: 16,
+                    child: DropdownButton<String>(
+                      value: _visibility,
+                      items: const [
+                        DropdownMenuItem(
+                          value: 'public',
+                          child: Text('Công khai', style: TextStyle(color: Colors.white)),
+                        ),
+                        DropdownMenuItem(
+                          value: 'friends',
+                          child: Text('Bạn bè', style: TextStyle(color: Colors.white)),
+                        ),
+                      ],
+                      onChanged: (value) {
+                        if (value != null) {
+                          setState(() {
+                            _visibility = value;
+                          });
+                        }
+                      },
+                      dropdownColor: Colors.black87,
                     ),
                   ),
               ],

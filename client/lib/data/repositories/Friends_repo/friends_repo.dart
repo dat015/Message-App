@@ -126,35 +126,42 @@ class FriendsRepo {
   }
 
   Future<List<User>> getFriends(int userId) async {
-  final response = await http.get(Uri.parse('$baseUrl/list/$userId'));
-  if (response.statusCode == 200) {
-    final jsonResponse = jsonDecode(response.body);
-    bool isSuccess;
-    if (jsonResponse['success'] is bool) {
-      isSuccess = jsonResponse['success'] as bool;
-    } else if (jsonResponse['success'] is String) {
-      isSuccess = jsonResponse['success'].toLowerCase() == 'true';
-    } else {
-      throw Exception('Invalid success value: ${jsonResponse['success']}');
-    }
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/list/$userId'));
+      if (response.statusCode == 200) {
+        final jsonResponse = jsonDecode(response.body);
+        bool isSuccess;
+        if (jsonResponse['success'] is bool) {
+          isSuccess = jsonResponse['success'] as bool;
+        } else if (jsonResponse['success'] is String) {
+          isSuccess = jsonResponse['success'].toLowerCase() == 'true';
+        } else {
+          throw Exception('Invalid success value: ${jsonResponse['success']}');
+        }
 
-    if (isSuccess) {
-      final friendsData = jsonResponse['friends'];
-      if (friendsData is Map<String, dynamic> && friendsData.containsKey('\$values')) {
-        final friends = friendsData['\$values'] as List<dynamic>;
-        return friends.map((json) => User.fromJson(json)).toList();
-      } else if (friendsData is List<dynamic>) {
-        return friendsData.map((json) => User.fromJson(json)).toList();
+        if (isSuccess) {
+          final friendsData = jsonResponse['friends'];
+          List<dynamic> friends;
+          if (friendsData is Map<String, dynamic> && friendsData.containsKey('\$values')) {
+            friends = friendsData['\$values'] as List<dynamic>;
+          } else if (friendsData is List<dynamic>) {
+            friends = friendsData;
+          } else {
+            throw Exception('Invalid response format: friends is neither a list nor a map with \$values');
+          }
+
+          return friends.map((json) => User.fromJson(json)).toList();
+        } else {
+          throw Exception('Failed to load friends: ${jsonResponse['message']}');
+        }
       } else {
-        throw Exception('Invalid response format: friends is neither a list nor a map with \$values');
+        throw Exception('Failed to load friends: ${response.statusCode}');
       }
-    } else {
-      throw Exception('Failed to load friends: ${jsonResponse['message']}');
+    } catch (e) {
+      print('Error in getFriends: $e');
+      return []; // Trả về danh sách rỗng nếu có lỗi
     }
-  } else {
-    throw Exception('Failed to load friends: ${response.statusCode}');
   }
-}
 
   Future<List<FriendRequestWithDetails>> getSentFriendRequests(int userId) async {
   final response = await http.get(Uri.parse('$baseUrl/get-sent-requests/$userId'));
