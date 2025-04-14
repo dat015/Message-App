@@ -87,4 +87,17 @@ class MessageRepo {
       return {'fileId': 0, 'fileUrl': ''};
     }
   }
+
+  Future<List<MessageWithAttachment>> searchMessages(int conversationId, String query) async {
+    try {
+      final response = await api_client.get('/api/Message/searchMessages/$conversationId/$query');
+      if(response is List<MessageWithAttachment>){
+        return response;
+      }
+      throw Exception('Failed to search messages');
+    }
+    catch(e){
+      throw Exception('Failed to search messages');
+    }
+  }
 }

@@ -111,6 +111,21 @@ namespace server.Services.WebSocketService
                         {
                             await HandleMessage(client, message);
                         }
+                        else if (message.type == "system")// Xử lý thêm thành viên vào nhóm
+                        {
+                            var userId = message.sender_id;
+                            var conversationId = message.conversation_id;
+                            await AddMemberToConversation(conversationId, userId);
+                        }
+                        else if (message.type == "ping")// Xử lý heartbeat từ client
+                        {
+                            Console.WriteLine($"Received ping from client {client.UserId}");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Unknown message type: {message.type}");
+                        }
+                        
                     }
                 }
                 catch (JsonException ex)
@@ -196,10 +211,36 @@ namespace server.Services.WebSocketService
                 }
             }
         }
+        private async Task AddMemberToConversation(int conversationId, int userId)
+        {
+            using var scope = _serviceProvider.CreateScope();
+            var conversationSV = scope.ServiceProvider.GetRequiredService<IConversation>();
+            
+            var participant = await conversationSV.AddMemberToGroup(conversationId, userId);
+            if(participant == null){
+                throw new Exception($"Failed to add user {userId} to conversation {conversationId}");
+            }
+
+            var notification = new MessageDTOForAttachment
+            {
+                id = 0,
+                type = "system",
+                content = $"User {participant.name} has been added to the group.",
+                sender_id = userId,
+                conversation_id = conversationId,
+                created_at = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"))
+            };
+            var message = new MessageWithAttachment
+            {   
+                Message = notification,
+                Attachment = null
+            };
+            await PublishMessage(message);
+        }
         private async Task HandleMessage(Client client, MessageDTO message)
         {
             _logger.LogInformation($"Handling message: {message.content}");
-            message.created_at = DateTime.UtcNow;
+            message.created_at = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
             Attachment existing_attachment = null;
 
             using var scope = _serviceProvider.CreateScope();
@@ -220,7 +261,7 @@ namespace server.Services.WebSocketService
                     sender_id = message.sender_id,
                     conversation_id = message.conversation_id,
                     content = message.content,
-                    created_at = DateTime.UtcNow
+                    created_at = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"))
                 };
 
                 dbContext.Messages.Add(new_message);
@@ -230,7 +271,8 @@ namespace server.Services.WebSocketService
                 //Lưu thời gian tin nhắn mới nhất
                 conversation.lastMessageTime = new_message.created_at;
                 conversation.lastMessage = message.content;
-
+                dbContext.Conversations.Update(conversation);
+                await dbContext.SaveChangesAsync();
                 if (message.fileID != null)
                 {
                     _logger.LogInformation($"Processing attachment with ID {message.fileID}");
@@ -390,7 +432,7 @@ namespace server.Services.WebSocketService
         }
 
         //nếu tin nhắn nhóm thì dùng redis để pub lên channel để các thành viên có thể nhận được
-        private async Task PublishMessage(MessageWithAttachment message)
+        public async Task PublishMessage(MessageWithAttachment message)
         {
             var subscriber = _redis.GetSubscriber();
             var messageJson = JsonSerializer.Serialize(message);
@@ -462,6 +504,11 @@ namespace server.Services.WebSocketService
             }
             _clients.Clear(); // Xóa danh sách client
             _redis?.Dispose(); // Đóng kết nối Redis
+        }
+
+        public static implicit operator WebSocket(webSocket v)
+        {
+            throw new NotImplementedException();
         }
     }
 

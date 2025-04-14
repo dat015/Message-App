@@ -18,6 +18,29 @@ namespace server.Controllers
         {
             _conversationService = conversationService;
         }
+
+            [HttpPut("update_conversation_name/{conversation_id}")]
+            public async Task<IActionResult> UpdateConversationName(int conversation_id, [FromBody] string name)
+            {
+                if (conversation_id == 0 || string.IsNullOrEmpty(name))
+                {
+                    return BadRequest("Invalid conversation id or name");
+                }
+                try
+                {
+                    var result = await _conversationService.UpdateConversationName(conversation_id, name);
+                    if (result == null)
+                    {
+                        return BadRequest("Not found conversation");
+                    }
+                    return Ok(result);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    throw ex;
+                }
+            }
         [HttpGet("get_conversations/{userId}")]
         public async Task<IActionResult> GetConversations(int userId)
         {
@@ -28,6 +51,7 @@ namespace server.Controllers
             try
             {
                 var conversations = await _conversationService.GetConversations(userId);
+                
                 return Ok(conversations);
             }
             catch (Exception e)

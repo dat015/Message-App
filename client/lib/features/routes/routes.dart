@@ -35,40 +35,43 @@ class AppRoutes {
 
       // Route cho trang chat
       case chat:
-        // Lấy arguments dưới dạng Map<String, dynamic>
-        final args = settings.arguments as Map<String, dynamic>?;
-        
-        // Kiểm tra xem arguments có null hoặc thiếu dữ liệu không
-        if (args == null || args['conversationId'] == null || args['user_id'] == null) {
-          print("Error: Missing required arguments for ChatScreen");
-          return MaterialPageRoute(
-            builder: (_) => const Scaffold(
-              body: Center(
-                child: Text('Lỗi: Thiếu tham số cuộc trò chuyện hoặc người dùng'),
-              ),
-            ),
-          );
-        }
+  final args = settings.arguments as Map<String, dynamic>?;
 
-        // Kiểm tra kiểu dữ liệu của conversationId và user_id
-        if (args['conversationId'] is! int || args['user_id'] is! int) {
-          print("Error: Invalid argument types for ChatScreen");
-          return MaterialPageRoute(
-            builder: (_) => const Scaffold(
-              body: Center(
-                child: Text('Lỗi: Tham số không đúng kiểu dữ liệu'),
-              ),
-            ),
-          );
-        }
+  // Kiểm tra các tham số bắt buộc
+  if (args == null || args['conversationId'] == null || args['user_id'] == null) {
+    print("Error: Missing required arguments for ChatScreen");
+    return MaterialPageRoute(
+      builder: (_) => const Scaffold(
+        body: Center(
+          child: Text('Lỗi: Thiếu tham số cuộc trò chuyện hoặc người dùng'),
+        ),
+      ),
+    );
+  }
 
-        // Tạo route cho ChatScreen với các tham số hợp lệ
-        return MaterialPageRoute(
-          builder: (_) => ChatScreen(
-            conversationId: args['conversationId'] as int,
-            userId: args['user_id'] as int
-          ),
-        );
+  // Kiểm tra kiểu dữ liệu
+  if (args['conversationId'] is! int || args['user_id'] is! int) {
+    print("Error: Invalid argument types for ChatScreen");
+    return MaterialPageRoute(
+      builder: (_) => const Scaffold(
+        body: Center(
+          child: Text('Lỗi: Tham số không đúng kiểu dữ liệu'),
+        ),
+      ),
+    );
+  }
+
+  // Lấy participantId nếu có
+  final participantId = args['participantId'] as int?;
+
+  // Trả về màn hình ChatScreen
+  return MaterialPageRoute(
+    builder: (_) => ChatScreen(
+      conversationId: args['conversationId'] as int,
+      userId: args['user_id'] as int,
+      participantId: participantId, // có thể null
+    ),
+  );
 
       // Route cho trang đăng nhập
       case login:

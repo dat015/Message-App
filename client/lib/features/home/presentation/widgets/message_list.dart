@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:first_app/data/dto/message_response.dart';
 import 'package:first_app/data/models/messages.dart';
 import 'package:first_app/data/models/participants.dart';
-import 'package:first_app/data/providers.dart';
+import 'package:first_app/data/providers/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';

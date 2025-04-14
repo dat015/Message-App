@@ -4,15 +4,14 @@ import 'participants.dart';
 
 class Conversation {
   int? id; // Nullable vì là auto-increment trong database
-  String name;
-  bool isGroup;
-  DateTime createdAt;
+   String name;
+  final bool isGroup;
+  final DateTime createdAt;
   DateTime? lastMessageTime;
   String? lastMessage;
   String? lastMessageSender;
   List<Message>? messages; // Tương ứng với ICollection<Message>
-  List<GroupSettings>?
-  groupSettings; // Tương ứng với ICollection<GroupSettings>
+  List<GroupSettings>? groupSettings; // Tương ứng với ICollection<GroupSettings>
   List<Participants>? participants; // Tương ứng với ICollection<Participants>
 
   // Constructor với các thuộc tính bắt buộc và giá trị mặc định
@@ -33,37 +32,31 @@ class Conversation {
   factory Conversation.fromJson(Map<String, dynamic> json) {
     return Conversation(
       id: json['id'] as int?,
-      name: json['name'] as String,
-      isGroup: json['is_group'] as bool,
-      createdAt: DateTime.parse(json['created_at'] as String),
-      lastMessageTime:
-          json['lastMessageTime'] != null
-              ? DateTime.parse(json['lastMessageTime'] as String)
-              : null,
+      name: json['name'] as String? ?? '', // Thêm giá trị mặc định nếu null
+      isGroup: json['is_group'] as bool? ?? false,
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'] as String)
+          : DateTime.now(), // Giá trị mặc định nếu null
+      lastMessageTime: json['lastMessageTime'] != null
+          ? DateTime.parse(json['lastMessageTime'] as String)
+          : null,
       lastMessage: json['lastMessage'] as String?,
       lastMessageSender: json['lastMessageSender'] as String?,
-      messages:
-          json['messages'] != null
-              ? (json['messages'] as List)
-                  .map((item) => Message.fromJson(item as Map<String, dynamic>))
-                  .toList()
-              : null,
+      messages: json['messages'] != null && json['messages'] is List
+          ? (json['messages'] as List<dynamic>)
+              .map((item) => Message.fromJson(item as Map<String, dynamic>))
+              .toList()
+          : null,
       groupSettings:
-          json['groupSettings'] != null
-              ? (json['groupSettings'] as List)
-                  .map(
-                    (item) =>
-                        GroupSettings.fromJson(item as Map<String, dynamic>),
-                  )
+          json['groupSettings'] != null && json['groupSettings'] is List
+              ? (json['groupSettings'] as List<dynamic>)
+                  .map((item) => GroupSettings.fromJson(item as Map<String, dynamic>))
                   .toList()
               : null,
       participants:
-          json['participants'] != null
-              ? (json['participants'] as List)
-                  .map(
-                    (item) =>
-                        Participants.fromJson(item as Map<String, dynamic>),
-                  )
+          json['participants'] != null && json['participants'] is Map
+              ? (json['participants'][r'$values'] as List<dynamic>?)
+                  ?.map((item) => Participants.fromJson(item as Map<String, dynamic>))
                   .toList()
               : null,
     );
@@ -80,10 +73,8 @@ class Conversation {
       'lastMessage': lastMessage,
       'lastMessageSender': lastMessageSender,
       'Messages': messages?.map((message) => message.toJson()).toList(),
-      'GroupSettings':
-          groupSettings?.map((settings) => settings.toJson()).toList(),
-      'Participants':
-          participants?.map((participant) => participant.toJson()).toList(),
+      'GroupSettings': groupSettings?.map((settings) => settings.toJson()).toList(),
+      'Participants': participants?.map((participant) => participant.toJson()).toList(),
     };
   }
 
@@ -94,7 +85,6 @@ class Conversation {
       print('Validation failed: Name must be between 1 and 100 characters');
       return false;
     }
-
     return true;
   }
 

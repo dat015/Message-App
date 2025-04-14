@@ -1,9 +1,11 @@
 import 'package:first_app/PlatformClient/config.dart';
+import 'package:first_app/data/providers/home_provider.dart';
 import 'package:first_app/features/auth/presentation/screens/login.dart';
 import 'package:first_app/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart'; // Thêm Firebase Core
 import 'package:flutter/foundation.dart' show kIsWeb; // Để kiểm tra nền tảng
+import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'features/routes/routes.dart';
@@ -34,7 +36,15 @@ void main() async {
     await Firebase.initializeApp();
   }
 
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => HomeProvider()),
+        // Các provider khác...
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

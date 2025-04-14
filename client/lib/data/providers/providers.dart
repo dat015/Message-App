@@ -63,12 +63,14 @@ class ChatProvider with ChangeNotifier {
             print('Failed to fetch messages: $e');
             return <MessageWithAttachment>[];
           });
+
       final fetchedConversation = await _conversationRepo
           .getConversation(conversationId)
           .catchError((e) {
             print('Failed to fetch conversation: $e');
             return null;
           });
+
       final fetchedParticipants = await _participantsRepo
           .getParticipants(conversationId)
           .catchError((e) {
@@ -79,6 +81,30 @@ class ChatProvider with ChangeNotifier {
       _messages = fetchedMessages;
       _conversation = fetchedConversation;
       _participants = fetchedParticipants ?? [];
+
+      // 👉 Gán lại tên nếu không phải group
+      if (_conversation != null && !_conversation!.isGroup) {
+        print("✅ Checking participants:");
+        for (var p in _participants) {
+          print("Participant: id=${p.id}, userId=${p.userId}, name=${p.name}");
+        }
+
+        final others =
+            _participants
+                .where((p) => p.userId != 0 && p.userId != userId)
+                .toList();
+
+        if (others.isNotEmpty) {
+          final other = others.first;
+          print(
+            "✅ Other participant found: ID=${other.id}, UserID=${other.userId}, Name=${other.name}",
+          );
+          _conversation!.name = other.name ?? _conversation!.name;
+        } else {
+          print("❌ No valid other participant found");
+        }
+      }
+
       notifyListeners();
     } catch (e) {
       print('Error loading data: $e');
@@ -87,6 +113,16 @@ class ChatProvider with ChangeNotifier {
       _participants = [];
       notifyListeners();
     }
+  }
+
+  void updateConversation(Conversation newConversation) {
+    _conversation = newConversation;
+    notifyListeners();
+  }
+
+  void updateParticipants(List<Participants> newParticipants) {
+    _conversation?.participants = newParticipants;
+    notifyListeners();
   }
 
   void _onMessageReceived(MessageWithAttachment messageWithAttachment) {
@@ -105,6 +141,11 @@ class ChatProvider with ChangeNotifier {
         "Message with ID ${messageWithAttachment.message.id} already exists, skipping.",
       );
     }
+  }
+
+  void addMember(int userId, int conversationId) {
+    _webSocketService.addMember(userId, conversationId);
+    notifyListeners();
   }
 
   // void sendMessage(String content, XFile? file, int? recipientId) {
@@ -172,7 +213,6 @@ class ChatProvider with ChangeNotifier {
     // notifyListeners(); // 🚀 Cập nhật UI ngay
     _webSocketService.sendMessage(userId, conversationId, content, fileID);
   }
-  
 
   Future<void> sendPrivateMessage(
     String content,

@@ -93,6 +93,26 @@ class WebSocketService {
     });
   }
 
+  void addMember(int userId, int conversationId) {
+    if (!_isConnected || _channel == null) {
+      print("Cannot add member: Not connected");
+      return;
+    }
+    try {
+      final message = {
+        "type": "add_member",
+        "sender_id": userId,
+        "conversation_id": conversationId,
+       
+      };
+      final jsonMessage = jsonEncode(message);
+      _channel!.sink.add(jsonMessage);
+      print("Sent group message: $jsonMessage");
+    } catch (e) {
+      print("Error sending message: $e");
+    }
+    
+  }
   void _sendBootupMessage(int userId, int conversationId) {
     if (!_isConnected || _channel == null) {
       print("Cannot send bootup message: Not connected");
