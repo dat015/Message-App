@@ -1,10 +1,16 @@
 import 'dart:io';
 
-import 'package:first_app/data/repositories/Post_repo/post_repo.dart';
-import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
+import 'package:first_app/PlatformClient/config.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io' if (dart.library.html) 'dart:html' as html;
+import 'package:first_app/data/repositories/Post_repo/post_repo.dart';
+import 'package:first_app/features/home/presentation/ai_caption/bloc/ai_caption_bloc.dart';
+import 'package:first_app/data/repositories/AI_Post_Repo/ai_post_request_repo.dart';
+import 'package:first_app/data/api/api_client.dart';
+import 'package:first_app/features/home/presentation/ai_caption/ai_caption_screen.dart';
+import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 
 class CreatePostScreen extends StatefulWidget {
   final int currentUserId;
@@ -71,7 +77,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   }
 
   Future<void> _selectMusic() async {
-    // Giả lập chọn nhạc (bạn có thể tích hợp với SelectMusicScreen)
     setState(() {
       _selectedMusicUrl = 'https://example.com/music.mp3';
     });
@@ -84,7 +89,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   }
 
   Future<void> _tagFriends() async {
-    // Giả lập tag bạn bè (có thể mở một màn hình để chọn bạn bè)
     setState(() {
       _taggedFriends = ['Nguyễn Văn A', 'Trần Thị B'];
     });
@@ -113,8 +117,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         authorName: widget.currentUserName,
         visibility: _visibility,
       );
-      
-      // Hiển thị thông báo thành công
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -142,6 +145,29 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     }
   }
 
+  void _showAiCaptionBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      isScrollControlled: true,
+      builder: (context) => BlocProvider(
+        create: (context) => AiCaptionBloc(
+          AiCaptionService(ApiClient(baseUrl: Config.baseUrl))
+        ),
+        child: AiCaptionBottomSheet(
+          onCaptionSelected: (caption) {
+            setState(() {
+              _postController.text = caption;
+              _isEditing = true;
+            });
+          },
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -149,20 +175,16 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: theme.brightness == Brightness.dark 
-          ? Colors.black 
-          : Colors.grey[50],
+      backgroundColor: theme.brightness == Brightness.dark ? Colors.black : Colors.grey[50],
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: theme.brightness == Brightness.dark 
-            ? Colors.black 
-            : Colors.white,
+        backgroundColor: theme.brightness == Brightness.dark ? Colors.black : Colors.white,
         leading: IconButton(
           icon: const Icon(Icons.close),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Tạo bài viết', 
+          'Tạo bài viết',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: screenWidth * 0.045,
@@ -175,12 +197,12 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               vertical: screenHeight * 0.01,
             ),
             child: ElevatedButton(
-              onPressed: (_isEditing || _selectedImage != null || _selectedMusicUrl != null) && !_isPosting 
-                  ? _createPost 
+              onPressed: (_isEditing || _selectedImage != null || _selectedMusicUrl != null) && !_isPosting
+                  ? _createPost
                   : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: (_isEditing || _selectedImage != null || _selectedMusicUrl != null) 
-                    ? theme.colorScheme.primary 
+                backgroundColor: (_isEditing || _selectedImage != null || _selectedMusicUrl != null)
+                    ? theme.colorScheme.primary
                     : Colors.grey[300],
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
@@ -192,9 +214,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   vertical: screenHeight * 0.005,
                 ),
               ),
-              child: _isPosting 
+              child: _isPosting
                   ? SizedBox(
-                      width: screenWidth * 0.04, 
+                      width: screenWidth * 0.04,
                       height: screenWidth * 0.04,
                       child: const CircularProgressIndicator(
                         strokeWidth: 2,
@@ -216,28 +238,21 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Divider
               Divider(height: 1, thickness: 0.5, color: Colors.grey[300]),
-              
-              // User info and post input area
               Padding(
                 padding: EdgeInsets.all(screenWidth * 0.04),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // User avatar
                     CircleAvatar(
                       radius: screenWidth * 0.06,
                       backgroundImage: NetworkImage(widget.currentUserAvatar),
                     ),
                     SizedBox(width: screenWidth * 0.03),
-                    
-                    // Post text field and user info
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // User name and tagged friends
                           Row(
                             children: [
                               Text(
@@ -272,7 +287,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                               ],
                             ],
                           ),
-
                           DropdownButton<String>(
                             value: _visibility,
                             items: const [
@@ -293,8 +307,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                               }
                             },
                           ),
-                          
-                          // Text field for post content
                           TextField(
                             controller: _postController,
                             maxLines: null,
@@ -321,8 +333,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   ],
                 ),
               ),
-
-              // Preview selected image
               if (_selectedImage != null)
                 Stack(
                   children: [
@@ -378,7 +388,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                               fit: BoxFit.cover,
                             ),
                     ),
-                    // Remove image button
                     Positioned(
                       top: screenWidth * 0.04,
                       right: screenWidth * 0.06,
@@ -400,8 +409,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                     ),
                   ],
                 ),
-
-              // Preview selected music
               if (_selectedMusicUrl != null)
                 Container(
                   margin: EdgeInsets.symmetric(
@@ -453,13 +460,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                     ],
                   ),
                 ),
-
               SizedBox(height: screenWidth * 0.04),
-              
-              // Divider before media options
               Divider(height: 1, thickness: 0.5, color: Colors.grey[300]),
-
-              // Media options
               Padding(
                 padding: EdgeInsets.all(screenWidth * 0.04),
                 child: Column(
@@ -497,6 +499,13 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                           label: 'Gắn thẻ',
                           color: Colors.orange,
                           onTap: _tagFriends,
+                          screenWidth: screenWidth,
+                        ),
+                        _buildOptionButton(
+                          icon: Icons.auto_awesome,
+                          label: 'Caption AI',
+                          color: Colors.purple,
+                          onTap: _showAiCaptionBottomSheet,
                           screenWidth: screenWidth,
                         ),
                       ],

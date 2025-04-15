@@ -193,6 +193,7 @@ class _DiaryState extends State<Diary> {
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                         children: [
                           _buildStoryCard(
+                            widget.userAvatar,
                             'Tạo mới',
                             widget.userAvatar,
                             isCreateNew: true,
@@ -208,6 +209,7 @@ class _DiaryState extends State<Diary> {
                           ...stories.map((story) => Padding(
                                 padding: const EdgeInsets.only(left: 10),
                                 child: _buildStoryCard(
+                                  story.authorAvatar,
                                   story.authorName,
                                   story.isImage ? story.imageUrl! : story.authorAvatar,
                                   isCreateNew: false,
@@ -394,6 +396,7 @@ class _DiaryState extends State<Diary> {
   }
 
   Widget _buildStoryCard(
+    String avatar,
     String name,
     String imagePath, {
     required bool isCreateNew,
@@ -476,7 +479,7 @@ class _DiaryState extends State<Diary> {
                           ),
                           child: CircleAvatar(
                             radius: 14,
-                            backgroundImage: NetworkImage(widget.userAvatar),
+                            backgroundImage: NetworkImage(avatar),
                           ),
                         ),
                       const SizedBox(height: 8),
@@ -510,7 +513,8 @@ class _DiaryState extends State<Diary> {
     required String postId,
     required Post post,
   }) {
-    final isOwnPost = post.authorId == widget.currentUserId;
+    final isOwnPost = post.authorId.toString() == widget.currentUserId.toString();
+
     final authorAvatars = post.authorAvatar;
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
