@@ -67,24 +67,28 @@ namespace server.Services
             if (request == null || request.Status != "Pending")
                 throw new InvalidOperationException("Invalid or already processed friend request");
 
-            request.Status = "Accepted";
+            // Tạo bản ghi bạn bè
             var friendship = new Friend
             {
                 UserId1 = request.SenderId,
                 UserId2 = request.ReceiverId,
                 CreatedAt = DateTime.UtcNow
             };
-
             _context.Friends.Add(friendship);
+
+            // Xóa bản ghi FriendRequest
+            _context.FriendRequests.Remove(request);
+
             await _context.SaveChangesAsync();
 
+            // Gửi thông báo WebSocket
             var receiver = await _context.Users.FindAsync(request.ReceiverId);
             var message = JsonSerializer.Serialize(new
             {
                 Type = "RequestAccepted",
                 RequestId = request.Id,
                 ReceiverId = request.ReceiverId,
-                ReceiverUsername = receiver.username,
+                ReceiverUsername = receiver?.username,
                 CreatedAt = DateTime.UtcNow.ToString("o")
             });
             await _webSocketFriendSV.SendRequestAcceptedNotificationAsync(request.SenderId, message);
@@ -98,7 +102,7 @@ namespace server.Services
             if (request == null || request.Status != "Pending")
                 throw new InvalidOperationException("Invalid or already processed friend request");
 
-            request.Status = "Rejected";
+            _context.FriendRequests.Remove(request);
             await _context.SaveChangesAsync();
 
             var receiver = await _context.Users.FindAsync(request.ReceiverId);
@@ -138,73 +142,87 @@ namespace server.Services
             return friends;
         }
 
-        public async Task<List<User>> SearchUsersByUsernameAsync(string usernameQuery, int currentUserId)
+        public async Task<List<User>> SearchUsersByEmailAsync(string email, int currentUserId)
         {
-            if (string.IsNullOrWhiteSpace(usernameQuery))
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                Console.WriteLine("SearchUsersByEmailAsync: Email is empty or whitespace");
                 return new List<User>();
+            }
 
+            Console.WriteLine($"Starting search in database: email='{email}', currentUserId={currentUserId}");
+            return await SearchUsersFromDatabaseAsync(email, currentUserId);
+        }
+
+        private async Task<List<User>> SearchUsersFromDatabaseAsync(string email, int currentUserId)
+        {
             try
             {
-                var db = _redis.GetDatabase();
+                Console.WriteLine($"Searching database: email='{email}', excluding userId={currentUserId}");
 
-                var query = $"@username:*{usernameQuery.ToLower()}* -@id:[{currentUserId} {currentUserId}]";
+                // Lấy danh sách bạn bè
+                var friends = await _context.Friends
+                    .Where(f => f.UserId1 == currentUserId || f.UserId2 == currentUserId)
+                    .Select(f => f.UserId1 == currentUserId ? f.UserId2 : f.UserId1)
+                    .ToListAsync();
 
-                var result = await db.ExecuteAsync("FT.SEARCH", "user_idx", query, "SORTBY", "username", "ASC", "LIMIT", "0", "10");
+                // Lấy danh sách lời mời đã gửi
+                var sentRequests = await _context.FriendRequests
+                    .Where(fr => fr.SenderId == currentUserId && fr.Status == "Pending")
+                    .Select(fr => fr.ReceiverId)
+                    .ToListAsync();
 
-                var users = new List<User>();
-                var resultArray = (RedisResult[])result;
-                int totalResults = (int)resultArray[0];
-                if (totalResults == 0) return users;
+                // Lấy danh sách lời mời đã nhận
+                var receivedRequests = await _context.FriendRequests
+                    .Where(fr => fr.ReceiverId == currentUserId && fr.Status == "Pending")
+                    .Select(fr => fr.SenderId)
+                    .ToListAsync();
 
-                for (int i = 1; i < resultArray.Length; i += 2)
+                // Tìm kiếm người dùng
+                var users = await _context.Users
+                    .Where(u => EF.Functions.Like(u.email, $"%{email}%") && u.id != currentUserId)
+                    .OrderBy(u => u.email)
+                    .Take(10)
+                    .Select(u => new User
+                    {
+                        id = u.id,
+                        username = u.username,
+                        email = u.email,
+                        avatar_url = u.avatar_url,
+                        bio = u.bio,
+                        location = u.location,
+                        interests = u.interests,
+                        birthday = u.birthday,
+                        gender = u.gender,
+                        created_at = u.created_at,
+                        RelationshipStatus = friends.Contains(u.id) ? "Friend" :
+                                            sentRequests.Contains(u.id) ? "SentRequest" :
+                                            receivedRequests.Contains(u.id) ? "ReceivedRequest" : "None",
+                        MutualFriendsCount = (
+                            from f in _context.Friends
+                            where (f.UserId1 == u.id || f.UserId2 == u.id)
+                            select f.UserId1 == u.id ? f.UserId2 : f.UserId1
+                        ).Intersect(
+                            from f in _context.Friends
+                            where (f.UserId1 == currentUserId || f.UserId2 == currentUserId)
+                            select f.UserId1 == currentUserId ? f.UserId2 : f.UserId1
+                        ).Count()
+                    })
+                    .ToListAsync();
+
+                Console.WriteLine($"Database returned {users.Count} users");
+                foreach (var user in users)
                 {
-                    var values = (RedisResult[])resultArray[i + 1];
-                    var dict = new Dictionary<string, string>();
-                    for (int j = 0; j < values.Length; j += 2)
-                    {
-                        dict[values[j].ToString()] = values[j + 1].ToString();
-                    }
-
-                    var userId = int.Parse(dict["id"]);
-                    users.Add(new User
-                    {
-                        id = userId,
-                        username = dict["username"],
-                        avatar_url = dict["avatarUrl"]
-                    });
+                    Console.WriteLine($"Database user: id={user.id}, email={user.email}, username={user.username}, relationship={user.RelationshipStatus}, mutualFriends={user.MutualFriendsCount}");
                 }
 
                 return users;
             }
-            catch (RedisConnectionException ex)
-            {
-                Console.WriteLine($"Redis error: {ex.Message}. Falling back to database.");
-                return await SearchUsersFromDatabaseAsync(usernameQuery, currentUserId);
-            }
-            catch (RedisTimeoutException ex)
-            {
-                Console.WriteLine($"Redis timeout: {ex.Message}. Falling back to database.");
-                return await SearchUsersFromDatabaseAsync(usernameQuery, currentUserId);
-            }
             catch (Exception ex)
             {
-                Console.WriteLine($"Unexpected Redis error: {ex.Message}. Falling back to database.");
-                return await SearchUsersFromDatabaseAsync(usernameQuery, currentUserId);
+                Console.WriteLine($"Database search error: {ex.Message}");
+                return new List<User>();
             }
-        }
-
-        private async Task<List<User>> SearchUsersFromDatabaseAsync(string usernameQuery, int currentUserId)
-        {
-            return await _context.Users
-                .Where(u => u.username.Contains(usernameQuery) && u.id != currentUserId)
-                .Select(u => new User
-                {
-                    id = u.id,
-                    username = u.username,
-                    avatar_url = u.avatar_url
-                })
-                .Take(10)
-                .ToListAsync();
         }
 
         public async Task<bool> CancelFriendRequestAsync(int senderId, int receiverId)

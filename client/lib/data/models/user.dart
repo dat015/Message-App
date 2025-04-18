@@ -9,6 +9,7 @@ class User {
   final DateTime createdAt;
   final bool gender;
   final int mutualFriendsCount;
+  final String? relationshipStatus;
 
   User({
     required this.id,
@@ -20,6 +21,7 @@ class User {
     required this.birthday,
     required this.createdAt,
     required this.gender,
+    this.relationshipStatus,
     this.mutualFriendsCount = 0,
   });
 
@@ -35,6 +37,7 @@ class User {
       birthday: DateTime.parse(json['birthday'] as String), // Dart không có DateOnly, dùng DateTime
       createdAt: DateTime.parse(json['created_at'] as String),
       gender: json['gender'] as bool,
+      relationshipStatus: json['relationshipStatus'] as String?,
       mutualFriendsCount: json['mutualFriendsCount'] ?? 0,
     );
   }
@@ -48,7 +51,8 @@ class User {
       'passwordSalt': passwordSalt,
       'email': email,
       'avatar_url': avatarUrl,
-      'birthday': birthday.toIso8601String().substring(0, 10), // Chỉ lấy ngày
+      'birthday': birthday.toIso8601String().substring(0, 10),
+      'relationshipStatus': relationshipStatus,
       'created_at': createdAt.toIso8601String(),
       'gender': gender,
     };

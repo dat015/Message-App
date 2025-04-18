@@ -22,6 +22,7 @@ class OtherProfileBloc extends Bloc<OtherProfileEvent, OtherProfileState> {
     on<SendFriendRequestEvent>(_onSendFriendRequest);
     on<AcceptFriendRequestEvent>(_onAcceptFriendRequest);
     on<CancelFriendRequestEvent>(_onCancelFriendRequest);
+    on<RejectFriendRequestEvent>(_onRejectFriendRequest);
     on<UnfriendEvent>(_onUnfriend);
   }
 
@@ -69,6 +70,19 @@ class OtherProfileBloc extends Bloc<OtherProfileEvent, OtherProfileState> {
         await _refreshProfile(emit);
       } catch (e) {
         emit(OtherProfileError('Lỗi khi chấp nhận: $e'));
+      }
+    }
+  }
+
+  Future<void> _onRejectFriendRequest(RejectFriendRequestEvent event, Emitter<OtherProfileState> emit) async {
+    if (state is OtherProfileLoaded) {
+      try {
+        final request = (await friendsRepo.getFriendRequests(viewerId))
+            .firstWhere((req) => req.friend.senderId == targetUserId);
+        await friendsRepo.rejectFriendRequest(request.request.id);
+        await _refreshProfile(emit);
+      } catch (e) {
+        emit(OtherProfileError('Lỗi khi từ chối: $e'));
       }
     }
   }

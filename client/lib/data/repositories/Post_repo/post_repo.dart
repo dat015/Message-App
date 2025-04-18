@@ -147,34 +147,32 @@ final FriendsRepo _friendRepo = FriendsRepo();
     }
   }
 
-  Future<List<Post>> getPosts(String currentUserId) async {
-    try {
-      final snapshot = await _firestore
-          .collection('posts')
-          .orderBy('createdAt', descending: true)
-          .get();
+  Stream<List<Post>> getPosts(String currentUserId) {
+  try {
+    return _firestore
+        .collection('posts')
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .asyncMap((snapshot) async {
+          final friends = await _getFriends(currentUserId);
+          final friendIds = friends.map((friend) => friend.toString()).toList();
 
-      // Lấy danh sách bạn bè
-      final friends = await _getFriends(currentUserId);
-      final friendIds = friends.map((friend) => friend.toString()).toList();
+          final posts = snapshot.docs.map((doc) => Post.fromMap(doc.id, doc.data())).toList();
 
-      final posts = snapshot.docs.map((doc) => Post.fromMap(doc.id, doc.data())).toList();
-
-      // Lọc bài viết dựa trên visibility
-      return posts.where((post) {
-        if (post.visibility == 'public') {
-          return true; // Bài viết công khai
-        } else if (post.visibility == 'friends') {
-          // Chỉ bạn bè hoặc chính người đăng mới thấy
-          return friendIds.contains(post.authorId) || post.authorId == currentUserId;
-        }
-        return false;
-      }).toList();
-    } catch (e) {
-      print('Error in getPosts: $e');
-      throw Exception('Lỗi khi lấy bài viết: $e');
-    }
+          return posts.where((post) {
+            if (post.visibility == 'public') {
+              return true;
+            } else if (post.visibility == 'friends') {
+              return friendIds.contains(post.authorId) || post.authorId == currentUserId;
+            }
+            return false;
+          }).toList();
+        });
+  } catch (e) {
+    print('Error in getPosts: $e');
+    rethrow;
   }
+}
 
   Future<List<Post>> getPostsByUserId(String userId) async {
     try {

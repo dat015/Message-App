@@ -175,6 +175,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final friendsRepo = FriendsRepo();
     return BlocProvider(
       create: (context) => FriendsBloc(
         friendsRepo: FriendsRepo(),
@@ -188,6 +189,7 @@ class _HomeScreenState extends State<HomeScreen> {
         currentUserId: userId,
         currentUserName: widget.user.user!.username,
         userAvatar: widget.user.user!.avatarUrl,
+        friendsRepo: friendsRepo,
       )
     );
   }

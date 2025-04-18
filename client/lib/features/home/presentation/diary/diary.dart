@@ -249,7 +249,7 @@ class _DiaryState extends State<Diary> {
 
           // Posts List
           StreamBuilder<List<Post>>(
-            stream: Stream.fromFuture(_postService.getPosts(widget.currentUserId.toString())),
+            stream: _postService.getPosts(widget.currentUserId.toString()),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
                 return SliverToBoxAdapter(
