@@ -1,16 +1,17 @@
 import 'dart:io' as io if (dart.library.html) 'dart:html';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:first_app/data/repositories/Friends_repo/friends_repo.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as supa;
 import 'package:first_app/data/models/post.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as path;
+import 'package:first_app/data/models/user.dart';
 
 class PostRepo {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final SupabaseClient _supabase = Supabase.instance.client;
-final FriendsRepo _friendRepo = FriendsRepo();
+  final supa.SupabaseClient _supabase = supa.Supabase.instance.client;
+  final FriendsRepo _friendRepo = FriendsRepo();
   Future<void> createPost({
     required String currentUserId,
     required String content,
@@ -42,7 +43,7 @@ final FriendsRepo _friendRepo = FriendsRepo();
                 .uploadBinary(
                   filePath,
                   bytes,
-                  fileOptions: const FileOptions(
+                  fileOptions: const supa.FileOptions(
                     cacheControl: '3600',
                     upsert: false,
                   ),
@@ -54,7 +55,7 @@ final FriendsRepo _friendRepo = FriendsRepo();
                 .upload(
                   filePath,
                   file,
-                  fileOptions: const FileOptions(
+                  fileOptions: const supa.FileOptions(
                     cacheControl: '3600',
                     upsert: false,
                   ),
@@ -114,7 +115,7 @@ final FriendsRepo _friendRepo = FriendsRepo();
       throw Exception('Lỗi khi thích/bỏ thích bài viết: $e');
     }
   }
-  
+
   Future<void> updatePost(String postId, String content) async {
     final postRef = _firestore.collection('posts').doc(postId);
     await postRef.update({
@@ -127,10 +128,11 @@ final FriendsRepo _friendRepo = FriendsRepo();
   Future<void> deletePost(String postId) async {
     final postRef = _firestore.collection('posts').doc(postId);
     // Delete all comments associated with the post
-    final commentsSnapshot = await _firestore
-        .collection('comments')
-        .where('postId', isEqualTo: postId)
-        .get();
+    final commentsSnapshot =
+        await _firestore
+            .collection('comments')
+            .where('postId', isEqualTo: postId)
+            .get();
     for (var doc in commentsSnapshot.docs) {
       await doc.reference.delete();
     }
@@ -138,9 +140,9 @@ final FriendsRepo _friendRepo = FriendsRepo();
     await postRef.delete();
   }
 
-  Future<List<Object>> _getFriends(String userId) async {
+  Future<List<User>> _getFriends(String userId) async {
     try {
-      return await _friendRepo.getFriends(int.parse(userId));
+      return await _friendRepo.getFriends(int.parse(userId)) as List<User>;
     } catch (e) {
       print('Error fetching friends: $e');
       return [];
@@ -148,31 +150,61 @@ final FriendsRepo _friendRepo = FriendsRepo();
   }
 
   Stream<List<Post>> getPosts(String currentUserId) {
-  try {
+    try {
+      return _firestore
+          .collection('posts')
+          .orderBy('createdAt', descending: true)
+          .snapshots()
+          .asyncMap((snapshot) async {
+            // Lấy danh sách bạn bè
+            final friends = await _getFriends(currentUserId);
+            print(
+              "Friends received: ${friends.map((f) => '(${f.id} ').join(', ')}",
+            );
+            final friendIds =
+                friends.map((friend) => friend.id.toString()).toList();
+
+            friendIds.add(currentUserId); // Thêm chính người dùng
+            print("Current user: $currentUserId");
+            print("Friend IDs: $friendIds");
+            // Lọc bài viết chỉ từ bạn bè hoặc chính người dùng
+            return snapshot.docs
+                .map((doc) => Post.fromMap(doc.id, doc.data()))
+                .where((post) {
+                  print("Checking post from ${post.authorId}");
+                  return friendIds.contains(
+                    post.authorId.toString(),
+                  ); // Ép kiểu nếu cần
+                })
+                .toList();
+          });
+    } catch (e) {
+      print('Error in getPosts: $e');
+      rethrow;
+    }
+  }
+
+  Stream<List<Post>> getUserPosts(String currentUserId, String profileUserId) {
     return _firestore
         .collection('posts')
+        .where('authorId', isEqualTo: profileUserId)
         .orderBy('createdAt', descending: true)
         .snapshots()
         .asyncMap((snapshot) async {
-          final friends = await _getFriends(currentUserId);
+          final friends = await _getFriends(profileUserId);
           final friendIds = friends.map((friend) => friend.toString()).toList();
-
-          final posts = snapshot.docs.map((doc) => Post.fromMap(doc.id, doc.data())).toList();
-
-          return posts.where((post) {
-            if (post.visibility == 'public') {
-              return true;
-            } else if (post.visibility == 'friends') {
-              return friendIds.contains(post.authorId) || post.authorId == currentUserId;
-            }
-            return false;
-          }).toList();
+          final isFriend = friendIds.contains(currentUserId);
+          return snapshot.docs
+              .map((doc) => Post.fromMap(doc.id, doc.data()))
+              .where(
+                (post) =>
+                    post.visibility == 'public' ||
+                    (post.visibility == 'friends' &&
+                        (isFriend || post.authorId == currentUserId)),
+              )
+              .toList();
         });
-  } catch (e) {
-    print('Error in getPosts: $e');
-    rethrow;
   }
-}
 
   Future<List<Post>> getPostsByUserId(String userId) async {
     try {

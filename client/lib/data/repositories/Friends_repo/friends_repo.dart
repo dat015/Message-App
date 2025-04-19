@@ -128,6 +128,8 @@ class FriendsRepo {
   Future<List<User>> getFriends(int userId) async {
     try {
       final response = await http.get(Uri.parse('$baseUrl/list/$userId'));
+      print('Response status: ${response.statusCode}');
+print('Response body: ${response.body}');
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(response.body);
         bool isSuccess;

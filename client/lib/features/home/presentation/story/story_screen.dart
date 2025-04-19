@@ -239,6 +239,7 @@ class _StoryScreenState extends State<StoryScreen>
 
     final story = widget.stories[_currentIndex];
     final hasLiked = story.reactions.containsKey(widget.currentUserId);
+    final isMyStory = story.authorId == widget.currentUserId;
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -303,7 +304,7 @@ class _StoryScreenState extends State<StoryScreen>
             _buildReactionButton(story, hasLiked),
 
             // Viewers count
-            _buildViewersButton(story),
+            if (isMyStory) _buildViewersButton(story),
 
             // Details overlay when long-pressed
             if (_showDetails) _buildStoryDetails(),

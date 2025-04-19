@@ -1,7 +1,8 @@
 import 'dart:io' as io if (dart.library.html) 'dart:html';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:first_app/data/models/user.dart';
 import 'package:first_app/data/repositories/Friends_repo/friends_repo.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as supa;
 import 'package:first_app/data/models/story.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:image_picker/image_picker.dart';
@@ -10,8 +11,8 @@ import 'package:path/path.dart' as path;
 
 class StoryRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final SupabaseClient _supabase = Supabase.instance.client;
-final FriendsRepo _friendRepo = FriendsRepo();
+  final supa.SupabaseClient _supabase = supa.Supabase.instance.client;
+  final FriendsRepo _friendRepo = FriendsRepo();
   Future<String> createStory({
     required String authorId,
     required String authorName,
@@ -93,7 +94,7 @@ final FriendsRepo _friendRepo = FriendsRepo();
             .uploadBinary(
               filePath,
               bytes,
-              fileOptions: const FileOptions(
+              fileOptions: const supa.FileOptions(
                 cacheControl: '3600',
                 upsert: false,
               ),
@@ -105,7 +106,7 @@ final FriendsRepo _friendRepo = FriendsRepo();
             .upload(
               filePath,
               ioFile,
-              fileOptions: const FileOptions(
+              fileOptions: const supa.FileOptions(
                 cacheControl: '3600',
                 upsert: false,
               ),
@@ -119,9 +120,9 @@ final FriendsRepo _friendRepo = FriendsRepo();
     }
   }
 
-  Future<List<Object>> _getFriends(String userId) async {
+  Future<List<User>> _getFriends(String userId) async {
     try {
-      return await _friendRepo.getFriends(int.parse(userId));
+      return await _friendRepo.getFriends(int.parse(userId)) as List<User>;
     } catch (e) {
       print('Error fetching friends: $e');
       return [];
@@ -136,31 +137,63 @@ final FriendsRepo _friendRepo = FriendsRepo();
         .orderBy('expiresAt', descending: false)
         .snapshots()
         .asyncMap((snapshot) async {
-          // Lấy danh sách bạn bè
-          final friends = await _getFriends(currentUserId);
-          final friendIds = friends.map((friend) => friend..toString()).toList();
+          try {
+            // Lấy danh sách bạn bè
+            final friends = await _getFriends(currentUserId);
+            final friendIds =
+                friends.map((friend) => friend.id.toString()).toList();
 
-          final stories = snapshot.docs.map((doc) => Story.fromMap(doc.id, doc.data())).toList();
+            friendIds.add(currentUserId);
 
-          // Lọc story dựa trên visibility
-          final filteredStories = stories.where((story) {
-            if (story.visibility == 'public') {
-              return true; // Story công khai
-            } else if (story.visibility == 'friends') {
-              // Chỉ bạn bè hoặc chính người đăng mới thấy
-              return friendIds.contains(story.authorId) || story.authorId == currentUserId;
-            }
-            return false;
-          }).toList();
+            // Debug log
+            print("Current user: $currentUserId");
+            print("Friend IDs: $friendIds");
 
-          // Sắp xếp để ưu tiên story của người dùng hiện tại
-          filteredStories.sort((a, b) {
-            if (a.authorId == currentUserId && b.authorId != currentUserId) return -1;
-            if (a.authorId != currentUserId && b.authorId == currentUserId) return 1;
-            return 0;
-          });
+            // Lọc story chỉ từ bạn bè hoặc chính người dùng
+            final filteredStories =
+                snapshot.docs
+                    .map((doc) => Story.fromMap(doc.id, doc.data()))
+                    .where((story) {
+                      print("Checking story from ${story.authorId}");
+                      return friendIds.contains(story.authorId.toString());
+                    })
+                    .toList();
 
-          return filteredStories;
+            // Ưu tiên story của chính người dùng
+            filteredStories.sort((a, b) {
+              if (a.authorId == currentUserId && b.authorId != currentUserId)
+                return -1;
+              if (a.authorId != currentUserId && b.authorId == currentUserId)
+                return 1;
+              return 0;
+            });
+
+            return filteredStories;
+          } catch (e) {
+            print('Error in getAllStories: $e');
+            return []; // Trả về danh sách rỗng nếu có lỗi
+          }
+        });
+  }
+
+  Stream<List<Story>> getUserStories(String currentUserId, String profileUserId) {
+    return _firestore
+        .collection('stories')
+        .where('authorId', isEqualTo: profileUserId)
+        .where('expiresAt', isGreaterThan: Timestamp.now())
+        .orderBy('expiresAt', descending: false)
+        .snapshots()
+        .asyncMap((snapshot) async {
+          final friends = await _getFriends(profileUserId);
+          final friendIds = friends.map((friend) => friend.toString()).toList();
+          final isFriend = friendIds.contains(currentUserId);
+          return snapshot.docs
+              .map((doc) => Story.fromMap(doc.id, doc.data()))
+              .where((story) =>
+                  story.visibility == 'public' ||
+                  (story.visibility == 'friends' &&
+                      (isFriend || story.authorId == currentUserId)))
+              .toList();
         });
   }
 
@@ -186,28 +219,28 @@ final FriendsRepo _friendRepo = FriendsRepo();
   }
 
   Future<Map<String, dynamic>> getUserInfo(String userId) async {
-  try {
-    final query = await _firestore
-        .collection('stories')
-        .where('authorId', isEqualTo: userId)
-        .limit(1)
-        .get();
+    try {
+      final query =
+          await _firestore
+              .collection('stories')
+              .where('authorId', isEqualTo: userId)
+              .limit(1)
+              .get();
 
-    if (query.docs.isNotEmpty) {
-      final data = query.docs.first.data();
-      return {
-        'name': data['authorName'] ?? 'Người dùng',
-        'avatar': data['authorAvatar'] ?? '',
-      };
-    } else {
+      if (query.docs.isNotEmpty) {
+        final data = query.docs.first.data();
+        return {
+          'name': data['authorName'] ?? 'Người dùng',
+          'avatar': data['authorAvatar'] ?? '',
+        };
+      } else {
+        return {'name': 'Người dùng', 'avatar': ''};
+      }
+    } catch (e) {
+      print('Error fetching user info from stories: $e');
       return {'name': 'Người dùng', 'avatar': ''};
     }
-  } catch (e) {
-    print('Error fetching user info from stories: $e');
-    return {'name': 'Người dùng', 'avatar': ''};
   }
-}
-
 
   // Đánh dấu story đã xem
   Future<void> markStoryAsViewed(String storyId, String userId) async {
