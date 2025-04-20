@@ -9,8 +9,8 @@ import 'package:first_app/data/repositories/Chat/websocket_service.dart';
 import 'package:first_app/data/repositories/Participants_Repo/participants_repo.dart';
 import 'package:first_app/data/repositories/User_Repo/user_repo.dart';
 import 'package:flutter/material.dart';
-import '../../../routes/routes.dart';
-import 'layout/main_layout.dart';
+import '../../../../routes/routes.dart';
+import '../layout/main_layout.dart';
 
 class HomeScreen extends StatefulWidget {
   final LoginResponse user;

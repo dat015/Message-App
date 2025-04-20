@@ -12,7 +12,7 @@ namespace server.Services.RedisService.ChatStorage
         Task UpdateMessageConversationAsync(long messageId, long newConversationId);
         Task AddUserConversationAsync(long userId, long conversationId);
         Task PublishMessageAsync(MessageWithAttachment message);
-        Task<List<MessageWithAttachment>> GetMessagesAsync(long conversationId, DateTime? fromDate = null, long limit = 50);
+        Task<List<MessageWithAttachment>> GetMessagesAsync(long conversationId,int user_id, DateTime? fromDate = null, long limit = 50);
         Task UpdateMessageRecallAsync(long messageId, long conversationId);
         Task DeleteMessageAsync(int conversation_id, int user_id);
         // Task DeleteMessageForMeAsync(int message_id, int user_id);

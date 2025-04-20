@@ -1,7 +1,7 @@
 import 'package:first_app/data/models/conversation.dart';
 import 'package:first_app/data/models/participants.dart';
 import 'package:first_app/data/providers/providers.dart';
-import 'package:first_app/features/home/presentation/screens/conversation_settings_screen.dart';
+import 'package:first_app/features/home/presentation/chat_box/conversation_settings_screen.dart';
 import 'package:first_app/features/home/presentation/widgets/message_input.dart';
 import 'package:first_app/features/home/presentation/widgets/message_list.dart'
     show MessageList;

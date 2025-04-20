@@ -77,7 +77,12 @@ namespace server.InjectService
                 var redisConfiguration = ConfigurationOptions.Parse(configuration["Redis:ConnectionString"]);
                 return ConnectionMultiplexer.Connect(redisConfiguration);
             });
-            services.AddSingleton<IChatStorage,ChatStorage>();
+            services.AddSingleton<IDatabase>(sp =>
+            {
+                var multiplexer = sp.GetRequiredService<IConnectionMultiplexer>();
+                return multiplexer.GetDatabase();
+            });
+            services.AddSingleton<IChatStorage, ChatStorage>();
             services.AddSignalR();
             //scoped: tạo ra 1 instance cho mỗi request
             services.AddScoped<IUploadFileService, UploadFileService>();

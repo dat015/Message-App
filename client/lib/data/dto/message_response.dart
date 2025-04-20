@@ -26,17 +26,16 @@ class MessageDTOForAttachment {
 
   factory MessageDTOForAttachment.fromJson(Map<String, dynamic> json) {
     print('Parsing MessageDTOForAttachment, JSON: $json');
-    print('isRecalled value: ${json['isRecalled']}');
     return MessageDTOForAttachment(
-      id: json['id'],
+      id: int.parse(json['id'].toString()),
       content: json['content'],
-      senderId: json['sender_id'],
+      senderId: int.parse(json['sender_id'].toString()),
       isRead: json['is_read'] ?? false,
       isRecalled: json['isRecalled'] ?? json['isrecalled'] ?? false,
       type: json['type'],
       isFile: json['isFile'] ?? false,
       createdAt: DateTime.parse(json['created_at']),
-      conversationId: json['conversation_id'],
+      conversationId: int.parse(json['conversation_id'].toString()),
     );
   }
 

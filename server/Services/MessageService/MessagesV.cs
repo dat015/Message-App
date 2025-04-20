@@ -26,13 +26,15 @@ namespace server.Services.MessageService
         private readonly ILogger<MessagesV> _logger;
         private readonly webSocket _webSocket;
         private readonly IChatStorage _chatStorage;
+        private readonly IDatabase _redisDatabase;
 
         public MessagesV(IConnectionMultiplexer redis,
                             ApplicationDbContext context,
                             IRedisService redisService,
                             ILogger<MessagesV> logger,
                             webSocket webSocket,
-                            IChatStorage chatStorage)
+                            IChatStorage chatStorage,
+                            IDatabase redisDatabase)
         {
             _context = context;
             _redisService = redisService;
@@ -40,6 +42,7 @@ namespace server.Services.MessageService
             _logger = logger;
             _webSocket = webSocket;
             _chatStorage = chatStorage;
+            _redisDatabase = redisDatabase;
         }
         public async Task addNewMessage(Message message)
         {
@@ -63,45 +66,61 @@ namespace server.Services.MessageService
             }
             try
             {
-                var existinConversation = await _context.Conversations
-                    .FindAsync(conversation_id);
+                // Kiểm tra xem conversation và user có tồn tại không
+                var existinConversation = await _context.Conversations.FindAsync(conversation_id);
                 var existingUser = await _context.Users.FindAsync(user_id);
 
                 if (existinConversation == null || existingUser == null)
                 {
                     return false;
                 }
+
+                // Lấy thời điểm xóa hiện tại
+                var clearedAt = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
+                var clearedAtTimestamp = ((DateTimeOffset)clearedAt).ToUnixTimeSeconds(); // Chuyển sang Unix timestamp
+
+                // Kiểm tra xem đã có bản ghi xóa tin nhắn trong cơ sở dữ liệu chưa
                 var existingDeletionMessage = await _context.messageDeletions
                     .Where(e => e.user_id == user_id && e.conversation_id == conversation_id)
                     .FirstOrDefaultAsync();
-                    //nếu dã tồn tại thì chỉ cần cập nhật thời gian
+
+                // Nếu đã tồn tại, cập nhật thời gian
                 if (existingDeletionMessage != null)
                 {
-                    existingDeletionMessage.cleared_at = DateTime.Now;
+                    existingDeletionMessage.cleared_at = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));;
                     _context.messageDeletions.Update(existingDeletionMessage);
-                    await _context.SaveChangesAsync();
-
-                    return true;
+                }
+                else
+                {
+                    // Nếu chưa tồn tại, tạo bản ghi mới
+                    var new_deletionMessage = new MessageDeletion
+                    {
+                        user_id = user_id,
+                        conversation_id = conversation_id,
+                        cleared_at = clearedAt
+                    };
+                    _context.messageDeletions.Add(new_deletionMessage);
                 }
 
-                var new_deletionMessage = new MessageDeletion()
-                {
-                    user_id = user_id,
-                    conversation_id = conversation_id,
-                };
-
-                _context.messageDeletions.Add(new_deletionMessage);
+                // Lưu thay đổi vào cơ sở dữ liệu
                 await _context.SaveChangesAsync();
 
-                // xóa dữ liệu ở redis
+                // Lưu cleared_at vào Redis
+                var clearedAtKey = $"user:{user_id}:conversation:{conversation_id}:cleared_at";
+                await _redisDatabase.StringSetAsync(clearedAtKey, clearedAtTimestamp);
+
+                // Đặt TTL (7 ngày) để tiết kiệm bộ nhớ
+                await _redisDatabase.KeyExpireAsync(clearedAtKey, TimeSpan.FromDays(7));
+
+                // Xóa cache liên quan (nếu cần)
                 await _chatStorage.DeleteMessageAsync(conversation_id, user_id);
+
                 return true;
             }
             catch (Exception ex)
             {
                 throw;
             }
-
         }
 
 
@@ -111,27 +130,38 @@ namespace server.Services.MessageService
             throw new NotImplementedException();
         }
 
-      
-        public async Task<List<MessageWithAttachment>> getMessages(int conversation_id, DateTime? fromDate = null)
+
+        public async Task<List<MessageWithAttachment>> GetMessagesAsync(long conversationId, int user_id, DateTime? fromDate = null)
         {
             try
             {
                 // Lấy tin nhắn từ Redis qua ChatStorage
-                var messages = await _chatStorage.GetMessagesAsync(conversation_id, fromDate);
+                var messages = await _chatStorage.GetMessagesAsync(conversationId, user_id, fromDate);
                 if (messages.Any())
                 {
-                    _logger.LogInformation("Retrieved {MessageCount} messages from Redis for conversation {ConversationId}", messages.Count, conversation_id);
+                    _logger.LogInformation("Retrieved {MessageCount} messages from Redis for conversation {ConversationId} and user {UserId}", messages.Count, conversationId, user_id);
                     return messages;
                 }
             }
             catch (RedisConnectionException ex)
             {
-                _logger.LogError(ex, "Redis unavailable, falling back to database for conversation {ConversationId}", conversation_id);
+                _logger.LogError(ex, "Redis unavailable, falling back to database for conversation {ConversationId}", conversationId);
             }
 
             // Fallback sang cơ sở dữ liệu
+            var clearedAt = await _context.messageDeletions
+                .Where(md => md.user_id == user_id && md.conversation_id == conversationId)
+                .Select(md => md.cleared_at)
+                .FirstOrDefaultAsync();
+
             var query = _context.Messages
-                .Where(m => m.conversation_id == conversation_id);
+                .Where(m => m.conversation_id == conversationId);
+
+            // Lọc tin nhắn có created_at > cleared_at
+            if (clearedAt != default(DateTime))
+            {
+                query = query.Where(m => m.created_at > clearedAt);
+            }
 
             if (fromDate.HasValue)
             {
@@ -183,16 +213,17 @@ namespace server.Services.MessageService
                     {
                         await _chatStorage.SaveMessageAsync(msg.Message, msg.Attachment);
                     }
-                    _logger.LogInformation("Cached {MessageCount} messages to Redis for conversation {ConversationId}", messagesWithAttachment.Count, conversation_id);
+                    _logger.LogInformation("Cached {MessageCount} messages to Redis for conversation {ConversationId}", messagesWithAttachment.Count, conversationId);
                 }
                 catch (RedisConnectionException ex)
                 {
-                    _logger.LogError(ex, "Failed to cache messages to Redis for conversation {ConversationId}", conversation_id);
+                    _logger.LogError(ex, "Failed to cache messages to Redis for conversation {ConversationId}", conversationId);
                 }
             }
 
             return messagesWithAttachment;
         }
+
 
         public async Task<bool> ReCallMessage(int message_id)
         {

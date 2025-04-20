@@ -1,7 +1,9 @@
 import 'package:first_app/data/providers/providers.dart';
+import 'package:first_app/data/repositories/Message_Repo/message_repository.dart';
+import 'package:first_app/data/repositories/User_Repo/user_repo.dart';
 import 'package:first_app/features/home/presentation/chat_box/chat.dart';
-import 'package:first_app/features/home/presentation/screens/members_screen.dart';
-import 'package:first_app/features/home/presentation/screens/search_messages_screen.dart';
+import 'package:first_app/features/home/presentation/chat_box/members_screen.dart';
+import 'package:first_app/features/home/presentation/chat_box/search_messages_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:first_app/data/models/conversation.dart';
 import 'package:first_app/data/models/participants.dart';
@@ -30,6 +32,8 @@ class _ConversationSettingsScreenState
   final ParticipantsRepo _participantsRepo = ParticipantsRepo();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _nicknameController = TextEditingController();
+  final MessageRepo _messageRepo = MessageRepo();
+  final UserRepo _userRepo = UserRepo();
   late ChatScreen _chatScreen;
   List<Participants> _participants = [];
   bool _isLoading = true;
@@ -213,9 +217,17 @@ class _ConversationSettingsScreenState
     );
 
     if (confirmed == true) {
+      var user = await _userRepo.GetUserFromApp();
+      if (user == null) {
+        return;
+      }
       try {
-        await _conversationRepo.deleteConversation(widget.conversation.id!);
+        await _messageRepo.deleteMessageConversation(
+          widget.conversation.id!,
+          user.id,
+        );
         if (mounted) {
+          
           Navigator.pop(context, true);
         }
       } catch (e) {

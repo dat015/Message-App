@@ -2,7 +2,7 @@ import 'package:first_app/data/dto/login_response.dart';
 import 'package:first_app/features/auth/presentation/screens/login.dart';
 import 'package:first_app/features/auth/presentation/screens/register.dart';
 import 'package:first_app/features/home/presentation/chat_box/chat.dart';
-import 'package:first_app/features/home/presentation/screens/home_screen.dart';
+import 'package:first_app/features/home/presentation/screens/home_screen/home_screen.dart';
 import 'package:flutter/material.dart';
 
 // Quản lý các route trong ứng dụng

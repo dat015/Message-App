@@ -9,10 +9,13 @@ import '../Chat/websocket_service.dart';
 
 class MessageRepo {
   var api_client = ApiClient();
-  Future<List<MessageWithAttachment>> getMessages(int conversationId) async {
+  Future<List<MessageWithAttachment>> getMessages(
+    int conversationId,
+    int userId,
+  ) async {
     try {
       final response = await api_client.get(
-        '/api/Message/getMessages/$conversationId',
+        '/api/Message/getMessages/$conversationId/$userId',
       );
       print("Response: $response"); // Debug
 
@@ -119,6 +122,25 @@ class MessageRepo {
     } catch (e) {
       // Truyền lỗi chi tiết từ ApiClient
       rethrow; // Ném lại lỗi để tầng trên xử lý
+    }
+  }
+
+  Future<void> deleteMessageConversation(
+    int conversation_id,
+    int user_id,
+  ) async {
+    try {
+       final response = await api_client.delete(
+        '/api/Message/DeleteMessageForMe/$conversation_id/$user_id',
+      );
+      // Kiểm tra phản hồi từ API nếu cần
+      if (response['success'] != true) {
+        throw Exception(
+          'Failed to recall message: ${response['message'] ?? 'Unknown error'}',
+        );
+      }
+    } catch (e) {
+      rethrow;
     }
   }
 }

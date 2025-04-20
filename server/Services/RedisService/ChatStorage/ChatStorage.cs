@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing.Printing;
+using System.Globalization;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -14,15 +15,19 @@ namespace server.Services.RedisService.ChatStorage
     {
         private readonly IConnectionMultiplexer _redis;
         private readonly ILogger<ChatStorage> _logger;
+        private readonly IDatabase _redisDatabase;
+
         private static readonly JsonSerializerOptions _jsonOptions = new()
         {
             PropertyNameCaseInsensitive = true
         };
 
-        public ChatStorage(IConnectionMultiplexer redis, ILogger<ChatStorage> logger)
+        public ChatStorage(IConnectionMultiplexer redis, ILogger<ChatStorage> logger, IDatabase redisDatabase)
         {
             _redis = redis;
             _logger = logger;
+            _redisDatabase = redisDatabase;
+
         }
 
         public async Task SaveMessageAsync(MessageDTOForAttachment message, AttachmentDTOForAttachment? attachment)
@@ -43,18 +48,21 @@ namespace server.Services.RedisService.ChatStorage
                 // Lưu chi tiết tin nhắn và attachment vào Hash
                 var messageHash = new[]
                 {
+                    new HashEntry("id", message.id),
                     new HashEntry("conversation_id", message.conversation_id),
                     new HashEntry("sender_id", message.sender_id),
                     new HashEntry("content", message.content ?? ""),
                     new HashEntry("created_at", message.created_at.ToString("O")),
-                    new HashEntry("isFile", message.isFile ? "1" : "0"),
+                    new HashEntry("isFile", message.isFile ? "true" : "false"),
                     new HashEntry("type", message.type ?? ""),
+                    new HashEntry("is_read", message.is_read ? "true" : "false"), // Thêm is_read
+                    new HashEntry("isrecalled", message.isRecalled ? "true" : "false"), // Thêm isRecalled
                     new HashEntry("file_id", attachment?.id.ToString() ?? ""),
                     new HashEntry("file_url", attachment?.file_url ?? ""),
                     new HashEntry("fileSize", attachment?.fileSize.ToString() ?? ""),
                     new HashEntry("file_type", attachment?.file_type ?? ""),
                     new HashEntry("uploaded_at", attachment?.uploaded_at.ToString("O") ?? ""),
-                    new HashEntry("is_temporary", attachment?.is_temporary.ToString() ?? "")
+                    new HashEntry("is_temporary", attachment?.is_temporary == true ? "true" : "false"),
                 };
                 await db.HashSetAsync(messageKey, messageHash);
                 await db.KeyExpireAsync(messageKey, TimeSpan.FromDays(7)); // TTL 7 ngày
@@ -131,64 +139,148 @@ namespace server.Services.RedisService.ChatStorage
             }
         }
 
-        public async Task<List<MessageWithAttachment>> GetMessagesAsync(long conversationId, DateTime? fromDate = null, long limit = 50)
+        public async Task<List<MessageWithAttachment>> GetMessagesAsync(long conversationId, int user_id, DateTime? fromDate = null, long limit = 50)
         {
-            var db = _redis.GetDatabase();
-            var conversationKey = $"conversation:{conversationId}:messages";
-            var messages = new List<MessageWithAttachment>();
-
             try
             {
-                // Kiểm tra key tồn tại và đúng loại
-                var keyType = await db.KeyTypeAsync(conversationKey);
-                if (keyType != RedisType.SortedSet && keyType != RedisType.None)
+                var messagesKey = $"conversation:{conversationId}:messages";
+                var clearedAtKey = $"user:{user_id}:conversation:{conversationId}:cleared_at";
+
+                // Lấy cleared_at từ Redis (nếu có)
+                long? clearedAtTimestamp = null;
+                var clearedAtValue = await _redisDatabase.StringGetAsync(clearedAtKey);
+                if (clearedAtValue.HasValue)
                 {
-                    _logger.LogWarning("Redis key {ConversationKey} is not a SortedSet. Deleting key.", conversationKey);
-                    await db.KeyDeleteAsync(conversationKey);
+                    clearedAtTimestamp = long.Parse(clearedAtValue);
                 }
 
-                // Lấy message_id từ Sorted Set
-                RedisValue[] messageIds;
-                if (fromDate.HasValue)
-                {
-                    var maxScore = fromDate.Value.ToUnixTimeSeconds();
-                    messageIds = await db.SortedSetRangeByScoreAsync(conversationKey, double.NegativeInfinity, maxScore, Exclude.None, Order.Descending, 0, limit);
-                }
-                else
-                {
-                    messageIds = await db.SortedSetRangeByRankAsync(conversationKey, 0, limit - 1, Order.Descending);
-                }
+                // Lấy danh sách message_id từ Sorted Set
+                var messageIds = await _redisDatabase.SortedSetRangeByRankWithScoresAsync(
+                    messagesKey,
+                    0,
+                    -1,
+                    Order.Descending
+                );
 
-                // Lấy chi tiết tin nhắn từ Hash
-                foreach (var messageId in messageIds)
+                var messages = new List<MessageWithAttachment>();
+                foreach (var entry in messageIds)
                 {
-                    var hash = await db.HashGetAllAsync($"message:{messageId}");
-                    if (hash.Length == 0) continue;
+                    var messageId = (int)entry.Element;
+                    var messageTimestamp = entry.Score; // Unix timestamp của created_at
+
+                    // Bỏ qua tin nhắn nếu nó trước cleared_at
+                    if (clearedAtTimestamp.HasValue && messageTimestamp <= clearedAtTimestamp.Value)
+                    {
+                        continue;
+                    }
+
+                    // Lọc thêm theo fromDate nếu có
+                    if (fromDate.HasValue)
+                    {
+                        var messageDateTime = DateTimeOffset.FromUnixTimeSeconds((long)messageTimestamp).UtcDateTime;
+                        if (messageDateTime > fromDate.Value)
+                        {
+                            continue;
+                        }
+                    }
+
+                    // Lấy chi tiết tin nhắn
+                    var messageKey = $"message:{messageId}";
+                    var messageHash = await _redisDatabase.HashGetAllAsync(messageKey);
+                    if (messageHash.Length == 0)
+                    {
+                        _logger.LogWarning("Message {MessageId} not found in Redis", messageId);
+                        continue;
+                    }
+
+                    // Kiểm tra các trường bắt buộc
+                    var idEntry = messageHash.FirstOrDefault(h => h.Name == "id");
+                    var conversationIdEntry = messageHash.FirstOrDefault(h => h.Name == "conversation_id");
+                    var senderIdEntry = messageHash.FirstOrDefault(h => h.Name == "sender_id");
+                    var contentEntry = messageHash.FirstOrDefault(h => h.Name == "content");
+                    var createdAtEntry = messageHash.FirstOrDefault(h => h.Name == "created_at");
+                    var isFileEntry = messageHash.FirstOrDefault(h => h.Name == "isFile");
+                    var typeEntry = messageHash.FirstOrDefault(h => h.Name == "type");
+                    var isReadEntry = messageHash.FirstOrDefault(h => h.Name == "is_read");
+
+                    // Kiểm tra các trường bắt buộc
+                    if (!idEntry.Value.HasValue || !conversationIdEntry.Value.HasValue || !senderIdEntry.Value.HasValue ||
+                        !contentEntry.Value.HasValue || !createdAtEntry.Value.HasValue || !isFileEntry.Value.HasValue ||
+                        !typeEntry.Value.HasValue || !isReadEntry.Value.HasValue)
+                    {
+                        _logger.LogWarning("Message {MessageId} has missing required fields: id={Id}, conversation_id={ConvId}, sender_id={SenderId}, content={Content}, created_at={CreatedAt}, isFile={IsFile}, type={Type}, is_read={IsRead}",
+                            messageId, idEntry.Value, conversationIdEntry.Value, senderIdEntry.Value, contentEntry.Value,
+                            createdAtEntry.Value, isFileEntry.Value, typeEntry.Value, isReadEntry.Value);
+                        continue;
+                    }
+
+                    // Hàm hỗ trợ để parse Boolean từ "0", "1", "true", "false"
+                    bool ParseBoolean(string value, bool defaultValue = false)
+                    {
+                        if (string.IsNullOrEmpty(value)) return defaultValue;
+                        if (value == "1" || value.Equals("true", StringComparison.OrdinalIgnoreCase)) return true;
+                        if (value == "0" || value.Equals("false", StringComparison.OrdinalIgnoreCase)) return false;
+                        _logger.LogWarning("Invalid boolean value '{Value}' for message {MessageId}", value, messageId);
+                        return defaultValue;
+                    }
+
+                    // Parse created_at với DateTimeOffset để hỗ trợ ISO 8601
+                    DateTime createdAt;
+                    if (!DateTimeOffset.TryParse(createdAtEntry.Value, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out var dateTimeOffset))
+                    {
+                        _logger.LogWarning("Invalid created_at format '{Value}' for message {MessageId}", createdAtEntry.Value, messageId);
+                        continue;
+                    }
+                    createdAt = dateTimeOffset.UtcDateTime;
 
                     var message = new MessageDTOForAttachment
                     {
-                        id = (int)long.Parse(messageId),
-                        conversation_id = (int)long.Parse(hash.FirstOrDefault(h => h.Name == "conversation_id").Value),
-                        sender_id = (int)long.Parse(hash.FirstOrDefault(h => h.Name == "sender_id").Value),
-                        content = hash.FirstOrDefault(h => h.Name == "content").Value,
-                        created_at = DateTime.Parse(hash.FirstOrDefault(h => h.Name == "created_at").Value),
-                        isFile = hash.FirstOrDefault(h => h.Name == "isFile").Value == "1",
-                        type = hash.FirstOrDefault(h => h.Name == "type").Value
+                        id = int.TryParse(idEntry.Value, out var id) ? id : 0,
+                        conversation_id = int.TryParse(conversationIdEntry.Value, out var convId) ? convId : 0,
+                        sender_id = int.TryParse(senderIdEntry.Value, out var senderId) ? senderId : 0,
+                        content = contentEntry.Value,
+                        created_at = createdAt,
+                        isFile = ParseBoolean(isFileEntry.Value, false),
+                        type = typeEntry.Value,
+                        is_read = ParseBoolean(isReadEntry.Value, false),
+                        isRecalled = ParseBoolean(messageHash.FirstOrDefault(h => h.Name == "isrecalled").Value, false)
                     };
 
+                    // Kiểm tra dữ liệu hợp lệ
+                    if (message.id == 0 || message.conversation_id == 0 || message.sender_id == 0 || message.created_at == DateTime.MinValue)
+                    {
+                        _logger.LogWarning("Message {MessageId} has invalid data: id={Id}, conversation_id={ConvId}, sender_id={SenderId}, created_at={CreatedAt}",
+                            messageId, message.id, message.conversation_id, message.sender_id, message.created_at);
+                        continue;
+                    }
+
                     AttachmentDTOForAttachment attachment = null;
-                    var fileId = hash.FirstOrDefault(h => h.Name == "file_id").Value;
+                    var fileId = messageHash.FirstOrDefault(h => h.Name == "file_id").Value;
                     if (!string.IsNullOrEmpty(fileId) && long.TryParse(fileId, out var attachmentId))
                     {
+                        var uploadedAt = DateTime.MinValue;
+                        var uploadedAtValue = messageHash.FirstOrDefault(h => h.Name == "uploaded_at").Value;
+                        if (!string.IsNullOrEmpty(uploadedAtValue))
+                        {
+                            if (DateTimeOffset.TryParse(uploadedAtValue, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out var uploadedDateTimeOffset))
+                            {
+                                uploadedAt = uploadedDateTimeOffset.UtcDateTime;
+                            }
+                            else
+                            {
+                                _logger.LogWarning("Invalid uploaded_at format '{Value}' for message {MessageId}", uploadedAtValue, messageId);
+                            }
+                        }
+
                         attachment = new AttachmentDTOForAttachment
                         {
                             id = (int)attachmentId,
-                            file_url = hash.FirstOrDefault(h => h.Name == "file_url").Value,
-                            fileSize = long.TryParse(hash.FirstOrDefault(h => h.Name == "fileSize").Value, out var size) ? size : 0,
-                            file_type = hash.FirstOrDefault(h => h.Name == "file_type").Value,
-                            uploaded_at = DateTime.TryParse(hash.FirstOrDefault(h => h.Name == "uploaded_at").Value, out var uploadedAt) ? uploadedAt : DateTime.MinValue,
-                            is_temporary = bool.TryParse(hash.FirstOrDefault(h => h.Name == "is_temporary").Value, out var isTemp) && isTemp,
-                            message_id = (int?)long.Parse(messageId)
+                            file_url = messageHash.FirstOrDefault(h => h.Name == "file_url").Value ,
+                            fileSize = long.TryParse(messageHash.FirstOrDefault(h => h.Name == "fileSize").Value, out var size) ? size : 0,
+                            file_type = messageHash.FirstOrDefault(h => h.Name == "file_type").Value ,
+                            uploaded_at = uploadedAt,
+                            is_temporary = ParseBoolean(messageHash.FirstOrDefault(h => h.Name == "is_temporary").Value, false),
+                            message_id = message.id
                         };
                     }
 
@@ -200,11 +292,16 @@ namespace server.Services.RedisService.ChatStorage
                 }
 
                 _logger.LogInformation("Retrieved {MessageCount} messages from Redis for conversation {ConversationId}", messages.Count, conversationId);
-                return messages;
+                return messages.OrderByDescending(m => m.Message.created_at).Take((int)limit).ToList();
             }
             catch (RedisConnectionException ex)
             {
                 _logger.LogError(ex, "Failed to retrieve messages from Redis for conversation {ConversationId}", conversationId);
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error processing messages for conversation {ConversationId}", conversationId);
                 throw;
             }
         }

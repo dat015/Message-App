@@ -58,7 +58,7 @@ class ChatProvider with ChangeNotifier {
     print('Loading data for conversation $conversationId and user $userId');
     try {
       final fetchedMessages = await _messageRepo
-          .getMessages(conversationId)
+          .getMessages(conversationId,userId)
           .catchError((e) {
             print('Failed to fetch messages: $e');
             return <MessageWithAttachment>[];
