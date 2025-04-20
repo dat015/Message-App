@@ -17,6 +17,7 @@ using CloudinaryDotNet;
 using server.Services.UploadService;
 using System.Text.Json.Serialization;
 using server.Services;
+using server.Services.RedisService.ChatStorage;
 
 namespace server.InjectService
 {
@@ -76,6 +77,7 @@ namespace server.InjectService
                 var redisConfiguration = ConfigurationOptions.Parse(configuration["Redis:ConnectionString"]);
                 return ConnectionMultiplexer.Connect(redisConfiguration);
             });
+            services.AddSingleton<IChatStorage,ChatStorage>();
             services.AddSignalR();
             //scoped: tạo ra 1 instance cho mỗi request
             services.AddScoped<IUploadFileService, UploadFileService>();

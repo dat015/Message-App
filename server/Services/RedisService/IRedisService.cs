@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using server.DTO;
 
 namespace server.Services.RedisService
 {

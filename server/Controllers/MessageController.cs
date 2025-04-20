@@ -41,6 +41,44 @@ namespace server.Controllers
             _uploadFileSV = uploadFileService;
 
         }
+
+        [HttpPost("delete_messages")]
+        
+        [HttpPut("recall_message/{message_id}")]
+        public async Task<IActionResult> recall_message(int message_id)
+        {
+            try
+            {
+                var result = await _messageSV.ReCallMessage(message_id);
+                if (!result)
+                {
+                    return BadRequest(
+                        new
+                        {
+                            Message = $"Thu hồi tin nhắn có ID {message_id} thất bại!"
+                        }
+                    );
+                }
+
+                return Ok(
+                    new
+                    {
+                        Message = $"Thu hồi tin nhắn có ID {message_id} thành công!"
+                    }
+                );
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(
+                        new
+                        {
+                            Message = $"Thu hồi tin nhắn có ID {message_id} thất bại!. Lỗi: " + ex.Message
+                        }
+                );
+            }
+        }
+
+
         [HttpPost("uploadFile")]
         public async Task<IActionResult> UploadFile([FromForm] IFormFile file)
         {

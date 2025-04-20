@@ -3,17 +3,19 @@ import 'package:first_app/data/models/messages.dart';
 
 class MessageDTOForAttachment {
   final int id;
-  final String content;
+  String? content;
   final int senderId;
   final bool isRead;
   final String? type;
   final bool isFile;
   final DateTime createdAt;
   final int conversationId;
+  bool isRecalled;
 
   MessageDTOForAttachment({
     required this.id,
-    required this.content,
+    this.content,
+    this.isRecalled = false,
     required this.senderId,
     this.isRead = false,
     this.type,
@@ -23,11 +25,14 @@ class MessageDTOForAttachment {
   });
 
   factory MessageDTOForAttachment.fromJson(Map<String, dynamic> json) {
+    print('Parsing MessageDTOForAttachment, JSON: $json');
+    print('isRecalled value: ${json['isRecalled']}');
     return MessageDTOForAttachment(
       id: json['id'],
       content: json['content'],
       senderId: json['sender_id'],
       isRead: json['is_read'] ?? false,
+      isRecalled: json['isRecalled'] ?? json['isrecalled'] ?? false,
       type: json['type'],
       isFile: json['isFile'] ?? false,
       createdAt: DateTime.parse(json['created_at']),
@@ -48,6 +53,7 @@ class MessageDTOForAttachment {
     };
   }
 }
+
 class AttachmentDTOForAttachment {
   final int id;
   final String fileUrl;
@@ -71,7 +77,10 @@ class AttachmentDTOForAttachment {
     return AttachmentDTOForAttachment(
       id: json['id'],
       fileUrl: json['file_url'],
-      fileSize: (json['fileSize'] != null ? (json['fileSize'] as num).toDouble() : 0.0),
+      fileSize:
+          (json['fileSize'] != null
+              ? (json['fileSize'] as num).toDouble()
+              : 0.0),
       fileType: json['file_type'],
       uploadedAt: DateTime.parse(json['uploaded_at']),
       isTemporary: json['is_temporary'] ?? true,
@@ -91,29 +100,24 @@ class AttachmentDTOForAttachment {
     };
   }
 }
+
 class MessageWithAttachment {
   final MessageDTOForAttachment message;
   final AttachmentDTOForAttachment? attachment;
 
-  MessageWithAttachment({
-    required this.message,
-    this.attachment,
-  });
+  MessageWithAttachment({required this.message, this.attachment});
 
   factory MessageWithAttachment.fromJson(Map<String, dynamic> json) {
     return MessageWithAttachment(
       message: MessageDTOForAttachment.fromJson(json['message']),
-      attachment: json['attachment'] != null
-          ? AttachmentDTOForAttachment.fromJson(json['attachment'])
-          : null,
+      attachment:
+          json['attachment'] != null
+              ? AttachmentDTOForAttachment.fromJson(json['attachment'])
+              : null,
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'message': message.toJson(),
-      'attachment': attachment?.toJson(),
-    };
+    return {'message': message.toJson(), 'attachment': attachment?.toJson()};
   }
 }
-

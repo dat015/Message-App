@@ -112,15 +112,15 @@ class _HomeScreenState extends State<HomeScreen> {
   void updateChatList(MessageWithAttachment newMessage) {
     setState(() {
       if (newMessage.message.type == "system" &&
-          (newMessage.message.content.startsWith("Đã đổi tên nhóm thành") ||
-              newMessage.message.content.startsWith("Đã đổi tên bạn thành"))) {
+          (newMessage.message.content?.startsWith("Đã đổi tên nhóm thành") ?? false) ||
+              (newMessage.message.content?.startsWith("Đã đổi tên bạn thành") ?? false)) {
         final index = _conversations.indexWhere(
           (chat) => chat.id == newMessage.message.conversationId,
         );
 
         if (index != -1) {
           // Sử dụng hàm getNewName để lấy tên mới
-          final newName = getNewName(newMessage.message.content);
+          final newName = getNewName(newMessage.message.content ?? '');
 
           
 

@@ -13,6 +13,7 @@ using server.Data;
 using server.DTO;
 using server.Models;
 using server.Services.ConversationService;
+using server.Services.RedisService.ChatStorage;
 using server.Services.UploadService;
 using StackExchange.Redis;
 
@@ -40,14 +41,18 @@ namespace server.Services.WebSocketService
         private readonly IConversation _conversation;
         private readonly WebSocketOptions _options;          // Cấu hình tùy chọn
         private readonly CancellationTokenSource _cts = new(); // Token để hủy các tác vụ bất đồng bộ
-        private readonly Cloudinary _cloudinary;
         private readonly ILogger<webSocket> _logger;
-        public webSocket(IConnectionMultiplexer redis, IServiceProvider serviceProvider, WebSocketOptions options = null, ILogger<webSocket> logger = null)
+        private readonly IChatStorage _chatStorage;
+        public webSocket(IConnectionMultiplexer redis, IServiceProvider serviceProvider,
+                         IChatStorage chatStorage,
+                         WebSocketOptions options = null,
+                         ILogger<webSocket> logger = null)
         {
             _redis = redis ?? throw new ArgumentNullException(nameof(redis));              // Redis không được null
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider)); // Service provider không được null
             _options = options ?? new WebSocketOptions();                                 // Sử dụng cấu hình mặc định nếu không cung cấp
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _chatStorage = chatStorage;
         }
 
 
@@ -111,7 +116,7 @@ namespace server.Services.WebSocketService
                         {
                             await HandleMessage(client, message);
                         }
-                        else if (message.type == "system")// Xử lý thêm thành viên vào nhóm
+                        else if (message.type == "system_addMember")// Xử lý thêm thành viên vào nhóm
                         {
                             var userId = message.sender_id;
                             var conversationId = message.conversation_id;
@@ -125,7 +130,7 @@ namespace server.Services.WebSocketService
                         {
                             Console.WriteLine($"Unknown message type: {message.type}");
                         }
-                        
+
                     }
                 }
                 catch (JsonException ex)
@@ -163,17 +168,30 @@ namespace server.Services.WebSocketService
             foreach (var conversationId in client.ConversationIds)
             {
                 // Đồng bộ dữ liệu từ DB lên Redis nếu Redis không có
-                var recentKey = $"conversation:{conversationId}:recent";
+                var recentKey = $"conversation:{conversationId}:messages";
                 if (!await db.KeyExistsAsync(recentKey))
                 {
                     var messages = await dbContext.Messages
                         .Where(m => m.conversation_id == conversationId)
                         .OrderByDescending(m => m.created_at)
                         .Take(50)
+                        .Select(m => new MessageDTOForAttachment
+                        {
+                            id = m.id,
+                            conversation_id = m.conversation_id,
+                            sender_id = m.sender_id,
+                            content = m.content,
+                            created_at = m.created_at,
+                            isFile = m.isFile,
+                            type = m.type,
+                            isRecalled = m.isRecalled
+                        })
                         .ToListAsync();
 
-                    var messagesJson = JsonSerializer.Serialize(messages);
-                    await db.StringSetAsync(recentKey, messagesJson, TimeSpan.FromHours(24));// Lưu vào Redis với TTL 24h
+                    foreach (var msg in messages)
+                    {
+                        await _chatStorage.SaveMessageAsync(msg, null);
+                    }
                 }
 
                 try
@@ -192,17 +210,6 @@ namespace server.Services.WebSocketService
                         }
                     });
                     Console.WriteLine($"User {client.UserId} subscribed to channel conversation:{conversationId}");
-
-                    // Thông báo người dùng tham gia phòng
-                    var joinMessage = new Message
-                    {
-                        type = "system",
-                        content = $"User {client.UserId} joined the conversation",
-                        sender_id = client.UserId,
-                        conversation_id = conversationId,
-                        created_at = DateTime.UtcNow
-                    };
-                    // await PublishMessage(joinMessage);
                 }
                 catch (Exception ex)
                 {
@@ -215,9 +222,10 @@ namespace server.Services.WebSocketService
         {
             using var scope = _serviceProvider.CreateScope();
             var conversationSV = scope.ServiceProvider.GetRequiredService<IConversation>();
-            
+
             var participant = await conversationSV.AddMemberToGroup(conversationId, userId);
-            if(participant == null){
+            if (participant == null)
+            {
                 throw new Exception($"Failed to add user {userId} to conversation {conversationId}");
             }
 
@@ -231,28 +239,27 @@ namespace server.Services.WebSocketService
                 created_at = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"))
             };
             var message = new MessageWithAttachment
-            {   
+            {
                 Message = notification,
                 Attachment = null
             };
-            await PublishMessage(message);
+            await _chatStorage.PublishMessageAsync(message);
         }
         private async Task HandleMessage(Client client, MessageDTO message)
         {
-            _logger.LogInformation($"Handling message: {message.content}");
+            _logger.LogInformation("Handling message from user {UserId}: {Content}", message.sender_id, message.content);
             message.created_at = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
-            Attachment existing_attachment = null;
 
             using var scope = _serviceProvider.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             var conversation = await dbContext.Conversations.FindAsync(message.conversation_id);
             if (conversation == null)
             {
-                _logger.LogWarning($"Conversation with ID {message.conversation_id} not found!");
+                _logger.LogWarning("Conversation with ID {ConversationId} not found", message.conversation_id);
                 return;
             }
-            using var transaction = await dbContext.Database.BeginTransactionAsync();
 
+            using var transaction = await dbContext.Database.BeginTransactionAsync();
             try
             {
                 var new_message = new Message
@@ -261,44 +268,38 @@ namespace server.Services.WebSocketService
                     sender_id = message.sender_id,
                     conversation_id = message.conversation_id,
                     content = message.content,
-                    created_at = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"))
+                    created_at = message.created_at,
+                    isFile = message.fileID != null
                 };
 
                 dbContext.Messages.Add(new_message);
                 await dbContext.SaveChangesAsync();
-                _logger.LogInformation($"Message saved to DB: {new_message.id}");
+                _logger.LogInformation("Message saved to DB with ID: {MessageId}", new_message.id);
 
-                //Lưu thời gian tin nhắn mới nhất
                 conversation.lastMessageTime = new_message.created_at;
                 conversation.lastMessage = message.content;
                 dbContext.Conversations.Update(conversation);
-                await dbContext.SaveChangesAsync();
+
+                Attachment existing_attachment = null;
                 if (message.fileID != null)
                 {
-                    _logger.LogInformation($"Processing attachment with ID {message.fileID}");
                     existing_attachment = await dbContext.Attachments.FindAsync(message.fileID);
-
                     if (existing_attachment == null)
                     {
-                        _logger.LogWarning($"Attachment with ID {message.fileID} not found!");
+                        _logger.LogWarning("Attachment with ID {FileId} not found", message.fileID);
+                        await transaction.RollbackAsync();
                         return;
                     }
 
                     existing_attachment.message_id = new_message.id;
                     existing_attachment.is_temporary = false;
-                    new_message.isFile = true;
-
-                    dbContext.Messages.Update(new_message);
                     dbContext.Attachments.Update(existing_attachment);
-                    await dbContext.SaveChangesAsync();
                 }
 
+                await dbContext.SaveChangesAsync();
                 await transaction.CommitAsync();
-                _logger.LogInformation($"Transaction committed for message: {new_message.id}");
+                _logger.LogInformation("Transaction committed for message: {MessageId}", new_message.id);
 
-                var db = _redis.GetDatabase();
-
-                // Convert sang DTO để tránh vòng lặp khi serialize
                 var messageDTO = new MessageDTOForAttachment
                 {
                     id = new_message.id,
@@ -308,7 +309,8 @@ namespace server.Services.WebSocketService
                     type = new_message.type,
                     isFile = new_message.isFile,
                     created_at = new_message.created_at,
-                    conversation_id = new_message.conversation_id
+                    conversation_id = new_message.conversation_id,
+                    isRecalled = new_message.isRecalled
                 };
 
                 AttachmentDTOForAttachment attachmentDTO = null;
@@ -326,76 +328,55 @@ namespace server.Services.WebSocketService
                     };
                 }
 
-                var messageDataGroup = new MessageWithAttachment
+                var messageWithAttachment = new MessageWithAttachment
                 {
                     Message = messageDTO,
                     Attachment = attachmentDTO
                 };
 
-                var redisKey = $"message:{message.conversation_id}:{new_message.id}";
-                var messageJson = JsonSerializer.Serialize(messageDataGroup);
-                await db.StringSetAsync(redisKey, messageJson);
-                _logger.LogInformation($"Message saved to Redis: {messageJson}");
+                // Lưu tin nhắn vào Redis
+                await _chatStorage.SaveMessageAsync(messageDTO, attachmentDTO);
 
                 if (message.type == "private" && message.content.Contains("recipient_id:"))
                 {
                     int recipientId = ParseRecipentId(message.content);
-                    if (recipientId <= 0) return;
+                    if (recipientId <= 0)
+                    {
+                        _logger.LogWarning("Invalid recipient ID in private message");
+                        return;
+                    }
 
-                    var sender_id = message.sender_id;
-                    var box = _conversation.CreateConversation(sender_id, recipientId);
-
+                    var box = _conversation.CreateConversation(new_message.sender_id, recipientId);
                     if (box != null && new_message.conversation_id != box.Id)
                     {
                         new_message.conversation_id = box.Id;
                         dbContext.Messages.Update(new_message);
                         await dbContext.SaveChangesAsync();
 
+                        await _chatStorage.UpdateMessageConversationAsync(new_message.id, box.Id);
                         messageDTO.conversation_id = new_message.conversation_id;
+                        messageWithAttachment.Message = messageDTO;
 
-                        redisKey = $"message:{message.conversation_id}:{new_message.id}";
-                        messageJson = JsonSerializer.Serialize(new MessageWithAttachment
-                        {
-                            Message = messageDTO,
-                            Attachment = attachmentDTO
-                        });
-
-                        await db.StringSetAsync(redisKey, messageJson);
+                        // Thêm user và recipient vào conversation mới
+                        await _chatStorage.AddUserConversationAsync(new_message.sender_id, box.Id);
+                        await _chatStorage.AddUserConversationAsync(recipientId, box.Id);
                     }
 
-                    try
-                    {
-                        await HandlePrivateMessage(new_message, recipientId);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex, "Error in HandlePrivateMessage");
-                    }
+                    await HandlePrivateMessage(new_message, recipientId);
                 }
                 else
                 {
-                    try
-                    {
-                        await PublishMessage(messageDataGroup);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex, "PublishMessage failed");
-                    }
+                    await _chatStorage.PublishMessageAsync(messageWithAttachment);
                 }
-
-                var conversationKey = $"conversation:{message.conversation_id}:recent";
-                await db.ListRightPushAsync(conversationKey, messageJson);
-                await db.ListTrimAsync(conversationKey, -50, -1);
-                await db.KeyExpireAsync(conversationKey, TimeSpan.FromHours(24));
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                _logger.LogError(ex, "Transaction failed while handling message.");
+                _logger.LogError(ex, "Transaction failed while handling message");
                 throw;
             }
         }
+
 
 
         private int ParseRecipentId(string content)

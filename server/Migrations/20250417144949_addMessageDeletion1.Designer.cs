@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using server.Data;
 
@@ -11,9 +12,11 @@ using server.Data;
 namespace Message_app.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250417144949_addMessageDeletion1")]
+    partial class addMessageDeletion1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -250,10 +253,10 @@ namespace Message_app.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
-                    b.Property<DateTime>("cleared_at")
+                    b.Property<DateTime>("deleted_at")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("conversation_id")
+                    b.Property<int>("message_id")
                         .HasColumnType("int");
 
                     b.Property<int>("user_id")
@@ -261,7 +264,7 @@ namespace Message_app.Migrations
 
                     b.HasKey("id");
 
-                    b.HasIndex("conversation_id");
+                    b.HasIndex("message_id");
 
                     b.HasIndex("user_id");
 
@@ -668,9 +671,9 @@ namespace Message_app.Migrations
 
             modelBuilder.Entity("server.Models.MessageDeletion", b =>
                 {
-                    b.HasOne("server.Models.Conversation", "conversation")
+                    b.HasOne("server.Models.Message", "message")
                         .WithMany()
-                        .HasForeignKey("conversation_id")
+                        .HasForeignKey("message_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -680,7 +683,7 @@ namespace Message_app.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("conversation");
+                    b.Navigation("message");
 
                     b.Navigation("user");
                 });

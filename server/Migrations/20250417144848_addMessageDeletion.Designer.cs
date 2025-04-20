@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using server.Data;
 
@@ -11,9 +12,11 @@ using server.Data;
 namespace Message_app.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250417144848_addMessageDeletion")]
+    partial class addMessageDeletion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -240,32 +243,6 @@ namespace Message_app.Migrations
                     b.HasIndex("sender_id");
 
                     b.ToTable("Messages");
-                });
-
-            modelBuilder.Entity("server.Models.MessageDeletion", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
-
-                    b.Property<DateTime>("cleared_at")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("conversation_id")
-                        .HasColumnType("int");
-
-                    b.Property<int>("user_id")
-                        .HasColumnType("int");
-
-                    b.HasKey("id");
-
-                    b.HasIndex("conversation_id");
-
-                    b.HasIndex("user_id");
-
-                    b.ToTable("messageDeletions");
                 });
 
             modelBuilder.Entity("server.Models.MessageStatus", b =>
@@ -664,25 +641,6 @@ namespace Message_app.Migrations
                     b.Navigation("conversation");
 
                     b.Navigation("sender");
-                });
-
-            modelBuilder.Entity("server.Models.MessageDeletion", b =>
-                {
-                    b.HasOne("server.Models.Conversation", "conversation")
-                        .WithMany()
-                        .HasForeignKey("conversation_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("server.Models.User", "user")
-                        .WithMany()
-                        .HasForeignKey("user_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("conversation");
-
-                    b.Navigation("user");
                 });
 
             modelBuilder.Entity("server.Models.MessageStatus", b =>

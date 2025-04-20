@@ -12,6 +12,7 @@ import 'features/routes/routes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
   // Khởi tạo Supabase
   await Supabase.initialize(
     url: 'https://hqpglsqigydjqafpvshl.supabase.co',

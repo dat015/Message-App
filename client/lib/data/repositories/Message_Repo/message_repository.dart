@@ -88,16 +88,37 @@ class MessageRepo {
     }
   }
 
-  Future<List<MessageWithAttachment>> searchMessages(int conversationId, String query) async {
+  Future<List<MessageWithAttachment>> searchMessages(
+    int conversationId,
+    String query,
+  ) async {
     try {
-      final response = await api_client.get('/api/Message/searchMessages/$conversationId/$query');
-      if(response is List<MessageWithAttachment>){
+      final response = await api_client.get(
+        '/api/Message/searchMessages/$conversationId/$query',
+      );
+      if (response is List<MessageWithAttachment>) {
         return response;
       }
       throw Exception('Failed to search messages');
-    }
-    catch(e){
+    } catch (e) {
       throw Exception('Failed to search messages');
+    }
+  }
+
+  Future<void> deleteMessage(int messageId) async {
+    try {
+      final response = await api_client.put(
+        '/api/Message/recall_message/$messageId',
+      );
+      // Kiểm tra phản hồi từ API nếu cần
+      if (response['success'] != true) {
+        throw Exception(
+          'Failed to recall message: ${response['message'] ?? 'Unknown error'}',
+        );
+      }
+    } catch (e) {
+      // Truyền lỗi chi tiết từ ApiClient
+      rethrow; // Ném lại lỗi để tầng trên xử lý
     }
   }
 }

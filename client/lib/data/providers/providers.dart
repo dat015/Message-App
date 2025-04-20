@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:first_app/PlatformClient/config.dart';
 import 'package:first_app/data/dto/message_response.dart';
 import 'package:first_app/data/models/attachment.dart';
+import 'package:first_app/data/repositories/Chat/websocket_service.dart';
 import 'package:flutter/material.dart';
 import 'package:first_app/data/models/messages.dart';
-import 'package:first_app/data/repositories/Chat/websocket_service.dart';
 import 'package:first_app/data/repositories/Message_Repo/message_repository.dart';
 import 'package:first_app/data/repositories/Conversations_repo/conversations_repository.dart';
 import 'package:first_app/data/repositories/Participants_Repo/participants_repo.dart';
@@ -115,6 +115,20 @@ class ChatProvider with ChangeNotifier {
     }
   }
 
+  Future<void> deleteMessage(int messageId) async {
+    await _messageRepo.deleteMessage(messageId);
+    print("ok");
+    _messages
+        .firstWhere((message) => message.message.id == messageId)
+        .message
+        .isRecalled = true;
+    _messages
+        .firstWhere((message) => message.message.id == messageId)
+        .message
+        .content = "Tin nhắn đã được thu hồi";
+    notifyListeners();
+  }
+
   void updateConversation(Conversation newConversation) {
     _conversation = newConversation;
     notifyListeners();
@@ -127,12 +141,30 @@ class ChatProvider with ChangeNotifier {
 
   void _onMessageReceived(MessageWithAttachment messageWithAttachment) {
     if (messageWithAttachment.message.conversationId != conversationId) return;
+    print(
+      "tin nhắn nhận được: ${messageWithAttachment.message.content}${messageWithAttachment.message.isRecalled}",
+    );
 
+    if (messageWithAttachment.message.isRecalled) {
+      _messages
+          .firstWhere(
+            (message) => message.message.id == messageWithAttachment.message.id,
+          )
+          .message
+          .content = "Tin nhắn đã được thu hồi";
+      _messages
+          .firstWhere(
+            (message) => message.message.id == messageWithAttachment.message.id,
+          )
+          .message
+          .isRecalled = true;
+      notifyListeners();
+      return;
+    }
     // Kiểm tra xem tin nhắn đã tồn tại chưa (dựa trên ID)
     bool isDuplicate = _messages.any(
       (msg) => msg.message.id == messageWithAttachment.message.id,
     );
-
     if (!isDuplicate) {
       _messages.add(messageWithAttachment);
       notifyListeners();
@@ -175,6 +207,7 @@ class ChatProvider with ChangeNotifier {
           conversationId: conversationId,
           isRead: true,
           isFile: isFile ?? false,
+          isRecalled: false,
         );
         var attachment = AttachmentDTOForAttachment(
           id: fileID,
@@ -204,6 +237,7 @@ class ChatProvider with ChangeNotifier {
       conversationId: conversationId,
       isRead: true,
       isFile: isFile ?? false,
+      isRecalled: false,
     );
     var messageWithAttachment = MessageWithAttachment(
       message: newMessage,
@@ -237,6 +271,7 @@ class ChatProvider with ChangeNotifier {
           conversationId: conversationId,
           isRead: true,
           isFile: isFile,
+          isRecalled: false,
         );
         var attachment = AttachmentDTOForAttachment(
           id: fileID,
@@ -272,6 +307,7 @@ class ChatProvider with ChangeNotifier {
       conversationId: conversationId,
       isRead: true,
       isFile: isFile,
+      isRecalled: false,
     );
     var messageWithAttachment = MessageWithAttachment(
       message: newMessage,

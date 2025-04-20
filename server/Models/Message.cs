@@ -26,6 +26,7 @@ namespace server.Models
         public int conversation_id { get; set; }
         [ForeignKey("sender_id")]
         public User? sender { get; set; }
+        public bool isRecalled {get; set;} = false; // thu hồi tin nhắn
       
         [ForeignKey("conversation_id")]
         public Conversation? conversation { get; set; }
