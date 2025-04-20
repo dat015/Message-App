@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../ai_caption/bloc/ai_caption_bloc.dart';
-import '../ai_caption/bloc/ai_caption_event.dart';
-import '../ai_caption/bloc/ai_caption_state.dart';
+import 'bloc_post/ai_caption_bloc.dart';
+import 'bloc_post/ai_caption_event.dart';
+import 'bloc_post/ai_caption_state.dart';
 
 class AiCaptionBottomSheet extends StatefulWidget {
   final Function(String) onCaptionSelected;

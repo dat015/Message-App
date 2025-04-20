@@ -32,4 +32,27 @@ public class AIPostController : ControllerBase
             return StatusCode(500, "Đã xảy ra lỗi khi xử lý yêu cầu. Vui lòng thử lại sau.");
         }
     }
+
+    [HttpPost("generate-comment-suggestions")]
+    public async Task<IActionResult> GenerateCommentSuggestions([FromBody] CommentSuggestionRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.PostContent))
+        {
+            return BadRequest("Nội dung bài viết không được để trống hoặc không hợp lệ.");
+        }
+
+        try
+        {
+            var suggestions = await _aiPostSV.GenerateCommentSuggestionsAsync(
+                request.PostContent,
+                request.ImageUrl
+            );
+            return Ok(new { suggestions });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.ToString());
+            return StatusCode(500, "Đã xảy ra lỗi khi xử lý yêu cầu. Vui lòng thử lại sau.");
+        }
+    }
 }

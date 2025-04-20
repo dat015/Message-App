@@ -134,7 +134,8 @@ class NavigationHelper {
     String postId,
     String currentUserId,
     String currentUserName,
-    String currentUserAvatar, {
+    String currentUserAvatar,
+    String postContent, {
     bool replace = false,
   }) async {
     await pushScreen(
@@ -143,7 +144,7 @@ class NavigationHelper {
         postId: postId,
         currentUserId: currentUserId,
         currentUserName: currentUserName,
-        currentUserAvatar: currentUserAvatar,
+        currentUserAvatar: currentUserAvatar, postContent: postContent,
       ),
       replace: replace,
     );

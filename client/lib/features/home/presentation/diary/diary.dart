@@ -699,6 +699,7 @@ class _DiaryState extends State<Diary> {
                       widget.currentUserId.toString(),
                       widget.currentUserName,
                       widget.userAvatar,
+                      post.content ?? '',
                     );
                   },
                   icon: Icon(
@@ -730,27 +731,6 @@ class _DiaryState extends State<Diary> {
                         ),
                       );
                     },
-                  ),
-                  style: TextButton.styleFrom(
-                    padding: EdgeInsets.zero,
-                    foregroundColor: Colors.grey.shade600,
-                  ),
-                ),
-                TextButton.icon(
-                  onPressed: () {
-                    // Implement share functionality
-                  },
-                  icon: Icon(
-                    Icons.share_outlined,
-                    color: Colors.grey.shade600,
-                    size: 20,
-                  ),
-                  label: Text(
-                    'Chia sẻ',
-                    style: TextStyle(
-                      color: Colors.grey.shade600,
-                      fontSize: 14,
-                    ),
                   ),
                   style: TextButton.styleFrom(
                     padding: EdgeInsets.zero,

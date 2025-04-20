@@ -1,10 +1,13 @@
 import 'dart:io' as io;
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:first_app/data/models/comment.dart';
 import 'package:first_app/data/repositories/Comment_repo/comment_repo.dart';
+import 'package:first_app/features/home/presentation/ai_caption/bloc_comments/comment_suggestion_bloc.dart';
+import 'package:first_app/features/home/presentation/ai_caption/bloc_comments/comment_suggestion_event.dart';
+import 'package:first_app/features/home/presentation/ai_caption/bloc_comments/comment_suggestion_state.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:video_player/video_player.dart';
 
@@ -13,6 +16,8 @@ class CommentScreen extends StatefulWidget {
   final String currentUserId;
   final String currentUserName;
   final String currentUserAvatar;
+  final String postContent; // Thêm
+  final String? postImageUrl; // Thêm
 
   const CommentScreen({
     Key? key,
@@ -20,6 +25,8 @@ class CommentScreen extends StatefulWidget {
     required this.currentUserId,
     required this.currentUserName,
     required this.currentUserAvatar,
+    required this.postContent, // Thêm
+    this.postImageUrl, // Thêm
   }) : super(key: key);
 
   @override
@@ -40,6 +47,18 @@ class _CommentScreenState extends State<CommentScreen> {
   String? _replyingToCommentId;
   XFile? _selectedMedia;
   String? _mediaType;
+  bool _showSuggestions = false; // Thêm
+
+  @override
+  void initState() {
+    super.initState();
+    print('CommentScreen: initState - Triggering GenerateCommentSuggestions');
+    // Khởi tạo gợi ý bình luận
+    context.read<CommentSuggestionBloc>().add(GenerateCommentSuggestions(
+          postContent: widget.postContent,
+          imageUrl: widget.postImageUrl,
+        ));
+  }
 
   @override
   void dispose() {
@@ -215,9 +234,7 @@ class _CommentScreenState extends State<CommentScreen> {
                   );
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Chỉnh sửa bình luận thành công'),
-                    ),
+                    const SnackBar(content: Text('Chỉnh sửa bình luận thành công')),
                   );
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -239,57 +256,55 @@ class _CommentScreenState extends State<CommentScreen> {
   }
 
   Future<void> _deleteComment(String commentId) async {
-  try {
-    await _commentService.deleteComment(commentId);
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            Icon(Icons.check_circle, color: Colors.white),
-            SizedBox(width: 8),
-            Text('Xóa bình luận thành công'),
-          ],
+    try {
+      await _commentService.deleteComment(commentId);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: const [
+              Icon(Icons.check_circle, color: Colors.white),
+              SizedBox(width: 8),
+              Text('Xóa bình luận thành công'),
+            ],
+          ),
+          backgroundColor: Colors.green[600],
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          margin: const EdgeInsets.all(16),
+          duration: const Duration(seconds: 2),
         ),
-        backgroundColor: Colors.green[600],
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.error_outline, color: Colors.white),
+              const SizedBox(width: 8),
+              Expanded(child: Text('Lỗi khi xóa: $e')),
+            ],
+          ),
+          backgroundColor: Colors.red[600],
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          margin: const EdgeInsets.all(16),
+          duration: const Duration(seconds: 3),
         ),
-        margin: EdgeInsets.all(16),
-        duration: Duration(seconds: 2),
-      ),
-    );
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            Icon(Icons.error_outline, color: Colors.white),
-            SizedBox(width: 8),
-            Expanded(child: Text('Lỗi khi xóa: $e')),
-          ],
-        ),
-        backgroundColor: Colors.red[600],
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        margin: EdgeInsets.all(16),
-        duration: Duration(seconds: 3),
-      ),
-    );
+      );
+    }
   }
-}
-
 
   Future<void> _toggleLikeComment(String commentId) async {
     try {
       await _commentService.toggleLikeComment(commentId, widget.currentUserId);
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Lỗi khi thích/bỏ thích: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Lỗi khi thích/bỏ thích: $e')),
+      );
     }
   }
 
@@ -308,544 +323,597 @@ class _CommentScreenState extends State<CommentScreen> {
     final isDarkMode = theme.brightness == Brightness.dark;
     final primaryColor = theme.colorScheme.primary;
 
-    return Scaffold(
-      backgroundColor: isDarkMode ? Colors.black : Colors.grey[50],
-      appBar: AppBar(
-        title: const Text('Bình luận'),
-        backgroundColor: primaryColor,
-        elevation: 0,
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: StreamBuilder<List<Comment>>(
-              key: ValueKey(widget.postId),
-              stream: _commentService.getComments(widget.postId),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  print('Stream received ${snapshot.data!.length} comments');
-                  _lastComments = snapshot.data;
-                  _showError = false;
-                } else if (snapshot.hasError) {
-                  print('Stream error: ${snapshot.error}');
-                }
+    return BlocBuilder<CommentSuggestionBloc, CommentSuggestionState>(
+      builder: (context, state) {
+        print('CommentScreen: BlocBuilder - State: ${state.runtimeType}');
+        if (state is CommentSuggestionLoaded) {
+          print('CommentScreen: Suggestions - ${state.suggestions}');
+        } else if (state is CommentSuggestionError) {
+          print('CommentScreen: Error - ${state.message}');
+        }
+        return Scaffold(
+          backgroundColor: isDarkMode ? Colors.black : Colors.grey[50],
+          appBar: AppBar(
+            title: const Text('Bình luận'),
+            backgroundColor: primaryColor,
+            elevation: 0,
+            centerTitle: true,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ),
+          body: Column(
+            children: [
+              Expanded(
+                child: StreamBuilder<List<Comment>>(
+                  key: ValueKey(widget.postId),
+                  stream: _commentService.getComments(widget.postId),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      print('Stream received ${snapshot.data!.length} comments');
+                      _lastComments = snapshot.data;
+                      _showError = false;
+                    } else if (snapshot.hasError) {
+                      print('CommentScreen: Stream error - ${snapshot.error}');
+                    }
 
-                if (snapshot.connectionState == ConnectionState.waiting && _lastComments == null) {
-                  return Center(
-                    child: CircularProgressIndicator(
-                      color: primaryColor,
-                      strokeWidth: 3,
-                    ),
-                  );
-                }
+                    if (snapshot.connectionState == ConnectionState.waiting && _lastComments == null) {
+                      return Center(
+                        child: CircularProgressIndicator(
+                          color: primaryColor,
+                          strokeWidth: 3,
+                        ),
+                      );
+                    }
 
-                if (_showError || (snapshot.hasError && _lastComments == null)) {
-                  return Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.error_outline,
-                          size: screenWidth * 0.15,
-                          color: Colors.red[300],
+                    if (_showError || (snapshot.hasError && _lastComments == null)) {
+                      return Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.error_outline,
+                              size: screenWidth * 0.15,
+                              color: Colors.red[300],
+                            ),
+                            SizedBox(height: screenWidth * 0.03),
+                            Text(
+                              'Không thể tải bình luận',
+                              style: TextStyle(
+                                fontSize: screenWidth * 0.04,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.red[300],
+                              ),
+                            ),
+                            SizedBox(height: screenWidth * 0.01),
+                            Text(
+                              'Lỗi: ${snapshot.error ?? "Không xác định"}',
+                              style: TextStyle(
+                                fontSize: screenWidth * 0.035,
+                                color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
+                              ),
+                            ),
+                            SizedBox(height: screenWidth * 0.03),
+                            ElevatedButton(
+                              onPressed: () {
+                                setState(() {
+                                  _showError = false;
+                                });
+                              },
+                              child: const Text('Thử lại'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: primaryColor,
+                                foregroundColor: Colors.white,
+                              ),
+                            ),
+                          ],
                         ),
-                        SizedBox(height: screenWidth * 0.03),
-                        Text(
-                          'Không thể tải bình luận',
-                          style: TextStyle(
-                            fontSize: screenWidth * 0.04,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.red[300],
-                          ),
-                        ),
-                        SizedBox(height: screenWidth * 0.01),
-                        Text(
-                          'Lỗi: ${snapshot.error ?? "Không xác định"}',
-                          style: TextStyle(
-                            fontSize: screenWidth * 0.035,
-                            color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
-                          ),
-                        ),
-                        SizedBox(height: screenWidth * 0.03),
-                        ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              _showError = false;
-                            });
-                          },
-                          child: const Text('Thử lại'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: primaryColor,
-                            foregroundColor: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                }
+                      );
+                    }
 
-                final comments = _lastComments ?? snapshot.data ?? [];
-                if (comments.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.chat_bubble_outline,
-                          size: screenWidth * 0.15,
-                          color: isDarkMode ? Colors.grey[700] : Colors.grey[400],
+                    final comments = _lastComments ?? snapshot.data ?? [];
+                    if (comments.isEmpty) {
+                      return Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.chat_bubble_outline,
+                              size: screenWidth * 0.15,
+                              color: isDarkMode ? Colors.grey[700] : Colors.grey[400],
+                            ),
+                            SizedBox(height: screenWidth * 0.03),
+                            Text(
+                              'Chưa có bình luận nào',
+                              style: TextStyle(
+                                fontSize: screenWidth * 0.04,
+                                fontWeight: FontWeight.w500,
+                                color: isDarkMode ? Colors.grey[500] : Colors.grey[600],
+                              ),
+                            ),
+                            SizedBox(height: screenWidth * 0.01),
+                            Text(
+                              'Hãy là người đầu tiên bình luận!',
+                              style: TextStyle(
+                                fontSize: screenWidth * 0.035,
+                                color: isDarkMode ? Colors.grey[600] : Colors.grey[500],
+                              ),
+                            ),
+                          ],
                         ),
-                        SizedBox(height: screenWidth * 0.03),
-                        Text(
-                          'Chưa có bình luận nào',
-                          style: TextStyle(
-                            fontSize: screenWidth * 0.04,
-                            fontWeight: FontWeight.w500,
-                            color: isDarkMode ? Colors.grey[500] : Colors.grey[600],
-                          ),
-                        ),
-                        SizedBox(height: screenWidth * 0.01),
-                        Text(
-                          'Hãy là người đầu tiên bình luận!',
-                          style: TextStyle(
-                            fontSize: screenWidth * 0.035,
-                            color: isDarkMode ? Colors.grey[600] : Colors.grey[500],
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                }
+                      );
+                    }
 
-                final sortedComments = _buildCommentTree(comments);
-                print('Displaying ${sortedComments.length} sorted comments');
+                    final sortedComments = _buildCommentTree(comments);
+                    print('Displaying ${sortedComments.length} sorted comments');
 
-                return ListView.builder(
-                  controller: _scrollController,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: screenWidth * 0.04,
-                    vertical: screenWidth * 0.02,
-                  ),
-                  itemCount: sortedComments.length,
-                  itemBuilder: (context, index) {
-                    final comment = sortedComments[index];
-                    final isCurrentUserComment = comment.userId == widget.currentUserId;
-                    final isLiked = comment.likes.contains(widget.currentUserId);
-                    final level = _getCommentLevel(comment, comments);
-
-                    return Padding(
-                      padding: EdgeInsets.only(
-                        bottom: screenWidth * 0.03,
-                        left: level * screenWidth * 0.08,
+                    return ListView.builder(
+                      controller: _scrollController,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: screenWidth * 0.04,
+                        vertical: screenWidth * 0.02,
                       ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  blurRadius: 3,
-                                  offset: const Offset(0, 1),
-                                ),
-                              ],
-                            ),
-                            child: CircleAvatar(
-                              radius: screenWidth * 0.05,
-                              backgroundImage: NetworkImage(comment.userAvatar),
-                            ),
+                      itemCount: sortedComments.length,
+                      itemBuilder: (context, index) {
+                        final comment = sortedComments[index];
+                        final isCurrentUserComment = comment.userId == widget.currentUserId;
+                        final isLiked = comment.likes.contains(widget.currentUserId);
+                        final level = _getCommentLevel(comment, comments);
+
+                        return Padding(
+                          padding: EdgeInsets.only(
+                            bottom: screenWidth * 0.03,
+                            left: level * screenWidth * 0.08,
                           ),
-                          SizedBox(width: screenWidth * 0.03),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  padding: EdgeInsets.all(screenWidth * 0.03),
-                                  decoration: BoxDecoration(
-                                    color: isCurrentUserComment
-                                        ? primaryColor.withOpacity(isDarkMode ? 0.2 : 0.1)
-                                        : isDarkMode
-                                            ? Colors.grey[800]
-                                            : Colors.grey[200],
-                                    borderRadius: BorderRadius.circular(16),
-                                    border: isCurrentUserComment
-                                        ? Border.all(
-                                            color: primaryColor.withOpacity(0.3),
-                                            width: 1,
-                                          )
-                                        : null,
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        comment.userName,
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: screenWidth * 0.035,
-                                          color: isCurrentUserComment
-                                              ? primaryColor
-                                              : isDarkMode
-                                                  ? Colors.white
-                                                  : Colors.black87,
-                                        ),
-                                      ),
-                                      SizedBox(height: screenWidth * 0.01),
-                                      if (comment.content.isNotEmpty)
-                                        Text(
-                                          comment.content,
-                                          style: TextStyle(
-                                            fontSize: screenWidth * 0.035,
-                                            color: isDarkMode ? Colors.white : Colors.black87,
-                                          ),
-                                        ),
-                                      if (comment.mediaUrl != null && comment.mediaType == 'image')
-                                        Padding(
-                                          padding: EdgeInsets.only(top: screenWidth * 0.02),
-                                          child: ClipRRect(
-                                            borderRadius: BorderRadius.circular(8),
-                                            child: Image.network(
-                                              comment.mediaUrl!,
-                                              width: screenWidth * 0.5,
-                                              height: screenWidth * 0.5,
-                                              fit: BoxFit.cover,
-                                              loadingBuilder: (context, child, loadingProgress) {
-                                                if (loadingProgress == null) return child;
-                                                return Center(
-                                                  child: CircularProgressIndicator(
-                                                    value: loadingProgress.expectedTotalBytes != null
-                                                        ? loadingProgress.cumulativeBytesLoaded /
-                                                            (loadingProgress.expectedTotalBytes ?? 1)
-                                                        : null,
-                                                  ),
-                                                );
-                                              },
-                                              errorBuilder: (context, error, stackTrace) => const Icon(Icons.error),
-                                            ),
-                                          ),
-                                        ),
-                                      if (comment.mediaUrl != null && comment.mediaType == 'video')
-                                        Padding(
-                                          padding: EdgeInsets.only(top: screenWidth * 0.02),
-                                          child: VideoPlayerWidget(
-                                            videoUrl: comment.mediaUrl!,
-                                            width: screenWidth * 0.5,
-                                            height: screenWidth * 0.5,
-                                          ),
-                                        ),
-                                    ],
-                                  ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      blurRadius: 3,
+                                      offset: const Offset(0, 1),
+                                    ),
+                                  ],
                                 ),
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                    left: screenWidth * 0.02,
-                                    top: screenWidth * 0.01,
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        _formatTimeAgo(comment.createdAt),
-                                        style: TextStyle(
-                                          color: isDarkMode ? Colors.grey[500] : Colors.grey[600],
-                                          fontSize: screenWidth * 0.03,
-                                        ),
+                                child: CircleAvatar(
+                                  radius: screenWidth * 0.05,
+                                  backgroundImage: NetworkImage(comment.userAvatar),
+                                ),
+                              ),
+                              SizedBox(width: screenWidth * 0.03),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      padding: EdgeInsets.all(screenWidth * 0.03),
+                                      decoration: BoxDecoration(
+                                        color: isCurrentUserComment
+                                            ? primaryColor.withOpacity(isDarkMode ? 0.2 : 0.1)
+                                            : isDarkMode
+                                                ? Colors.grey[800]
+                                                : Colors.grey[200],
+                                        borderRadius: BorderRadius.circular(16),
+                                        border: isCurrentUserComment
+                                            ? Border.all(
+                                                color: primaryColor.withOpacity(0.3),
+                                                width: 1,
+                                              )
+                                            : null,
                                       ),
-                                      SizedBox(width: screenWidth * 0.03),
-                                      GestureDetector(
-                                        onTap: () => _toggleLikeComment(comment.id),
-                                        child: Row(
-                                          children: [
-                                            Icon(
-                                              isLiked ? Icons.favorite : Icons.favorite_border,
-                                              color: isLiked
-                                                  ? Colors.red
-                                                  : (isDarkMode ? Colors.grey[400] : Colors.grey[700]),
-                                              size: screenWidth * 0.04,
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            comment.userName,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: screenWidth * 0.035,
+                                              color: isCurrentUserComment
+                                                  ? primaryColor
+                                                  : isDarkMode
+                                                      ? Colors.white
+                                                      : Colors.black87,
                                             ),
-                                            SizedBox(width: screenWidth * 0.01),
+                                          ),
+                                          SizedBox(height: screenWidth * 0.01),
+                                          if (comment.content.isNotEmpty)
                                             Text(
-                                              comment.likes.length.toString(),
+                                              comment.content,
                                               style: TextStyle(
-                                                color: isDarkMode ? Colors.grey[400] : Colors.grey[700],
-                                                fontSize: screenWidth * 0.03,
+                                                fontSize: screenWidth * 0.035,
+                                                color: isDarkMode ? Colors.white : Colors.black87,
                                               ),
                                             ),
-                                          ],
-                                        ),
-                                      ),
-                                      SizedBox(width: screenWidth * 0.03),
-                                      GestureDetector(
-                                        onTap: () => _startReplying(comment.id, comment.userName),
-                                        child: Text(
-                                          'Phản hồi',
-                                          style: TextStyle(
-                                            color: isDarkMode ? Colors.grey[400] : Colors.grey[700],
-                                            fontSize: screenWidth * 0.03,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          if (isCurrentUserComment)
-                            GestureDetector(
-                              onTap: () {
-                                showModalBottomSheet(
-                                  context: context,
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                                  ),
-                                  builder: (context) => Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      ListTile(
-                                        leading: const Icon(Icons.edit, color: Colors.blue),
-                                        title: const Text('Chỉnh sửa'),
-                                        onTap: () {
-                                          Navigator.pop(context);
-                                          _editComment(comment.id, comment.content);
-                                        },
-                                      ),
-                                      ListTile(
-                                        leading: const Icon(Icons.delete, color: Colors.red),
-                                        title: const Text('Xóa'),
-                                        onTap: () {
-                                          Navigator.pop(context);
-                                          showDialog(
-                                            context: context,
-                                            builder: (context) => AlertDialog(
-                                              title: const Text('Xóa bình luận'),
-                                              content: const Text('Bạn có chắc muốn xóa bình luận này?'),
-                                              actions: [
-                                                TextButton(
-                                                  onPressed: () => Navigator.pop(context),
-                                                  child: const Text('Hủy'),
-                                                ),
-                                                ElevatedButton(
-                                                  onPressed: () async {
-                                                    Navigator.pop(context);
-                                                    await _deleteComment(comment.id);
+                                          if (comment.mediaUrl != null && comment.mediaType == 'image')
+                                            Padding(
+                                              padding: EdgeInsets.only(top: screenWidth * 0.02),
+                                              child: ClipRRect(
+                                                borderRadius: BorderRadius.circular(8),
+                                                child: Image.network(
+                                                  comment.mediaUrl!,
+                                                  width: screenWidth * 0.5,
+                                                  height: screenWidth * 0.5,
+                                                  fit: BoxFit.cover,
+                                                  loadingBuilder: (context, child, loadingProgress) {
+                                                    if (loadingProgress == null) return child;
+                                                    return Center(
+                                                      child: CircularProgressIndicator(
+                                                        value: loadingProgress.expectedTotalBytes != null
+                                                            ? loadingProgress.cumulativeBytesLoaded /
+                                                                (loadingProgress.expectedTotalBytes ?? 1)
+                                                            : null,
+                                                      ),
+                                                    );
                                                   },
-                                                  style: ElevatedButton.styleFrom(
-                                                    backgroundColor: Colors.red,
+                                                  errorBuilder: (context, error, stackTrace) => const Icon(Icons.error),
+                                                ),
+                                              ),
+                                            ),
+                                          if (comment.mediaUrl != null && comment.mediaType == 'video')
+                                            Padding(
+                                              padding: EdgeInsets.only(top: screenWidth * 0.02),
+                                              child: VideoPlayerWidget(
+                                                videoUrl: comment.mediaUrl!,
+                                                width: screenWidth * 0.5,
+                                                height: screenWidth * 0.5,
+                                              ),
+                                            ),
+                                        ],
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                        left: screenWidth * 0.02,
+                                        top: screenWidth * 0.01,
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Text(
+                                            _formatTimeAgo(comment.createdAt),
+                                            style: TextStyle(
+                                              color: isDarkMode ? Colors.grey[500] : Colors.grey[600],
+                                              fontSize: screenWidth * 0.03,
+                                            ),
+                                          ),
+                                          SizedBox(width: screenWidth * 0.03),
+                                          GestureDetector(
+                                            onTap: () => _toggleLikeComment(comment.id),
+                                            child: Row(
+                                              children: [
+                                                Icon(
+                                                  isLiked ? Icons.favorite : Icons.favorite_border,
+                                                  color: isLiked
+                                                      ? Colors.red
+                                                      : (isDarkMode ? Colors.grey[400] : Colors.grey[700]),
+                                                  size: screenWidth * 0.04,
+                                                ),
+                                                SizedBox(width: screenWidth * 0.01),
+                                                Text(
+                                                  comment.likes.length.toString(),
+                                                  style: TextStyle(
+                                                    color: isDarkMode ? Colors.grey[400] : Colors.grey[700],
+                                                    fontSize: screenWidth * 0.03,
                                                   ),
-                                                  child: const Text('Xóa'),
                                                 ),
                                               ],
                                             ),
-                                          );
-                                        },
+                                          ),
+                                          SizedBox(width: screenWidth * 0.03),
+                                          GestureDetector(
+                                            onTap: () => _startReplying(comment.id, comment.userName),
+                                            child: Text(
+                                              'Phản hồi',
+                                              style: TextStyle(
+                                                color: isDarkMode ? Colors.grey[400] : Colors.grey[700],
+                                                fontSize: screenWidth * 0.03,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      SizedBox(height: screenWidth * 0.02),
-                                    ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              if (isCurrentUserComment)
+                                GestureDetector(
+                                  onTap: () {
+                                    showModalBottomSheet(
+                                      context: context,
+                                      shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                                      ),
+                                      builder: (context) => Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          ListTile(
+                                            leading: const Icon(Icons.edit, color: Colors.blue),
+                                            title: const Text('Chỉnh sửa'),
+                                            onTap: () {
+                                              Navigator.pop(context);
+                                              _editComment(comment.id, comment.content);
+                                            },
+                                          ),
+                                          ListTile(
+                                            leading: const Icon(Icons.delete, color: Colors.red),
+                                            title: const Text('Xóa'),
+                                            onTap: () {
+                                              Navigator.pop(context);
+                                              showDialog(
+                                                context: context,
+                                                builder: (context) => AlertDialog(
+                                                  title: const Text('Xóa bình luận'),
+                                                  content: const Text('Bạn có chắc muốn xóa bình luận này?'),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () => Navigator.pop(context),
+                                                      child: const Text('Hủy'),
+                                                    ),
+                                                    ElevatedButton(
+                                                      onPressed: () async {
+                                                        Navigator.pop(context);
+                                                        await _deleteComment(comment.id);
+                                                      },
+                                                      style: ElevatedButton.styleFrom(
+                                                        backgroundColor: Colors.red,
+                                                      ),
+                                                      child: const Text('Xóa'),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                          SizedBox(height: screenWidth * 0.02),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                  child: Icon(
+                                    Icons.more_vert,
+                                    color: isDarkMode ? Colors.grey[500] : Colors.grey[600],
+                                    size: screenWidth * 0.05,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+              if (_showSuggestions) // Thêm
+                Container(
+                  height: 50,
+                  color: isDarkMode ? Colors.grey[850] : Colors.grey[100],
+                  child: state is CommentSuggestionLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : state is CommentSuggestionLoaded && state.suggestions.isNotEmpty
+                          ? ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: state.suggestions.length,
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      print('CommentScreen: Selected suggestion - ${state.suggestions[index]}');
+                                      _commentController.text = state.suggestions[index];
+                                      setState(() {
+                                        _showSuggestions = false;
+                                      });
+                                    },
+                                    child: Chip(
+                                      label: Text(state.suggestions[index]),
+                                      backgroundColor: isDarkMode ? Colors.grey[700] : Colors.grey[200],
+                                    ),
                                   ),
                                 );
                               },
-                              child: Icon(
-                                Icons.more_vert,
-                                color: isDarkMode ? Colors.grey[500] : Colors.grey[600],
-                                size: screenWidth * 0.05,
+                            )
+                          : const Center(child: Text('Không có gợi ý')),
+                ),
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: screenWidth * 0.04,
+                  vertical: screenWidth * 0.03,
+                ),
+                decoration: BoxDecoration(
+                  color: isDarkMode ? Colors.grey[900] : Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 5,
+                      offset: const Offset(0, -1),
+                    ),
+                  ],
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                ),
+                child: Column(
+                  children: [
+                    if (_selectedMedia != null)
+                      Padding(
+                        padding: EdgeInsets.only(bottom: screenWidth * 0.02),
+                        child: Stack(
+                          children: [
+                            Container(
+                              width: screenWidth * 0.3,
+                              height: screenWidth * 0.3,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: _mediaType == 'image'
+                                  ? kIsWeb
+                                      ? Image.network(_selectedMedia!.path)
+                                      : Image.file(io.File(_selectedMedia!.path), fit: BoxFit.cover)
+                                  : const Icon(Icons.videocam, size: 50),
+                            ),
+                            Positioned(
+                              right: 0,
+                              top: 0,
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _selectedMedia = null;
+                                    _mediaType = null;
+                                  });
+                                },
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    color: Colors.red,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(Icons.close, color: Colors.white, size: 20),
+                                ),
                               ),
                             ),
-                        ],
+                          ],
+                        ),
                       ),
-                    );
-                  },
-                );
-              },
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: screenWidth * 0.04,
-              vertical: screenWidth * 0.03,
-            ),
-            decoration: BoxDecoration(
-              color: isDarkMode ? Colors.grey[900] : Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 5,
-                  offset: const Offset(0, -1),
-                ),
-              ],
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-            ),
-            child: Column(
-              children: [
-                if (_selectedMedia != null)
-                  Padding(
-                    padding: EdgeInsets.only(bottom: screenWidth * 0.02),
-                    child: Stack(
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Container(
-                          width: screenWidth * 0.3,
-                          height: screenWidth * 0.3,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: _mediaType == 'image'
-                              ? kIsWeb
-                                  ? Image.network(_selectedMedia!.path)
-                                  : Image.file(io.File(_selectedMedia!.path), fit: BoxFit.cover)
-                              : const Icon(Icons.videocam, size: 50), // Placeholder for video
-                        ),
-                        Positioned(
-                          right: 0,
-                          top: 0,
-                          child: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                _selectedMedia = null;
-                                _mediaType = null;
-                              });
-                            },
-                            child: Container(
-                              decoration: const BoxDecoration(
-                                color: Colors.red,
-                                shape: BoxShape.circle,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                blurRadius: 3,
+                                offset: const Offset(0, 1),
                               ),
-                              child: const Icon(Icons.close, color: Colors.white, size: 20),
+                            ],
+                          ),
+                          child: CircleAvatar(
+                            radius: screenWidth * 0.05,
+                            backgroundImage: NetworkImage(widget.currentUserAvatar),
+                          ),
+                        ),
+                        SizedBox(width: screenWidth * 0.02),
+                        Expanded(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: isDarkMode ? Colors.grey[800] : Colors.grey[100],
+                              borderRadius: BorderRadius.circular(25),
+                              border: Border.all(
+                                color: isDarkMode ? Colors.grey[700]! : Colors.grey[300]!,
+                                width: 1,
+                              ),
                             ),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: TextField(
+                                    controller: _commentController,
+                                    focusNode: _commentFocusNode,
+                                    maxLines: null,
+                                    minLines: 1,
+                                    keyboardType: TextInputType.multiline,
+                                    textCapitalization: TextCapitalization.sentences,
+                                    style: TextStyle(
+                                      fontSize: screenWidth * 0.04,
+                                      color: isDarkMode ? Colors.white : Colors.black87,
+                                    ),
+                                    decoration: InputDecoration(
+                                      hintText: _replyingToCommentId != null
+                                          ? 'Viết phản hồi...'
+                                          : 'Viết bình luận...',
+                                      hintStyle: TextStyle(
+                                        color: isDarkMode ? Colors.grey[400] : Colors.grey[500],
+                                        fontSize: screenWidth * 0.04,
+                                      ),
+                                      border: InputBorder.none,
+                                      contentPadding: EdgeInsets.symmetric(
+                                        horizontal: screenWidth * 0.04,
+                                        vertical: screenWidth * 0.035,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: Icon(
+                                    Icons.lightbulb,
+                                    color: primaryColor,
+                                    size: screenWidth * 0.06,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _showSuggestions = !_showSuggestions;
+                                    });
+                                  },
+                                ),
+                                IconButton(
+                                  icon: Icon(
+                                    Icons.image,
+                                    color: primaryColor,
+                                    size: screenWidth * 0.06,
+                                  ),
+                                  onPressed: () => _pickMedia(true),
+                                ),
+                                IconButton(
+                                  icon: Icon(
+                                    Icons.videocam,
+                                    color: primaryColor,
+                                    size: screenWidth * 0.06,
+                                  ),
+                                  onPressed: () => _pickMedia(false),
+                                ),
+                                SizedBox(width: screenWidth * 0.01),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: screenWidth * 0.02),
+                        GestureDetector(
+                          onTap: _isSubmitting
+                              ? null
+                              : () => _submitComment(parentCommentId: _replyingToCommentId),
+                          child: Container(
+                            padding: EdgeInsets.all(screenWidth * 0.03),
+                            decoration: BoxDecoration(
+                              color: primaryColor,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: primaryColor.withOpacity(0.4),
+                                  blurRadius: 5,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: _isSubmitting
+                                ? SizedBox(
+                                    width: screenWidth * 0.045,
+                                    height: screenWidth * 0.045,
+                                    child: const CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                    ),
+                                  )
+                                : Icon(
+                                    Icons.send_rounded,
+                                    color: Colors.white,
+                                    size: screenWidth * 0.05,
+                                  ),
                           ),
                         ),
                       ],
                     ),
-                  ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 3,
-                            offset: const Offset(0, 1),
-                          ),
-                        ],
-                      ),
-                      child: CircleAvatar(
-                        radius: screenWidth * 0.05,
-                        backgroundImage: NetworkImage(widget.currentUserAvatar),
-                      ),
-                    ),
-                    SizedBox(width: screenWidth * 0.02),
-                    Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: isDarkMode ? Colors.grey[800] : Colors.grey[100],
-                          borderRadius: BorderRadius.circular(25),
-                          border: Border.all(
-                            color: isDarkMode ? Colors.grey[700]! : Colors.grey[300]!,
-                            width: 1,
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: TextField(
-                                controller: _commentController,
-                                focusNode: _commentFocusNode,
-                                maxLines: null,
-                                minLines: 1,
-                                keyboardType: TextInputType.multiline,
-                                textCapitalization: TextCapitalization.sentences,
-                                style: TextStyle(
-                                  fontSize: screenWidth * 0.04,
-                                  color: isDarkMode ? Colors.white : Colors.black87,
-                                ),
-                                decoration: InputDecoration(
-                                  hintText: _replyingToCommentId != null
-                                      ? 'Viết phản hồi...'
-                                      : 'Viết bình luận...',
-                                  hintStyle: TextStyle(
-                                    color: isDarkMode ? Colors.grey[400] : Colors.grey[500],
-                                    fontSize: screenWidth * 0.04,
-                                  ),
-                                  border: InputBorder.none,
-                                  contentPadding: EdgeInsets.symmetric(
-                                    horizontal: screenWidth * 0.04,
-                                    vertical: screenWidth * 0.035,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            IconButton(
-                              icon: Icon(
-                                Icons.image,
-                                color: primaryColor,
-                                size: screenWidth * 0.06,
-                              ),
-                              onPressed: () => _pickMedia(true),
-                            ),
-                            IconButton(
-                              icon: Icon(
-                                Icons.videocam,
-                                color: primaryColor,
-                                size: screenWidth * 0.06,
-                              ),
-                              onPressed: () => _pickMedia(false),
-                            ),
-                            SizedBox(width: screenWidth * 0.01),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: screenWidth * 0.02),
-                    GestureDetector(
-                      onTap: _isSubmitting
-                          ? null
-                          : () => _submitComment(parentCommentId: _replyingToCommentId),
-                      child: Container(
-                        padding: EdgeInsets.all(screenWidth * 0.03),
-                        decoration: BoxDecoration(
-                          color: primaryColor,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: primaryColor.withOpacity(0.4),
-                              blurRadius: 5,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: _isSubmitting
-                            ? SizedBox(
-                                width: screenWidth * 0.045,
-                                height: screenWidth * 0.045,
-                                child: const CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                                ),
-                              )
-                            : Icon(
-                                Icons.send_rounded,
-                                color: Colors.white,
-                                size: screenWidth * 0.05,
-                              ),
-                      ),
-                    ),
                   ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -863,18 +931,15 @@ class _CommentScreenState extends State<CommentScreen> {
       }
     }
 
-    // Thêm bình luận gốc và phản hồi theo thứ tự
     void addCommentWithReplies(Comment comment) {
       result.add(comment);
       final replies = commentMap[comment.id] ?? [];
-      // Sắp xếp phản hồi theo createdAt tăng dần
       replies.sort((a, b) => a.createdAt.compareTo(b.createdAt));
       for (var reply in replies) {
         addCommentWithReplies(reply);
       }
     }
 
-    // Lấy bình luận gốc, sắp xếp theo createdAt giảm dần
     final rootComments =
         comments.where((c) => c.parentCommentId == null).toList();
     rootComments.sort((a, b) => b.createdAt.compareTo(a.createdAt));
@@ -892,17 +957,16 @@ class _CommentScreenState extends State<CommentScreen> {
     while (currentId != null) {
       final parent = comments.firstWhere(
         (c) => c.id == currentId,
-        orElse:
-            () => Comment(
-              id: '',
-              postId: '',
-              userId: '',
-              userName: '',
-              userAvatar: '',
-              content: '',
-              createdAt: DateTime.now(),
-              likes: [],
-            ),
+        orElse: () => Comment(
+          id: '',
+          postId: '',
+          userId: '',
+          userName: '',
+          userAvatar: '',
+          content: '',
+          createdAt: DateTime.now(),
+          likes: [],
+        ),
       );
       if (parent.id.isEmpty) break;
       level++;

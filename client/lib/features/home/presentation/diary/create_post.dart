@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io' if (dart.library.html) 'dart:html' as html;
 import 'package:first_app/data/repositories/Post_repo/post_repo.dart';
-import 'package:first_app/features/home/presentation/ai_caption/bloc/ai_caption_bloc.dart';
+import 'package:first_app/features/home/presentation/ai_caption/bloc_post/ai_caption_bloc.dart';
 import 'package:first_app/data/repositories/AI_Post_Repo/ai_post_request_repo.dart';
 import 'package:first_app/data/api/api_client.dart';
 import 'package:first_app/features/home/presentation/ai_caption/ai_caption_screen.dart';

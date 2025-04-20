@@ -1210,6 +1210,7 @@ class OtherProfilePage extends StatelessWidget {
                             viewerId.toString(),
                             username,
                             profileImage,
+                            post.content ?? '',
                           );
                         },
                         icon: Icon(
