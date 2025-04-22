@@ -18,6 +18,34 @@ namespace server.Controllers
         {
             this.participantSV = participantSV;
         }
+
+        [HttpPost("add_member/{conversation_id}/{user_id}")]
+        public async Task<IActionResult> AddMember(int conversation_id, int user_id)
+        {
+            if (conversation_id == 0 || user_id == 0)
+            {
+                return BadRequest("Invalid conversation id or user id");
+            }
+            try
+            {
+                var result = await participantSV.AddParticipantAsync(conversation_id, user_id);
+                if (result == null)
+                {
+                    return BadRequest("Not found participant");
+                }
+                return Ok(new
+                {
+                    Success = true,
+                    Participant = result
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+        }
+
         [HttpPut("update_nickname/{userId}/{conversation_id}")]
         public async Task<IActionResult> UpdateNickName(int userId, int conversation_id, [FromBody] NicknameUpdateRequest request)
         {

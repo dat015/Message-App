@@ -20,6 +20,7 @@ namespace server.Models
                 public string? name { get; set; }
                 [Required]
                 public DateTime joined_at { get; set; } = DateTime.Now;
+                public string adder { get; set; } = "NO";
                 [Required]
                 public bool is_deleted { get; set; } = false;
                 [ForeignKey("conversation_id")]

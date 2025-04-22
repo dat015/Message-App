@@ -1,46 +1,56 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:first_app/data/dto/message_response.dart';
 import 'package:first_app/data/models/messages.dart';
-import 'package:first_app/data/repositories/Message_Repo/message_repository.dart';
 
 class SearchMessagesScreen extends StatefulWidget {
   final int conversationId;
+  final List<MessageWithAttachment> messages;
 
-  const SearchMessagesScreen({super.key, required this.conversationId});
+  const SearchMessagesScreen({
+    super.key,
+    required this.conversationId,
+    required this.messages,
+  });
 
   @override
   State<SearchMessagesScreen> createState() => _SearchMessagesScreenState();
 }
 
 class _SearchMessagesScreenState extends State<SearchMessagesScreen> {
-  final MessageRepo _messageRepo = MessageRepo();
   final TextEditingController _searchController = TextEditingController();
-  List<Message> _searchResults = [];
+  List<MessageWithAttachment> _searchResults = [];
   bool _isLoading = false;
+  Timer? _debounce;
 
-  Future<void> _searchMessages(String query) async {
-    if (query.isEmpty) {
-      setState(() {
-        _searchResults = [];
-      });
-      return;
-    }
+  void _searchMessages(String query) {
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
 
-    setState(() => _isLoading = true);
-    try {
-      final results = await _messageRepo.searchMessages(
-        widget.conversationId,
-        query,
-      );
+    _debounce = Timer(const Duration(milliseconds: 300), () {
+      if (query.isEmpty) {
+        setState(() {
+          _searchResults = [];
+        });
+        return;
+      }
+
+      setState(() => _isLoading = true);
+
+      // Lọc tin nhắn cục bộ từ widget.messages
+      final results = widget.messages
+          .where((messageWithAttachment) {
+            final content = messageWithAttachment.message.content?.toLowerCase() ?? '';
+            final searchQuery = query.toLowerCase();
+            return content.contains(searchQuery);
+          })
+          .toList(); // Giữ nguyên MessageWithAttachment, không dùng .map
+
       setState(() {
-        _searchResults = results.cast<Message>();
+        _searchResults = results; // Không cần cast
         _isLoading = false;
       });
-    } catch (e) {
-      setState(() => _isLoading = false);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Lỗi khi tìm kiếm tin nhắn: $e')));
-    }
+    });
   }
 
   @override
@@ -87,66 +97,67 @@ class _SearchMessagesScreenState extends State<SearchMessagesScreen> {
             ),
           ),
           Expanded(
-            child:
-                _isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : _searchResults.isEmpty
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : _searchResults.isEmpty
                     ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.search_off,
-                            size: 64,
-                            color: Colors.grey[400],
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            'Không tìm thấy tin nhắn nào',
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: Colors.grey[600],
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.search_off,
+                              size: 64,
+                              color: Colors.grey[400],
                             ),
-                          ),
-                        ],
-                      ),
-                    )
+                            const SizedBox(height: 16),
+                            Text(
+                              'Không tìm thấy tin nhắn nào',
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
                     : ListView.builder(
-                      itemCount: _searchResults.length,
-                      itemBuilder: (context, index) {
-                        final message = _searchResults[index];
-                        return Card(
-                          margin: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
-                          child: ListTile(
-                            leading: CircleAvatar(
-                              backgroundColor: Theme.of(context).primaryColor,
-                              child: const Icon(
-                                Icons.message,
-                                color: Colors.white,
+                        itemCount: _searchResults.length,
+                        itemBuilder: (context, index) {
+                          final messageWithAttachment = _searchResults[index];
+                          final message = messageWithAttachment.message;
+                          return Card(
+                            margin: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
+                            child: ListTile(
+                              leading: CircleAvatar(
+                                backgroundColor: Theme.of(context).primaryColor,
+                                child: const Icon(
+                                  Icons.message,
+                                  color: Colors.white,
+                                ),
                               ),
-                            ),
-                            title: Text(
-                              message.content,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
+                              title: Text(
+                                message.content ?? 'Không có nội dung',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
+                              subtitle: Text(
+                                '${message.senderId} - ${DateFormat('dd/MM/yyyy HH:mm').format(message.createdAt ?? DateTime.now())}',
+                                style: TextStyle(color: Colors.grey[600]),
+                              ),
+                              trailing: messageWithAttachment.attachment != null
+                                  ? const Icon(Icons.attach_file)
+                                  : null,
+                              onTap: () {
+                                // TODO: Điều hướng đến tin nhắn trong màn hình chat
+                              },
                             ),
-                            subtitle: Text(
-                              '${message.senderId} - ${message.createdAt.toString().substring(0, 16)}',
-                              style: TextStyle(color: Colors.grey[600]),
-                            ),
-                            onTap: () {
-                              // TODO: Navigate to the message in the chat
-                              // This would require implementing a scroll-to-message feature
-                              // in the chat screen
-                            },
-                          ),
-                        );
-                      },
-                    ),
+                          );
+                        },
+                      ),
           ),
         ],
       ),
@@ -155,6 +166,7 @@ class _SearchMessagesScreenState extends State<SearchMessagesScreen> {
 
   @override
   void dispose() {
+    _debounce?.cancel();
     _searchController.dispose();
     super.dispose();
   }

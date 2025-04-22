@@ -8,6 +8,7 @@ using server.Data;
 using server.DTO;
 using server.Models;
 using server.Services.RedisService;
+using server.Services.RedisService.ChatStorage;
 using server.Services.WebSocketService;
 using StackExchange.Redis;
 
@@ -19,55 +20,95 @@ namespace server.Services.ParticipantService
         private readonly IRedisService _redisService;
         private readonly IConnectionMultiplexer _redis;
         private readonly webSocket _webSocket; // Singleton
+        private readonly IChatStorage _chatStorage;
 
-        public ParticipantSV(ApplicationDbContext context, IRedisService redisService, IConnectionMultiplexer redis, webSocket webSocket)
+        public ParticipantSV(ApplicationDbContext context, IRedisService redisService, IConnectionMultiplexer redis, webSocket webSocket, IChatStorage chatStorage)
         {
             _context = context;
             _redisService = redisService;
             _redis = redis;
             _webSocket = webSocket; // Inject the singleton instance
+            _chatStorage = chatStorage;
         }
 
 
-        public Task<Participants> AddParticipantAsync(int conversation_id, int user_id)
+        public async Task<Participants> AddParticipantAsync(int conversation_id, int user_id)
         {
-            if (conversation_id == 0 || user_id == 0)
+            if (conversation_id <= 0 || user_id <= 0)
             {
-                return null;
+                throw new ArgumentException("Conversation ID hoặc User ID không hợp lệ.");
             }
+
             try
             {
-                var existParticipant = _context.Participants
-                    .Where(p => p.conversation_id == conversation_id && p.user_id == user_id)
-                    .FirstOrDefault();
-                if (existParticipant != null)
+                // Kiểm tra xem cuộc trò chuyện có tồn tại không
+                var conversation = await _context.Conversations
+                    .AnyAsync(c => c.id == conversation_id);
+                if (!conversation)
                 {
-                    return Task.FromResult(existParticipant);
+                    throw new KeyNotFoundException("Cuộc trò chuyện không tồn tại.");
                 }
-                var user = _context.Users
+
+                // Kiểm tra người dùng và thành viên cùng lúc
+                var user = await _context.Users
                     .Where(u => u.id == user_id)
-                    .FirstOrDefault();
+                    .Select(u => new { u.id, u.username })
+                    .FirstOrDefaultAsync();
+
                 if (user == null)
                 {
-                    return null;
+                    throw new KeyNotFoundException("Người dùng không tồn tại.");
                 }
+
+                var existParticipant = await _context.Participants
+                    .AnyAsync(p => p.conversation_id == conversation_id && p.user_id == user_id);
+
+                if (existParticipant)
+                {
+                    return await _context.Participants
+                        .FirstAsync(p => p.conversation_id == conversation_id && p.user_id == user_id);
+                }
+
                 var participant = new Participants
                 {
                     conversation_id = conversation_id,
                     user_id = user_id,
                     role = "member",
                     name = user.username,
-                    joined_at = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time")),
+                    joined_at = TimeZoneInfo.ConvertTimeFromUtc(
+                        DateTime.UtcNow,
+                        TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time")
+                    ),
                     is_deleted = false,
                 };
+
                 _context.Participants.Add(participant);
-                _context.SaveChanges();
-                return Task.FromResult(participant);
+                await _context.SaveChangesAsync();
+
+                // Tạo tin nhắn hệ thống
+                var message = new MessageDTOForAttachment
+                {
+                    content = $"{user.username} đã tham gia cuộc trò chuyện",
+                    sender_id = user_id,
+                    conversation_id = conversation_id,
+                    type = "system",
+                };
+
+                var messageWithAttachment = new MessageWithAttachment
+                {
+                    Message = message,
+                    Attachment = null
+                };
+
+                await _chatStorage.PublishMessageAsync(messageWithAttachment);
+
+                return participant;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine(e.Message);
-                throw e;
+                // Ghi log lỗi chi tiết (sử dụng ILogger thay vì Console)
+                Console.WriteLine($"Lỗi khi thêm thành viên: {ex.Message}");
+                throw new InvalidOperationException("Không thể thêm thành viên vào cuộc trò chuyện.", ex);
             }
         }
 
@@ -163,8 +204,8 @@ namespace server.Services.ParticipantService
                         .FirstOrDefault())
                     .FirstOrDefaultAsync();
 
-                 Console.WriteLine("currentUserId: " + currentUserId);
-                 Console.WriteLine("user_id: " + user_id);
+                Console.WriteLine("currentUserId: " + currentUserId);
+                Console.WriteLine("user_id: " + user_id);
                 _redisService.DeleteDataAsync($"conversation:{currentUserId}");
                 _redisService.DeleteDataAsync($"conversation:{user_id}");
 
@@ -179,7 +220,7 @@ namespace server.Services.ParticipantService
                 {
                     Message = message_update_type,
                     Attachment = null
-                };  
+                };
 
                 await _webSocket.PublishMessage(message_update);
                 return true;

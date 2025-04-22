@@ -117,6 +117,7 @@ class _ChatScreenState extends State<ChatScreen> {
                             (context) => ConversationSettingsScreen(
                               conversation: conversation,
                               currentUserId: id,
+                              messages: provider.messages,
                             ),
                       ),
                     );

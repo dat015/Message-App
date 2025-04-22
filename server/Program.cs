@@ -10,7 +10,7 @@ using server.Services;
 using server.Services.UserService; // Thêm namespace cho UserQrService
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.WebHost.UseUrls("http://localhost:5053");
 builder.Configuration
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
@@ -75,7 +75,7 @@ using (var scope = app.Services.CreateScope())
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Message App API V1"));
 }
 app.UseCors("AllowAll");
 app.MapControllers();

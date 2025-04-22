@@ -23,6 +23,21 @@ namespace server.Controllers
             this.userSV = userSV;
             _userQrService = userQrService;
         }
+        [HttpGet("getMemberForConversation/{conversationId}")]
+        public async Task<IActionResult> GetMemberForConversation(int conversationId)
+        {
+            try
+            {
+                var members = await userSV.GetMemberForConversationAsync(conversationId);
+                return Ok(members);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest("Error retrieving members for conversation: " + ex.Message);
+            }
+        }
+
         [HttpGet("getUser/{user_id}")]
         public async Task<IActionResult> GetUser(int user_id)
         {

@@ -1,7 +1,9 @@
+import 'package:first_app/data/repositories/User_Repo/user_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:first_app/data/models/conversation.dart';
 import 'package:first_app/data/models/participants.dart';
 import 'package:first_app/data/repositories/Participants_Repo/participants_repo.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class MembersScreen extends StatefulWidget {
   final Conversation conversation;
@@ -23,12 +25,13 @@ class _MembersScreenState extends State<MembersScreen> {
   final ParticipantsRepo _participantsRepo = ParticipantsRepo();
   final TextEditingController _searchController = TextEditingController();
   List<Participants> _filteredParticipants = [];
+  final UserRepo _userRepo = UserRepo();
   bool _isLoading = false;
-
   @override
   void initState() {
     super.initState();
     _filteredParticipants = widget.participants;
+    print("user id: ${widget.currentUserId}");
   }
 
   void _filterParticipants(String query) {

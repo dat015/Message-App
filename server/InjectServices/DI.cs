@@ -18,6 +18,7 @@ using server.Services.UploadService;
 using System.Text.Json.Serialization;
 using server.Services;
 using server.Services.RedisService.ChatStorage;
+using Microsoft.OpenApi.Models;
 
 namespace server.InjectService
 {
@@ -39,7 +40,11 @@ namespace server.InjectService
                 options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
             }); // Thêm JsonOptions để xử lý vòng lặp tham chiếu
             services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen();
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Message App API", Version = "v1" });
+                c.OperationFilter<AddFileParamTypesOperationFilter>();
+            }); 
             //config sqlserver
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));

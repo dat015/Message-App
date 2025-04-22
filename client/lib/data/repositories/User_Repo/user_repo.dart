@@ -1,12 +1,29 @@
 import 'dart:convert';
 
 import 'package:first_app/data/api/api_client.dart';
+import 'package:first_app/data/dto/MemberDTO.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../models/user.dart';
 
 class UserRepo {
   var api_client = ApiClient();
+
+  Future<List<MemberDTO>> GetAllMember(int conversation_id) async {
+    var response = await api_client.get(
+      "/api/User/getMemberForConversation/$conversation_id",
+    );
+
+    // Kiểm tra response
+    print('Response: $response');
+
+    // Đảm bảo dùng key $values
+    final List<dynamic> memberList = response['\$values'] as List<dynamic>;
+    return memberList
+        .map((json) => MemberDTO.fromJson(json as Map<String, dynamic>))
+        .toList();
+  }
+
   Future<User> getUser(int userId) async {
     try {
       var response = await api_client.get('/api/User/getUser/$userId');

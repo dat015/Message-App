@@ -1,3 +1,4 @@
+import 'package:first_app/data/dto/message_response.dart';
 import 'package:first_app/data/providers/providers.dart';
 import 'package:first_app/data/repositories/Message_Repo/message_repository.dart';
 import 'package:first_app/data/repositories/User_Repo/user_repo.dart';
@@ -14,11 +15,13 @@ import 'package:provider/provider.dart';
 class ConversationSettingsScreen extends StatefulWidget {
   final Conversation conversation;
   final int currentUserId;
+  final List<MessageWithAttachment> messages;
 
   const ConversationSettingsScreen({
     super.key,
     required this.conversation,
     required this.currentUserId,
+    required this.messages
   });
 
   @override
@@ -36,17 +39,24 @@ class _ConversationSettingsScreenState
   final UserRepo _userRepo = UserRepo();
   late ChatScreen _chatScreen;
   List<Participants> _participants = [];
+
   bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
     _nameController.text = widget.conversation.name;
+    print("user id setting ${widget.currentUserId}");
     _chatScreen = ChatScreen(
       conversationId: widget.conversation.id!,
       userId: widget.currentUserId,
     );
     _loadParticipants();
+  }
+
+  Future<int?> getUser_id() async {
+    var user = await _userRepo.GetUserFromApp();
+    return user?.id;
   }
 
   Future<void> _loadParticipants() async {
@@ -227,7 +237,6 @@ class _ConversationSettingsScreenState
           user.id,
         );
         if (mounted) {
-          
           Navigator.pop(context, true);
         }
       } catch (e) {
@@ -369,7 +378,9 @@ class _ConversationSettingsScreenState
                             subtitle:
                                 'Xem tất cả thành viên trong cuộc trò chuyện',
                             icon: Icons.people,
-                            onTap: () {
+                            onTap: () async {
+                              final userId =
+                                  await getUser_id(); // Chờ kết quả Future
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -377,7 +388,7 @@ class _ConversationSettingsScreenState
                                       (context) => MembersScreen(
                                         conversation: widget.conversation,
                                         participants: _participants,
-                                        currentUserId: widget.currentUserId,
+                                        currentUserId: userId ?? 0,
                                       ),
                                 ),
                               );
@@ -394,6 +405,7 @@ class _ConversationSettingsScreenState
                                   builder:
                                       (context) => SearchMessagesScreen(
                                         conversationId: widget.conversation.id!,
+                                        messages: widget.messages,
                                       ),
                                 ),
                               );
