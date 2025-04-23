@@ -2,11 +2,7 @@ import 'package:first_app/data/models/post.dart';
 import 'package:first_app/data/models/story.dart';
 import 'package:first_app/data/repositories/Post_repo/post_repo.dart';
 import 'package:first_app/data/repositories/Story_repo/story_repo.dart';
-import 'package:first_app/features/home/presentation/diary/create_post.dart';
-import 'package:first_app/features/home/presentation/diary/comment_screen.dart';
-import 'package:first_app/features/home/presentation/diary/edit_post_screen.dart';
-import 'package:first_app/features/home/presentation/story/create_story_screen.dart';
-import 'package:first_app/features/home/presentation/story/story_screen.dart';
+import 'package:first_app/features/routes/navigation_helper.dart'; 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -69,431 +65,275 @@ class _DiaryState extends State<Diary> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: RefreshIndicator(
-        onRefresh: () async {
-          setState(() {});
-        },
-        child: CustomScrollView(
-          slivers: [
-            // App Bar
-            SliverAppBar(
-              pinned: true,
-              backgroundColor: Colors.blue.shade700,
-              elevation: 0,
-              title: const Text(
-                'Nhật ký',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.search, color: Colors.white),
-                  onPressed: () {
-                    // Implement search functionality
-                  },
-                ),
-                Stack(
-                  alignment: Alignment.topRight,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.notifications_outlined, color: Colors.white),
-                      onPressed: () {
-                        // Implement notification functionality
+    return RefreshIndicator(
+      onRefresh: () async {
+        setState(() {});
+      },
+      child: CustomScrollView(
+        slivers: [
+          // Main Content
+          SliverToBoxAdapter(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Create Post Card
+                Card(
+                  margin: const EdgeInsets.all(12),
+                  elevation: 1,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: InkWell(
+                      onTap: () {
+                        NavigationHelper().goToCreatePost(
+                          context,
+                          widget.currentUserId,
+                          widget.currentUserName,
+                          widget.userAvatar,
+                        );
                       },
-                    ),
-                    Positioned(
-                      right: 8,
-                      top: 8,
-                      child: Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: const BoxDecoration(
-                          color: Colors.red,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Text(
-                          '5',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 20,
+                            backgroundImage: NetworkImage(widget.userAvatar),
                           ),
-                        ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 10,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade100,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                'Hôm nay bạn thế nào?',
+                                style: TextStyle(
+                                  color: Colors.grey.shade700,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
+                  ),
                 ),
-                const SizedBox(width: 8),
-              ],
-            ),
 
-            // Main Content
-            SliverToBoxAdapter(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Create Post Card
-                  Card(
-                    margin: const EdgeInsets.all(12),
-                    elevation: 1,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => CreatePostScreen(
-                                currentUserId: widget.currentUserId,
-                                currentUserName: widget.currentUserName,
-                                currentUserAvatar: widget.userAvatar,
-                              ),
-                            ),
-                          );
-                        },
-                        child: Row(
-                          children: [
-                            CircleAvatar(
-                              radius: 20,
-                              backgroundImage: NetworkImage(widget.userAvatar),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 10,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.grey.shade100,
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Text(
-                                  'Hôm nay bạn thế nào?',
-                                  style: TextStyle(
-                                    color: Colors.grey.shade700,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
+                // Media Options
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      _buildMediaOption(
+                        Icons.image,
+                        'Ảnh',
+                        Colors.green.shade600,
+                      ),
+                      _buildMediaOption(
+                        Icons.videocam_rounded,
+                        'Video',
+                        Colors.purple.shade600,
+                      ),
+                      _buildMediaOption(
+                        Icons.photo_album_rounded,
+                        'Album',
+                        Colors.blue.shade600,
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+                const Divider(height: 1),
+                const SizedBox(height: 16),
+
+                // "Khoảnh khắc" Section Header
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Khoảnh khắc',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
+                    ],
                   ),
+                ),
 
-                  // Media Options
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 12),
-                    child: Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        _buildMediaOption(
-                          Icons.image,
-                          'Ảnh',
-                          Colors.green.shade600,
-                        ),
-                        _buildMediaOption(
-                          Icons.videocam_rounded,
-                          'Video',
-                          Colors.purple.shade600,
-                        ),
-                        _buildMediaOption(
-                          Icons.photo_album_rounded,
-                          'Album',
-                          Colors.blue.shade600,
-                        ),
-                        _buildMediaOption(
-                          Icons.access_time_rounded,
-                          'Kỷ niệm',
-                          Colors.orange.shade600,
-                        ),
-                      ],
-                    ),
-                  ),
+                // Stories List
+                SizedBox(
+                  height: 200,
+                  child: StreamBuilder<List<Story>>(
+                    stream: _storyRepo.getAllStories(widget.currentUserId.toString()),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return Center(child: Text('Lỗi: ${snapshot.error}'));
+                      }
 
-                  const SizedBox(height: 16),
-                  const Divider(height: 1),
-                  const SizedBox(height: 16),
+                      if (!snapshot.hasData) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
 
-                  // "Khoảnh khắc" Section Header
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'Khoảnh khắc',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                      final stories = snapshot.data!;
+                      return ListView(
+                        scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        children: [
+                          _buildStoryCard(
+                            widget.userAvatar,
+                            'Tạo mới',
+                            widget.userAvatar,
+                            isCreateNew: true,
+                            onTap: () {
+                              NavigationHelper().goToCreateStory(
+                                context,
+                                widget.currentUserId.toString(),
+                                widget.currentUserName,
+                                widget.userAvatar,
+                              );
+                            },
                           ),
-                        ),
-                        TextButton.icon(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => StreamBuilder<List<Story>>(
-                                  stream: _storyRepo.getAllStories(widget.currentUserId.toString()),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.hasError) {
-                                      return Center(child: Text('Lỗi: ${snapshot.error}'));
-                                    }
-                                    if (!snapshot.hasData) {
-                                      return const Center(child: CircularProgressIndicator());
-                                    }
-                                    final stories = snapshot.data!;
-                                    if (stories.isEmpty) {
-                                      return const Center(child: Text('Không có story nào'));
-                                    }
-                                    return StoryScreen(
-                                      currentUserId: widget.currentUserId.toString(),
-                                      stories: stories,
+                          ...stories.map((story) => Padding(
+                                padding: const EdgeInsets.only(left: 10),
+                                child: _buildStoryCard(
+                                  story.authorAvatar,
+                                  story.authorName,
+                                  story.isImage ? story.imageUrl! : story.authorAvatar,
+                                  isCreateNew: false,
+                                  onTap: () {
+                                    NavigationHelper().goToStory(
+                                      context,
+                                      widget.currentUserId.toString(),
+                                      [story],
                                     );
                                   },
                                 ),
-                              ),
-                            );
-                          },
-                          icon: const Icon(Icons.arrow_forward_rounded, size: 18),
-                          label: const Text('Xem tất cả'),
-                          style: TextButton.styleFrom(
-                            foregroundColor: Colors.blue.shade700,
-                            padding: EdgeInsets.zero,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // Stories List
-                  SizedBox(
-                    height: 200,
-                    child: StreamBuilder<List<Story>>(
-                      stream: _storyRepo.getAllStories(widget.currentUserId.toString()),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasError) {
-                          return Center(child: Text('Lỗi: ${snapshot.error}'));
-                        }
-
-                        if (!snapshot.hasData) {
-                          return const Center(child: CircularProgressIndicator());
-                        }
-
-                        final stories = snapshot.data!;
-                        return ListView(
-                          scrollDirection: Axis.horizontal,
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                          children: [
-                            _buildStoryCard(
-                              'Tạo mới',
-                              widget.userAvatar,
-                              isCreateNew: true,
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => CreateStoryScreen(
-                                      currentUserId: widget.currentUserId.toString(),
-                                      currentUserName: widget.currentUserName,
-                                      currentUserAvatar: widget.userAvatar,
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                            ...stories.map((story) => Padding(
-                                  padding: const EdgeInsets.only(left: 10),
-                                  child: _buildStoryCard(
-                                    story.authorName,
-                                    story.isImage ? story.imageUrl! : story.authorAvatar,
-                                    isCreateNew: false,
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => StoryScreen(
-                                            currentUserId: widget.currentUserId.toString(),
-                                            stories: [story],
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                )).toList(),
-                          ],
-                        );
-                      },
-                    ),
-                  ),
-
-                  const SizedBox(height: 8),
-                  const Divider(height: 1, thickness: 6, color: Color(0xFFF5F5F5)),
-                  const SizedBox(height: 8),
-
-                  // Posts Section Header
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: Text(
-                      'Bài viết của bạn',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // Posts List
-            StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection('posts')
-                  .where(
-                    'authorId',
-                    isEqualTo: widget.currentUserId.toString(),
-                  )
-                  .orderBy('createdAt', descending: true)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  if (snapshot.error.toString().contains(
-                    'The query requires an index',
-                  )) {
-                    return SliverToBoxAdapter(
-                      child: Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            children: [
-                              const CircularProgressIndicator(),
-                              const SizedBox(height: 16),
-                              const Text(
-                                'Đang cấu hình hệ thống...\nVui lòng đợi trong giây lát và thử lại.',
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-                  }
-                  return SliverToBoxAdapter(
-                    child: Center(child: Text('Lỗi: ${snapshot.error}')),
-                  );
-                }
-
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const SliverToBoxAdapter(
-                    child: Center(child: CircularProgressIndicator()),
-                  );
-                }
-
-                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return SliverToBoxAdapter(
-                    child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(32),
-                        child: Column(
-                          children: [
-                            Icon(
-                              Icons.article_outlined,
-                              size: 64,
-                              color: Colors.grey.shade400,
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'Chưa có bài viết nào',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.grey.shade600,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            ElevatedButton.icon(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => CreatePostScreen(
-                                      currentUserId: widget.currentUserId,
-                                      currentUserName: widget.currentUserName,
-                                      currentUserAvatar: widget.userAvatar,
-                                    ),
-                                  ),
-                                );
-                              },
-                              icon: const Icon(Icons.add),
-                              label: const Text('Tạo bài viết mới'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.blue.shade700,
-                                foregroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 10,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                }
-
-                return SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      final doc = snapshot.data!.docs[index];
-                      final postData = doc.data() as Map<String, dynamic>;
-                      final post = Post.fromMap(doc.id, postData);
-
-                      return _buildPostItem(
-                        profileImage: widget.userAvatar,
-                        username: post.authorName ?? 'Unknown',
-                        timeAgo: _formatTimeAgo(post.createdAt),
-                        content: post.content ?? '',
-                        postImage: post.imageUrl ?? '/images/register.png',
-                        postId: doc.id,
-                        post: post,
+                              )).toList(),
+                        ],
                       );
                     },
-                    childCount: snapshot.data!.docs.length,
+                  ),
+                ),
+
+                const SizedBox(height: 8),
+                const Divider(height: 1, thickness: 6, color: Color(0xFFF5F5F5)),
+                const SizedBox(height: 8),
+
+                // Posts Section Header
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: Text(
+                    'Bảng tin của bạn',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Posts List
+          StreamBuilder<List<Post>>(
+            stream: _postService.getPosts(widget.currentUserId.toString()),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return SliverToBoxAdapter(
+                  child: Center(child: Text('Lỗi: ${snapshot.error}')),
+                );
+              }
+
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const SliverToBoxAdapter(
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              }
+
+              if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                return SliverToBoxAdapter(
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(32),
+                      child: Column(
+                        children: [
+                          Icon(
+                            Icons.article_outlined,
+                            size: 64,
+                            color: Colors.grey.shade400,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'Chưa có bài viết nào',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              NavigationHelper().goToCreatePost(
+                                context,
+                                widget.currentUserId,
+                                widget.currentUserName,
+                                widget.userAvatar,
+                              );
+                            },
+                            icon: const Icon(Icons.add),
+                            label: const Text('Tạo bài viết mới'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue.shade700,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 10,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 );
-              },
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => CreatePostScreen(
-                currentUserId: widget.currentUserId,
-                currentUserName: widget.currentUserName,
-                currentUserAvatar: widget.userAvatar,
-              ),
-            ),
-          );
-        },
-        backgroundColor: Colors.blue.shade700,
-        child: const Icon(Icons.add, color: Colors.white),
+              }
+
+              return SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    final post = snapshot.data![index];
+                    return _buildPostItem(
+                      profileImage: widget.userAvatar,
+                      username: post.authorName ?? 'Unknown',
+                      timeAgo: _formatTimeAgo(post.createdAt),
+                      content: post.content ?? '',
+                      postImage: post.imageUrl ?? '/images/register.png',
+                      postId: post.id!,
+                      post: post,
+                    );
+                  },
+                  childCount: snapshot.data!.length,
+                ),
+              );
+            },
+          ),
+        ],
       ),
     );
   }
@@ -556,6 +396,7 @@ class _DiaryState extends State<Diary> {
   }
 
   Widget _buildStoryCard(
+    String avatar,
     String name,
     String imagePath, {
     required bool isCreateNew,
@@ -580,7 +421,6 @@ class _DiaryState extends State<Diary> {
           borderRadius: BorderRadius.circular(12),
           child: Stack(
             children: [
-              // Image Background
               Positioned.fill(
                 child: Image.network(
                   imagePath,
@@ -591,8 +431,6 @@ class _DiaryState extends State<Diary> {
                   ),
                 ),
               ),
-
-              // Gradient Overlay
               Positioned.fill(
                 child: Container(
                   decoration: BoxDecoration(
@@ -607,8 +445,6 @@ class _DiaryState extends State<Diary> {
                   ),
                 ),
               ),
-
-              // Content
               Positioned(
                 left: 0,
                 right: 0,
@@ -643,7 +479,7 @@ class _DiaryState extends State<Diary> {
                           ),
                           child: CircleAvatar(
                             radius: 14,
-                            backgroundImage: NetworkImage(widget.userAvatar),
+                            backgroundImage: NetworkImage(avatar),
                           ),
                         ),
                       const SizedBox(height: 8),
@@ -677,6 +513,9 @@ class _DiaryState extends State<Diary> {
     required String postId,
     required Post post,
   }) {
+    final isOwnPost = post.authorId.toString() == widget.currentUserId.toString();
+
+    final authorAvatars = post.authorAvatar;
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
       elevation: 1,
@@ -694,7 +533,7 @@ class _DiaryState extends State<Diary> {
               children: [
                 CircleAvatar(
                   radius: 20,
-                  backgroundImage: NetworkImage(profileImage),
+                  backgroundImage: NetworkImage(authorAvatars),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -719,13 +558,13 @@ class _DiaryState extends State<Diary> {
                     ],
                   ),
                 ),
+                if (isOwnPost)
                 IconButton(
                   icon: Icon(
                     Icons.more_horiz,
                     color: Colors.grey.shade600,
                   ),
                   onPressed: () {
-                    // Show post options
                     showModalBottomSheet(
                       context: context,
                       shape: const RoundedRectangleBorder(
@@ -738,17 +577,13 @@ class _DiaryState extends State<Diary> {
                             leading: const Icon(Icons.edit),
                             title: const Text('Chỉnh sửa bài viết'),
                             onTap: () {
-                              Navigator.pop(context);
-                              Navigator.push(
+                              NavigationHelper().pop(context); // Đóng bottom sheet
+                              NavigationHelper().goToEditPost(
                                 context,
-                                MaterialPageRoute(
-                                  builder: (context) => EditPostScreen(
-                                    post: post,
-                                    currentUserId: widget.currentUserId.toString(),
-                                    currentUserName: widget.currentUserName,
-                                    currentUserAvatar: widget.userAvatar,
-                                  ),
-                                ),
+                                post,
+                                widget.currentUserId.toString(),
+                                widget.currentUserName,
+                                widget.userAvatar,
                               );
                             },
                           ),
@@ -759,7 +594,7 @@ class _DiaryState extends State<Diary> {
                               style: TextStyle(color: Colors.red),
                             ),
                             onTap: () {
-                              Navigator.pop(context);
+                              NavigationHelper().pop(context); // Đóng bottom sheet
                               _deletePost(postId);
                             },
                           ),
@@ -813,13 +648,10 @@ class _DiaryState extends State<Diary> {
               children: [
                 Expanded(
                   child: StreamBuilder<DocumentSnapshot>(
-                    stream: FirebaseFirestore.instance
-                        .collection('posts')
-                        .doc(postId)
-                        .snapshots(),
+                    stream: FirebaseFirestore.instance.collection('posts').doc(postId).snapshots(),
                     builder: (context, snapshot) {
                       if (!snapshot.hasData || !snapshot.data!.exists) {
-                        return const SizedBox(); // Trả về widget rỗng nếu tài liệu không tồn tại
+                        return const SizedBox();
                       }
 
                       final postData = snapshot.data!.data() as Map<String, dynamic>;
@@ -861,16 +693,13 @@ class _DiaryState extends State<Diary> {
                 ),
                 TextButton.icon(
                   onPressed: () {
-                    Navigator.push(
+                    NavigationHelper().goToComment(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) => CommentScreen(
-                          postId: postId,
-                          currentUserId: widget.currentUserId.toString(),
-                          currentUserName: widget.currentUserName,
-                          currentUserAvatar: widget.userAvatar,
-                        ),
-                      ),
+                      postId,
+                      widget.currentUserId.toString(),
+                      widget.currentUserName,
+                      widget.userAvatar,
+                      post.content ?? '',
                     );
                   },
                   icon: Icon(
@@ -902,27 +731,6 @@ class _DiaryState extends State<Diary> {
                         ),
                       );
                     },
-                  ),
-                  style: TextButton.styleFrom(
-                    padding: EdgeInsets.zero,
-                    foregroundColor: Colors.grey.shade600,
-                  ),
-                ),
-                TextButton.icon(
-                  onPressed: () {
-                    // Implement share functionality
-                  },
-                  icon: Icon(
-                    Icons.share_outlined,
-                    color: Colors.grey.shade600,
-                    size: 20,
-                  ),
-                  label: Text(
-                    'Chia sẻ',
-                    style: TextStyle(
-                      color: Colors.grey.shade600,
-                      fontSize: 14,
-                    ),
                   ),
                   style: TextButton.styleFrom(
                     padding: EdgeInsets.zero,

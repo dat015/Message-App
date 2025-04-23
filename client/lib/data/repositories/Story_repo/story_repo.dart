@@ -1,6 +1,8 @@
 import 'dart:io' as io if (dart.library.html) 'dart:html';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:first_app/data/models/user.dart';
+import 'package:first_app/data/repositories/Friends_repo/friends_repo.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as supa;
 import 'package:first_app/data/models/story.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:image_picker/image_picker.dart';
@@ -9,16 +11,19 @@ import 'package:path/path.dart' as path;
 
 class StoryRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final SupabaseClient _supabase = Supabase.instance.client;
-
-  // Tạo story mới
+  final supa.SupabaseClient _supabase = supa.Supabase.instance.client;
+  final FriendsRepo _friendRepo = FriendsRepo();
   Future<String> createStory({
     required String authorId,
     required String authorName,
     required String authorAvatar,
     XFile? imageFile,
     XFile? videoFile,
+    String? musicUrl,
+    int? musicStartTime,
+    int? musicDuration,
     Duration duration = const Duration(hours: 24),
+    String visibility = 'public',
   }) async {
     try {
       String? imageUrl;
@@ -44,7 +49,6 @@ class StoryRepository {
       // Tạo story trong Firestore
       final now = DateTime.now();
       final expiresAt = now.add(duration);
-      print('Creating story - now: $now, expiresAt: $expiresAt'); // Debug
       final story = Story(
         id: '',
         authorId: authorId,
@@ -52,10 +56,14 @@ class StoryRepository {
         authorAvatar: authorAvatar,
         imageUrl: imageUrl,
         videoUrl: videoUrl,
+        musicUrl: musicUrl,
+        musicStartTime: musicStartTime,
+        musicDuration: musicDuration,
         createdAt: now,
         expiresAt: expiresAt,
         viewers: [],
         reactions: {},
+        visibility: visibility,
       );
 
       final docRef = await _firestore.collection('stories').add(story.toMap());
@@ -66,7 +74,7 @@ class StoryRepository {
     }
   }
 
-  // Upload media lên Supabase
+  // Phương thức uploadMedia không thay đổi
   Future<String> _uploadMedia({
     required XFile file,
     required String userId,
@@ -80,25 +88,25 @@ class StoryRepository {
       final filePath = 'stories/$userId/$fileName';
 
       if (kIsWeb) {
-        final bytes = await file.readAsBytes(); // Xử lý cho web
+        final bytes = await file.readAsBytes();
         await _supabase.storage
             .from('media')
             .uploadBinary(
               filePath,
               bytes,
-              fileOptions: const FileOptions(
+              fileOptions: const supa.FileOptions(
                 cacheControl: '3600',
                 upsert: false,
               ),
             );
       } else {
-        final io.File ioFile = io.File(file.path); // Xử lý cho mobile
+        final io.File ioFile = io.File(file.path);
         await _supabase.storage
             .from('media')
             .upload(
               filePath,
               ioFile,
-              fileOptions: const FileOptions(
+              fileOptions: const supa.FileOptions(
                 cacheControl: '3600',
                 upsert: false,
               ),
@@ -112,34 +120,80 @@ class StoryRepository {
     }
   }
 
+  Future<List<User>> _getFriends(String userId) async {
+    try {
+      return await _friendRepo.getFriends(int.parse(userId)) as List<User>;
+    } catch (e) {
+      print('Error fetching friends: $e');
+      return [];
+    }
+  }
+
   // Lấy tất cả story
   Stream<List<Story>> getAllStories(String currentUserId) {
-    final now = DateTime.now();
-    print('Current time in getAllStories: $now'); // Debug thời gian hiện tại
-
     return _firestore
         .collection('stories')
         .where('expiresAt', isGreaterThan: Timestamp.now())
-        .orderBy('expiresAt', descending: false) // Sắp xếp theo expiresAt tăng dần
+        .orderBy('expiresAt', descending: false)
         .snapshots()
-        .map((snapshot) {
-          print('Raw documents from Firestore: ${snapshot.docs.length}'); // Debug số lượng document
+        .asyncMap((snapshot) async {
+          try {
+            // Lấy danh sách bạn bè
+            final friends = await _getFriends(currentUserId);
+            final friendIds =
+                friends.map((friend) => friend.id.toString()).toList();
 
-          final stories = snapshot.docs.map((doc) {
-            final story = Story.fromMap(doc.id, doc.data());
-            print('Story: ${story.id}, expiresAt: ${story.expiresAt}'); // Debug từng story
-            return story;
-          }).toList();
+            friendIds.add(currentUserId);
 
-          // Sắp xếp trên client-side để ưu tiên story của người dùng hiện tại
-          stories.sort((a, b) {
-            if (a.authorId == currentUserId && b.authorId != currentUserId) return -1;
-            if (a.authorId != currentUserId && b.authorId == currentUserId) return 1;
-            return 0;
-          });
+            // Debug log
+            print("Current user: $currentUserId");
+            print("Friend IDs: $friendIds");
 
-          print('Final stories in getAllStories: ${stories.length}'); // Debug số lượng story sau sắp xếp
-          return stories;
+            // Lọc story chỉ từ bạn bè hoặc chính người dùng
+            final filteredStories =
+                snapshot.docs
+                    .map((doc) => Story.fromMap(doc.id, doc.data()))
+                    .where((story) {
+                      print("Checking story from ${story.authorId}");
+                      return friendIds.contains(story.authorId.toString());
+                    })
+                    .toList();
+
+            // Ưu tiên story của chính người dùng
+            filteredStories.sort((a, b) {
+              if (a.authorId == currentUserId && b.authorId != currentUserId)
+                return -1;
+              if (a.authorId != currentUserId && b.authorId == currentUserId)
+                return 1;
+              return 0;
+            });
+
+            return filteredStories;
+          } catch (e) {
+            print('Error in getAllStories: $e');
+            return []; // Trả về danh sách rỗng nếu có lỗi
+          }
+        });
+  }
+
+  Stream<List<Story>> getUserStories(String currentUserId, String profileUserId) {
+    return _firestore
+        .collection('stories')
+        .where('authorId', isEqualTo: profileUserId)
+        .where('expiresAt', isGreaterThan: Timestamp.now())
+        .orderBy('expiresAt', descending: false)
+        .snapshots()
+        .asyncMap((snapshot) async {
+          final friends = await _getFriends(profileUserId);
+          final friendIds = friends.map((friend) => friend.toString()).toList();
+          final isFriend = friendIds.contains(currentUserId);
+          return snapshot.docs
+              .map((doc) => Story.fromMap(doc.id, doc.data()))
+              .where((story) =>
+                  story.visibility == 'public' ||
+                  (story.visibility == 'friends' &&
+                      (isFriend || story.authorId == currentUserId)))
+              .toList();
         });
   }
 
@@ -151,14 +205,41 @@ class StoryRepository {
         .orderBy('expiresAt', descending: false)
         .snapshots()
         .map((snapshot) {
-          final stories = snapshot.docs.map((doc) {
-            final story = Story.fromMap(doc.id, doc.data());
-            print('Friend story: ${story.id}, expiresAt: ${story.expiresAt}'); // Debug
-            return story;
-          }).toList();
+          final stories =
+              snapshot.docs.map((doc) {
+                final story = Story.fromMap(doc.id, doc.data());
+                print(
+                  'Friend story: ${story.id}, expiresAt: ${story.expiresAt}',
+                ); // Debug
+                return story;
+              }).toList();
           print('Friend stories: ${stories.length}'); // Debug
           return stories;
         });
+  }
+
+  Future<Map<String, dynamic>> getUserInfo(String userId) async {
+    try {
+      final query =
+          await _firestore
+              .collection('stories')
+              .where('authorId', isEqualTo: userId)
+              .limit(1)
+              .get();
+
+      if (query.docs.isNotEmpty) {
+        final data = query.docs.first.data();
+        return {
+          'name': data['authorName'] ?? 'Người dùng',
+          'avatar': data['authorAvatar'] ?? '',
+        };
+      } else {
+        return {'name': 'Người dùng', 'avatar': ''};
+      }
+    } catch (e) {
+      print('Error fetching user info from stories: $e');
+      return {'name': 'Người dùng', 'avatar': ''};
+    }
   }
 
   // Đánh dấu story đã xem
@@ -174,7 +255,11 @@ class StoryRepository {
   }
 
   // Thêm hoặc cập nhật cảm xúc
-  Future<void> addReaction(String storyId, String userId, String reaction) async {
+  Future<void> addReaction(
+    String storyId,
+    String userId,
+    String reaction,
+  ) async {
     try {
       await _firestore.collection('stories').doc(storyId).update({
         'reactions.$userId': reaction,
@@ -200,10 +285,11 @@ class StoryRepository {
   // Xóa story đã hết hạn
   Future<void> deleteExpiredStories() async {
     try {
-      final expiredStories = await _firestore
-          .collection('stories')
-          .where('expiresAt', isLessThan: Timestamp.now())
-          .get();
+      final expiredStories =
+          await _firestore
+              .collection('stories')
+              .where('expiresAt', isLessThan: Timestamp.now())
+              .get();
 
       for (final doc in expiredStories.docs) {
         await doc.reference.delete();

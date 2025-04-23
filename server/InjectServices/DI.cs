@@ -17,6 +17,7 @@ using CloudinaryDotNet;
 using server.Services.UploadService;
 using System.Text.Json.Serialization;
 using server.Services;
+using server.Services.ImageDescriptionService;
 
 namespace server.InjectService
 {
@@ -89,6 +90,8 @@ namespace server.InjectService
             services.AddScoped<IUserQrService, UserQrService>();
             services.AddScoped<IUserProfileSV, UserProfileSV>();
             services.AddScoped<IWebSocketFriendSV, WebSocketFriendSV>();
+            services.AddScoped<IAIPostSV, AIPostSV>();
+            services.AddScoped<IImageDescriptionSV, ImageDescriptionService>();
             services.AddScoped<AuthorizationJWT>();
         }
 

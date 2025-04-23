@@ -13,7 +13,7 @@ namespace server.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int id { get; set; }
         [Required]
-        public string related_type { get; set; } //request friend, accept friend, story reaction,...
+        public string related_type { get; set; } 
         [Required]
         public string content { get; set; }
         [Required]

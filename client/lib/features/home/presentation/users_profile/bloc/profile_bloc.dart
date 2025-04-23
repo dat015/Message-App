@@ -22,28 +22,39 @@ class OtherProfileBloc extends Bloc<OtherProfileEvent, OtherProfileState> {
     on<SendFriendRequestEvent>(_onSendFriendRequest);
     on<AcceptFriendRequestEvent>(_onAcceptFriendRequest);
     on<CancelFriendRequestEvent>(_onCancelFriendRequest);
+    on<RejectFriendRequestEvent>(_onRejectFriendRequest);
     on<UnfriendEvent>(_onUnfriend);
   }
 
-  Future<void> _onLoadProfile(LoadProfileEvent event, Emitter<OtherProfileState> emit) async {
+  Future<void> _onLoadProfile(
+  LoadProfileEvent event,
+  Emitter<OtherProfileState> emit,
+) async {
+  try {
     emit(OtherProfileLoading());
-    try {
-      if (!event.forceRefresh && _cachedProfile != null) {
-        final friendStatus = await _checkFriendStatus(_cachedProfile!);
-        emit(OtherProfileLoaded(_cachedProfile!, friendStatus));
-        return;
-      }
 
-      final profile = await profileRepository.fetchOtherUserProfile(viewerId, targetUserId);
-      _cachedProfile = profile;
-      final friendStatus = await _checkFriendStatus(profile);
-      emit(OtherProfileLoaded(profile, friendStatus));
-    } catch (e) {
-      emit(OtherProfileError('Lỗi khi tải hồ sơ: $e'));
-    }
+    // Fetch user profile
+    final user = await profileRepository.fetchOtherUserProfile(viewerId, targetUserId);
+
+    // Get friend status and friends using _checkFriendStatus
+    final result = await _checkFriendStatus();
+
+    emit(
+      OtherProfileLoaded(
+        profile: user,
+        friendStatus: result['friendStatus'],
+        friends: result['friends'],
+      ),
+    );
+  } catch (e) {
+    emit(OtherProfileError('Lỗi khi tải hồ sơ: $e'));
   }
+}
 
-  Future<void> _onSendFriendRequest(SendFriendRequestEvent event, Emitter<OtherProfileState> emit) async {
+  Future<void> _onSendFriendRequest(
+    SendFriendRequestEvent event,
+    Emitter<OtherProfileState> emit,
+  ) async {
     if (state is OtherProfileLoaded) {
       final currentState = state as OtherProfileLoaded;
       try {
@@ -51,7 +62,7 @@ class OtherProfileBloc extends Bloc<OtherProfileEvent, OtherProfileState> {
           viewerId,
           targetUserId,
           currentState.profile.username,
-          currentState.profile.avatarUrl,
+          currentState.profile.avatarUrl!,
         );
         await _refreshProfile(emit);
       } catch (e) {
@@ -60,11 +71,15 @@ class OtherProfileBloc extends Bloc<OtherProfileEvent, OtherProfileState> {
     }
   }
 
-  Future<void> _onAcceptFriendRequest(AcceptFriendRequestEvent event, Emitter<OtherProfileState> emit) async {
+  Future<void> _onAcceptFriendRequest(
+    AcceptFriendRequestEvent event,
+    Emitter<OtherProfileState> emit,
+  ) async {
     if (state is OtherProfileLoaded) {
       try {
-        final request = (await friendsRepo.getFriendRequests(viewerId))
-            .firstWhere((req) => req.friend.senderId == targetUserId);
+        final request = (await friendsRepo.getFriendRequests(
+          viewerId,
+        )).firstWhere((req) => req.friend.senderId == targetUserId);
         await friendsRepo.acceptFriendRequest(request.request.id);
         await _refreshProfile(emit);
       } catch (e) {
@@ -73,7 +88,27 @@ class OtherProfileBloc extends Bloc<OtherProfileEvent, OtherProfileState> {
     }
   }
 
-  Future<void> _onCancelFriendRequest(CancelFriendRequestEvent event, Emitter<OtherProfileState> emit) async {
+  Future<void> _onRejectFriendRequest(
+    RejectFriendRequestEvent event,
+    Emitter<OtherProfileState> emit,
+  ) async {
+    if (state is OtherProfileLoaded) {
+      try {
+        final request = (await friendsRepo.getFriendRequests(
+          viewerId,
+        )).firstWhere((req) => req.friend.senderId == targetUserId);
+        await friendsRepo.rejectFriendRequest(request.request.id);
+        await _refreshProfile(emit);
+      } catch (e) {
+        emit(OtherProfileError('Lỗi khi từ chối: $e'));
+      }
+    }
+  }
+
+  Future<void> _onCancelFriendRequest(
+    CancelFriendRequestEvent event,
+    Emitter<OtherProfileState> emit,
+  ) async {
     if (state is OtherProfileLoaded) {
       try {
         await friendsRepo.cancelFriendRequest(viewerId, targetUserId);
@@ -84,7 +119,10 @@ class OtherProfileBloc extends Bloc<OtherProfileEvent, OtherProfileState> {
     }
   }
 
-  Future<void> _onUnfriend(UnfriendEvent event, Emitter<OtherProfileState> emit) async {
+  Future<void> _onUnfriend(
+    UnfriendEvent event,
+    Emitter<OtherProfileState> emit,
+  ) async {
     if (state is OtherProfileLoaded) {
       try {
         await friendsRepo.unfriend(viewerId, targetUserId);
@@ -96,37 +134,47 @@ class OtherProfileBloc extends Bloc<OtherProfileEvent, OtherProfileState> {
   }
 
   Future<void> _refreshProfile(Emitter<OtherProfileState> emit) async {
-    emit(OtherProfileLoading());
-    try {
-      final profile = await profileRepository.fetchOtherUserProfile(viewerId, targetUserId);
-      _cachedProfile = profile;
-      final friendStatus = await _checkFriendStatus(profile);
-      emit(OtherProfileLoaded(profile, friendStatus));
-    } catch (e) {
-      emit(OtherProfileError('Lỗi khi làm mới hồ sơ: $e'));
-    }
+  emit(OtherProfileLoading());
+  try {
+    final user = await profileRepository.fetchUserProfile(targetUserId);
+    final profile = await profileRepository.fetchOtherUserProfile(
+      viewerId,
+      targetUserId,
+    );
+    _cachedProfile = profile;
+    final result = await _checkFriendStatus();
+    emit(
+      OtherProfileLoaded(
+        profile: user,
+        friendStatus: result['friendStatus'],
+        friends: result['friends'],
+      ),
+    );
+  } catch (e) {
+    emit(OtherProfileError('Lỗi khi làm mới hồ sơ: $e'));
   }
+}
 
-  Future<String> _checkFriendStatus(UserProfile profile) async {
-    try {
-      final friends = await friendsRepo.getFriends(viewerId);
-      if (friends.any((friend) => friend.id == targetUserId)) {
-        return "friend";
-      }
-
-      final friendRequests = await friendsRepo.getFriendRequests(viewerId);
-      if (friendRequests.any((req) => req.friend.senderId == targetUserId)) {
-        return "pending";
-      }
-
-      final sentRequests = await friendsRepo.getSentFriendRequests(viewerId);
-      if (sentRequests.any((req) => req.friend.receiverId == targetUserId)) {
-        return "sent";
-      }
-
-      return "none";
-    } catch (e) {
-      return "none";
+  Future<Map<String, dynamic>> _checkFriendStatus() async {
+  try {
+    final friends = await friendsRepo.getFriends(targetUserId); // Fetch target user's friends
+    if (friends.any((friend) => friend.id == viewerId)) {
+      return {'friendStatus': 'friend', 'friends': friends};
     }
+
+    final friendRequests = await friendsRepo.getFriendRequests(viewerId);
+    if (friendRequests.any((req) => req.friend.senderId == targetUserId)) {
+      return {'friendStatus': 'pending', 'friends': friends};
+    }
+
+    final sentRequests = await friendsRepo.getSentFriendRequests(viewerId);
+    if (sentRequests.any((req) => req.friend.receiverId == targetUserId)) {
+      return {'friendStatus': 'sent', 'friends': friends};
+    }
+
+    return {'friendStatus': 'none', 'friends': friends};
+  } catch (e) {
+    return {'friendStatus': 'none', 'friends': []};
   }
+}
 }
