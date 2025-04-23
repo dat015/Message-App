@@ -236,7 +236,7 @@ class _DiaryState extends State<Diary> {
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   child: Text(
-                    'Bài viết của bạn',
+                    'Bảng tin của bạn',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,

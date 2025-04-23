@@ -18,7 +18,7 @@ class OtherProfilePage extends StatelessWidget {
   final int viewerId;
   final int targetUserId;
 
-  const OtherProfilePage({
+  OtherProfilePage({
     Key? key,
     required this.viewerId,
     required this.targetUserId,
@@ -87,7 +87,6 @@ class OtherProfilePage extends StatelessWidget {
                       clipBehavior: Clip.none,
                       alignment: Alignment.topCenter,
                       children: [
-                        // Cover Image
                         Container(
                           width: double.infinity,
                           height: 200,
@@ -114,7 +113,6 @@ class OtherProfilePage extends StatelessWidget {
                                 ),
                           ),
                         ),
-                        // Profile Avatar
                         Positioned(
                           top: 130,
                           child: StreamBuilder<List<Story>>(
@@ -139,7 +137,9 @@ class OtherProfilePage extends StatelessWidget {
                                 child: CircleAvatar(
                                   radius: 55,
                                   backgroundColor: Colors.white,
-                                  backgroundImage: NetworkImage(user.avatarUrl),
+                                  backgroundImage: NetworkImage(
+                                    user.avatarUrl!,
+                                  ),
                                 ),
                               );
                             },
@@ -207,7 +207,6 @@ class OtherProfilePage extends StatelessWidget {
                       ),
                     ),
 
-                    // Divider for sections
                     Divider(thickness: 8, color: Colors.grey[100]),
 
                     // Profile Details
@@ -247,16 +246,48 @@ class OtherProfilePage extends StatelessWidget {
                                     icon: Icons.home,
                                     text: 'Sống tại ${user.location}',
                                   ),
-                                if (user.interests != null)
-                                  _buildDetailRow(
-                                    icon: Icons.favorite,
-                                    text: 'Sở thích: ${user.interests}',
-                                  ),
                                 if (user.gender != null)
                                   _buildDetailRow(
                                     icon: Icons.person,
                                     text:
                                         'Giới tính: ${user.gender == 'Nam' ? 'Nam' : 'Nữ'}',
+                                  ),
+                                if (user.interests != null &&
+                                    user.interests!.isNotEmpty)
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      _buildDetailRow(
+                                        icon: Icons.favorite,
+                                        text: 'Sở thích',
+                                      ),
+                                      SizedBox(height: 8),
+                                      Wrap(
+                                        spacing: 8.0,
+                                        runSpacing: 4.0,
+                                        children:
+                                            user.interests!
+                                                .split(',')
+                                                .map(
+                                                  (interest) => Chip(
+                                                    avatar: Icon(
+                                                      _interestIcons[interest] ??
+                                                          Icons.interests,
+                                                      color: Colors.blue[700],
+                                                      size: 18,
+                                                    ),
+                                                    label: Text(interest),
+                                                    backgroundColor: Colors.blue
+                                                        .withOpacity(0.1),
+                                                    labelStyle: TextStyle(
+                                                      color: Colors.blue[700],
+                                                    ),
+                                                  ),
+                                                )
+                                                .toList(),
+                                      ),
+                                    ],
                                   ),
                               ],
                             ),
@@ -539,7 +570,8 @@ class OtherProfilePage extends StatelessWidget {
                                     posts
                                         .map(
                                           (post) => _buildPostItem(
-                                            profileImage: user.avatarUrl,
+                                            context: context,
+                                            profileImage: user.avatarUrl!,
                                             username:
                                                 post.authorName ?? 'Unknown',
                                             timeAgo: _formatTimeAgo(
@@ -573,6 +605,36 @@ class OtherProfilePage extends StatelessWidget {
       ),
     );
   }
+
+  final Map<String, IconData> _interestIcons = {
+    'Đọc sách': Icons.book,
+    'Du lịch': Icons.flight_takeoff,
+    'Nấu ăn': Icons.kitchen,
+    'Chơi thể thao': Icons.sports_soccer,
+    'Nghe nhạc': Icons.headphones,
+    'Xem phim': Icons.movie,
+    'Vẽ tranh': Icons.brush,
+    'Chụp ảnh': Icons.camera_alt,
+    'Viết lách': Icons.edit,
+    'Học ngoại ngữ': Icons.language,
+    'Chơi game': Icons.videogame_asset,
+    'Tập yoga': Icons.self_improvement,
+    'Chạy bộ': Icons.directions_run,
+    'Đạp xe': Icons.directions_bike,
+    'Bơi lội': Icons.pool,
+    'Cắm trại': Icons.local_fire_department,
+    'Leo núi': Icons.terrain,
+    'Thiền': Icons.spa,
+    'Làm đồ thủ công': Icons.handyman,
+    'Sưu tầm đồ vật': Icons.collections,
+    'Xem bóng đá': Icons.sports_football,
+    'Chơi nhạc cụ': Icons.music_note,
+    'Tham gia tình nguyện': Icons.volunteer_activism,
+    'Khám phá công nghệ': Icons.computer,
+    'Làm vườn': Icons.local_florist,
+    'Thử món ăn mới': Icons.restaurant,
+    'Khác': Icons.interests,
+  };
 
   Widget _buildFriendButton(BuildContext context, String friendStatus) {
     switch (friendStatus) {
@@ -869,6 +931,7 @@ class OtherProfilePage extends StatelessWidget {
   }
 
   Widget _buildPostItem({
+    required BuildContext context,
     required String profileImage,
     required String username,
     required String content,
@@ -1203,13 +1266,15 @@ class OtherProfilePage extends StatelessWidget {
                     ),
                     Expanded(
                       child: TextButton.icon(
-                        onPressed: () {
+                        onPressed: () async {
+                          final profileRepo = UsProfileRepository();
+                          final currentUser = await profileRepo.fetchUserProfile(viewerId);
                           NavigationHelper().goToComment(
                             context as BuildContext,
                             postId,
                             viewerId.toString(),
-                            username,
-                            profileImage,
+                            currentUser.username,
+                            currentUser.avatarUrl ?? '',
                             post.content ?? '',
                           );
                         },

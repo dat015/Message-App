@@ -146,11 +146,8 @@ namespace server.Services
         {
             if (string.IsNullOrWhiteSpace(email))
             {
-                Console.WriteLine("SearchUsersByEmailAsync: Email is empty or whitespace");
                 return new List<User>();
             }
-
-            Console.WriteLine($"Starting search in database: email='{email}', currentUserId={currentUserId}");
             return await SearchUsersFromDatabaseAsync(email, currentUserId);
         }
 
@@ -180,7 +177,7 @@ namespace server.Services
 
                 // Tìm kiếm người dùng
                 var users = await _context.Users
-                    .Where(u => EF.Functions.Like(u.email, $"%{email}%") && u.id != currentUserId)
+                    .Where(u => u.email == email && u.id != currentUserId)
                     .OrderBy(u => u.email)
                     .Take(10)
                     .Select(u => new User

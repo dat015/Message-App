@@ -1,11 +1,13 @@
 import 'package:first_app/data/models/post.dart';
 import 'package:first_app/data/models/story.dart';
+import 'package:first_app/data/models/user_profile.dart';
 import 'package:first_app/features/home/presentation/diary/comment_screen.dart';
 import 'package:first_app/features/home/presentation/diary/create_post.dart';
 import 'package:first_app/features/home/presentation/diary/edit_post_screen.dart';
 import 'package:first_app/features/home/presentation/story/create_story_screen.dart';
 import 'package:first_app/features/home/presentation/story/story_screen.dart';
 import 'package:first_app/features/home/presentation/friends/qr_scanner.dart';
+import 'package:first_app/features/home/presentation/users_profile/edit_profile_us.dart';
 import 'package:first_app/features/home/presentation/users_profile/other_us_profile.dart';
 import 'package:first_app/features/home/presentation/friends/bloc/friends_bloc.dart';
 import 'package:flutter/material.dart';
@@ -99,10 +101,7 @@ class NavigationHelper {
   }) async {
     await pushScreen(
       context,
-      StoryScreen(
-        currentUserId: currentUserId,
-        stories: stories,
-      ),
+      StoryScreen(currentUserId: currentUserId, stories: stories),
       replace: replace,
     );
   }
@@ -144,11 +143,28 @@ class NavigationHelper {
         postId: postId,
         currentUserId: currentUserId,
         currentUserName: currentUserName,
-        currentUserAvatar: currentUserAvatar, postContent: postContent,
+        currentUserAvatar: currentUserAvatar,
+        postContent: postContent,
       ),
       replace: replace,
     );
   }
+
+  Future<void> goToEditProfile(
+  BuildContext context,
+  UserProfile user,
+  Function(UserProfile) onProfileUpdated, // Thêm callback để cập nhật thông tin
+  {bool replace = false}
+) async {
+  await pushScreen(
+    context,
+    EditProfilePage(
+      user: user,
+      onProfileUpdated: onProfileUpdated,
+    ),
+    replace: replace,
+  );
+}
 
   Future<void> goToProfile(
     BuildContext context,
@@ -158,10 +174,7 @@ class NavigationHelper {
   }) async {
     await pushScreen(
       context,
-      OtherProfilePage(
-        viewerId: viewerId,
-        targetUserId: targetUserId,
-      ),
+      OtherProfilePage(viewerId: viewerId, targetUserId: targetUserId),
       replace: replace,
     );
   }

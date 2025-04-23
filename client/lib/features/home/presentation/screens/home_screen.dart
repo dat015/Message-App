@@ -7,6 +7,7 @@ import 'package:first_app/features/home/presentation/diary/diary.dart';
 import 'package:first_app/features/home/presentation/friends/bloc/friends_bloc.dart';
 import 'package:first_app/features/home/presentation/friends/bloc/friends_event.dart';
 import 'package:first_app/features/home/presentation/friends/friends.dart';
+import 'package:first_app/features/home/presentation/users_profile/us_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../routes/routes.dart';
@@ -25,11 +26,13 @@ class _HomeScreenState extends State<HomeScreen> {
   late Future<List<Conversation>> _conversationsFuture;
   late int userId;
   late String userAvatar;
+  late String userName;
   ConversationRepo conversationRepo = ConversationRepo();
 
   @override
   void initState() {
     userId = widget.user.user!.id;
+    userName = widget.user.user!.username;
     userAvatar = widget.user.user!.avatarUrl;
     super.initState();
     _conversationsFuture = _fetchConversations();
@@ -163,6 +166,8 @@ class _HomeScreenState extends State<HomeScreen> {
           currentUserName: widget.user.user!.username,
           userAvatar: widget.user.user!.avatarUrl,
         );
+        case 4: // Trang cá nhân
+      return ProfilePage(userId: userId, currentUserName: userName, userAvatar: userAvatar,);
       default:
         return const Center(child: Text('Chưa triển khai'));
     }

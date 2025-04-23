@@ -247,7 +247,8 @@ class CustomSearchDelegate extends SearchDelegate<String> {
   @override
   Widget buildResults(BuildContext context) {
     if (query.isNotEmpty) {
-      friendsBloc.add(SearchUsersEvent(query));
+      friendsBloc.add(ResetSearchEvent());
+      return const Center(child: Text('Nhập email để tìm kiếm'));
     }
     return BlocListener<FriendsBloc, FriendsState>(
       bloc: friendsBloc,
@@ -522,6 +523,9 @@ class CustomSearchDelegate extends SearchDelegate<String> {
 
   @override
   Widget buildSuggestions(BuildContext context) {
+    if (query.isEmpty) {
+      friendsBloc.add(ResetSearchEvent());
+    }
     return Container(
       padding: const EdgeInsets.all(16),
       child: const Text(

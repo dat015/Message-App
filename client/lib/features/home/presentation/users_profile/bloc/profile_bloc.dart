@@ -62,7 +62,7 @@ class OtherProfileBloc extends Bloc<OtherProfileEvent, OtherProfileState> {
           viewerId,
           targetUserId,
           currentState.profile.username,
-          currentState.profile.avatarUrl,
+          currentState.profile.avatarUrl!,
         );
         await _refreshProfile(emit);
       } catch (e) {

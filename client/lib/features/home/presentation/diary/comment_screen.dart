@@ -16,8 +16,8 @@ class CommentScreen extends StatefulWidget {
   final String currentUserId;
   final String currentUserName;
   final String currentUserAvatar;
-  final String postContent; // Thêm
-  final String? postImageUrl; // Thêm
+  final String postContent;
+  final String? postImageUrl;
 
   const CommentScreen({
     Key? key,
@@ -54,10 +54,12 @@ class _CommentScreenState extends State<CommentScreen> {
     super.initState();
     print('CommentScreen: initState - Triggering GenerateCommentSuggestions');
     // Khởi tạo gợi ý bình luận
-    context.read<CommentSuggestionBloc>().add(GenerateCommentSuggestions(
-          postContent: widget.postContent,
-          imageUrl: widget.postImageUrl,
-        ));
+    context.read<CommentSuggestionBloc>().add(
+      GenerateCommentSuggestions(
+        postContent: widget.postContent,
+        imageUrl: widget.postImageUrl,
+      ),
+    );
   }
 
   @override
@@ -72,9 +74,10 @@ class _CommentScreenState extends State<CommentScreen> {
   Future<void> _pickMedia(bool isImage) async {
     final picker = ImagePicker();
     try {
-      final XFile? media = await (isImage
-          ? picker.pickImage(source: ImageSource.gallery)
-          : picker.pickVideo(source: ImageSource.gallery));
+      final XFile? media =
+          await (isImage
+              ? picker.pickImage(source: ImageSource.gallery)
+              : picker.pickVideo(source: ImageSource.gallery));
       if (media != null) {
         setState(() {
           _selectedMedia = media;
@@ -82,17 +85,17 @@ class _CommentScreenState extends State<CommentScreen> {
         });
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Lỗi khi chọn media: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Lỗi khi chọn media: $e')));
     }
   }
 
   Future<void> _submitComment({String? parentCommentId}) async {
     final content = _commentController.text.trim();
-    if (content.isEmpty) {
+    if (content.isEmpty && _selectedMedia == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Vui lòng nhập nội dung')),
+        const SnackBar(content: Text('Vui lòng nhập nội dung hoặc chọn media')),
       );
       return;
     }
@@ -103,7 +106,9 @@ class _CommentScreenState extends State<CommentScreen> {
     });
 
     try {
-      print('Submitting comment/reply at ${DateTime.now()} for post: ${widget.postId}, parent: $parentCommentId');
+      print(
+        'Submitting comment/reply at ${DateTime.now()} for post: ${widget.postId}, parent: $parentCommentId',
+      );
       final tempComment = Comment(
         id: 'temp_${DateTime.now().millisecondsSinceEpoch}',
         postId: widget.postId,
@@ -167,12 +172,13 @@ class _CommentScreenState extends State<CommentScreen> {
     } catch (e) {
       print('Error submitting comment: $e');
       setState(() {
-        _lastComments = _lastComments?.where((c) => !c.id.startsWith('temp_')).toList();
+        _lastComments =
+            _lastComments?.where((c) => !c.id.startsWith('temp_')).toList();
       });
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Lỗi khi gửi bình luận: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Lỗi khi gửi bình luận: $e')));
       }
     } finally {
       if (mounted) {
@@ -234,7 +240,9 @@ class _CommentScreenState extends State<CommentScreen> {
                   );
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Chỉnh sửa bình luận thành công')),
+                    const SnackBar(
+                      content: Text('Chỉnh sửa bình luận thành công'),
+                    ),
                   );
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -302,9 +310,9 @@ class _CommentScreenState extends State<CommentScreen> {
     try {
       await _commentService.toggleLikeComment(commentId, widget.currentUserId);
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Lỗi khi thích/bỏ thích: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Lỗi khi thích/bỏ thích: $e')));
     }
   }
 
@@ -334,14 +342,49 @@ class _CommentScreenState extends State<CommentScreen> {
         return Scaffold(
           backgroundColor: isDarkMode ? Colors.black : Colors.grey[50],
           appBar: AppBar(
-            title: const Text('Bình luận'),
-            backgroundColor: primaryColor,
-            elevation: 0,
+            title: const Text(
+              'Bình luận',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            backgroundColor: isDarkMode ? Colors.black : primaryColor,
+            elevation: isDarkMode ? 0 : 1,
             centerTitle: true,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
+              icon: const Icon(Icons.arrow_back_ios_new),
               onPressed: () => Navigator.pop(context),
             ),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.info_outline),
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    builder:
+                        (context) => Container(
+                          padding: EdgeInsets.all(16),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: const [
+                              Text(
+                                'Quy tắc bình luận',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                              ),
+                              SizedBox(height: 10),
+                              Text('Hãy tôn trọng người khác khi bình luận'),
+                              Text(
+                                'Không sử dụng ngôn từ thô tục hoặc phân biệt',
+                              ),
+                              Text('Không spam hoặc quảng cáo'),
+                            ],
+                          ),
+                        ),
+                  );
+                },
+              ),
+            ],
           ),
           body: Column(
             children: [
@@ -351,14 +394,17 @@ class _CommentScreenState extends State<CommentScreen> {
                   stream: _commentService.getComments(widget.postId),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      print('Stream received ${snapshot.data!.length} comments');
+                      print(
+                        'Stream received ${snapshot.data!.length} comments',
+                      );
                       _lastComments = snapshot.data;
                       _showError = false;
                     } else if (snapshot.hasError) {
                       print('CommentScreen: Stream error - ${snapshot.error}');
                     }
 
-                    if (snapshot.connectionState == ConnectionState.waiting && _lastComments == null) {
+                    if (snapshot.connectionState == ConnectionState.waiting &&
+                        _lastComments == null) {
                       return Center(
                         child: CircularProgressIndicator(
                           color: primaryColor,
@@ -367,7 +413,8 @@ class _CommentScreenState extends State<CommentScreen> {
                       );
                     }
 
-                    if (_showError || (snapshot.hasError && _lastComments == null)) {
+                    if (_showError ||
+                        (snapshot.hasError && _lastComments == null)) {
                       return Center(
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
@@ -391,7 +438,10 @@ class _CommentScreenState extends State<CommentScreen> {
                               'Lỗi: ${snapshot.error ?? "Không xác định"}',
                               style: TextStyle(
                                 fontSize: screenWidth * 0.035,
-                                color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
+                                color:
+                                    isDarkMode
+                                        ? Colors.grey[400]
+                                        : Colors.grey[600],
                               ),
                             ),
                             SizedBox(height: screenWidth * 0.03),
@@ -421,7 +471,10 @@ class _CommentScreenState extends State<CommentScreen> {
                             Icon(
                               Icons.chat_bubble_outline,
                               size: screenWidth * 0.15,
-                              color: isDarkMode ? Colors.grey[700] : Colors.grey[400],
+                              color:
+                                  isDarkMode
+                                      ? Colors.grey[700]
+                                      : Colors.grey[400],
                             ),
                             SizedBox(height: screenWidth * 0.03),
                             Text(
@@ -429,7 +482,10 @@ class _CommentScreenState extends State<CommentScreen> {
                               style: TextStyle(
                                 fontSize: screenWidth * 0.04,
                                 fontWeight: FontWeight.w500,
-                                color: isDarkMode ? Colors.grey[500] : Colors.grey[600],
+                                color:
+                                    isDarkMode
+                                        ? Colors.grey[500]
+                                        : Colors.grey[600],
                               ),
                             ),
                             SizedBox(height: screenWidth * 0.01),
@@ -437,7 +493,10 @@ class _CommentScreenState extends State<CommentScreen> {
                               'Hãy là người đầu tiên bình luận!',
                               style: TextStyle(
                                 fontSize: screenWidth * 0.035,
-                                color: isDarkMode ? Colors.grey[600] : Colors.grey[500],
+                                color:
+                                    isDarkMode
+                                        ? Colors.grey[600]
+                                        : Colors.grey[500],
                               ),
                             ),
                           ],
@@ -446,7 +505,9 @@ class _CommentScreenState extends State<CommentScreen> {
                     }
 
                     final sortedComments = _buildCommentTree(comments);
-                    print('Displaying ${sortedComments.length} sorted comments');
+                    print(
+                      'Displaying ${sortedComments.length} sorted comments',
+                    );
 
                     return ListView.builder(
                       controller: _scrollController,
@@ -457,8 +518,11 @@ class _CommentScreenState extends State<CommentScreen> {
                       itemCount: sortedComments.length,
                       itemBuilder: (context, index) {
                         final comment = sortedComments[index];
-                        final isCurrentUserComment = comment.userId == widget.currentUserId;
-                        final isLiked = comment.likes.contains(widget.currentUserId);
+                        final isCurrentUserComment =
+                            comment.userId == widget.currentUserId;
+                        final isLiked = comment.likes.contains(
+                          widget.currentUserId,
+                        );
                         final level = _getCommentLevel(comment, comments);
 
                         return Padding(
@@ -469,21 +533,47 @@ class _CommentScreenState extends State<CommentScreen> {
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.1),
-                                      blurRadius: 3,
-                                      offset: const Offset(0, 1),
+                              Stack(
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border:
+                                          isCurrentUserComment
+                                              ? Border.all(
+                                                color: primaryColor,
+                                                width: 2,
+                                              )
+                                              : null,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.1),
+                                          blurRadius: 3,
+                                          offset: const Offset(0, 1),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                                child: CircleAvatar(
-                                  radius: screenWidth * 0.05,
-                                  backgroundImage: NetworkImage(comment.userAvatar),
-                                ),
+                                    child: CircleAvatar(
+                                      radius: screenWidth * 0.05,
+                                      backgroundImage: NetworkImage(
+                                        comment.userAvatar,
+                                      ),
+                                    ),
+                                  ),
+                                  if (level > 0)
+                                    Positioned(
+                                      top: -8,
+                                      left: -8,
+                                      child: Icon(
+                                        Icons.reply,
+                                        size: 16,
+                                        color:
+                                            isDarkMode
+                                                ? Colors.grey[500]
+                                                : Colors.grey[700],
+                                      ),
+                                    ),
+                                ],
                               ),
                               SizedBox(width: screenWidth * 0.03),
                               Expanded(
@@ -491,35 +581,73 @@ class _CommentScreenState extends State<CommentScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Container(
-                                      padding: EdgeInsets.all(screenWidth * 0.03),
+                                      padding: EdgeInsets.all(
+                                        screenWidth * 0.03,
+                                      ),
                                       decoration: BoxDecoration(
-                                        color: isCurrentUserComment
-                                            ? primaryColor.withOpacity(isDarkMode ? 0.2 : 0.1)
-                                            : isDarkMode
+                                        color:
+                                            isCurrentUserComment
+                                                ? primaryColor.withOpacity(
+                                                  isDarkMode ? 0.2 : 0.1,
+                                                )
+                                                : isDarkMode
                                                 ? Colors.grey[800]
-                                                : Colors.grey[200],
+                                                : Colors.grey[100],
                                         borderRadius: BorderRadius.circular(16),
-                                        border: isCurrentUserComment
-                                            ? Border.all(
-                                                color: primaryColor.withOpacity(0.3),
-                                                width: 1,
-                                              )
-                                            : null,
+                                        border:
+                                            isCurrentUserComment
+                                                ? Border.all(
+                                                  color: primaryColor
+                                                      .withOpacity(0.5),
+                                                  width: 1.5,
+                                                )
+                                                : null,
                                       ),
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
-                                          Text(
-                                            comment.userName,
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: screenWidth * 0.035,
-                                              color: isCurrentUserComment
-                                                  ? primaryColor
-                                                  : isDarkMode
-                                                      ? Colors.white
-                                                      : Colors.black87,
-                                            ),
+                                          Row(
+                                            children: [
+                                              Text(
+                                                comment.userName,
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: screenWidth * 0.035,
+                                                  color:
+                                                      isCurrentUserComment
+                                                          ? primaryColor
+                                                          : isDarkMode
+                                                          ? Colors.white
+                                                          : Colors.black87,
+                                                ),
+                                              ),
+                                              SizedBox(width: 4),
+                                              if (isCurrentUserComment)
+                                                Container(
+                                                  padding: EdgeInsets.symmetric(
+                                                    horizontal: 6,
+                                                    vertical: 2,
+                                                  ),
+                                                  decoration: BoxDecoration(
+                                                    color: primaryColor
+                                                        .withOpacity(0.2),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          10,
+                                                        ),
+                                                  ),
+                                                  child: Text(
+                                                    'Bạn',
+                                                    style: TextStyle(
+                                                      fontSize: 10,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: primaryColor,
+                                                    ),
+                                                  ),
+                                                ),
+                                            ],
                                           ),
                                           SizedBox(height: screenWidth * 0.01),
                                           if (comment.content.isNotEmpty)
@@ -527,41 +655,186 @@ class _CommentScreenState extends State<CommentScreen> {
                                               comment.content,
                                               style: TextStyle(
                                                 fontSize: screenWidth * 0.035,
-                                                color: isDarkMode ? Colors.white : Colors.black87,
+                                                color:
+                                                    isDarkMode
+                                                        ? Colors.white
+                                                        : Colors.black87,
                                               ),
                                             ),
-                                          if (comment.mediaUrl != null && comment.mediaType == 'image')
+                                          if (comment.mediaUrl != null &&
+                                              comment.mediaType == 'image')
                                             Padding(
-                                              padding: EdgeInsets.only(top: screenWidth * 0.02),
-                                              child: ClipRRect(
-                                                borderRadius: BorderRadius.circular(8),
-                                                child: Image.network(
-                                                  comment.mediaUrl!,
-                                                  width: screenWidth * 0.5,
-                                                  height: screenWidth * 0.5,
-                                                  fit: BoxFit.cover,
-                                                  loadingBuilder: (context, child, loadingProgress) {
-                                                    if (loadingProgress == null) return child;
-                                                    return Center(
-                                                      child: CircularProgressIndicator(
-                                                        value: loadingProgress.expectedTotalBytes != null
-                                                            ? loadingProgress.cumulativeBytesLoaded /
-                                                                (loadingProgress.expectedTotalBytes ?? 1)
-                                                            : null,
+                                              padding: EdgeInsets.only(
+                                                top: screenWidth * 0.02,
+                                              ),
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  // Hiển thị ảnh ở chế độ xem toàn màn hình
+                                                  showDialog(
+                                                    context: context,
+                                                    builder:
+                                                        (context) => Dialog(
+                                                          backgroundColor:
+                                                              Colors
+                                                                  .transparent,
+                                                          child: ClipRRect(
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                  8,
+                                                                ),
+                                                            child: Image.network(
+                                                              comment.mediaUrl!,
+                                                              fit:
+                                                                  BoxFit
+                                                                      .contain,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                  );
+                                                },
+                                                child: Hero(
+                                                  tag: comment.mediaUrl!,
+                                                  child: ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          8,
+                                                        ),
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        border: Border.all(
+                                                          color:
+                                                              isDarkMode
+                                                                  ? Colors
+                                                                      .grey[700]!
+                                                                  : Colors
+                                                                      .grey[300]!,
+                                                          width: 1,
+                                                        ),
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              8,
+                                                            ),
                                                       ),
-                                                    );
-                                                  },
-                                                  errorBuilder: (context, error, stackTrace) => const Icon(Icons.error),
+                                                      child: Image.network(
+                                                        comment.mediaUrl!,
+                                                        width:
+                                                            screenWidth * 0.5,
+                                                        height:
+                                                            screenWidth * 0.5,
+                                                        fit: BoxFit.cover,
+                                                        loadingBuilder: (
+                                                          context,
+                                                          child,
+                                                          loadingProgress,
+                                                        ) {
+                                                          if (loadingProgress ==
+                                                              null)
+                                                            return child;
+                                                          return Container(
+                                                            width:
+                                                                screenWidth *
+                                                                0.5,
+                                                            height:
+                                                                screenWidth *
+                                                                0.5,
+                                                            color:
+                                                                isDarkMode
+                                                                    ? Colors
+                                                                        .grey[800]
+                                                                    : Colors
+                                                                        .grey[200],
+                                                            child: Center(
+                                                              child: CircularProgressIndicator(
+                                                                value:
+                                                                    loadingProgress.expectedTotalBytes !=
+                                                                            null
+                                                                        ? loadingProgress.cumulativeBytesLoaded /
+                                                                            (loadingProgress.expectedTotalBytes ??
+                                                                                1)
+                                                                        : null,
+                                                                color:
+                                                                    primaryColor,
+                                                              ),
+                                                            ),
+                                                          );
+                                                        },
+                                                        errorBuilder:
+                                                            (
+                                                              context,
+                                                              error,
+                                                              stackTrace,
+                                                            ) => Container(
+                                                              width:
+                                                                  screenWidth *
+                                                                  0.5,
+                                                              height:
+                                                                  screenWidth *
+                                                                  0.5,
+                                                              color:
+                                                                  isDarkMode
+                                                                      ? Colors
+                                                                          .grey[800]
+                                                                      : Colors
+                                                                          .grey[200],
+                                                              child: Column(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  Icon(
+                                                                    Icons
+                                                                        .broken_image,
+                                                                    size: 40,
+                                                                    color:
+                                                                        Colors
+                                                                            .red,
+                                                                  ),
+                                                                  SizedBox(
+                                                                    height: 8,
+                                                                  ),
+                                                                  Text(
+                                                                    'Không tải được ảnh',
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                      ),
+                                                    ),
+                                                  ),
                                                 ),
                                               ),
                                             ),
-                                          if (comment.mediaUrl != null && comment.mediaType == 'video')
+                                          if (comment.mediaUrl != null &&
+                                              comment.mediaType == 'video')
                                             Padding(
-                                              padding: EdgeInsets.only(top: screenWidth * 0.02),
-                                              child: VideoPlayerWidget(
-                                                videoUrl: comment.mediaUrl!,
-                                                width: screenWidth * 0.5,
-                                                height: screenWidth * 0.5,
+                                              padding: EdgeInsets.only(
+                                                top: screenWidth * 0.02,
+                                              ),
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                      color:
+                                                          isDarkMode
+                                                              ? Colors
+                                                                  .grey[700]!
+                                                              : Colors
+                                                                  .grey[300]!,
+                                                      width: 1,
+                                                    ),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          8,
+                                                        ),
+                                                  ),
+                                                  child: VideoPlayerWidget(
+                                                    videoUrl: comment.mediaUrl!,
+                                                    width: screenWidth * 0.5,
+                                                    height: screenWidth * 0.5,
+                                                  ),
+                                                ),
                                               ),
                                             ),
                                         ],
@@ -577,28 +850,53 @@ class _CommentScreenState extends State<CommentScreen> {
                                           Text(
                                             _formatTimeAgo(comment.createdAt),
                                             style: TextStyle(
-                                              color: isDarkMode ? Colors.grey[500] : Colors.grey[600],
+                                              color:
+                                                  isDarkMode
+                                                      ? Colors.grey[500]
+                                                      : Colors.grey[600],
                                               fontSize: screenWidth * 0.03,
                                             ),
                                           ),
                                           SizedBox(width: screenWidth * 0.03),
                                           GestureDetector(
-                                            onTap: () => _toggleLikeComment(comment.id),
+                                            onTap:
+                                                () => _toggleLikeComment(
+                                                  comment.id,
+                                                ),
                                             child: Row(
                                               children: [
                                                 Icon(
-                                                  isLiked ? Icons.favorite : Icons.favorite_border,
-                                                  color: isLiked
-                                                      ? Colors.red
-                                                      : (isDarkMode ? Colors.grey[400] : Colors.grey[700]),
+                                                  isLiked
+                                                      ? Icons.favorite
+                                                      : Icons.favorite_border,
+                                                  color:
+                                                      isLiked
+                                                          ? Colors.red
+                                                          : (isDarkMode
+                                                              ? Colors.grey[400]
+                                                              : Colors
+                                                                  .grey[700]),
                                                   size: screenWidth * 0.04,
                                                 ),
-                                                SizedBox(width: screenWidth * 0.01),
+                                                SizedBox(
+                                                  width: screenWidth * 0.01,
+                                                ),
                                                 Text(
-                                                  comment.likes.length.toString(),
+                                                  comment.likes.length
+                                                      .toString(),
                                                   style: TextStyle(
-                                                    color: isDarkMode ? Colors.grey[400] : Colors.grey[700],
-                                                    fontSize: screenWidth * 0.03,
+                                                    color:
+                                                        isLiked
+                                                            ? Colors.red
+                                                            : isDarkMode
+                                                            ? Colors.grey[400]
+                                                            : Colors.grey[700],
+                                                    fontSize:
+                                                        screenWidth * 0.03,
+                                                    fontWeight:
+                                                        isLiked
+                                                            ? FontWeight.bold
+                                                            : FontWeight.normal,
                                                   ),
                                                 ),
                                               ],
@@ -606,14 +904,37 @@ class _CommentScreenState extends State<CommentScreen> {
                                           ),
                                           SizedBox(width: screenWidth * 0.03),
                                           GestureDetector(
-                                            onTap: () => _startReplying(comment.id, comment.userName),
-                                            child: Text(
-                                              'Phản hồi',
-                                              style: TextStyle(
-                                                color: isDarkMode ? Colors.grey[400] : Colors.grey[700],
-                                                fontSize: screenWidth * 0.03,
-                                                fontWeight: FontWeight.w500,
-                                              ),
+                                            onTap:
+                                                () => _startReplying(
+                                                  comment.id,
+                                                  comment.userName,
+                                                ),
+                                            child: Row(
+                                              children: [
+                                                Icon(
+                                                  Icons.reply,
+                                                  size: screenWidth * 0.04,
+                                                  color:
+                                                      isDarkMode
+                                                          ? Colors.grey[400]
+                                                          : Colors.grey[700],
+                                                ),
+                                                SizedBox(
+                                                  width: screenWidth * 0.01,
+                                                ),
+                                                Text(
+                                                  'Phản hồi',
+                                                  style: TextStyle(
+                                                    color:
+                                                        isDarkMode
+                                                            ? Colors.grey[400]
+                                                            : Colors.grey[700],
+                                                    fontSize:
+                                                        screenWidth * 0.03,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ),
                                         ],
@@ -628,58 +949,118 @@ class _CommentScreenState extends State<CommentScreen> {
                                     showModalBottomSheet(
                                       context: context,
                                       shape: const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                                        borderRadius: BorderRadius.vertical(
+                                          top: Radius.circular(20),
+                                        ),
                                       ),
-                                      builder: (context) => Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          ListTile(
-                                            leading: const Icon(Icons.edit, color: Colors.blue),
-                                            title: const Text('Chỉnh sửa'),
-                                            onTap: () {
-                                              Navigator.pop(context);
-                                              _editComment(comment.id, comment.content);
-                                            },
-                                          ),
-                                          ListTile(
-                                            leading: const Icon(Icons.delete, color: Colors.red),
-                                            title: const Text('Xóa'),
-                                            onTap: () {
-                                              Navigator.pop(context);
-                                              showDialog(
-                                                context: context,
-                                                builder: (context) => AlertDialog(
-                                                  title: const Text('Xóa bình luận'),
-                                                  content: const Text('Bạn có chắc muốn xóa bình luận này?'),
-                                                  actions: [
-                                                    TextButton(
-                                                      onPressed: () => Navigator.pop(context),
-                                                      child: const Text('Hủy'),
-                                                    ),
-                                                    ElevatedButton(
-                                                      onPressed: () async {
-                                                        Navigator.pop(context);
-                                                        await _deleteComment(comment.id);
-                                                      },
-                                                      style: ElevatedButton.styleFrom(
-                                                        backgroundColor: Colors.red,
-                                                      ),
-                                                      child: const Text('Xóa'),
-                                                    ),
-                                                  ],
+                                      builder:
+                                          (context) => Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Container(
+                                                margin: EdgeInsets.only(
+                                                  top: 8,
+                                                  bottom: 16,
                                                 ),
-                                              );
-                                            },
+                                                width: 40,
+                                                height: 4,
+                                                decoration: BoxDecoration(
+                                                  color:
+                                                      isDarkMode
+                                                          ? Colors.grey[600]
+                                                          : Colors.grey[300],
+                                                  borderRadius:
+                                                      BorderRadius.circular(2),
+                                                ),
+                                              ),
+                                              ListTile(
+                                                leading: const Icon(
+                                                  Icons.edit,
+                                                  color: Colors.blue,
+                                                ),
+                                                title: const Text(
+                                                  'Chỉnh sửa bình luận',
+                                                ),
+                                                onTap: () {
+                                                  Navigator.pop(context);
+                                                  _editComment(
+                                                    comment.id,
+                                                    comment.content,
+                                                  );
+                                                },
+                                              ),
+                                              ListTile(
+                                                leading: const Icon(
+                                                  Icons.delete,
+                                                  color: Colors.red,
+                                                ),
+                                                title: const Text(
+                                                  'Xóa bình luận',
+                                                ),
+                                                onTap: () {
+                                                  Navigator.pop(context);
+                                                  showDialog(
+                                                    context: context,
+                                                    builder:
+                                                        (
+                                                          context,
+                                                        ) => AlertDialog(
+                                                          title: const Text(
+                                                            'Xóa bình luận',
+                                                          ),
+                                                          content: const Text(
+                                                            'Bạn có chắc muốn xóa bình luận này không?',
+                                                          ),
+                                                          actions: [
+                                                            TextButton(
+                                                              onPressed:
+                                                                  () =>
+                                                                      Navigator.pop(
+                                                                        context,
+                                                                      ),
+                                                              child: const Text(
+                                                                'Hủy',
+                                                              ),
+                                                            ),
+                                                            ElevatedButton(
+                                                              onPressed: () async {
+                                                                Navigator.pop(
+                                                                  context,
+                                                                );
+                                                                await _deleteComment(
+                                                                  comment.id,
+                                                                );
+                                                              },
+                                                              style: ElevatedButton.styleFrom(
+                                                                backgroundColor:
+                                                                    Colors.red,
+                                                              ),
+                                                              child: const Text(
+                                                                'Xóa',
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                  );
+                                                },
+                                              ),
+                                              SizedBox(
+                                                height: screenWidth * 0.02,
+                                              ),
+                                            ],
                                           ),
-                                          SizedBox(height: screenWidth * 0.02),
-                                        ],
-                                      ),
                                     );
                                   },
-                                  child: Icon(
-                                    Icons.more_vert,
-                                    color: isDarkMode ? Colors.grey[500] : Colors.grey[600],
-                                    size: screenWidth * 0.05,
+                                  child: Container(
+                                    padding: EdgeInsets.all(8),
+                                    child: Icon(
+                                      Icons.more_vert,
+                                      color:
+                                          isDarkMode
+                                              ? Colors.grey[500]
+                                              : Colors.grey[600],
+                                      size: screenWidth * 0.05,
+                                    ),
                                   ),
                                 ),
                             ],
@@ -690,36 +1071,133 @@ class _CommentScreenState extends State<CommentScreen> {
                   },
                 ),
               ),
-              if (_showSuggestions) // Thêm
+              if (_showSuggestions)
                 Container(
-                  height: 50,
-                  color: isDarkMode ? Colors.grey[850] : Colors.grey[100],
-                  child: state is CommentSuggestionLoading
-                      ? const Center(child: CircularProgressIndicator())
-                      : state is CommentSuggestionLoaded && state.suggestions.isNotEmpty
-                          ? ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: state.suggestions.length,
-                              itemBuilder: (context, index) {
-                                return Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      print('CommentScreen: Selected suggestion - ${state.suggestions[index]}');
-                                      _commentController.text = state.suggestions[index];
-                                      setState(() {
-                                        _showSuggestions = false;
-                                      });
-                                    },
-                                    child: Chip(
-                                      label: Text(state.suggestions[index]),
-                                      backgroundColor: isDarkMode ? Colors.grey[700] : Colors.grey[200],
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: isDarkMode ? Colors.grey[850] : Colors.grey[100],
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(15),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 5,
+                        offset: const Offset(0, -1),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          left: 16,
+                          top: 6,
+                          bottom: 4,
+                        ),
+                        child: Text(
+                          'Gợi ý bình luận:',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color:
+                                isDarkMode
+                                    ? Colors.grey[400]
+                                    : Colors.grey[600],
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child:
+                            state is CommentSuggestionLoading
+                                ? Center(
+                                  child: SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        primaryColor,
+                                      ),
                                     ),
                                   ),
-                                );
-                              },
-                            )
-                          : const Center(child: Text('Không có gợi ý')),
+                                )
+                                : state is CommentSuggestionLoaded &&
+                                    state.suggestions.isNotEmpty
+                                ? ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                  ),
+                                  itemCount: state.suggestions.length,
+                                  itemBuilder: (context, index) {
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 4,
+                                      ),
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          _commentController.text =
+                                              state.suggestions[index];
+                                          _commentFocusNode.requestFocus();
+                                          setState(() {
+                                            _showSuggestions = false;
+                                          });
+                                        },
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                            vertical: 8,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color:
+                                                isDarkMode
+                                                    ? Colors.grey[700]
+                                                    : Colors.white,
+                                            borderRadius: BorderRadius.circular(
+                                              20,
+                                            ),
+                                            border: Border.all(
+                                              color: primaryColor.withOpacity(
+                                                0.5,
+                                              ),
+                                              width: 1,
+                                            ),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              state.suggestions[index],
+                                              style: TextStyle(
+                                                fontSize: 13,
+                                                color:
+                                                    isDarkMode
+                                                        ? Colors.white
+                                                        : Colors.black87,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                )
+                                : Center(
+                                  child: Text(
+                                    'Không có gợi ý bình luận',
+                                    style: TextStyle(
+                                      color:
+                                          isDarkMode
+                                              ? Colors.grey[400]
+                                              : Colors.grey[600],
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ),
+                      ),
+                    ],
+                  ),
                 ),
               Container(
                 padding: EdgeInsets.symmetric(
@@ -735,10 +1213,60 @@ class _CommentScreenState extends State<CommentScreen> {
                       offset: const Offset(0, -1),
                     ),
                   ],
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(20),
+                  ),
                 ),
                 child: Column(
                   children: [
+                    if (_replyingToCommentId != null)
+                      Padding(
+                        padding: EdgeInsets.only(bottom: screenWidth * 0.02),
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color:
+                                isDarkMode
+                                    ? Colors.grey[800]
+                                    : Colors.grey[200],
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: primaryColor.withOpacity(0.5),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  'Đang trả lời bình luận',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: primaryColor,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _replyingToCommentId = null;
+                                    _commentController.clear();
+                                  });
+                                },
+                                child: Icon(
+                                  Icons.close,
+                                  size: 16,
+                                  color: primaryColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     if (_selectedMedia != null)
                       Padding(
                         padding: EdgeInsets.only(bottom: screenWidth * 0.02),
@@ -748,17 +1276,47 @@ class _CommentScreenState extends State<CommentScreen> {
                               width: screenWidth * 0.3,
                               height: screenWidth * 0.3,
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: primaryColor.withOpacity(0.5),
+                                  width: 2,
+                                ),
                               ),
-                              child: _mediaType == 'image'
-                                  ? kIsWeb
-                                      ? Image.network(_selectedMedia!.path)
-                                      : Image.file(io.File(_selectedMedia!.path), fit: BoxFit.cover)
-                                  : const Icon(Icons.videocam, size: 50),
+                              child:
+                                  _mediaType == 'image'
+                                      ? ClipRRect(
+                                        borderRadius: BorderRadius.circular(10),
+                                        child:
+                                            kIsWeb
+                                                ? Image.network(
+                                                  _selectedMedia!.path,
+                                                  fit: BoxFit.cover,
+                                                )
+                                                : Image.file(
+                                                  io.File(_selectedMedia!.path),
+                                                  fit: BoxFit.cover,
+                                                ),
+                                      )
+                                      : Container(
+                                        decoration: BoxDecoration(
+                                          color:
+                                              isDarkMode
+                                                  ? Colors.grey[800]
+                                                  : Colors.grey[200],
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
+                                        ),
+                                        child: Icon(
+                                          Icons.videocam,
+                                          size: 50,
+                                          color: primaryColor,
+                                        ),
+                                      ),
                             ),
                             Positioned(
-                              right: 0,
-                              top: 0,
+                              right: -5,
+                              top: -5,
                               child: GestureDetector(
                                 onTap: () {
                                   setState(() {
@@ -767,11 +1325,23 @@ class _CommentScreenState extends State<CommentScreen> {
                                   });
                                 },
                                 child: Container(
-                                  decoration: const BoxDecoration(
+                                  padding: const EdgeInsets.all(2),
+                                  decoration: BoxDecoration(
                                     color: Colors.red,
                                     shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color:
+                                          isDarkMode
+                                              ? Colors.black
+                                              : Colors.white,
+                                      width: 2,
+                                    ),
                                   ),
-                                  child: const Icon(Icons.close, color: Colors.white, size: 20),
+                                  child: const Icon(
+                                    Icons.close,
+                                    color: Colors.white,
+                                    size: 16,
+                                  ),
                                 ),
                               ),
                             ),
@@ -784,6 +1354,7 @@ class _CommentScreenState extends State<CommentScreen> {
                         Container(
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
+                            border: Border.all(color: primaryColor, width: 2),
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black.withOpacity(0.1),
@@ -794,18 +1365,28 @@ class _CommentScreenState extends State<CommentScreen> {
                           ),
                           child: CircleAvatar(
                             radius: screenWidth * 0.05,
-                            backgroundImage: NetworkImage(widget.currentUserAvatar),
+                            backgroundImage: NetworkImage(
+                              widget.currentUserAvatar,
+                            ),
                           ),
                         ),
                         SizedBox(width: screenWidth * 0.02),
                         Expanded(
                           child: Container(
                             decoration: BoxDecoration(
-                              color: isDarkMode ? Colors.grey[800] : Colors.grey[100],
+                              color:
+                                  isDarkMode
+                                      ? Colors.grey[800]
+                                      : Colors.grey[100],
                               borderRadius: BorderRadius.circular(25),
                               border: Border.all(
-                                color: isDarkMode ? Colors.grey[700]! : Colors.grey[300]!,
-                                width: 1,
+                                color:
+                                    _commentFocusNode.hasFocus
+                                        ? primaryColor
+                                        : isDarkMode
+                                        ? Colors.grey[700]!
+                                        : Colors.grey[300]!,
+                                width: _commentFocusNode.hasFocus ? 2 : 1,
                               ),
                             ),
                             child: Row(
@@ -817,17 +1398,25 @@ class _CommentScreenState extends State<CommentScreen> {
                                     maxLines: null,
                                     minLines: 1,
                                     keyboardType: TextInputType.multiline,
-                                    textCapitalization: TextCapitalization.sentences,
+                                    textCapitalization:
+                                        TextCapitalization.sentences,
                                     style: TextStyle(
                                       fontSize: screenWidth * 0.04,
-                                      color: isDarkMode ? Colors.white : Colors.black87,
+                                      color:
+                                          isDarkMode
+                                              ? Colors.white
+                                              : Colors.black87,
                                     ),
                                     decoration: InputDecoration(
-                                      hintText: _replyingToCommentId != null
-                                          ? 'Viết phản hồi...'
-                                          : 'Viết bình luận...',
+                                      hintText:
+                                          _replyingToCommentId != null
+                                              ? 'Viết phản hồi...'
+                                              : 'Viết bình luận...',
                                       hintStyle: TextStyle(
-                                        color: isDarkMode ? Colors.grey[400] : Colors.grey[500],
+                                        color:
+                                            isDarkMode
+                                                ? Colors.grey[400]
+                                                : Colors.grey[500],
                                         fontSize: screenWidth * 0.04,
                                       ),
                                       border: InputBorder.none,
@@ -836,12 +1425,24 @@ class _CommentScreenState extends State<CommentScreen> {
                                         vertical: screenWidth * 0.035,
                                       ),
                                     ),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _showSuggestions =
+                                            value.isEmpty &&
+                                            _selectedMedia == null;
+                                      });
+                                    },
                                   ),
                                 ),
                                 IconButton(
                                   icon: Icon(
                                     Icons.lightbulb,
-                                    color: primaryColor,
+                                    color:
+                                        _showSuggestions
+                                            ? primaryColor
+                                            : isDarkMode
+                                            ? Colors.grey[400]
+                                            : Colors.grey[600],
                                     size: screenWidth * 0.06,
                                   ),
                                   onPressed: () {
@@ -853,7 +1454,12 @@ class _CommentScreenState extends State<CommentScreen> {
                                 IconButton(
                                   icon: Icon(
                                     Icons.image,
-                                    color: primaryColor,
+                                    color: primaryColor.withOpacity(
+                                      _selectedMedia != null &&
+                                              _mediaType == 'image'
+                                          ? 0.5
+                                          : 1,
+                                    ),
                                     size: screenWidth * 0.06,
                                   ),
                                   onPressed: () => _pickMedia(true),
@@ -861,7 +1467,12 @@ class _CommentScreenState extends State<CommentScreen> {
                                 IconButton(
                                   icon: Icon(
                                     Icons.videocam,
-                                    color: primaryColor,
+                                    color: primaryColor.withOpacity(
+                                      _selectedMedia != null &&
+                                              _mediaType == 'video'
+                                          ? 0.5
+                                          : 1,
+                                    ),
                                     size: screenWidth * 0.06,
                                   ),
                                   onPressed: () => _pickMedia(false),
@@ -873,13 +1484,25 @@ class _CommentScreenState extends State<CommentScreen> {
                         ),
                         SizedBox(width: screenWidth * 0.02),
                         GestureDetector(
-                          onTap: _isSubmitting
-                              ? null
-                              : () => _submitComment(parentCommentId: _replyingToCommentId),
+                          onTap:
+                              (_isSubmitting ||
+                                      (_commentController.text.trim().isEmpty &&
+                                          _selectedMedia == null))
+                                  ? null
+                                  : () => _submitComment(
+                                    parentCommentId: _replyingToCommentId,
+                                  ),
                           child: Container(
                             padding: EdgeInsets.all(screenWidth * 0.03),
                             decoration: BoxDecoration(
-                              color: primaryColor,
+                              color:
+                                  (_isSubmitting ||
+                                          (_commentController.text
+                                                  .trim()
+                                                  .isEmpty &&
+                                              _selectedMedia == null))
+                                      ? primaryColor.withOpacity(0.5)
+                                      : primaryColor,
                               shape: BoxShape.circle,
                               boxShadow: [
                                 BoxShadow(
@@ -889,20 +1512,24 @@ class _CommentScreenState extends State<CommentScreen> {
                                 ),
                               ],
                             ),
-                            child: _isSubmitting
-                                ? SizedBox(
-                                    width: screenWidth * 0.045,
-                                    height: screenWidth * 0.045,
-                                    child: const CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            child:
+                                _isSubmitting
+                                    ? SizedBox(
+                                      width: screenWidth * 0.045,
+                                      height: screenWidth * 0.045,
+                                      child: const CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                              Colors.white,
+                                            ),
+                                      ),
+                                    )
+                                    : Icon(
+                                      Icons.send_rounded,
+                                      color: Colors.white,
+                                      size: screenWidth * 0.05,
                                     ),
-                                  )
-                                : Icon(
-                                    Icons.send_rounded,
-                                    color: Colors.white,
-                                    size: screenWidth * 0.05,
-                                  ),
                           ),
                         ),
                       ],
@@ -957,16 +1584,17 @@ class _CommentScreenState extends State<CommentScreen> {
     while (currentId != null) {
       final parent = comments.firstWhere(
         (c) => c.id == currentId,
-        orElse: () => Comment(
-          id: '',
-          postId: '',
-          userId: '',
-          userName: '',
-          userAvatar: '',
-          content: '',
-          createdAt: DateTime.now(),
-          likes: [],
-        ),
+        orElse:
+            () => Comment(
+              id: '',
+              postId: '',
+              userId: '',
+              userName: '',
+              userAvatar: '',
+              content: '',
+              createdAt: DateTime.now(),
+              likes: [],
+            ),
       );
       if (parent.id.isEmpty) break;
       level++;
@@ -1021,13 +1649,15 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   void initState() {
     super.initState();
     _controller = VideoPlayerController.network(widget.videoUrl)
-      ..initialize().then((_) {
-        setState(() {
-          _isInitialized = true;
-        });
-      }).catchError((e) {
-        print('Error initializing video: $e');
-      });
+      ..initialize()
+          .then((_) {
+            setState(() {
+              _isInitialized = true;
+            });
+          })
+          .catchError((e) {
+            print('Error initializing video: $e');
+          });
   }
 
   @override
@@ -1040,38 +1670,40 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   Widget build(BuildContext context) {
     return _isInitialized
         ? ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: SizedBox(
-              width: widget.width,
-              height: widget.height,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  VideoPlayer(_controller),
-                  IconButton(
-                    icon: Icon(
-                      _controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
-                      color: Colors.white,
-                      size: 40,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        if (_controller.value.isPlaying) {
-                          _controller.pause();
-                        } else {
-                          _controller.play();
-                        }
-                      });
-                    },
-                  ),
-                ],
-              ),
-            ),
-          )
-        : SizedBox(
+          borderRadius: BorderRadius.circular(8),
+          child: SizedBox(
             width: widget.width,
             height: widget.height,
-            child: const Center(child: CircularProgressIndicator()),
-          );
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                VideoPlayer(_controller),
+                IconButton(
+                  icon: Icon(
+                    _controller.value.isPlaying
+                        ? Icons.pause
+                        : Icons.play_arrow,
+                    color: Colors.white,
+                    size: 40,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      if (_controller.value.isPlaying) {
+                        _controller.pause();
+                      } else {
+                        _controller.play();
+                      }
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+        )
+        : SizedBox(
+          width: widget.width,
+          height: widget.height,
+          child: const Center(child: CircularProgressIndicator()),
+        );
   }
 }
