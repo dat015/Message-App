@@ -43,6 +43,7 @@ namespace server.Services.WebSocketService
         private readonly CancellationTokenSource _cts = new(); // Token để hủy các tác vụ bất đồng bộ
         private readonly ILogger<webSocket> _logger;
         private readonly IChatStorage _chatStorage;
+        private readonly CallHandler _callHandler;
         public webSocket(IConnectionMultiplexer redis, IServiceProvider serviceProvider,
                          IChatStorage chatStorage,
                          WebSocketOptions options = null,
@@ -53,8 +54,22 @@ namespace server.Services.WebSocketService
             _options = options ?? new WebSocketOptions();                                 // Sử dụng cấu hình mặc định nếu không cung cấp
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _chatStorage = chatStorage;
+            _callHandler = new CallHandler(_redis.GetDatabase(), this);
         }
-
+        public IEnumerable<Client> GetClientsInConversation(int conversationId)
+        {
+            var clients = _clients.Keys
+                .Where(c => c.ConversationIds.Contains(conversationId) && c.WebSocket.State == WebSocketState.Open)
+                .ToList();
+            Console.WriteLine($"GetClientsInConversation {conversationId}: Found {clients.Count} clients: {string.Join(", ", clients.Select(c => c.UserId))}");
+            return clients;
+        }
+        public Client GetClient(int userId)
+        {
+            var client = _clients.Keys.FirstOrDefault(c => c.UserId == userId && c.WebSocket.State == WebSocketState.Open);
+            Console.WriteLine($"GetClient {userId}: {(client != null ? "Found" : "Not found")}");
+            return client;
+        }
 
         // Xử lý yêu cầu WebSocket từ client
         public async Task HandleWebSocket(HttpContext context)
@@ -111,6 +126,15 @@ namespace server.Services.WebSocketService
                         if (message.type == "bootup")// Xử lý khi client khởi động
                         {
                             await HandleBootup(client, message);
+                        }
+                        else if (message.type == "startCall" ||
+                         message.type == "acceptCall" ||
+                         message.type == "offer" ||
+                         message.type == "answer" ||
+                         message.type == "iceCandidate" ||
+                         message.type == "endCall")
+                        {
+                            await _callHandler.HandleCallMessage(client, message);
                         }
                         else if (!string.IsNullOrEmpty(message.content))// Xử lý tin nhắn bình thường
                         {
@@ -424,27 +448,23 @@ namespace server.Services.WebSocketService
         private async Task CleanupClient(Client client)
         {
             var subscriber = _redis.GetSubscriber();
+            var db = _redis.GetDatabase();
             foreach (var conversationId in client.ConversationIds)
             {
-                try
+                await subscriber.UnsubscribeAsync($"conversation:{conversationId}");
+                var callDataJson = await db.StringGetAsync($"call:{conversationId}");
+                if (!callDataJson.IsNullOrEmpty)
                 {
-                    await subscriber.UnsubscribeAsync($"conversation:{conversationId}");
-                    var leaveMessage = new Message
+                    var callMessage = new MessageDTO
                     {
-                        type = "system",
-                        content = $"User {client.UserId} left the conversation",
+                        type = "endCall",
                         sender_id = client.UserId,
-                        conversation_id = conversationId,
-                        created_at = DateTime.UtcNow
+                        conversation_id = conversationId
                     };
-                    // await PublishMessage(leaveMessage);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error unsubscribing from channel: {ex.Message}");
-                    throw;
+                    await _callHandler.HandleCallMessage(client, callMessage);
                 }
             }
+            _clients.TryRemove(client, out _);
         }
 
         // Gửi heartbeat định kỳ để kiểm tra kết nối

@@ -58,7 +58,7 @@ class MainLayout extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.close, color: Colors.black),
+            icon: const Icon(Icons.add_box, color: Colors.black),
             onPressed: () {
               // Logic khi nhấn nút đóng (nếu cần)
             },

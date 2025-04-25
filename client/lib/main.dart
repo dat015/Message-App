@@ -1,5 +1,8 @@
 import 'package:first_app/PlatformClient/config.dart';
+import 'package:first_app/data/providers/CallProvider.dart';
 import 'package:first_app/data/providers/home_provider.dart';
+import 'package:first_app/data/providers/providers.dart';
+import 'package:first_app/data/repositories/Chat/websocket_service.dart';
 import 'package:first_app/features/auth/presentation/screens/login.dart';
 import 'package:first_app/theme/theme.dart';
 import 'package:flutter/material.dart';
@@ -41,7 +44,19 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => HomeProvider()),
-        // Các provider khác...
+        Provider<WebSocketService>(
+          create: (_) => WebSocketService(
+            url: Config.baseUrlWS,
+            onMessageReceived: (message) {
+              print('Received chat message: ${message.message.content}');
+            },
+          ),
+        ),
+        ChangeNotifierProvider<CallProvider>(
+          create: (context) => CallProvider(
+            webSocketService: context.read<WebSocketService>(),
+          ),
+        ),
       ],
       child: const MyApp(),
     ),
@@ -50,10 +65,13 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+  static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   Widget build(BuildContext context) {
+
     return MaterialApp(
+      navigatorKey: navigatorKey, // Thêm navigatorKey
       debugShowCheckedModeBanner: false,
       initialRoute: AppRoutes.login,
       onGenerateRoute: AppRoutes.generateRoute,

@@ -41,7 +41,6 @@ namespace server.Controllers
             _uploadFileSV = uploadFileService;
 
         }
-        [HttpPost("addNewMessage")]
 
         [HttpDelete("DeleteMessageForMe/{conversation_id}/{user_id}")]
         public async Task<IActionResult> DeleteMessageConversationForMe(int conversation_id, int user_id)

@@ -1,12 +1,15 @@
 import 'package:first_app/data/models/conversation.dart';
 import 'package:first_app/data/models/participants.dart';
+import 'package:first_app/data/providers/CallProvider.dart';
 import 'package:first_app/data/providers/providers.dart';
 import 'package:first_app/features/home/presentation/chat_box/conversation_settings_screen.dart';
 import 'package:first_app/features/home/presentation/widgets/message_input.dart';
 import 'package:first_app/features/home/presentation/widgets/message_list.dart'
     show MessageList;
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:first_app/features/home/presentation/chat_box/call_screen.dart';
 
 class ChatScreen extends StatefulWidget {
   final int conversationId;
@@ -89,10 +92,67 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
           backgroundColor: Colors.blue,
           actions: [
-            IconButton(
-              icon: const Icon(Icons.call),
-              onPressed: () {
-                // TODO: Implement call functionality
+            Consumer<CallProvider>(
+              builder: (context, callProvider, child) {
+                return IconButton(
+                  icon: Icon(
+                    callProvider.isCalling ? Icons.call_end : Icons.call,
+                    color: callProvider.isCalling ? Colors.red : Colors.green,
+                  ),
+                  onPressed: () async {
+                    try {
+                      if (callProvider.isCalling) {
+                        print("end call");
+                        callProvider.endCall();
+                      } else {
+                        final permissionStatus =
+                            await Permission.microphone.request();
+                        if (permissionStatus.isGranted) {
+                          // lấy tên từ conversation để hiện lên màn hình
+                          String name =
+                              Provider.of<ChatProvider>(
+                                context,
+                                listen: false,
+                              ).conversation!.name;
+                          //thực hiện yêu cầu gọi điện
+                          await callProvider.startCall(
+                            widget.userId,
+                            widget.conversationId,
+                            name,
+                            'voice',
+                          );
+
+                          if (callProvider.isCalling) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (context) => CallScreen(
+                                      userId: widget.userId,
+                                      conversationId: widget.conversationId,
+                                    ),
+                              ),
+                            );
+                          }
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Yêu cầu quyền micro bị từ chối'),
+                            ),
+                          );
+                        }
+                      }
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Lỗi khi thực hiện cuộc gọi: $e'),
+                        ),
+                      );
+                    }
+                  },
+                  tooltip:
+                      callProvider.isCalling ? 'Kết thúc cuộc gọi' : 'Gọi nhóm',
+                );
               },
             ),
             Consumer<ChatProvider>(

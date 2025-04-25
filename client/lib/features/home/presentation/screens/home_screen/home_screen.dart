@@ -73,6 +73,9 @@ class _HomeScreenState extends State<HomeScreen> {
       final conversations = await conversationRepo.getConversations(userId);
       print("Thanh cong");
       for (var conversation in conversations) {
+        print(
+          "Conversation ${conversation.id} isGroup: ${conversation.isGroup.runtimeType} - value: ${conversation.isGroup}",
+        );
         if (!conversation.isGroup && conversation.participants != null) {
           final otherParticipant = conversation.participants!.firstWhere(
             (p) => p.userId != userId,
@@ -112,8 +115,12 @@ class _HomeScreenState extends State<HomeScreen> {
   void updateChatList(MessageWithAttachment newMessage) {
     setState(() {
       if (newMessage.message.type == "system" &&
-          (newMessage.message.content?.startsWith("Đã đổi tên nhóm thành") ?? false) ||
-              (newMessage.message.content?.startsWith("Đã đổi tên bạn thành") ?? false)) {
+              (newMessage.message.content?.startsWith(
+                    "Đã đổi tên nhóm thành",
+                  ) ??
+                  false) ||
+          (newMessage.message.content?.startsWith("Đã đổi tên bạn thành") ??
+              false)) {
         final index = _conversations.indexWhere(
           (chat) => chat.id == newMessage.message.conversationId,
         );
@@ -121,8 +128,6 @@ class _HomeScreenState extends State<HomeScreen> {
         if (index != -1) {
           // Sử dụng hàm getNewName để lấy tên mới
           final newName = getNewName(newMessage.message.content ?? '');
-
-          
 
           // Cập nhật thông tin tin nhắn cuối cùng
           _conversations[index].lastMessage = newMessage.message.content;
