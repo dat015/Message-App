@@ -1,6 +1,7 @@
 import 'package:first_app/data/repositories/WebRTCService/webRTCService.dart';
 import 'package:flutter/material.dart';
 import 'package:first_app/data/repositories/Chat/websocket_service.dart';
+import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'dart:async';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:first_app/main.dart';
@@ -16,6 +17,7 @@ class CallProvider extends ChangeNotifier {
 
   CallProvider({required this.webSocketService}) {
     _callEventSubscription = webSocketService.callEvents.listen((event) {
+      print('Received call event: $event');
       if (event['event'] == 'receiveCall') {
         _handleIncomingCall(
           callerId: event['callerId'],
@@ -25,22 +27,29 @@ class CallProvider extends ChangeNotifier {
           sdp: event['sdp'],
         );
       } else if (event['event'] == 'callAccepted') {
-        _webRTCService?.handleAnswer(event['sdp']);
-        isCalling = true;
-        notifyListeners();
+        print('Call accepted, handling answer: ${event['sdp']}');
+        if (_webRTCService != null) {
+          _webRTCService!.handleAnswer(event['sdp']);
+          isCalling = true;
+          notifyListeners();
+        } else {
+          print('Error: WebRTCService is null when handling callAccepted');
+        }
       } else if (event['event'] == 'iceCandidate') {
+        print('Handling ICE candidate: ${event['data']}');
         _webRTCService?.handleIceCandidate(event['data']);
       } else if (event['event'] == 'callEnded') {
-        print("call ended");
-        isCalling = false;
-        _webRTCService?.dispose();
-        currentConversationId = null;
-        currentUserId = null;
-        callerName = null;
-        notifyListeners();
+        print('Call ended');
+        _endCallCleanup();
+      } else if (event['event'] == 'error') {
+        print('Call error: ${event['content']}');
+        _showSnackBar('Lỗi cuộc gọi: ${event['content']}');
       }
     });
   }
+
+  RTCVideoRenderer? get localRenderer => _webRTCService?.localRenderer;
+  RTCVideoRenderer? get remoteRenderer => _webRTCService?.remoteRenderer;
 
   Future<void> startCall(
     int userId,
@@ -52,18 +61,29 @@ class CallProvider extends ChangeNotifier {
       _showSnackBar('Bạn đang trong một cuộc gọi!');
       return;
     }
-    print("Bat dau cuoc goi");
-   
-  webSocketService.connect(userId, conversationId);
-
 
     try {
       if (!await Permission.microphone.request().isGranted) {
         throw 'Quyền micro bị từ chối';
       }
-      _webRTCService = WebRTCService(webSocketService, userId, conversationId);
+      if (!await Permission.camera.request().isGranted) {
+        throw 'Quyền camera bị từ chối';
+      }
+
+      webSocketService.connect(userId, conversationId);
+      _webRTCService = WebRTCService(
+        webSocketService,
+        userId,
+        conversationId,
+        onRemoteStreamAdded: (stream) {
+          print('Remote stream added in CallProvider');
+          notifyListeners();
+        },
+      );
+
       await _webRTCService!.init();
       final offer = await _webRTCService!.createOffer();
+      print('Starting call with offer: $offer');
       webSocketService.startCall(
         userId,
         conversationId,
@@ -71,15 +91,17 @@ class CallProvider extends ChangeNotifier {
         offerType,
         offer,
       );
+
       isCalling = true;
       currentConversationId = conversationId;
       currentUserId = userId;
       callerName = name;
       notifyListeners();
-      print("Dang trong cuoc goi: $isCalling");
       _showSnackBar('Đang gọi nhóm...');
     } catch (e) {
+      print('Error starting call: $e');
       isCalling = false;
+      _webRTCService?.dispose();
       _showSnackBar('Lỗi khi bắt đầu cuộc gọi: $e');
     }
   }
@@ -99,52 +121,64 @@ class CallProvider extends ChangeNotifier {
     showDialog(
       context: MyApp.navigatorKey.currentState!.overlay!.context,
       barrierDismissible: false,
-      builder:
-          (context) => AlertDialog(
-            title: const Text('Cuộc gọi đến'),
-            content: Text('$name đang gọi bạn ($offerType).'),
-            actions: [
-              TextButton(
-                onPressed: () async {
-                  try {
-                    if (!await Permission.microphone.request().isGranted) {
-                      throw 'Quyền micro bị từ chối';
-                    }
-                    _webRTCService = WebRTCService(
-                      webSocketService,
-                      callerId,
-                      conversationId,
-                    );
-                    await _webRTCService!.init();
-                    final answer = await _webRTCService!.handleOffer(sdp);
-                    webSocketService.acceptCall(
-                      callerId,
-                      conversationId,
-                      name,
-                      offerType,
-                      answer,
-                    );
-                    isCalling = true;
-                    currentConversationId = conversationId;
-                    currentUserId = callerId;
-                    callerName = name;
+      builder: (context) => AlertDialog(
+        title: const Text('Cuộc gọi đến'),
+        content: Text('$name đang gọi bạn ($offerType).'),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              try {
+                if (!await Permission.microphone.request().isGranted) {
+                  throw 'Quyền micro bị từ chối';
+                }
+                if (!await Permission.camera.request().isGranted) {
+                  throw 'Quyền camera bị từ chối';
+                }
+
+                _webRTCService = WebRTCService(
+                  webSocketService,
+                  callerId,
+                  conversationId,
+                  onRemoteStreamAdded: (stream) {
+                    print('Remote stream added in CallProvider');
                     notifyListeners();
-                    Navigator.of(context).pop();
-                    _showSnackBar('Đã tham gia cuộc gọi');
-                  } catch (e) {
-                    _showSnackBar('Lỗi khi chấp nhận cuộc gọi: $e');
-                  }
-                },
-                child: const Text('Chấp nhận'),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('Từ chối'),
-              ),
-            ],
+                  },
+                );
+
+                await _webRTCService!.init();
+                final answer = await _webRTCService!.handleOffer(sdp);
+                print('Sending acceptCall with answer: $answer');
+                webSocketService.acceptCall(
+                  callerId,
+                  conversationId,
+                  name,
+                  offerType,
+                  answer,
+                );
+
+                isCalling = true;
+                currentConversationId = conversationId;
+                currentUserId = callerId;
+                callerName = name;
+                notifyListeners();
+                Navigator.of(context).pop();
+                _showSnackBar('Đã tham gia cuộc gọi');
+              } catch (e) {
+                print('Error accepting call: $e');
+                _showSnackBar('Lỗi khi chấp nhận cuộc gọi: $e');
+                Navigator.of(context).pop();
+              }
+            },
+            child: const Text('Chấp nhận'),
           ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('Từ chối'),
+          ),
+        ],
+      ),
     );
   }
 
@@ -152,7 +186,13 @@ class CallProvider extends ChangeNotifier {
     if (!isCalling || currentUserId == null || currentConversationId == null) {
       return;
     }
+    print('Ending call: userId=$currentUserId, conversationId=$currentConversationId');
     webSocketService.endCall(currentUserId!, currentConversationId!);
+    _endCallCleanup();
+  }
+
+  void _endCallCleanup() {
+    print('Cleaning up call');
     _webRTCService?.dispose();
     isCalling = false;
     currentConversationId = null;
@@ -171,6 +211,7 @@ class CallProvider extends ChangeNotifier {
 
   @override
   void dispose() {
+    print('Disposing CallProvider');
     _callEventSubscription?.cancel();
     _webRTCService?.dispose();
     super.dispose();

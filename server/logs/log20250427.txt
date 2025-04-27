@@ -1,0 +1,1622 @@
+2025-04-27 09:04:05.613 +07:00 [INF] Executed DbCommand (75ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [u].[id], [u].[username], [u].[avatar_url]
+FROM [Users] AS [u]
+2025-04-27 09:04:05.798 +07:00 [INF] User profile is available. Using 'C:\Users\Thao\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-04-27 09:04:05.897 +07:00 [WRN] Overriding address(es) 'http://localhost:5053'. Binding to endpoints defined via IConfiguration and/or UseKestrel() instead.
+2025-04-27 09:04:05.908 +07:00 [INF] Now listening on: http://[::]:5053
+2025-04-27 09:04:05.909 +07:00 [INF] Now listening on: http://0.0.0.0:5053
+2025-04-27 09:04:05.909 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-04-27 09:04:05.909 +07:00 [INF] Hosting environment: Development
+2025-04-27 09:04:05.909 +07:00 [INF] Content root path: C:\Users\Thao\source\Flutter\Message_app\server
+2025-04-27 09:05:01.444 +07:00 [INF] Request starting HTTP/1.1 POST http://192.168.1.4:5053/api/Auth/login - application/json 57
+2025-04-27 09:05:01.585 +07:00 [WRN] Failed to determine the https port for redirect.
+2025-04-27 09:05:01.667 +07:00 [INF] Executing endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-04-27 09:05:01.721 +07:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(server.DTO.AuthDTO.LoginDTO) on controller Message_app.Controllers.AuthController (Message_app).
+2025-04-27 09:05:02.208 +07:00 [INF] Executed DbCommand (75ms) [Parameters=[@__email_0='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[email] = @__email_0
+2025-04-27 09:05:02.510 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.DTO.AuthDTO.LoginRespose'.
+2025-04-27 09:05:02.673 +07:00 [INF] Executed action Message_app.Controllers.AuthController.Login (Message_app) in 944.1615ms
+2025-04-27 09:05:02.676 +07:00 [INF] Executed endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-04-27 09:05:02.692 +07:00 [INF] Request finished HTTP/1.1 POST http://192.168.1.4:5053/api/Auth/login - 200 null application/json; charset=utf-8 1252.3912ms
+2025-04-27 09:05:04.033 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/api/Conversation/get_conversations/2 - null null
+2025-04-27 09:05:04.034 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/api/Conversation/get_conversations/2 - null null
+2025-04-27 09:05:04.052 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-04-27 09:05:04.060 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-04-27 09:05:04.071 +07:00 [INF] Route matched with {action = "GetConversations", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetConversations(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-04-27 09:05:04.075 +07:00 [INF] Route matched with {action = "GetConversations", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetConversations(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-04-27 09:05:04.520 +07:00 [INF] Executed DbCommand (61ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [c].[id], [c].[name], [c].[is_group], [c].[created_at], [c].[lastMessage], [c].[lastMessageTime], [t].[Id], [t].[UserId], [t].[ConversationId], [t].[Name], [t].[IsDeleted]
+FROM [Conversations] AS [c]
+LEFT JOIN (
+    SELECT [p0].[id] AS [Id], [p0].[user_id] AS [UserId], [p0].[conversation_id] AS [ConversationId], [p0].[name] AS [Name], [p0].[is_deleted] AS [IsDeleted]
+    FROM [Participants] AS [p0]
+    WHERE [p0].[is_deleted] = CAST(0 AS bit)
+) AS [t] ON [c].[id] = [t].[ConversationId]
+WHERE EXISTS (
+    SELECT 1
+    FROM [Participants] AS [p]
+    WHERE [c].[id] = [p].[conversation_id] AND [p].[user_id] = @__userId_0 AND [p].[is_deleted] = CAST(0 AS bit))
+ORDER BY [c].[id]
+2025-04-27 09:05:04.522 +07:00 [INF] Executed DbCommand (45ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [c].[id], [c].[name], [c].[is_group], [c].[created_at], [c].[lastMessage], [c].[lastMessageTime], [t].[Id], [t].[UserId], [t].[ConversationId], [t].[Name], [t].[IsDeleted]
+FROM [Conversations] AS [c]
+LEFT JOIN (
+    SELECT [p0].[id] AS [Id], [p0].[user_id] AS [UserId], [p0].[conversation_id] AS [ConversationId], [p0].[name] AS [Name], [p0].[is_deleted] AS [IsDeleted]
+    FROM [Participants] AS [p0]
+    WHERE [p0].[is_deleted] = CAST(0 AS bit)
+) AS [t] ON [c].[id] = [t].[ConversationId]
+WHERE EXISTS (
+    SELECT 1
+    FROM [Participants] AS [p]
+    WHERE [c].[id] = [p].[conversation_id] AND [p].[user_id] = @__userId_0 AND [p].[is_deleted] = CAST(0 AS bit))
+ORDER BY [c].[id]
+2025-04-27 09:05:04.583 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.DTO.ConversationDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-04-27 09:05:04.589 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.DTO.ConversationDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-04-27 09:05:04.592 +07:00 [INF] Executed action server.Controllers.ConversationController.GetConversations (Message_app) in 516.2904ms
+2025-04-27 09:05:04.592 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-04-27 09:05:04.595 +07:00 [INF] Executed action server.Controllers.ConversationController.GetConversations (Message_app) in 520.2385ms
+2025-04-27 09:05:04.597 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-04-27 09:05:04.597 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/api/Conversation/get_conversations/2 - 200 null application/json; charset=utf-8 562.92ms
+2025-04-27 09:05:04.597 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/api/Conversation/get_conversations/2 - 200 null application/json; charset=utf-8 564.6383ms
+2025-04-27 09:05:04.758 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/ws/chat?userId=2 - null null
+2025-04-27 09:05:04.758 +07:00 [INF] Executing endpoint '/ws/chat'
+2025-04-27 09:05:05.190 +07:00 [INF] Executed DbCommand (9ms) [Parameters=[@__client_UserId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[conversation_id]
+FROM [Participants] AS [p]
+WHERE [p].[user_id] = @__client_UserId_0 AND [p].[is_deleted] = CAST(0 AS bit)
+2025-04-27 09:05:14.733 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/ws/chat?userId=2 - null null
+2025-04-27 09:05:14.734 +07:00 [INF] Executing endpoint '/ws/chat'
+2025-04-27 09:05:14.915 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/api/Message/getMessages/1/2 - null null
+2025-04-27 09:05:14.916 +07:00 [INF] Executing endpoint 'server.Controllers.MessageController.GetMessages (Message_app)'
+2025-04-27 09:05:14.923 +07:00 [INF] Route matched with {action = "GetMessages", controller = "Message"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetMessages(Int32, Int32) on controller server.Controllers.MessageController (Message_app).
+2025-04-27 09:05:14.948 +07:00 [INF] Executed DbCommand (8ms) [Parameters=[@__client_UserId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[conversation_id]
+FROM [Participants] AS [p]
+WHERE [p].[user_id] = @__client_UserId_0 AND [p].[is_deleted] = CAST(0 AS bit)
+2025-04-27 09:05:15.003 +07:00 [INF] Retrieved 33 messages from Redis for conversation 1
+2025-04-27 09:05:15.007 +07:00 [INF] Retrieved 33 messages from Redis for conversation 1 and user 2
+2025-04-27 09:05:15.008 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.DTO.MessageWithAttachment, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-04-27 09:05:15.015 +07:00 [INF] Executed action server.Controllers.MessageController.GetMessages (Message_app) in 91.8801ms
+2025-04-27 09:05:15.016 +07:00 [INF] Executed endpoint 'server.Controllers.MessageController.GetMessages (Message_app)'
+2025-04-27 09:05:15.017 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/api/Message/getMessages/1/2 - 200 null application/json; charset=utf-8 101.8283ms
+2025-04-27 09:05:15.064 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/api/Conversation/get_first_conversation/1 - null null
+2025-04-27 09:05:15.067 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetFirstConversation (Message_app)'
+2025-04-27 09:05:15.073 +07:00 [INF] Route matched with {action = "GetFirstConversation", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetFirstConversation(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-04-27 09:05:15.116 +07:00 [INF] Executed DbCommand (5ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [c].[id], [c].[created_at], [c].[is_group], [c].[lastMessage], [c].[lastMessageSender], [c].[lastMessageTime], [c].[name]
+FROM [Conversations] AS [c]
+WHERE [c].[id] = @__p_0
+2025-04-27 09:05:15.156 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.Models.Conversation'.
+2025-04-27 09:05:15.160 +07:00 [INF] Executed action server.Controllers.ConversationController.GetFirstConversation (Message_app) in 86.4722ms
+2025-04-27 09:05:15.160 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetFirstConversation (Message_app)'
+2025-04-27 09:05:15.160 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/api/Conversation/get_first_conversation/1 - 200 null application/json; charset=utf-8 96.8577ms
+2025-04-27 09:05:15.209 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/api/Participant/get_participants/1 - null null
+2025-04-27 09:05:15.210 +07:00 [INF] Executing endpoint 'server.Controllers.ParticipantController.GetParticipants (Message_app)'
+2025-04-27 09:05:15.217 +07:00 [INF] Route matched with {action = "GetParticipants", controller = "Participant"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetParticipants(Int32) on controller server.Controllers.ParticipantController (Message_app).
+2025-04-27 09:05:15.236 +07:00 [INF] Executed DbCommand (5ms) [Parameters=[@__conversation_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[id], [p].[adder], [p].[conversation_id], [p].[is_deleted], [p].[joined_at], [p].[name], [p].[role], [p].[user_id]
+FROM [Participants] AS [p]
+WHERE [p].[conversation_id] = @__conversation_id_0
+2025-04-27 09:05:15.260 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType17`1[[System.Collections.Generic.List`1[[server.Models.Participants, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-04-27 09:05:15.278 +07:00 [INF] Executed action server.Controllers.ParticipantController.GetParticipants (Message_app) in 60.6843ms
+2025-04-27 09:05:15.279 +07:00 [INF] Executed endpoint 'server.Controllers.ParticipantController.GetParticipants (Message_app)'
+2025-04-27 09:05:15.280 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/api/Participant/get_participants/1 - 200 null application/json; charset=utf-8 70.8467ms
+2025-04-27 09:07:33.470 +07:00 [INF] Request starting HTTP/1.1 POST http://192.168.1.4:5053/api/Auth/login - application/json 54
+2025-04-27 09:07:33.495 +07:00 [INF] Executing endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-04-27 09:07:33.505 +07:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(server.DTO.AuthDTO.LoginDTO) on controller Message_app.Controllers.AuthController (Message_app).
+2025-04-27 09:07:33.656 +07:00 [INF] Executed DbCommand (91ms) [Parameters=[@__email_0='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[email] = @__email_0
+2025-04-27 09:07:33.674 +07:00 [INF] Executing BadRequestObjectResult, writing value of type 'System.String'.
+2025-04-27 09:07:33.679 +07:00 [INF] Executed action Message_app.Controllers.AuthController.Login (Message_app) in 172.6317ms
+2025-04-27 09:07:33.679 +07:00 [INF] Executed endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-04-27 09:07:33.681 +07:00 [INF] Request finished HTTP/1.1 POST http://192.168.1.4:5053/api/Auth/login - 400 null application/json; charset=utf-8 214.9967ms
+2025-04-27 09:07:42.854 +07:00 [INF] Request starting HTTP/1.1 POST http://192.168.1.4:5053/api/Auth/login - application/json 53
+2025-04-27 09:07:42.854 +07:00 [INF] Executing endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-04-27 09:07:42.854 +07:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(server.DTO.AuthDTO.LoginDTO) on controller Message_app.Controllers.AuthController (Message_app).
+2025-04-27 09:07:42.864 +07:00 [INF] Executed DbCommand (6ms) [Parameters=[@__email_0='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[email] = @__email_0
+2025-04-27 09:07:42.874 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.DTO.AuthDTO.LoginRespose'.
+2025-04-27 09:07:42.876 +07:00 [INF] Executed action Message_app.Controllers.AuthController.Login (Message_app) in 21.4608ms
+2025-04-27 09:07:42.876 +07:00 [INF] Executed endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-04-27 09:07:42.876 +07:00 [INF] Request finished HTTP/1.1 POST http://192.168.1.4:5053/api/Auth/login - 200 null application/json; charset=utf-8 22.3635ms
+2025-04-27 09:07:42.961 +07:00 [INF] Request starting HTTP/1.1 POST http://192.168.1.4:5053/api/Auth/login - application/json 53
+2025-04-27 09:07:42.961 +07:00 [INF] Executing endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-04-27 09:07:42.961 +07:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(server.DTO.AuthDTO.LoginDTO) on controller Message_app.Controllers.AuthController (Message_app).
+2025-04-27 09:07:42.967 +07:00 [INF] Executed DbCommand (4ms) [Parameters=[@__email_0='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[email] = @__email_0
+2025-04-27 09:07:42.967 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.DTO.AuthDTO.LoginRespose'.
+2025-04-27 09:07:42.968 +07:00 [INF] Executed action Message_app.Controllers.AuthController.Login (Message_app) in 6.3531ms
+2025-04-27 09:07:42.968 +07:00 [INF] Executed endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-04-27 09:07:42.968 +07:00 [INF] Request finished HTTP/1.1 POST http://192.168.1.4:5053/api/Auth/login - 200 null application/json; charset=utf-8 7.3855ms
+2025-04-27 09:07:43.321 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/api/Conversation/get_conversations/5 - null null
+2025-04-27 09:07:43.323 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/api/Conversation/get_conversations/5 - null null
+2025-04-27 09:07:43.326 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-04-27 09:07:43.326 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-04-27 09:07:43.326 +07:00 [INF] Route matched with {action = "GetConversations", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetConversations(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-04-27 09:07:43.326 +07:00 [INF] Route matched with {action = "GetConversations", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetConversations(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-04-27 09:07:43.392 +07:00 [INF] Executed DbCommand (54ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [c].[id], [c].[name], [c].[is_group], [c].[created_at], [c].[lastMessage], [c].[lastMessageTime], [t].[Id], [t].[UserId], [t].[ConversationId], [t].[Name], [t].[IsDeleted]
+FROM [Conversations] AS [c]
+LEFT JOIN (
+    SELECT [p0].[id] AS [Id], [p0].[user_id] AS [UserId], [p0].[conversation_id] AS [ConversationId], [p0].[name] AS [Name], [p0].[is_deleted] AS [IsDeleted]
+    FROM [Participants] AS [p0]
+    WHERE [p0].[is_deleted] = CAST(0 AS bit)
+) AS [t] ON [c].[id] = [t].[ConversationId]
+WHERE EXISTS (
+    SELECT 1
+    FROM [Participants] AS [p]
+    WHERE [c].[id] = [p].[conversation_id] AND [p].[user_id] = @__userId_0 AND [p].[is_deleted] = CAST(0 AS bit))
+ORDER BY [c].[id]
+2025-04-27 09:07:43.392 +07:00 [INF] Executed DbCommand (54ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [c].[id], [c].[name], [c].[is_group], [c].[created_at], [c].[lastMessage], [c].[lastMessageTime], [t].[Id], [t].[UserId], [t].[ConversationId], [t].[Name], [t].[IsDeleted]
+FROM [Conversations] AS [c]
+LEFT JOIN (
+    SELECT [p0].[id] AS [Id], [p0].[user_id] AS [UserId], [p0].[conversation_id] AS [ConversationId], [p0].[name] AS [Name], [p0].[is_deleted] AS [IsDeleted]
+    FROM [Participants] AS [p0]
+    WHERE [p0].[is_deleted] = CAST(0 AS bit)
+) AS [t] ON [c].[id] = [t].[ConversationId]
+WHERE EXISTS (
+    SELECT 1
+    FROM [Participants] AS [p]
+    WHERE [c].[id] = [p].[conversation_id] AND [p].[user_id] = @__userId_0 AND [p].[is_deleted] = CAST(0 AS bit))
+ORDER BY [c].[id]
+2025-04-27 09:07:43.396 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.DTO.ConversationDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-04-27 09:07:43.396 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.DTO.ConversationDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-04-27 09:07:43.396 +07:00 [INF] Executed action server.Controllers.ConversationController.GetConversations (Message_app) in 70.2936ms
+2025-04-27 09:07:43.396 +07:00 [INF] Executed action server.Controllers.ConversationController.GetConversations (Message_app) in 69.8491ms
+2025-04-27 09:07:43.396 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-04-27 09:07:43.396 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-04-27 09:07:43.397 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/api/Conversation/get_conversations/5 - 200 null application/json; charset=utf-8 73.6488ms
+2025-04-27 09:07:43.397 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/api/Conversation/get_conversations/5 - 200 null application/json; charset=utf-8 75.5942ms
+2025-04-27 09:07:43.577 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/ws/chat?userId=5 - null null
+2025-04-27 09:07:43.578 +07:00 [INF] Executing endpoint '/ws/chat'
+2025-04-27 09:07:43.583 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/api/Conversation/get_conversations/5 - null null
+2025-04-27 09:07:43.583 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-04-27 09:07:43.583 +07:00 [INF] Route matched with {action = "GetConversations", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetConversations(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-04-27 09:07:43.587 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/api/Conversation/get_conversations/5 - null null
+2025-04-27 09:07:43.587 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-04-27 09:07:43.587 +07:00 [INF] Route matched with {action = "GetConversations", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetConversations(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-04-27 09:07:43.612 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.DTO.ConversationDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-04-27 09:07:43.612 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.DTO.ConversationDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-04-27 09:07:43.612 +07:00 [INF] Executed action server.Controllers.ConversationController.GetConversations (Message_app) in 24.5865ms
+2025-04-27 09:07:43.612 +07:00 [INF] Executed action server.Controllers.ConversationController.GetConversations (Message_app) in 28.5997ms
+2025-04-27 09:07:43.612 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-04-27 09:07:43.612 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-04-27 09:07:43.612 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/api/Conversation/get_conversations/5 - 200 null application/json; charset=utf-8 29.43ms
+2025-04-27 09:07:43.612 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/api/Conversation/get_conversations/5 - 200 null application/json; charset=utf-8 25.5339ms
+2025-04-27 09:07:43.812 +07:00 [INF] Executed DbCommand (5ms) [Parameters=[@__client_UserId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[conversation_id]
+FROM [Participants] AS [p]
+WHERE [p].[user_id] = @__client_UserId_0 AND [p].[is_deleted] = CAST(0 AS bit)
+2025-04-27 09:07:43.846 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/ws/chat?userId=5 - null null
+2025-04-27 09:07:43.846 +07:00 [INF] Executing endpoint '/ws/chat'
+2025-04-27 09:07:44.030 +07:00 [INF] Executed endpoint '/ws/chat'
+2025-04-27 09:07:44.030 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/ws/chat?userId=5 - 101 null null 452.5842ms
+2025-04-27 09:07:44.041 +07:00 [INF] Executed DbCommand (7ms) [Parameters=[@__client_UserId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[conversation_id]
+FROM [Participants] AS [p]
+WHERE [p].[user_id] = @__client_UserId_0 AND [p].[is_deleted] = CAST(0 AS bit)
+2025-04-27 09:07:46.643 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/ws/chat?userId=5 - null null
+2025-04-27 09:07:46.643 +07:00 [INF] Executing endpoint '/ws/chat'
+2025-04-27 09:07:46.659 +07:00 [INF] Executed DbCommand (6ms) [Parameters=[@__client_UserId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[conversation_id]
+FROM [Participants] AS [p]
+WHERE [p].[user_id] = @__client_UserId_0 AND [p].[is_deleted] = CAST(0 AS bit)
+2025-04-27 09:07:46.681 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/api/Message/getMessages/1/5 - null null
+2025-04-27 09:07:46.683 +07:00 [INF] Executing endpoint 'server.Controllers.MessageController.GetMessages (Message_app)'
+2025-04-27 09:07:46.683 +07:00 [INF] Route matched with {action = "GetMessages", controller = "Message"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetMessages(Int32, Int32) on controller server.Controllers.MessageController (Message_app).
+2025-04-27 09:07:46.693 +07:00 [INF] Retrieved 6 messages from Redis for conversation 1
+2025-04-27 09:07:46.695 +07:00 [INF] Retrieved 6 messages from Redis for conversation 1 and user 5
+2025-04-27 09:07:46.695 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.DTO.MessageWithAttachment, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-04-27 09:07:46.695 +07:00 [INF] Executed action server.Controllers.MessageController.GetMessages (Message_app) in 11.8835ms
+2025-04-27 09:07:46.695 +07:00 [INF] Executed endpoint 'server.Controllers.MessageController.GetMessages (Message_app)'
+2025-04-27 09:07:46.696 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/api/Message/getMessages/1/5 - 200 null application/json; charset=utf-8 14.1478ms
+2025-04-27 09:07:46.784 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/api/Conversation/get_first_conversation/1 - null null
+2025-04-27 09:07:46.784 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetFirstConversation (Message_app)'
+2025-04-27 09:07:46.784 +07:00 [INF] Route matched with {action = "GetFirstConversation", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetFirstConversation(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-04-27 09:07:46.800 +07:00 [INF] Executed DbCommand (5ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [c].[id], [c].[created_at], [c].[is_group], [c].[lastMessage], [c].[lastMessageSender], [c].[lastMessageTime], [c].[name]
+FROM [Conversations] AS [c]
+WHERE [c].[id] = @__p_0
+2025-04-27 09:07:46.800 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.Models.Conversation'.
+2025-04-27 09:07:46.800 +07:00 [INF] Executed action server.Controllers.ConversationController.GetFirstConversation (Message_app) in 16.1484ms
+2025-04-27 09:07:46.800 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetFirstConversation (Message_app)'
+2025-04-27 09:07:46.800 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/api/Conversation/get_first_conversation/1 - 200 null application/json; charset=utf-8 16.677ms
+2025-04-27 09:07:46.834 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/api/Participant/get_participants/1 - null null
+2025-04-27 09:07:46.836 +07:00 [INF] Executing endpoint 'server.Controllers.ParticipantController.GetParticipants (Message_app)'
+2025-04-27 09:07:46.836 +07:00 [INF] Route matched with {action = "GetParticipants", controller = "Participant"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetParticipants(Int32) on controller server.Controllers.ParticipantController (Message_app).
+2025-04-27 09:07:46.842 +07:00 [INF] Executed DbCommand (4ms) [Parameters=[@__conversation_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[id], [p].[adder], [p].[conversation_id], [p].[is_deleted], [p].[joined_at], [p].[name], [p].[role], [p].[user_id]
+FROM [Participants] AS [p]
+WHERE [p].[conversation_id] = @__conversation_id_0
+2025-04-27 09:07:46.842 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType17`1[[System.Collections.Generic.List`1[[server.Models.Participants, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-04-27 09:07:46.843 +07:00 [INF] Executed action server.Controllers.ParticipantController.GetParticipants (Message_app) in 7.0706ms
+2025-04-27 09:07:46.843 +07:00 [INF] Executed endpoint 'server.Controllers.ParticipantController.GetParticipants (Message_app)'
+2025-04-27 09:07:46.843 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/api/Participant/get_participants/1 - 200 null application/json; charset=utf-8 8.6794ms
+2025-04-27 09:07:49.065 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/ws/chat?userId=5 - null null
+2025-04-27 09:07:49.065 +07:00 [INF] Executing endpoint '/ws/chat'
+2025-04-27 09:07:49.074 +07:00 [INF] Executed DbCommand (5ms) [Parameters=[@__client_UserId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[conversation_id]
+FROM [Participants] AS [p]
+WHERE [p].[user_id] = @__client_UserId_0 AND [p].[is_deleted] = CAST(0 AS bit)
+2025-04-27 09:07:54.946 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/ws/chat?userId=5 - null null
+2025-04-27 09:07:54.946 +07:00 [INF] Executing endpoint '/ws/chat'
+2025-04-27 09:07:54.999 +07:00 [INF] Executed DbCommand (9ms) [Parameters=[@__client_UserId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[conversation_id]
+FROM [Participants] AS [p]
+WHERE [p].[user_id] = @__client_UserId_0 AND [p].[is_deleted] = CAST(0 AS bit)
+2025-04-27 09:08:13.433 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/ws/chat?userId=2 - null null
+2025-04-27 09:08:13.435 +07:00 [INF] Executing endpoint '/ws/chat'
+2025-04-27 09:08:13.482 +07:00 [INF] Executed DbCommand (8ms) [Parameters=[@__client_UserId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[conversation_id]
+FROM [Participants] AS [p]
+WHERE [p].[user_id] = @__client_UserId_0 AND [p].[is_deleted] = CAST(0 AS bit)
+2025-04-27 09:09:00.076 +07:00 [INF] Executed endpoint '/ws/chat'
+2025-04-27 09:09:00.076 +07:00 [INF] Executed endpoint '/ws/chat'
+2025-04-27 09:09:00.076 +07:00 [INF] Executed endpoint '/ws/chat'
+2025-04-27 09:09:00.076 +07:00 [INF] Executed endpoint '/ws/chat'
+2025-04-27 09:09:00.080 +07:00 [ERR] An unhandled exception has occurred while executing the request.
+System.Net.WebSockets.WebSocketException (0x80004005): The remote party closed the WebSocket connection without completing the close handshake.
+   at System.Net.WebSockets.ManagedWebSocket.ThrowEOFUnexpected()
+   at System.Net.WebSockets.ManagedWebSocket.EnsureBufferContainsAsync(Int32 minimumRequiredBytes, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.WebSockets.ManagedWebSocket.ReceiveAsyncPrivate[TResult](Memory`1 payloadBuffer, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.Threading.Tasks.ValueTask`1.ValueTaskSourceAsTask.<>c.<.cctor>b__4_0(Object state)
+--- End of stack trace from previous location ---
+   at server.Services.WebSocketService.webSocket.Receiver(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 108
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 91
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 89
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-04-27 09:09:00.079 +07:00 [ERR] An unhandled exception has occurred while executing the request.
+System.Net.WebSockets.WebSocketException (0x80004005): The remote party closed the WebSocket connection without completing the close handshake.
+   at System.Net.WebSockets.ManagedWebSocket.ThrowEOFUnexpected()
+   at System.Net.WebSockets.ManagedWebSocket.EnsureBufferContainsAsync(Int32 minimumRequiredBytes, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.WebSockets.ManagedWebSocket.ReceiveAsyncPrivate[TResult](Memory`1 payloadBuffer, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.Threading.Tasks.ValueTask`1.ValueTaskSourceAsTask.<>c.<.cctor>b__4_0(Object state)
+--- End of stack trace from previous location ---
+   at server.Services.WebSocketService.webSocket.Receiver(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 108
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 91
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 89
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-04-27 09:09:00.080 +07:00 [ERR] An unhandled exception has occurred while executing the request.
+System.Net.WebSockets.WebSocketException (0x80004005): The remote party closed the WebSocket connection without completing the close handshake.
+   at System.Net.WebSockets.ManagedWebSocket.ThrowEOFUnexpected()
+   at System.Net.WebSockets.ManagedWebSocket.EnsureBufferContainsAsync(Int32 minimumRequiredBytes, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.WebSockets.ManagedWebSocket.ReceiveAsyncPrivate[TResult](Memory`1 payloadBuffer, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.Threading.Tasks.ValueTask`1.ValueTaskSourceAsTask.<>c.<.cctor>b__4_0(Object state)
+--- End of stack trace from previous location ---
+   at server.Services.WebSocketService.webSocket.Receiver(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 108
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 91
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 89
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-04-27 09:09:00.080 +07:00 [ERR] An unhandled exception has occurred while executing the request.
+System.Net.WebSockets.WebSocketException (0x80004005): The remote party closed the WebSocket connection without completing the close handshake.
+   at System.Net.WebSockets.ManagedWebSocket.ThrowEOFUnexpected()
+   at System.Net.WebSockets.ManagedWebSocket.EnsureBufferContainsAsync(Int32 minimumRequiredBytes, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.WebSockets.ManagedWebSocket.ReceiveAsyncPrivate[TResult](Memory`1 payloadBuffer, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.Threading.Tasks.ValueTask`1.ValueTaskSourceAsTask.<>c.<.cctor>b__4_0(Object state)
+--- End of stack trace from previous location ---
+   at server.Services.WebSocketService.webSocket.Receiver(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 108
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 91
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 89
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-04-27 09:09:00.150 +07:00 [WRN] The response has already started, the error page middleware will not be executed.
+2025-04-27 09:09:00.153 +07:00 [WRN] The response has already started, the error page middleware will not be executed.
+2025-04-27 09:09:00.152 +07:00 [WRN] The response has already started, the error page middleware will not be executed.
+2025-04-27 09:09:00.152 +07:00 [WRN] The response has already started, the error page middleware will not be executed.
+2025-04-27 09:09:00.156 +07:00 [ERR] Connection id "0HNC55VLJSUFG", Request id "0HNC55VLJSUFG:00000001": An unhandled exception was thrown by the application.
+System.Net.WebSockets.WebSocketException (0x80004005): The remote party closed the WebSocket connection without completing the close handshake.
+   at System.Net.WebSockets.ManagedWebSocket.ThrowEOFUnexpected()
+   at System.Net.WebSockets.ManagedWebSocket.EnsureBufferContainsAsync(Int32 minimumRequiredBytes, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.WebSockets.ManagedWebSocket.ReceiveAsyncPrivate[TResult](Memory`1 payloadBuffer, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.Threading.Tasks.ValueTask`1.ValueTaskSourceAsTask.<>c.<.cctor>b__4_0(Object state)
+--- End of stack trace from previous location ---
+   at server.Services.WebSocketService.webSocket.Receiver(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 108
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 91
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 89
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Watch.BrowserRefresh.BrowserRefreshMiddleware.InvokeAsync(HttpContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+2025-04-27 09:09:00.156 +07:00 [ERR] Connection id "0HNC55VLJSUFL", Request id "0HNC55VLJSUFL:00000001": An unhandled exception was thrown by the application.
+System.Net.WebSockets.WebSocketException (0x80004005): The remote party closed the WebSocket connection without completing the close handshake.
+   at System.Net.WebSockets.ManagedWebSocket.ThrowEOFUnexpected()
+   at System.Net.WebSockets.ManagedWebSocket.EnsureBufferContainsAsync(Int32 minimumRequiredBytes, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.WebSockets.ManagedWebSocket.ReceiveAsyncPrivate[TResult](Memory`1 payloadBuffer, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.Threading.Tasks.ValueTask`1.ValueTaskSourceAsTask.<>c.<.cctor>b__4_0(Object state)
+--- End of stack trace from previous location ---
+   at server.Services.WebSocketService.webSocket.Receiver(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 108
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 91
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 89
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Watch.BrowserRefresh.BrowserRefreshMiddleware.InvokeAsync(HttpContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+2025-04-27 09:09:00.156 +07:00 [ERR] Connection id "0HNC55VLJSUFH", Request id "0HNC55VLJSUFH:00000001": An unhandled exception was thrown by the application.
+System.Net.WebSockets.WebSocketException (0x80004005): The remote party closed the WebSocket connection without completing the close handshake.
+   at System.Net.WebSockets.ManagedWebSocket.ThrowEOFUnexpected()
+   at System.Net.WebSockets.ManagedWebSocket.EnsureBufferContainsAsync(Int32 minimumRequiredBytes, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.WebSockets.ManagedWebSocket.ReceiveAsyncPrivate[TResult](Memory`1 payloadBuffer, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.Threading.Tasks.ValueTask`1.ValueTaskSourceAsTask.<>c.<.cctor>b__4_0(Object state)
+--- End of stack trace from previous location ---
+   at server.Services.WebSocketService.webSocket.Receiver(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 108
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 91
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 89
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Watch.BrowserRefresh.BrowserRefreshMiddleware.InvokeAsync(HttpContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+2025-04-27 09:09:00.156 +07:00 [ERR] Connection id "0HNC55VLJSUFM", Request id "0HNC55VLJSUFM:00000001": An unhandled exception was thrown by the application.
+System.Net.WebSockets.WebSocketException (0x80004005): The remote party closed the WebSocket connection without completing the close handshake.
+   at System.Net.WebSockets.ManagedWebSocket.ThrowEOFUnexpected()
+   at System.Net.WebSockets.ManagedWebSocket.EnsureBufferContainsAsync(Int32 minimumRequiredBytes, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.WebSockets.ManagedWebSocket.ReceiveAsyncPrivate[TResult](Memory`1 payloadBuffer, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.Threading.Tasks.ValueTask`1.ValueTaskSourceAsTask.<>c.<.cctor>b__4_0(Object state)
+--- End of stack trace from previous location ---
+   at server.Services.WebSocketService.webSocket.Receiver(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 108
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 91
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 89
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Watch.BrowserRefresh.BrowserRefreshMiddleware.InvokeAsync(HttpContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+2025-04-27 09:09:00.160 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/ws/chat?userId=5 - 101 null null 76314.4092ms
+2025-04-27 09:09:00.161 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/ws/chat?userId=5 - 101 null null 71096.6788ms
+2025-04-27 09:09:00.164 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/ws/chat?userId=5 - 101 null null 73521.5693ms
+2025-04-27 09:09:00.166 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/ws/chat?userId=5 - 101 null null 65220.1812ms
+2025-04-27 09:10:02.354 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Auth/login - null null
+2025-04-27 09:10:02.356 +07:00 [INF] CORS policy execution successful.
+2025-04-27 09:10:02.359 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Auth/login - 204 null null 4.9561ms
+2025-04-27 09:10:02.362 +07:00 [INF] Request starting HTTP/1.1 POST http://localhost:5053/api/Auth/login - application/json 53
+2025-04-27 09:10:02.362 +07:00 [INF] CORS policy execution successful.
+2025-04-27 09:10:02.364 +07:00 [INF] CORS policy execution successful.
+2025-04-27 09:10:02.364 +07:00 [INF] Executing endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-04-27 09:10:02.364 +07:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(server.DTO.AuthDTO.LoginDTO) on controller Message_app.Controllers.AuthController (Message_app).
+2025-04-27 09:10:02.371 +07:00 [INF] Executed DbCommand (5ms) [Parameters=[@__email_0='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[email] = @__email_0
+2025-04-27 09:10:02.372 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.DTO.AuthDTO.LoginRespose'.
+2025-04-27 09:10:02.374 +07:00 [INF] Executed action Message_app.Controllers.AuthController.Login (Message_app) in 9.3936ms
+2025-04-27 09:10:02.374 +07:00 [INF] Executed endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-04-27 09:10:02.374 +07:00 [INF] Request finished HTTP/1.1 POST http://localhost:5053/api/Auth/login - 200 null application/json; charset=utf-8 12.2527ms
+2025-04-27 09:10:02.579 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_conversations/5 - null null
+2025-04-27 09:10:02.579 +07:00 [INF] CORS policy execution successful.
+2025-04-27 09:10:02.580 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_conversations/5 - 204 null null 0.5817ms
+2025-04-27 09:10:02.581 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_conversations/5 - null null
+2025-04-27 09:10:02.581 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Conversation/get_conversations/5 - null null
+2025-04-27 09:10:02.581 +07:00 [INF] CORS policy execution successful.
+2025-04-27 09:10:02.581 +07:00 [INF] CORS policy execution successful.
+2025-04-27 09:10:02.582 +07:00 [INF] CORS policy execution successful.
+2025-04-27 09:10:02.582 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-04-27 09:10:02.582 +07:00 [INF] Route matched with {action = "GetConversations", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetConversations(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-04-27 09:10:02.582 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_conversations/5 - 204 null null 1.2745ms
+2025-04-27 09:10:02.583 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.DTO.ConversationDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-04-27 09:10:02.584 +07:00 [INF] Executed action server.Controllers.ConversationController.GetConversations (Message_app) in 1.7261ms
+2025-04-27 09:10:02.585 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-04-27 09:10:02.585 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Conversation/get_conversations/5 - 200 null application/json; charset=utf-8 4.0412ms
+2025-04-27 09:10:02.586 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Conversation/get_conversations/5 - null null
+2025-04-27 09:10:02.586 +07:00 [INF] CORS policy execution successful.
+2025-04-27 09:10:02.586 +07:00 [INF] CORS policy execution successful.
+2025-04-27 09:10:02.586 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-04-27 09:10:02.587 +07:00 [INF] Route matched with {action = "GetConversations", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetConversations(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-04-27 09:10:02.589 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.DTO.ConversationDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-04-27 09:10:02.590 +07:00 [INF] Executed action server.Controllers.ConversationController.GetConversations (Message_app) in 3.1607ms
+2025-04-27 09:10:02.590 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-04-27 09:10:02.591 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Conversation/get_conversations/5 - 200 null application/json; charset=utf-8 4.9044ms
+2025-04-27 09:10:02.688 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/ws/chat?userId=5 - null null
+2025-04-27 09:10:02.688 +07:00 [INF] CORS policy execution successful.
+2025-04-27 09:10:02.688 +07:00 [INF] CORS policy execution successful.
+2025-04-27 09:10:02.688 +07:00 [INF] Executing endpoint '/ws/chat'
+2025-04-27 09:10:02.697 +07:00 [INF] Executed DbCommand (4ms) [Parameters=[@__client_UserId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[conversation_id]
+FROM [Participants] AS [p]
+WHERE [p].[user_id] = @__client_UserId_0 AND [p].[is_deleted] = CAST(0 AS bit)
+2025-04-27 09:10:04.470 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/ws/chat?userId=5 - null null
+2025-04-27 09:10:04.470 +07:00 [INF] CORS policy execution successful.
+2025-04-27 09:10:04.470 +07:00 [INF] CORS policy execution successful.
+2025-04-27 09:10:04.470 +07:00 [INF] Executing endpoint '/ws/chat'
+2025-04-27 09:10:04.567 +07:00 [INF] Executed DbCommand (4ms) [Parameters=[@__client_UserId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[conversation_id]
+FROM [Participants] AS [p]
+WHERE [p].[user_id] = @__client_UserId_0 AND [p].[is_deleted] = CAST(0 AS bit)
+2025-04-27 09:10:04.567 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Message/getMessages/1/5 - null null
+2025-04-27 09:10:04.567 +07:00 [INF] CORS policy execution successful.
+2025-04-27 09:10:04.567 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Message/getMessages/1/5 - 204 null null 0.2362ms
+2025-04-27 09:10:04.569 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Message/getMessages/1/5 - null null
+2025-04-27 09:10:04.569 +07:00 [INF] CORS policy execution successful.
+2025-04-27 09:10:04.569 +07:00 [INF] CORS policy execution successful.
+2025-04-27 09:10:04.570 +07:00 [INF] Executing endpoint 'server.Controllers.MessageController.GetMessages (Message_app)'
+2025-04-27 09:10:04.570 +07:00 [INF] Route matched with {action = "GetMessages", controller = "Message"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetMessages(Int32, Int32) on controller server.Controllers.MessageController (Message_app).
+2025-04-27 09:10:04.576 +07:00 [INF] Retrieved 6 messages from Redis for conversation 1
+2025-04-27 09:10:04.576 +07:00 [INF] Retrieved 6 messages from Redis for conversation 1 and user 5
+2025-04-27 09:10:04.576 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.DTO.MessageWithAttachment, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-04-27 09:10:04.576 +07:00 [INF] Executed action server.Controllers.MessageController.GetMessages (Message_app) in 6.1575ms
+2025-04-27 09:10:04.576 +07:00 [INF] Executed endpoint 'server.Controllers.MessageController.GetMessages (Message_app)'
+2025-04-27 09:10:04.576 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Message/getMessages/1/5 - 200 null application/json; charset=utf-8 7.1571ms
+2025-04-27 09:10:04.593 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_first_conversation/1 - null null
+2025-04-27 09:10:04.594 +07:00 [INF] CORS policy execution successful.
+2025-04-27 09:10:04.594 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_first_conversation/1 - 204 null null 0.2554ms
+2025-04-27 09:10:04.595 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Conversation/get_first_conversation/1 - null null
+2025-04-27 09:10:04.595 +07:00 [INF] CORS policy execution successful.
+2025-04-27 09:10:04.595 +07:00 [INF] CORS policy execution successful.
+2025-04-27 09:10:04.596 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetFirstConversation (Message_app)'
+2025-04-27 09:10:04.596 +07:00 [INF] Route matched with {action = "GetFirstConversation", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetFirstConversation(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-04-27 09:10:04.600 +07:00 [INF] Executed DbCommand (3ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [c].[id], [c].[created_at], [c].[is_group], [c].[lastMessage], [c].[lastMessageSender], [c].[lastMessageTime], [c].[name]
+FROM [Conversations] AS [c]
+WHERE [c].[id] = @__p_0
+2025-04-27 09:10:04.600 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.Models.Conversation'.
+2025-04-27 09:10:04.601 +07:00 [INF] Executed action server.Controllers.ConversationController.GetFirstConversation (Message_app) in 4.816ms
+2025-04-27 09:10:04.601 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetFirstConversation (Message_app)'
+2025-04-27 09:10:04.601 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Conversation/get_first_conversation/1 - 200 null application/json; charset=utf-8 5.7065ms
+2025-04-27 09:10:04.616 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Participant/get_participants/1 - null null
+2025-04-27 09:10:04.616 +07:00 [INF] CORS policy execution successful.
+2025-04-27 09:10:04.617 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Participant/get_participants/1 - 204 null null 0.2563ms
+2025-04-27 09:10:04.618 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Participant/get_participants/1 - null null
+2025-04-27 09:10:04.618 +07:00 [INF] CORS policy execution successful.
+2025-04-27 09:10:04.618 +07:00 [INF] CORS policy execution successful.
+2025-04-27 09:10:04.619 +07:00 [INF] Executing endpoint 'server.Controllers.ParticipantController.GetParticipants (Message_app)'
+2025-04-27 09:10:04.619 +07:00 [INF] Route matched with {action = "GetParticipants", controller = "Participant"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetParticipants(Int32) on controller server.Controllers.ParticipantController (Message_app).
+2025-04-27 09:10:04.623 +07:00 [INF] Executed DbCommand (3ms) [Parameters=[@__conversation_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[id], [p].[adder], [p].[conversation_id], [p].[is_deleted], [p].[joined_at], [p].[name], [p].[role], [p].[user_id]
+FROM [Participants] AS [p]
+WHERE [p].[conversation_id] = @__conversation_id_0
+2025-04-27 09:10:04.624 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType17`1[[System.Collections.Generic.List`1[[server.Models.Participants, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-04-27 09:10:04.624 +07:00 [INF] Executed action server.Controllers.ParticipantController.GetParticipants (Message_app) in 4.8523ms
+2025-04-27 09:10:04.624 +07:00 [INF] Executed endpoint 'server.Controllers.ParticipantController.GetParticipants (Message_app)'
+2025-04-27 09:10:04.624 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Participant/get_participants/1 - 200 null application/json; charset=utf-8 5.9755ms
+2025-04-27 09:10:10.782 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/ws/chat?userId=5 - null null
+2025-04-27 09:10:10.782 +07:00 [INF] CORS policy execution successful.
+2025-04-27 09:10:10.783 +07:00 [INF] CORS policy execution successful.
+2025-04-27 09:10:10.784 +07:00 [INF] Executing endpoint '/ws/chat'
+2025-04-27 09:10:10.807 +07:00 [INF] Executed DbCommand (6ms) [Parameters=[@__client_UserId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[conversation_id]
+FROM [Participants] AS [p]
+WHERE [p].[user_id] = @__client_UserId_0 AND [p].[is_deleted] = CAST(0 AS bit)
+2025-04-27 09:32:17.086 +07:00 [INF] Executed endpoint '/ws/chat'
+2025-04-27 09:32:17.086 +07:00 [INF] Executed endpoint '/ws/chat'
+2025-04-27 09:32:17.086 +07:00 [INF] Executed endpoint '/ws/chat'
+2025-04-27 09:32:17.086 +07:00 [ERR] An unhandled exception has occurred while executing the request.
+System.Net.WebSockets.WebSocketException (0x80004005): The remote party closed the WebSocket connection without completing the close handshake.
+ ---> Microsoft.AspNetCore.Connections.ConnectionResetException: An existing connection was forcibly closed by the remote host.
+ ---> System.Net.Sockets.SocketException (10054): An existing connection was forcibly closed by the remote host.
+   --- End of inner exception stack trace ---
+   at System.IO.Pipelines.Pipe.GetReadAsyncResult()
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.Http1UpgradeMessageBody.ReadAsyncInternalAwaited(ValueTask`1 readTask, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpRequestStream.ReadAsyncInternal(Memory`1 destination, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.IO.Stream.ReadAtLeastAsyncCore(Memory`1 buffer, Int32 minimumBytes, Boolean throwOnEndOfStream, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.Net.WebSockets.ManagedWebSocket.EnsureBufferContainsAsync(Int32 minimumRequiredBytes, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.WebSockets.ManagedWebSocket.ReceiveAsyncPrivate[TResult](Memory`1 payloadBuffer, CancellationToken cancellationToken)
+   at System.Net.WebSockets.ManagedWebSocket.ReceiveAsyncPrivate[TResult](Memory`1 payloadBuffer, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.Threading.Tasks.ValueTask`1.ValueTaskSourceAsTask.<>c.<.cctor>b__4_0(Object state)
+--- End of stack trace from previous location ---
+   at server.Services.WebSocketService.webSocket.Receiver(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 108
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 91
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 89
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-04-27 09:32:17.086 +07:00 [ERR] An unhandled exception has occurred while executing the request.
+System.Net.WebSockets.WebSocketException (0x80004005): The remote party closed the WebSocket connection without completing the close handshake.
+ ---> Microsoft.AspNetCore.Connections.ConnectionResetException: An existing connection was forcibly closed by the remote host.
+ ---> System.Net.Sockets.SocketException (10054): An existing connection was forcibly closed by the remote host.
+   --- End of inner exception stack trace ---
+   at System.IO.Pipelines.Pipe.GetReadAsyncResult()
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.Http1UpgradeMessageBody.ReadAsyncInternalAwaited(ValueTask`1 readTask, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpRequestStream.ReadAsyncInternal(Memory`1 destination, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.IO.Stream.ReadAtLeastAsyncCore(Memory`1 buffer, Int32 minimumBytes, Boolean throwOnEndOfStream, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.Net.WebSockets.ManagedWebSocket.EnsureBufferContainsAsync(Int32 minimumRequiredBytes, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.WebSockets.ManagedWebSocket.ReceiveAsyncPrivate[TResult](Memory`1 payloadBuffer, CancellationToken cancellationToken)
+   at System.Net.WebSockets.ManagedWebSocket.ReceiveAsyncPrivate[TResult](Memory`1 payloadBuffer, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.Threading.Tasks.ValueTask`1.ValueTaskSourceAsTask.<>c.<.cctor>b__4_0(Object state)
+--- End of stack trace from previous location ---
+   at server.Services.WebSocketService.webSocket.Receiver(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 108
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 91
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 89
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-04-27 09:32:17.086 +07:00 [ERR] An unhandled exception has occurred while executing the request.
+System.Net.WebSockets.WebSocketException (0x80004005): The remote party closed the WebSocket connection without completing the close handshake.
+ ---> Microsoft.AspNetCore.Connections.ConnectionResetException: An existing connection was forcibly closed by the remote host.
+ ---> System.Net.Sockets.SocketException (10054): An existing connection was forcibly closed by the remote host.
+   --- End of inner exception stack trace ---
+   at System.IO.Pipelines.Pipe.GetReadAsyncResult()
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.Http1UpgradeMessageBody.ReadAsyncInternalAwaited(ValueTask`1 readTask, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpRequestStream.ReadAsyncInternal(Memory`1 destination, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.IO.Stream.ReadAtLeastAsyncCore(Memory`1 buffer, Int32 minimumBytes, Boolean throwOnEndOfStream, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.Net.WebSockets.ManagedWebSocket.EnsureBufferContainsAsync(Int32 minimumRequiredBytes, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.WebSockets.ManagedWebSocket.ReceiveAsyncPrivate[TResult](Memory`1 payloadBuffer, CancellationToken cancellationToken)
+   at System.Net.WebSockets.ManagedWebSocket.ReceiveAsyncPrivate[TResult](Memory`1 payloadBuffer, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.Threading.Tasks.ValueTask`1.ValueTaskSourceAsTask.<>c.<.cctor>b__4_0(Object state)
+--- End of stack trace from previous location ---
+   at server.Services.WebSocketService.webSocket.Receiver(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 108
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 91
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 89
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-04-27 09:32:17.092 +07:00 [WRN] The response has already started, the error page middleware will not be executed.
+2025-04-27 09:32:17.099 +07:00 [WRN] The response has already started, the error page middleware will not be executed.
+2025-04-27 09:32:17.093 +07:00 [WRN] The response has already started, the error page middleware will not be executed.
+2025-04-27 09:32:17.099 +07:00 [ERR] Connection id "0HNC55VLJSUF3", Request id "0HNC55VLJSUF3:00000001": An unhandled exception was thrown by the application.
+System.Net.WebSockets.WebSocketException (0x80004005): The remote party closed the WebSocket connection without completing the close handshake.
+ ---> Microsoft.AspNetCore.Connections.ConnectionResetException: An existing connection was forcibly closed by the remote host.
+ ---> System.Net.Sockets.SocketException (10054): An existing connection was forcibly closed by the remote host.
+   --- End of inner exception stack trace ---
+   at System.IO.Pipelines.Pipe.GetReadAsyncResult()
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.Http1UpgradeMessageBody.ReadAsyncInternalAwaited(ValueTask`1 readTask, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpRequestStream.ReadAsyncInternal(Memory`1 destination, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.IO.Stream.ReadAtLeastAsyncCore(Memory`1 buffer, Int32 minimumBytes, Boolean throwOnEndOfStream, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.Net.WebSockets.ManagedWebSocket.EnsureBufferContainsAsync(Int32 minimumRequiredBytes, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.WebSockets.ManagedWebSocket.ReceiveAsyncPrivate[TResult](Memory`1 payloadBuffer, CancellationToken cancellationToken)
+   at System.Net.WebSockets.ManagedWebSocket.ReceiveAsyncPrivate[TResult](Memory`1 payloadBuffer, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.Threading.Tasks.ValueTask`1.ValueTaskSourceAsTask.<>c.<.cctor>b__4_0(Object state)
+--- End of stack trace from previous location ---
+   at server.Services.WebSocketService.webSocket.Receiver(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 108
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 91
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 89
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Watch.BrowserRefresh.BrowserRefreshMiddleware.InvokeAsync(HttpContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+2025-04-27 09:32:17.099 +07:00 [ERR] Connection id "0HNC55VLJSUF4", Request id "0HNC55VLJSUF4:00000001": An unhandled exception was thrown by the application.
+System.Net.WebSockets.WebSocketException (0x80004005): The remote party closed the WebSocket connection without completing the close handshake.
+ ---> Microsoft.AspNetCore.Connections.ConnectionResetException: An existing connection was forcibly closed by the remote host.
+ ---> System.Net.Sockets.SocketException (10054): An existing connection was forcibly closed by the remote host.
+   --- End of inner exception stack trace ---
+   at System.IO.Pipelines.Pipe.GetReadAsyncResult()
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.Http1UpgradeMessageBody.ReadAsyncInternalAwaited(ValueTask`1 readTask, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpRequestStream.ReadAsyncInternal(Memory`1 destination, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.IO.Stream.ReadAtLeastAsyncCore(Memory`1 buffer, Int32 minimumBytes, Boolean throwOnEndOfStream, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.Net.WebSockets.ManagedWebSocket.EnsureBufferContainsAsync(Int32 minimumRequiredBytes, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.WebSockets.ManagedWebSocket.ReceiveAsyncPrivate[TResult](Memory`1 payloadBuffer, CancellationToken cancellationToken)
+   at System.Net.WebSockets.ManagedWebSocket.ReceiveAsyncPrivate[TResult](Memory`1 payloadBuffer, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.Threading.Tasks.ValueTask`1.ValueTaskSourceAsTask.<>c.<.cctor>b__4_0(Object state)
+--- End of stack trace from previous location ---
+   at server.Services.WebSocketService.webSocket.Receiver(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 108
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 91
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 89
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Watch.BrowserRefresh.BrowserRefreshMiddleware.InvokeAsync(HttpContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+2025-04-27 09:32:17.100 +07:00 [ERR] Connection id "0HNC55VLJSUFN", Request id "0HNC55VLJSUFN:00000001": An unhandled exception was thrown by the application.
+System.Net.WebSockets.WebSocketException (0x80004005): The remote party closed the WebSocket connection without completing the close handshake.
+ ---> Microsoft.AspNetCore.Connections.ConnectionResetException: An existing connection was forcibly closed by the remote host.
+ ---> System.Net.Sockets.SocketException (10054): An existing connection was forcibly closed by the remote host.
+   --- End of inner exception stack trace ---
+   at System.IO.Pipelines.Pipe.GetReadAsyncResult()
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.Http1UpgradeMessageBody.ReadAsyncInternalAwaited(ValueTask`1 readTask, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpRequestStream.ReadAsyncInternal(Memory`1 destination, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.IO.Stream.ReadAtLeastAsyncCore(Memory`1 buffer, Int32 minimumBytes, Boolean throwOnEndOfStream, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.Net.WebSockets.ManagedWebSocket.EnsureBufferContainsAsync(Int32 minimumRequiredBytes, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.WebSockets.ManagedWebSocket.ReceiveAsyncPrivate[TResult](Memory`1 payloadBuffer, CancellationToken cancellationToken)
+   at System.Net.WebSockets.ManagedWebSocket.ReceiveAsyncPrivate[TResult](Memory`1 payloadBuffer, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.Threading.Tasks.ValueTask`1.ValueTaskSourceAsTask.<>c.<.cctor>b__4_0(Object state)
+--- End of stack trace from previous location ---
+   at server.Services.WebSocketService.webSocket.Receiver(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 108
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 91
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 89
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Watch.BrowserRefresh.BrowserRefreshMiddleware.InvokeAsync(HttpContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+2025-04-27 09:32:17.106 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/ws/chat?userId=2 - 101 null null 1632347.4313ms
+2025-04-27 09:32:17.114 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/ws/chat?userId=2 - 101 null null 1443680.761ms
+2025-04-27 09:32:17.112 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/ws/chat?userId=2 - 101 null null 1622379.5673ms
+2025-04-27 09:46:16.715 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/ws/chat?userId=2 - null null
+2025-04-27 09:46:16.716 +07:00 [INF] Executing endpoint '/ws/chat'
+2025-04-27 09:46:16.879 +07:00 [INF] Executed DbCommand (20ms) [Parameters=[@__client_UserId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[conversation_id]
+FROM [Participants] AS [p]
+WHERE [p].[user_id] = @__client_UserId_0 AND [p].[is_deleted] = CAST(0 AS bit)
+2025-04-27 09:46:17.552 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/ws/chat?userId=2 - null null
+2025-04-27 09:46:17.553 +07:00 [INF] Executing endpoint '/ws/chat'
+2025-04-27 09:46:17.560 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/ws/chat?userId=2 - null null
+2025-04-27 09:46:17.560 +07:00 [INF] Executing endpoint '/ws/chat'
+2025-04-27 09:46:17.741 +07:00 [INF] Executed DbCommand (8ms) [Parameters=[@__client_UserId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[conversation_id]
+FROM [Participants] AS [p]
+WHERE [p].[user_id] = @__client_UserId_0 AND [p].[is_deleted] = CAST(0 AS bit)
+2025-04-27 09:46:17.749 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__client_UserId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[conversation_id]
+FROM [Participants] AS [p]
+WHERE [p].[user_id] = @__client_UserId_0 AND [p].[is_deleted] = CAST(0 AS bit)
+2025-04-27 09:48:18.056 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/api/friends/requests/received/2 - null null
+2025-04-27 09:48:18.119 +07:00 [INF] Executing endpoint 'server.Controllers.FriendsController.GetReceivedFriendRequests (Message_app)'
+2025-04-27 09:48:18.251 +07:00 [INF] Route matched with {action = "GetReceivedFriendRequests", controller = "Friends"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetReceivedFriendRequests(Int32) on controller server.Controllers.FriendsController (Message_app).
+2025-04-27 09:48:18.660 +07:00 [INF] Executed DbCommand (11ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [f].[Id], [f].[SenderId], [f].[ReceiverId], [u].[username] AS [Username], [u].[avatar_url] AS [AvatarUrl], [f].[Status], [f].[CreatedAt], 0 AS [MutualFriendsCount]
+FROM [FriendRequests] AS [f]
+INNER JOIN [Users] AS [u] ON [f].[SenderId] = [u].[id]
+WHERE [f].[ReceiverId] = @__userId_0 AND [f].[Status] = N'Pending'
+2025-04-27 09:48:18.663 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType8`2[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[FriendRequestDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-04-27 09:48:18.675 +07:00 [INF] Executed action server.Controllers.FriendsController.GetReceivedFriendRequests (Message_app) in 422.9188ms
+2025-04-27 09:48:18.675 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.GetReceivedFriendRequests (Message_app)'
+2025-04-27 09:48:18.675 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/api/friends/requests/received/2 - 200 null application/json; charset=utf-8 619.4573ms
+2025-04-27 09:48:36.073 +07:00 [INF] Executed endpoint '/ws/chat'
+2025-04-27 09:48:36.074 +07:00 [INF] Executed endpoint '/ws/chat'
+2025-04-27 09:48:36.075 +07:00 [INF] Executed endpoint '/ws/chat'
+2025-04-27 09:48:36.076 +07:00 [ERR] An unhandled exception has occurred while executing the request.
+System.Net.WebSockets.WebSocketException (0x80004005): The remote party closed the WebSocket connection without completing the close handshake.
+   at System.Net.WebSockets.ManagedWebSocket.ThrowEOFUnexpected()
+   at System.Net.WebSockets.ManagedWebSocket.EnsureBufferContainsAsync(Int32 minimumRequiredBytes, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.WebSockets.ManagedWebSocket.ReceiveAsyncPrivate[TResult](Memory`1 payloadBuffer, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.Threading.Tasks.ValueTask`1.ValueTaskSourceAsTask.<>c.<.cctor>b__4_0(Object state)
+--- End of stack trace from previous location ---
+   at server.Services.WebSocketService.webSocket.Receiver(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 108
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 91
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 89
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-04-27 09:48:36.075 +07:00 [ERR] An unhandled exception has occurred while executing the request.
+System.Net.WebSockets.WebSocketException (0x80004005): The remote party closed the WebSocket connection without completing the close handshake.
+   at System.Net.WebSockets.ManagedWebSocket.ThrowEOFUnexpected()
+   at System.Net.WebSockets.ManagedWebSocket.EnsureBufferContainsAsync(Int32 minimumRequiredBytes, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.WebSockets.ManagedWebSocket.ReceiveAsyncPrivate[TResult](Memory`1 payloadBuffer, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.Threading.Tasks.ValueTask`1.ValueTaskSourceAsTask.<>c.<.cctor>b__4_0(Object state)
+--- End of stack trace from previous location ---
+   at server.Services.WebSocketService.webSocket.Receiver(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 108
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 91
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 89
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-04-27 09:48:36.074 +07:00 [ERR] An unhandled exception has occurred while executing the request.
+System.Net.WebSockets.WebSocketException (0x80004005): The remote party closed the WebSocket connection without completing the close handshake.
+   at System.Net.WebSockets.ManagedWebSocket.ThrowEOFUnexpected()
+   at System.Net.WebSockets.ManagedWebSocket.EnsureBufferContainsAsync(Int32 minimumRequiredBytes, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.WebSockets.ManagedWebSocket.ReceiveAsyncPrivate[TResult](Memory`1 payloadBuffer, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.Threading.Tasks.ValueTask`1.ValueTaskSourceAsTask.<>c.<.cctor>b__4_0(Object state)
+--- End of stack trace from previous location ---
+   at server.Services.WebSocketService.webSocket.Receiver(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 108
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 91
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 89
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-04-27 09:48:36.079 +07:00 [WRN] The response has already started, the error page middleware will not be executed.
+2025-04-27 09:48:36.082 +07:00 [WRN] The response has already started, the error page middleware will not be executed.
+2025-04-27 09:48:36.080 +07:00 [WRN] The response has already started, the error page middleware will not be executed.
+2025-04-27 09:48:36.082 +07:00 [ERR] Connection id "0HNC55VLJSUFU", Request id "0HNC55VLJSUFU:00000001": An unhandled exception was thrown by the application.
+System.Net.WebSockets.WebSocketException (0x80004005): The remote party closed the WebSocket connection without completing the close handshake.
+   at System.Net.WebSockets.ManagedWebSocket.ThrowEOFUnexpected()
+   at System.Net.WebSockets.ManagedWebSocket.EnsureBufferContainsAsync(Int32 minimumRequiredBytes, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.WebSockets.ManagedWebSocket.ReceiveAsyncPrivate[TResult](Memory`1 payloadBuffer, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.Threading.Tasks.ValueTask`1.ValueTaskSourceAsTask.<>c.<.cctor>b__4_0(Object state)
+--- End of stack trace from previous location ---
+   at server.Services.WebSocketService.webSocket.Receiver(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 108
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 91
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 89
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Watch.BrowserRefresh.BrowserRefreshMiddleware.InvokeAsync(HttpContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+2025-04-27 09:48:36.082 +07:00 [ERR] Connection id "0HNC55VLJSUFT", Request id "0HNC55VLJSUFT:00000001": An unhandled exception was thrown by the application.
+System.Net.WebSockets.WebSocketException (0x80004005): The remote party closed the WebSocket connection without completing the close handshake.
+   at System.Net.WebSockets.ManagedWebSocket.ThrowEOFUnexpected()
+   at System.Net.WebSockets.ManagedWebSocket.EnsureBufferContainsAsync(Int32 minimumRequiredBytes, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.WebSockets.ManagedWebSocket.ReceiveAsyncPrivate[TResult](Memory`1 payloadBuffer, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.Threading.Tasks.ValueTask`1.ValueTaskSourceAsTask.<>c.<.cctor>b__4_0(Object state)
+--- End of stack trace from previous location ---
+   at server.Services.WebSocketService.webSocket.Receiver(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 108
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 91
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 89
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Watch.BrowserRefresh.BrowserRefreshMiddleware.InvokeAsync(HttpContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+2025-04-27 09:48:36.082 +07:00 [ERR] Connection id "0HNC55VLJSUFV", Request id "0HNC55VLJSUFV:00000001": An unhandled exception was thrown by the application.
+System.Net.WebSockets.WebSocketException (0x80004005): The remote party closed the WebSocket connection without completing the close handshake.
+   at System.Net.WebSockets.ManagedWebSocket.ThrowEOFUnexpected()
+   at System.Net.WebSockets.ManagedWebSocket.EnsureBufferContainsAsync(Int32 minimumRequiredBytes, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.WebSockets.ManagedWebSocket.ReceiveAsyncPrivate[TResult](Memory`1 payloadBuffer, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.Threading.Tasks.ValueTask`1.ValueTaskSourceAsTask.<>c.<.cctor>b__4_0(Object state)
+--- End of stack trace from previous location ---
+   at server.Services.WebSocketService.webSocket.Receiver(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 108
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 91
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 89
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Watch.BrowserRefresh.BrowserRefreshMiddleware.InvokeAsync(HttpContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+2025-04-27 09:48:36.087 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/ws/chat?userId=2 - 101 null null 138534.261ms
+2025-04-27 09:48:36.088 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/ws/chat?userId=2 - 101 null null 139372.5441ms
+2025-04-27 09:48:36.089 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/ws/chat?userId=2 - 101 null null 138529.6926ms
+2025-04-27 09:49:11.614 +07:00 [INF] Request starting HTTP/1.1 POST http://192.168.1.4:5053/api/Auth/login - application/json 57
+2025-04-27 09:49:11.615 +07:00 [INF] Executing endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-04-27 09:49:11.618 +07:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(server.DTO.AuthDTO.LoginDTO) on controller Message_app.Controllers.AuthController (Message_app).
+2025-04-27 09:49:11.688 +07:00 [INF] Executed DbCommand (11ms) [Parameters=[@__email_0='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[email] = @__email_0
+2025-04-27 09:49:11.692 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.DTO.AuthDTO.LoginRespose'.
+2025-04-27 09:49:11.692 +07:00 [INF] Executed action Message_app.Controllers.AuthController.Login (Message_app) in 74.2859ms
+2025-04-27 09:49:11.693 +07:00 [INF] Executed endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-04-27 09:49:11.693 +07:00 [INF] Request finished HTTP/1.1 POST http://192.168.1.4:5053/api/Auth/login - 200 null application/json; charset=utf-8 78.3906ms
+2025-04-27 09:49:12.939 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/api/Conversation/get_conversations/2 - null null
+2025-04-27 09:49:12.939 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/api/Conversation/get_conversations/2 - null null
+2025-04-27 09:49:12.939 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-04-27 09:49:12.939 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-04-27 09:49:12.940 +07:00 [INF] Route matched with {action = "GetConversations", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetConversations(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-04-27 09:49:12.940 +07:00 [INF] Route matched with {action = "GetConversations", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetConversations(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-04-27 09:49:12.950 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.DTO.ConversationDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-04-27 09:49:12.951 +07:00 [INF] Executed action server.Controllers.ConversationController.GetConversations (Message_app) in 10.8675ms
+2025-04-27 09:49:12.951 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-04-27 09:49:12.951 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/api/Conversation/get_conversations/2 - 200 null application/json; charset=utf-8 12.7752ms
+2025-04-27 09:49:12.951 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.DTO.ConversationDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-04-27 09:49:12.952 +07:00 [INF] Executed action server.Controllers.ConversationController.GetConversations (Message_app) in 12.1762ms
+2025-04-27 09:49:12.952 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-04-27 09:49:12.952 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/api/Conversation/get_conversations/2 - 200 null application/json; charset=utf-8 12.9969ms
+2025-04-27 09:49:13.447 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/ws/chat?userId=2 - null null
+2025-04-27 09:49:13.448 +07:00 [INF] Executing endpoint '/ws/chat'
+2025-04-27 09:49:13.571 +07:00 [INF] Executed DbCommand (5ms) [Parameters=[@__client_UserId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[conversation_id]
+FROM [Participants] AS [p]
+WHERE [p].[user_id] = @__client_UserId_0 AND [p].[is_deleted] = CAST(0 AS bit)
+2025-04-27 09:49:14.689 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/ws/chat?userId=2 - null null
+2025-04-27 09:49:14.690 +07:00 [INF] Executing endpoint '/ws/chat'
+2025-04-27 09:49:14.691 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/api/Message/getMessages/1/2 - null null
+2025-04-27 09:49:14.691 +07:00 [INF] Executing endpoint 'server.Controllers.MessageController.GetMessages (Message_app)'
+2025-04-27 09:49:14.691 +07:00 [INF] Route matched with {action = "GetMessages", controller = "Message"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetMessages(Int32, Int32) on controller server.Controllers.MessageController (Message_app).
+2025-04-27 09:49:14.722 +07:00 [INF] Executed DbCommand (10ms) [Parameters=[@__client_UserId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[conversation_id]
+FROM [Participants] AS [p]
+WHERE [p].[user_id] = @__client_UserId_0 AND [p].[is_deleted] = CAST(0 AS bit)
+2025-04-27 09:49:14.735 +07:00 [INF] Retrieved 33 messages from Redis for conversation 1
+2025-04-27 09:49:14.735 +07:00 [INF] Retrieved 33 messages from Redis for conversation 1 and user 2
+2025-04-27 09:49:14.735 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.DTO.MessageWithAttachment, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-04-27 09:49:14.737 +07:00 [INF] Executed action server.Controllers.MessageController.GetMessages (Message_app) in 45.6565ms
+2025-04-27 09:49:14.737 +07:00 [INF] Executed endpoint 'server.Controllers.MessageController.GetMessages (Message_app)'
+2025-04-27 09:49:14.737 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/api/Message/getMessages/1/2 - 200 null application/json; charset=utf-8 46.3471ms
+2025-04-27 09:49:14.983 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/api/Conversation/get_first_conversation/1 - null null
+2025-04-27 09:49:14.983 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetFirstConversation (Message_app)'
+2025-04-27 09:49:14.983 +07:00 [INF] Route matched with {action = "GetFirstConversation", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetFirstConversation(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-04-27 09:49:15.019 +07:00 [INF] Executed DbCommand (15ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [c].[id], [c].[created_at], [c].[is_group], [c].[lastMessage], [c].[lastMessageSender], [c].[lastMessageTime], [c].[name]
+FROM [Conversations] AS [c]
+WHERE [c].[id] = @__p_0
+2025-04-27 09:49:15.020 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.Models.Conversation'.
+2025-04-27 09:49:15.022 +07:00 [INF] Executed action server.Controllers.ConversationController.GetFirstConversation (Message_app) in 38.5873ms
+2025-04-27 09:49:15.022 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetFirstConversation (Message_app)'
+2025-04-27 09:49:15.022 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/api/Conversation/get_first_conversation/1 - 200 null application/json; charset=utf-8 39.4786ms
+2025-04-27 09:49:15.055 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/api/Participant/get_participants/1 - null null
+2025-04-27 09:49:15.055 +07:00 [INF] Executing endpoint 'server.Controllers.ParticipantController.GetParticipants (Message_app)'
+2025-04-27 09:49:15.055 +07:00 [INF] Route matched with {action = "GetParticipants", controller = "Participant"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetParticipants(Int32) on controller server.Controllers.ParticipantController (Message_app).
+2025-04-27 09:49:15.066 +07:00 [INF] Executed DbCommand (8ms) [Parameters=[@__conversation_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[id], [p].[adder], [p].[conversation_id], [p].[is_deleted], [p].[joined_at], [p].[name], [p].[role], [p].[user_id]
+FROM [Participants] AS [p]
+WHERE [p].[conversation_id] = @__conversation_id_0
+2025-04-27 09:49:15.067 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType17`1[[System.Collections.Generic.List`1[[server.Models.Participants, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-04-27 09:49:15.068 +07:00 [INF] Executed action server.Controllers.ParticipantController.GetParticipants (Message_app) in 12.5235ms
+2025-04-27 09:49:15.068 +07:00 [INF] Executed endpoint 'server.Controllers.ParticipantController.GetParticipants (Message_app)'
+2025-04-27 09:49:15.069 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/api/Participant/get_participants/1 - 200 null application/json; charset=utf-8 13.964ms
+2025-04-27 09:49:28.501 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/ws/chat?userId=2 - null null
+2025-04-27 09:49:28.501 +07:00 [INF] Executing endpoint '/ws/chat'
+2025-04-27 09:49:28.551 +07:00 [INF] Executed DbCommand (13ms) [Parameters=[@__client_UserId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[conversation_id]
+FROM [Participants] AS [p]
+WHERE [p].[user_id] = @__client_UserId_0 AND [p].[is_deleted] = CAST(0 AS bit)
+2025-04-27 09:51:46.843 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/api/Participant/get_participants/1 - null null
+2025-04-27 09:51:46.844 +07:00 [INF] Executing endpoint 'server.Controllers.ParticipantController.GetParticipants (Message_app)'
+2025-04-27 09:51:46.844 +07:00 [INF] Route matched with {action = "GetParticipants", controller = "Participant"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetParticipants(Int32) on controller server.Controllers.ParticipantController (Message_app).
+2025-04-27 09:51:46.854 +07:00 [INF] Executed DbCommand (7ms) [Parameters=[@__conversation_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[id], [p].[adder], [p].[conversation_id], [p].[is_deleted], [p].[joined_at], [p].[name], [p].[role], [p].[user_id]
+FROM [Participants] AS [p]
+WHERE [p].[conversation_id] = @__conversation_id_0
+2025-04-27 09:51:46.854 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType17`1[[System.Collections.Generic.List`1[[server.Models.Participants, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-04-27 09:51:46.854 +07:00 [INF] Executed action server.Controllers.ParticipantController.GetParticipants (Message_app) in 10.019ms
+2025-04-27 09:51:46.854 +07:00 [INF] Executed endpoint 'server.Controllers.ParticipantController.GetParticipants (Message_app)'
+2025-04-27 09:51:46.854 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/api/Participant/get_participants/1 - 200 null application/json; charset=utf-8 11.499ms
+2025-04-27 09:52:08.759 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/api/Conversation/get_conversations/2 - null null
+2025-04-27 09:52:08.759 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-04-27 09:52:08.768 +07:00 [INF] Route matched with {action = "GetConversations", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetConversations(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-04-27 09:52:08.772 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.DTO.ConversationDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-04-27 09:52:08.773 +07:00 [INF] Executed action server.Controllers.ConversationController.GetConversations (Message_app) in 5.1178ms
+2025-04-27 09:52:08.774 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-04-27 09:52:08.774 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/api/Conversation/get_conversations/2 - 200 null application/json; charset=utf-8 15.3638ms
+2025-04-27 09:57:40.603 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Participant/get_participants/1 - null null
+2025-04-27 09:57:40.605 +07:00 [INF] CORS policy execution successful.
+2025-04-27 09:57:40.607 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Participant/get_participants/1 - 204 null null 3.5491ms
+2025-04-27 09:57:40.609 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Participant/get_participants/1 - null null
+2025-04-27 09:57:40.611 +07:00 [INF] CORS policy execution successful.
+2025-04-27 09:57:40.611 +07:00 [INF] CORS policy execution successful.
+2025-04-27 09:57:40.611 +07:00 [INF] Executing endpoint 'server.Controllers.ParticipantController.GetParticipants (Message_app)'
+2025-04-27 09:57:40.611 +07:00 [INF] Route matched with {action = "GetParticipants", controller = "Participant"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetParticipants(Int32) on controller server.Controllers.ParticipantController (Message_app).
+2025-04-27 09:57:40.728 +07:00 [INF] Executed DbCommand (16ms) [Parameters=[@__conversation_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[id], [p].[adder], [p].[conversation_id], [p].[is_deleted], [p].[joined_at], [p].[name], [p].[role], [p].[user_id]
+FROM [Participants] AS [p]
+WHERE [p].[conversation_id] = @__conversation_id_0
+2025-04-27 09:57:40.729 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType17`1[[System.Collections.Generic.List`1[[server.Models.Participants, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-04-27 09:57:40.730 +07:00 [INF] Executed action server.Controllers.ParticipantController.GetParticipants (Message_app) in 118.2141ms
+2025-04-27 09:57:40.730 +07:00 [INF] Executed endpoint 'server.Controllers.ParticipantController.GetParticipants (Message_app)'
+2025-04-27 09:57:40.730 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Participant/get_participants/1 - 200 null application/json; charset=utf-8 120.6903ms
+2025-04-27 10:26:35.075 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/ws/chat?userId=2 - null null
+2025-04-27 10:26:35.075 +07:00 [INF] Executing endpoint '/ws/chat'
+2025-04-27 10:26:35.119 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/api/Message/getMessages/1/2 - null null
+2025-04-27 10:26:35.120 +07:00 [INF] Executing endpoint 'server.Controllers.MessageController.GetMessages (Message_app)'
+2025-04-27 10:26:35.120 +07:00 [INF] Route matched with {action = "GetMessages", controller = "Message"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetMessages(Int32, Int32) on controller server.Controllers.MessageController (Message_app).
+2025-04-27 10:26:35.134 +07:00 [INF] Retrieved 33 messages from Redis for conversation 1
+2025-04-27 10:26:35.134 +07:00 [INF] Retrieved 33 messages from Redis for conversation 1 and user 2
+2025-04-27 10:26:35.134 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.DTO.MessageWithAttachment, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-04-27 10:26:35.134 +07:00 [INF] Executed action server.Controllers.MessageController.GetMessages (Message_app) in 14.5644ms
+2025-04-27 10:26:35.134 +07:00 [INF] Executed endpoint 'server.Controllers.MessageController.GetMessages (Message_app)'
+2025-04-27 10:26:35.135 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/api/Message/getMessages/1/2 - 200 null application/json; charset=utf-8 15.1103ms
+2025-04-27 10:26:35.233 +07:00 [INF] Executed DbCommand (14ms) [Parameters=[@__client_UserId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[conversation_id]
+FROM [Participants] AS [p]
+WHERE [p].[user_id] = @__client_UserId_0 AND [p].[is_deleted] = CAST(0 AS bit)
+2025-04-27 10:26:35.253 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/api/Conversation/get_first_conversation/1 - null null
+2025-04-27 10:26:35.254 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetFirstConversation (Message_app)'
+2025-04-27 10:26:35.254 +07:00 [INF] Route matched with {action = "GetFirstConversation", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetFirstConversation(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-04-27 10:26:35.280 +07:00 [INF] Executed DbCommand (21ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [c].[id], [c].[created_at], [c].[is_group], [c].[lastMessage], [c].[lastMessageSender], [c].[lastMessageTime], [c].[name]
+FROM [Conversations] AS [c]
+WHERE [c].[id] = @__p_0
+2025-04-27 10:26:35.281 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.Models.Conversation'.
+2025-04-27 10:26:35.282 +07:00 [INF] Executed action server.Controllers.ConversationController.GetFirstConversation (Message_app) in 27.5152ms
+2025-04-27 10:26:35.282 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetFirstConversation (Message_app)'
+2025-04-27 10:26:35.282 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/api/Conversation/get_first_conversation/1 - 200 null application/json; charset=utf-8 28.4334ms
+2025-04-27 10:26:35.395 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/api/Participant/get_participants/1 - null null
+2025-04-27 10:26:35.395 +07:00 [INF] Executing endpoint 'server.Controllers.ParticipantController.GetParticipants (Message_app)'
+2025-04-27 10:26:35.395 +07:00 [INF] Route matched with {action = "GetParticipants", controller = "Participant"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetParticipants(Int32) on controller server.Controllers.ParticipantController (Message_app).
+2025-04-27 10:26:35.400 +07:00 [INF] Executed DbCommand (3ms) [Parameters=[@__conversation_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[id], [p].[adder], [p].[conversation_id], [p].[is_deleted], [p].[joined_at], [p].[name], [p].[role], [p].[user_id]
+FROM [Participants] AS [p]
+WHERE [p].[conversation_id] = @__conversation_id_0
+2025-04-27 10:26:35.401 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType17`1[[System.Collections.Generic.List`1[[server.Models.Participants, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-04-27 10:26:35.401 +07:00 [INF] Executed action server.Controllers.ParticipantController.GetParticipants (Message_app) in 5.8848ms
+2025-04-27 10:26:35.401 +07:00 [INF] Executed endpoint 'server.Controllers.ParticipantController.GetParticipants (Message_app)'
+2025-04-27 10:26:35.402 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/api/Participant/get_participants/1 - 200 null application/json; charset=utf-8 6.7645ms
+2025-04-27 10:26:47.459 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Auth/login - null null
+2025-04-27 10:26:47.460 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:26:47.460 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Auth/login - 204 null null 0.5999ms
+2025-04-27 10:26:47.461 +07:00 [INF] Request starting HTTP/1.1 POST http://localhost:5053/api/Auth/login - application/json 53
+2025-04-27 10:26:47.461 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:26:47.461 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:26:47.461 +07:00 [INF] Executing endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-04-27 10:26:47.461 +07:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(server.DTO.AuthDTO.LoginDTO) on controller Message_app.Controllers.AuthController (Message_app).
+2025-04-27 10:26:47.468 +07:00 [INF] Executed DbCommand (6ms) [Parameters=[@__email_0='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[email] = @__email_0
+2025-04-27 10:26:47.470 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.DTO.AuthDTO.LoginRespose'.
+2025-04-27 10:26:47.471 +07:00 [INF] Executed action Message_app.Controllers.AuthController.Login (Message_app) in 9.1953ms
+2025-04-27 10:26:47.472 +07:00 [INF] Executed endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-04-27 10:26:47.472 +07:00 [INF] Request finished HTTP/1.1 POST http://localhost:5053/api/Auth/login - 200 null application/json; charset=utf-8 10.9277ms
+2025-04-27 10:26:47.653 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_conversations/5 - null null
+2025-04-27 10:26:47.653 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:26:47.653 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_conversations/5 - 204 null null 0.4133ms
+2025-04-27 10:26:47.654 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_conversations/5 - null null
+2025-04-27 10:26:47.654 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:26:47.661 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_conversations/5 - 204 null null 6.2665ms
+2025-04-27 10:26:47.661 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Conversation/get_conversations/5 - null null
+2025-04-27 10:26:47.661 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:26:47.666 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:26:47.667 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-04-27 10:26:47.667 +07:00 [INF] Route matched with {action = "GetConversations", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetConversations(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-04-27 10:26:47.672 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.DTO.ConversationDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-04-27 10:26:47.678 +07:00 [INF] Executed action server.Controllers.ConversationController.GetConversations (Message_app) in 8.3294ms
+2025-04-27 10:26:47.678 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-04-27 10:26:47.678 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Conversation/get_conversations/5 - 200 null application/json; charset=utf-8 17.2556ms
+2025-04-27 10:26:47.681 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Conversation/get_conversations/5 - null null
+2025-04-27 10:26:47.681 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:26:47.682 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:26:47.682 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-04-27 10:26:47.682 +07:00 [INF] Route matched with {action = "GetConversations", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetConversations(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-04-27 10:26:47.683 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.DTO.ConversationDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-04-27 10:26:47.683 +07:00 [INF] Executed action server.Controllers.ConversationController.GetConversations (Message_app) in 1.1381ms
+2025-04-27 10:26:47.683 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-04-27 10:26:47.683 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Conversation/get_conversations/5 - 200 null application/json; charset=utf-8 2.2833ms
+2025-04-27 10:26:47.773 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/ws/chat?userId=5 - null null
+2025-04-27 10:26:47.773 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:26:47.773 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:26:47.773 +07:00 [INF] Executing endpoint '/ws/chat'
+2025-04-27 10:26:47.845 +07:00 [INF] Executed DbCommand (3ms) [Parameters=[@__client_UserId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[conversation_id]
+FROM [Participants] AS [p]
+WHERE [p].[user_id] = @__client_UserId_0 AND [p].[is_deleted] = CAST(0 AS bit)
+2025-04-27 10:26:56.137 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/ws/chat?userId=5 - null null
+2025-04-27 10:26:56.138 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:26:56.138 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:26:56.138 +07:00 [INF] Executing endpoint '/ws/chat'
+2025-04-27 10:26:56.241 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__client_UserId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[conversation_id]
+FROM [Participants] AS [p]
+WHERE [p].[user_id] = @__client_UserId_0 AND [p].[is_deleted] = CAST(0 AS bit)
+2025-04-27 10:26:56.246 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Message/getMessages/1/5 - null null
+2025-04-27 10:26:56.246 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:26:56.246 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Message/getMessages/1/5 - 204 null null 0.2684ms
+2025-04-27 10:26:56.248 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Message/getMessages/1/5 - null null
+2025-04-27 10:26:56.248 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:26:56.248 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:26:56.248 +07:00 [INF] Executing endpoint 'server.Controllers.MessageController.GetMessages (Message_app)'
+2025-04-27 10:26:56.248 +07:00 [INF] Route matched with {action = "GetMessages", controller = "Message"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetMessages(Int32, Int32) on controller server.Controllers.MessageController (Message_app).
+2025-04-27 10:26:56.252 +07:00 [INF] Retrieved 6 messages from Redis for conversation 1
+2025-04-27 10:26:56.252 +07:00 [INF] Retrieved 6 messages from Redis for conversation 1 and user 5
+2025-04-27 10:26:56.252 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.DTO.MessageWithAttachment, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-04-27 10:26:56.252 +07:00 [INF] Executed action server.Controllers.MessageController.GetMessages (Message_app) in 3.7305ms
+2025-04-27 10:26:56.252 +07:00 [INF] Executed endpoint 'server.Controllers.MessageController.GetMessages (Message_app)'
+2025-04-27 10:26:56.252 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Message/getMessages/1/5 - 200 null application/json; charset=utf-8 4.7712ms
+2025-04-27 10:26:56.272 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_first_conversation/1 - null null
+2025-04-27 10:26:56.272 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:26:56.272 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_first_conversation/1 - 204 null null 0.3865ms
+2025-04-27 10:26:56.274 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Conversation/get_first_conversation/1 - null null
+2025-04-27 10:26:56.274 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:26:56.274 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:26:56.274 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetFirstConversation (Message_app)'
+2025-04-27 10:26:56.274 +07:00 [INF] Route matched with {action = "GetFirstConversation", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetFirstConversation(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-04-27 10:26:56.281 +07:00 [INF] Executed DbCommand (3ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [c].[id], [c].[created_at], [c].[is_group], [c].[lastMessage], [c].[lastMessageSender], [c].[lastMessageTime], [c].[name]
+FROM [Conversations] AS [c]
+WHERE [c].[id] = @__p_0
+2025-04-27 10:26:56.282 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.Models.Conversation'.
+2025-04-27 10:26:56.282 +07:00 [INF] Executed action server.Controllers.ConversationController.GetFirstConversation (Message_app) in 8.1306ms
+2025-04-27 10:26:56.283 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetFirstConversation (Message_app)'
+2025-04-27 10:26:56.283 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Conversation/get_first_conversation/1 - 200 null application/json; charset=utf-8 8.9407ms
+2025-04-27 10:26:56.297 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Participant/get_participants/1 - null null
+2025-04-27 10:26:56.298 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:26:56.298 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Participant/get_participants/1 - 204 null null 0.2322ms
+2025-04-27 10:26:56.299 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Participant/get_participants/1 - null null
+2025-04-27 10:26:56.299 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:26:56.299 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:26:56.299 +07:00 [INF] Executing endpoint 'server.Controllers.ParticipantController.GetParticipants (Message_app)'
+2025-04-27 10:26:56.300 +07:00 [INF] Route matched with {action = "GetParticipants", controller = "Participant"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetParticipants(Int32) on controller server.Controllers.ParticipantController (Message_app).
+2025-04-27 10:26:56.304 +07:00 [INF] Executed DbCommand (3ms) [Parameters=[@__conversation_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[id], [p].[adder], [p].[conversation_id], [p].[is_deleted], [p].[joined_at], [p].[name], [p].[role], [p].[user_id]
+FROM [Participants] AS [p]
+WHERE [p].[conversation_id] = @__conversation_id_0
+2025-04-27 10:26:56.304 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType17`1[[System.Collections.Generic.List`1[[server.Models.Participants, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-04-27 10:26:56.304 +07:00 [INF] Executed action server.Controllers.ParticipantController.GetParticipants (Message_app) in 4.7776ms
+2025-04-27 10:26:56.304 +07:00 [INF] Executed endpoint 'server.Controllers.ParticipantController.GetParticipants (Message_app)'
+2025-04-27 10:26:56.305 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Participant/get_participants/1 - 200 null application/json; charset=utf-8 5.5403ms
+2025-04-27 10:27:09.449 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/ws/chat?userId=5 - null null
+2025-04-27 10:27:09.449 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:27:09.450 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:27:09.450 +07:00 [INF] Executing endpoint '/ws/chat'
+2025-04-27 10:27:09.460 +07:00 [INF] Executed DbCommand (4ms) [Parameters=[@__client_UserId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[conversation_id]
+FROM [Participants] AS [p]
+WHERE [p].[user_id] = @__client_UserId_0 AND [p].[is_deleted] = CAST(0 AS bit)
+2025-04-27 10:29:56.724 +07:00 [INF] Executed endpoint '/ws/chat'
+2025-04-27 10:29:56.725 +07:00 [ERR] An unhandled exception has occurred while executing the request.
+StackExchange.Redis.RedisServerException: WRONGTYPE Operation against a key holding the wrong kind of value
+   at server.Services.WebSocketService.webSocket.CleanupClient(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 455
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 93
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 89
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-04-27 10:29:56.730 +07:00 [WRN] The response has already started, the error page middleware will not be executed.
+2025-04-27 10:29:56.731 +07:00 [INF] Executed endpoint '/ws/chat'
+2025-04-27 10:29:56.732 +07:00 [ERR] An unhandled exception has occurred while executing the request.
+StackExchange.Redis.RedisServerException: WRONGTYPE Operation against a key holding the wrong kind of value
+   at server.Services.WebSocketService.webSocket.CleanupClient(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 455
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 93
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 89
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-04-27 10:29:56.733 +07:00 [WRN] The response has already started, the error page middleware will not be executed.
+2025-04-27 10:29:56.732 +07:00 [INF] Executed endpoint '/ws/chat'
+2025-04-27 10:29:56.733 +07:00 [ERR] An unhandled exception has occurred while executing the request.
+StackExchange.Redis.RedisServerException: WRONGTYPE Operation against a key holding the wrong kind of value
+   at server.Services.WebSocketService.webSocket.CleanupClient(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 455
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 93
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 89
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-04-27 10:29:56.731 +07:00 [ERR] Connection id "0HNC55VLJSUFR", Request id "0HNC55VLJSUFR:00000001": An unhandled exception was thrown by the application.
+StackExchange.Redis.RedisServerException: WRONGTYPE Operation against a key holding the wrong kind of value
+   at server.Services.WebSocketService.webSocket.CleanupClient(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 455
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 93
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 89
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Watch.BrowserRefresh.BrowserRefreshMiddleware.InvokeAsync(HttpContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+2025-04-27 10:29:56.734 +07:00 [WRN] The response has already started, the error page middleware will not be executed.
+2025-04-27 10:29:56.733 +07:00 [ERR] Connection id "0HNC55VLJSUFS", Request id "0HNC55VLJSUFS:00000001": An unhandled exception was thrown by the application.
+StackExchange.Redis.RedisServerException: WRONGTYPE Operation against a key holding the wrong kind of value
+   at server.Services.WebSocketService.webSocket.CleanupClient(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 455
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 93
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 89
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Watch.BrowserRefresh.BrowserRefreshMiddleware.InvokeAsync(HttpContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+2025-04-27 10:29:56.738 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/ws/chat?userId=5 - 101 null null 4792268.0993ms
+2025-04-27 10:29:56.738 +07:00 [ERR] Connection id "0HNC55VLJSUFQ", Request id "0HNC55VLJSUFQ:00000001": An unhandled exception was thrown by the application.
+StackExchange.Redis.RedisServerException: WRONGTYPE Operation against a key holding the wrong kind of value
+   at server.Services.WebSocketService.webSocket.CleanupClient(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 455
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 93
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 89
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Watch.BrowserRefresh.BrowserRefreshMiddleware.InvokeAsync(HttpContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+2025-04-27 10:29:56.741 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/ws/chat?userId=5 - 101 null null 4785958.9733ms
+2025-04-27 10:29:56.743 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/ws/chat?userId=5 - 101 null null 4794054.6482ms
+2025-04-27 10:29:56.754 +07:00 [INF] Executed endpoint '/ws/chat'
+2025-04-27 10:29:56.754 +07:00 [INF] Executed endpoint '/ws/chat'
+2025-04-27 10:29:56.754 +07:00 [INF] Executed endpoint '/ws/chat'
+2025-04-27 10:29:56.754 +07:00 [ERR] An unhandled exception has occurred while executing the request.
+StackExchange.Redis.RedisServerException: WRONGTYPE Operation against a key holding the wrong kind of value
+   at server.Services.WebSocketService.webSocket.CleanupClient(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 455
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 93
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 89
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-04-27 10:29:56.754 +07:00 [ERR] An unhandled exception has occurred while executing the request.
+StackExchange.Redis.RedisServerException: WRONGTYPE Operation against a key holding the wrong kind of value
+   at server.Services.WebSocketService.webSocket.CleanupClient(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 455
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 93
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 89
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-04-27 10:29:56.755 +07:00 [WRN] The response has already started, the error page middleware will not be executed.
+2025-04-27 10:29:56.755 +07:00 [ERR] An unhandled exception has occurred while executing the request.
+StackExchange.Redis.RedisServerException: WRONGTYPE Operation against a key holding the wrong kind of value
+   at server.Services.WebSocketService.webSocket.CleanupClient(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 455
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 93
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 89
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-04-27 10:29:56.755 +07:00 [WRN] The response has already started, the error page middleware will not be executed.
+2025-04-27 10:29:56.756 +07:00 [WRN] The response has already started, the error page middleware will not be executed.
+2025-04-27 10:29:56.756 +07:00 [ERR] Connection id "0HNC55VLJSUGK", Request id "0HNC55VLJSUGK:00000001": An unhandled exception was thrown by the application.
+StackExchange.Redis.RedisServerException: WRONGTYPE Operation against a key holding the wrong kind of value
+   at server.Services.WebSocketService.webSocket.CleanupClient(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 455
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 93
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 89
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Watch.BrowserRefresh.BrowserRefreshMiddleware.InvokeAsync(HttpContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+2025-04-27 10:29:56.755 +07:00 [ERR] Connection id "0HNC55VLJSUGJ", Request id "0HNC55VLJSUGJ:00000001": An unhandled exception was thrown by the application.
+StackExchange.Redis.RedisServerException: WRONGTYPE Operation against a key holding the wrong kind of value
+   at server.Services.WebSocketService.webSocket.CleanupClient(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 455
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 93
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 89
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Watch.BrowserRefresh.BrowserRefreshMiddleware.InvokeAsync(HttpContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+2025-04-27 10:29:56.756 +07:00 [ERR] Connection id "0HNC55VLJSUGL", Request id "0HNC55VLJSUGL:00000001": An unhandled exception was thrown by the application.
+StackExchange.Redis.RedisServerException: WRONGTYPE Operation against a key holding the wrong kind of value
+   at server.Services.WebSocketService.webSocket.CleanupClient(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 455
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 93
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 89
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Watch.BrowserRefresh.BrowserRefreshMiddleware.InvokeAsync(HttpContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+2025-04-27 10:29:56.758 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/ws/chat?userId=5 - 101 null null 180621.0863ms
+2025-04-27 10:29:56.760 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/ws/chat?userId=5 - 101 null null 167310.8819ms
+2025-04-27 10:29:56.759 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/ws/chat?userId=5 - 101 null null 188985.7314ms
+2025-04-27 10:30:21.180 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Auth/login - null null
+2025-04-27 10:30:21.180 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:30:21.181 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Auth/login - 204 null null 0.7979ms
+2025-04-27 10:30:21.182 +07:00 [INF] Request starting HTTP/1.1 POST http://localhost:5053/api/Auth/login - application/json 53
+2025-04-27 10:30:21.182 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:30:21.182 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:30:21.182 +07:00 [INF] Executing endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-04-27 10:30:21.182 +07:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(server.DTO.AuthDTO.LoginDTO) on controller Message_app.Controllers.AuthController (Message_app).
+2025-04-27 10:30:21.188 +07:00 [INF] Executed DbCommand (4ms) [Parameters=[@__email_0='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[email] = @__email_0
+2025-04-27 10:30:21.189 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.DTO.AuthDTO.LoginRespose'.
+2025-04-27 10:30:21.189 +07:00 [INF] Executed action Message_app.Controllers.AuthController.Login (Message_app) in 7.0915ms
+2025-04-27 10:30:21.189 +07:00 [INF] Executed endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-04-27 10:30:21.189 +07:00 [INF] Request finished HTTP/1.1 POST http://localhost:5053/api/Auth/login - 200 null application/json; charset=utf-8 7.6559ms
+2025-04-27 10:30:21.384 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_conversations/5 - null null
+2025-04-27 10:30:21.385 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:30:21.385 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_conversations/5 - 204 null null 0.9917ms
+2025-04-27 10:30:21.386 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_conversations/5 - null null
+2025-04-27 10:30:21.386 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:30:21.386 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_conversations/5 - 204 null null 0.2657ms
+2025-04-27 10:30:21.386 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Conversation/get_conversations/5 - null null
+2025-04-27 10:30:21.386 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:30:21.386 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:30:21.386 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-04-27 10:30:21.387 +07:00 [INF] Route matched with {action = "GetConversations", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetConversations(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-04-27 10:30:21.388 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.DTO.ConversationDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-04-27 10:30:21.388 +07:00 [INF] Executed action server.Controllers.ConversationController.GetConversations (Message_app) in 1.17ms
+2025-04-27 10:30:21.388 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-04-27 10:30:21.388 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Conversation/get_conversations/5 - 200 null application/json; charset=utf-8 1.7167ms
+2025-04-27 10:30:21.389 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Conversation/get_conversations/5 - null null
+2025-04-27 10:30:21.389 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:30:21.389 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:30:21.389 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-04-27 10:30:21.390 +07:00 [INF] Route matched with {action = "GetConversations", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetConversations(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-04-27 10:30:21.391 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.DTO.ConversationDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-04-27 10:30:21.392 +07:00 [INF] Executed action server.Controllers.ConversationController.GetConversations (Message_app) in 1.9412ms
+2025-04-27 10:30:21.392 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-04-27 10:30:21.392 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Conversation/get_conversations/5 - 200 null application/json; charset=utf-8 2.553ms
+2025-04-27 10:30:21.446 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/ws/chat?userId=5 - null null
+2025-04-27 10:30:21.446 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:30:21.446 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:30:21.446 +07:00 [INF] Executing endpoint '/ws/chat'
+2025-04-27 10:30:21.570 +07:00 [INF] Executed DbCommand (7ms) [Parameters=[@__client_UserId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[conversation_id]
+FROM [Participants] AS [p]
+WHERE [p].[user_id] = @__client_UserId_0 AND [p].[is_deleted] = CAST(0 AS bit)
+2025-04-27 10:30:23.578 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/ws/chat?userId=5 - null null
+2025-04-27 10:30:23.578 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:30:23.578 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:30:23.578 +07:00 [INF] Executing endpoint '/ws/chat'
+2025-04-27 10:30:23.676 +07:00 [INF] Executed DbCommand (4ms) [Parameters=[@__client_UserId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[conversation_id]
+FROM [Participants] AS [p]
+WHERE [p].[user_id] = @__client_UserId_0 AND [p].[is_deleted] = CAST(0 AS bit)
+2025-04-27 10:30:23.680 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Message/getMessages/1/5 - null null
+2025-04-27 10:30:23.681 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:30:23.681 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Message/getMessages/1/5 - 204 null null 0.6925ms
+2025-04-27 10:30:23.683 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Message/getMessages/1/5 - null null
+2025-04-27 10:30:23.683 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:30:23.683 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:30:23.683 +07:00 [INF] Executing endpoint 'server.Controllers.MessageController.GetMessages (Message_app)'
+2025-04-27 10:30:23.683 +07:00 [INF] Route matched with {action = "GetMessages", controller = "Message"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetMessages(Int32, Int32) on controller server.Controllers.MessageController (Message_app).
+2025-04-27 10:30:23.688 +07:00 [INF] Retrieved 6 messages from Redis for conversation 1
+2025-04-27 10:30:23.688 +07:00 [INF] Retrieved 6 messages from Redis for conversation 1 and user 5
+2025-04-27 10:30:23.688 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.DTO.MessageWithAttachment, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-04-27 10:30:23.688 +07:00 [INF] Executed action server.Controllers.MessageController.GetMessages (Message_app) in 5.4176ms
+2025-04-27 10:30:23.689 +07:00 [INF] Executed endpoint 'server.Controllers.MessageController.GetMessages (Message_app)'
+2025-04-27 10:30:23.689 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Message/getMessages/1/5 - 200 null application/json; charset=utf-8 5.9796ms
+2025-04-27 10:30:23.708 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_first_conversation/1 - null null
+2025-04-27 10:30:23.708 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:30:23.708 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_first_conversation/1 - 204 null null 0.3985ms
+2025-04-27 10:30:23.711 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Conversation/get_first_conversation/1 - null null
+2025-04-27 10:30:23.711 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:30:23.712 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:30:23.712 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetFirstConversation (Message_app)'
+2025-04-27 10:30:23.712 +07:00 [INF] Route matched with {action = "GetFirstConversation", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetFirstConversation(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-04-27 10:30:23.733 +07:00 [INF] Executed DbCommand (12ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [c].[id], [c].[created_at], [c].[is_group], [c].[lastMessage], [c].[lastMessageSender], [c].[lastMessageTime], [c].[name]
+FROM [Conversations] AS [c]
+WHERE [c].[id] = @__p_0
+2025-04-27 10:30:23.734 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.Models.Conversation'.
+2025-04-27 10:30:23.735 +07:00 [INF] Executed action server.Controllers.ConversationController.GetFirstConversation (Message_app) in 22.0769ms
+2025-04-27 10:30:23.735 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetFirstConversation (Message_app)'
+2025-04-27 10:30:23.735 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Conversation/get_first_conversation/1 - 200 null application/json; charset=utf-8 24.0305ms
+2025-04-27 10:30:23.750 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Participant/get_participants/1 - null null
+2025-04-27 10:30:23.750 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:30:23.750 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Participant/get_participants/1 - 204 null null 0.4246ms
+2025-04-27 10:30:23.752 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Participant/get_participants/1 - null null
+2025-04-27 10:30:23.752 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:30:23.752 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:30:23.752 +07:00 [INF] Executing endpoint 'server.Controllers.ParticipantController.GetParticipants (Message_app)'
+2025-04-27 10:30:23.753 +07:00 [INF] Route matched with {action = "GetParticipants", controller = "Participant"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetParticipants(Int32) on controller server.Controllers.ParticipantController (Message_app).
+2025-04-27 10:30:23.762 +07:00 [INF] Executed DbCommand (4ms) [Parameters=[@__conversation_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[id], [p].[adder], [p].[conversation_id], [p].[is_deleted], [p].[joined_at], [p].[name], [p].[role], [p].[user_id]
+FROM [Participants] AS [p]
+WHERE [p].[conversation_id] = @__conversation_id_0
+2025-04-27 10:30:23.762 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType17`1[[System.Collections.Generic.List`1[[server.Models.Participants, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-04-27 10:30:23.762 +07:00 [INF] Executed action server.Controllers.ParticipantController.GetParticipants (Message_app) in 9.7187ms
+2025-04-27 10:30:23.762 +07:00 [INF] Executed endpoint 'server.Controllers.ParticipantController.GetParticipants (Message_app)'
+2025-04-27 10:30:23.763 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Participant/get_participants/1 - 200 null application/json; charset=utf-8 10.7191ms
+2025-04-27 10:30:26.090 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/ws/chat?userId=5 - null null
+2025-04-27 10:30:26.090 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:30:26.090 +07:00 [INF] CORS policy execution successful.
+2025-04-27 10:30:26.090 +07:00 [INF] Executing endpoint '/ws/chat'
+2025-04-27 10:30:26.124 +07:00 [INF] Executed DbCommand (6ms) [Parameters=[@__client_UserId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[conversation_id]
+FROM [Participants] AS [p]
+WHERE [p].[user_id] = @__client_UserId_0 AND [p].[is_deleted] = CAST(0 AS bit)
+2025-04-27 12:12:44.477 +07:00 [INF] Executed endpoint '/ws/chat'
+2025-04-27 12:12:44.477 +07:00 [INF] Executed endpoint '/ws/chat'
+2025-04-27 12:12:44.477 +07:00 [INF] Executed endpoint '/ws/chat'
+2025-04-27 12:12:44.478 +07:00 [INF] Executed endpoint '/ws/chat'
+2025-04-27 12:12:44.479 +07:00 [ERR] An unhandled exception has occurred while executing the request.
+System.Net.WebSockets.WebSocketException (0xE8635350): The remote party closed the WebSocket connection without completing the close handshake.
+   at System.Net.WebSockets.ManagedWebSocket.ThrowEOFUnexpected()
+   at System.Net.WebSockets.ManagedWebSocket.EnsureBufferContainsAsync(Int32 minimumRequiredBytes, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.WebSockets.ManagedWebSocket.ReceiveAsyncPrivate[TResult](Memory`1 payloadBuffer, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.Threading.Tasks.ValueTask`1.ValueTaskSourceAsTask.<>c.<.cctor>b__4_0(Object state)
+--- End of stack trace from previous location ---
+   at server.Services.WebSocketService.webSocket.Receiver(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 108
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 91
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 89
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-04-27 12:12:44.479 +07:00 [ERR] An unhandled exception has occurred while executing the request.
+System.Net.WebSockets.WebSocketException (0x80004005): The remote party closed the WebSocket connection without completing the close handshake.
+   at System.Net.WebSockets.ManagedWebSocket.ThrowEOFUnexpected()
+   at System.Net.WebSockets.ManagedWebSocket.EnsureBufferContainsAsync(Int32 minimumRequiredBytes, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.WebSockets.ManagedWebSocket.ReceiveAsyncPrivate[TResult](Memory`1 payloadBuffer, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.Threading.Tasks.ValueTask`1.ValueTaskSourceAsTask.<>c.<.cctor>b__4_0(Object state)
+--- End of stack trace from previous location ---
+   at server.Services.WebSocketService.webSocket.Receiver(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 108
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 91
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 89
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-04-27 12:12:44.479 +07:00 [ERR] An unhandled exception has occurred while executing the request.
+System.Net.WebSockets.WebSocketException (0x80004005): The remote party closed the WebSocket connection without completing the close handshake.
+   at System.Net.WebSockets.ManagedWebSocket.ThrowEOFUnexpected()
+   at System.Net.WebSockets.ManagedWebSocket.EnsureBufferContainsAsync(Int32 minimumRequiredBytes, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.WebSockets.ManagedWebSocket.ReceiveAsyncPrivate[TResult](Memory`1 payloadBuffer, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.Threading.Tasks.ValueTask`1.ValueTaskSourceAsTask.<>c.<.cctor>b__4_0(Object state)
+--- End of stack trace from previous location ---
+   at server.Services.WebSocketService.webSocket.Receiver(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 108
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 91
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 89
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-04-27 12:12:44.486 +07:00 [WRN] The response has already started, the error page middleware will not be executed.
+2025-04-27 12:12:44.479 +07:00 [ERR] An unhandled exception has occurred while executing the request.
+System.Net.WebSockets.WebSocketException (0x80004005): The remote party closed the WebSocket connection without completing the close handshake.
+   at System.Net.WebSockets.ManagedWebSocket.ThrowEOFUnexpected()
+   at System.Net.WebSockets.ManagedWebSocket.EnsureBufferContainsAsync(Int32 minimumRequiredBytes, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.WebSockets.ManagedWebSocket.ReceiveAsyncPrivate[TResult](Memory`1 payloadBuffer, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.Threading.Tasks.ValueTask`1.ValueTaskSourceAsTask.<>c.<.cctor>b__4_0(Object state)
+--- End of stack trace from previous location ---
+   at server.Services.WebSocketService.webSocket.Receiver(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 108
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 91
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 89
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-04-27 12:12:44.488 +07:00 [WRN] The response has already started, the error page middleware will not be executed.
+2025-04-27 12:12:44.490 +07:00 [WRN] The response has already started, the error page middleware will not be executed.
+2025-04-27 12:12:44.491 +07:00 [ERR] Connection id "0HNC55VLJSUG5", Request id "0HNC55VLJSUG5:00000001": An unhandled exception was thrown by the application.
+System.Net.WebSockets.WebSocketException (0xE8635350): The remote party closed the WebSocket connection without completing the close handshake.
+   at System.Net.WebSockets.ManagedWebSocket.ThrowEOFUnexpected()
+   at System.Net.WebSockets.ManagedWebSocket.EnsureBufferContainsAsync(Int32 minimumRequiredBytes, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.WebSockets.ManagedWebSocket.ReceiveAsyncPrivate[TResult](Memory`1 payloadBuffer, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.Threading.Tasks.ValueTask`1.ValueTaskSourceAsTask.<>c.<.cctor>b__4_0(Object state)
+--- End of stack trace from previous location ---
+   at server.Services.WebSocketService.webSocket.Receiver(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 108
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 91
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 89
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Watch.BrowserRefresh.BrowserRefreshMiddleware.InvokeAsync(HttpContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+2025-04-27 12:12:44.496 +07:00 [WRN] The response has already started, the error page middleware will not be executed.
+2025-04-27 12:12:44.497 +07:00 [ERR] Connection id "0HNC55VLJSUG9", Request id "0HNC55VLJSUG9:00000001": An unhandled exception was thrown by the application.
+System.Net.WebSockets.WebSocketException (0x80004005): The remote party closed the WebSocket connection without completing the close handshake.
+   at System.Net.WebSockets.ManagedWebSocket.ThrowEOFUnexpected()
+   at System.Net.WebSockets.ManagedWebSocket.EnsureBufferContainsAsync(Int32 minimumRequiredBytes, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.WebSockets.ManagedWebSocket.ReceiveAsyncPrivate[TResult](Memory`1 payloadBuffer, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.Threading.Tasks.ValueTask`1.ValueTaskSourceAsTask.<>c.<.cctor>b__4_0(Object state)
+--- End of stack trace from previous location ---
+   at server.Services.WebSocketService.webSocket.Receiver(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 108
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 91
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 89
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Watch.BrowserRefresh.BrowserRefreshMiddleware.InvokeAsync(HttpContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+2025-04-27 12:12:44.497 +07:00 [ERR] Connection id "0HNC55VLJSUG4", Request id "0HNC55VLJSUG4:00000001": An unhandled exception was thrown by the application.
+System.Net.WebSockets.WebSocketException (0x80004005): The remote party closed the WebSocket connection without completing the close handshake.
+   at System.Net.WebSockets.ManagedWebSocket.ThrowEOFUnexpected()
+   at System.Net.WebSockets.ManagedWebSocket.EnsureBufferContainsAsync(Int32 minimumRequiredBytes, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.WebSockets.ManagedWebSocket.ReceiveAsyncPrivate[TResult](Memory`1 payloadBuffer, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.Threading.Tasks.ValueTask`1.ValueTaskSourceAsTask.<>c.<.cctor>b__4_0(Object state)
+--- End of stack trace from previous location ---
+   at server.Services.WebSocketService.webSocket.Receiver(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 108
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 91
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 89
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Watch.BrowserRefresh.BrowserRefreshMiddleware.InvokeAsync(HttpContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+2025-04-27 12:12:44.504 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/ws/chat?userId=2 - 101 null null 8609814.3524ms
+2025-04-27 12:12:44.504 +07:00 [ERR] Connection id "0HNC55VLJSUGD", Request id "0HNC55VLJSUGD:00000001": An unhandled exception was thrown by the application.
+System.Net.WebSockets.WebSocketException (0x80004005): The remote party closed the WebSocket connection without completing the close handshake.
+   at System.Net.WebSockets.ManagedWebSocket.ThrowEOFUnexpected()
+   at System.Net.WebSockets.ManagedWebSocket.EnsureBufferContainsAsync(Int32 minimumRequiredBytes, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.WebSockets.ManagedWebSocket.ReceiveAsyncPrivate[TResult](Memory`1 payloadBuffer, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.Threading.Tasks.ValueTask`1.ValueTaskSourceAsTask.<>c.<.cctor>b__4_0(Object state)
+--- End of stack trace from previous location ---
+   at server.Services.WebSocketService.webSocket.Receiver(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 108
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 91
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 89
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Watch.BrowserRefresh.BrowserRefreshMiddleware.InvokeAsync(HttpContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+2025-04-27 12:12:44.508 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/ws/chat?userId=2 - 101 null null 8596007.5325ms
+2025-04-27 12:12:44.514 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/ws/chat?userId=2 - 101 null null 8611066.7493ms
+2025-04-27 12:12:44.534 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/ws/chat?userId=2 - 101 null null 6369459.3042ms

@@ -6,10 +6,10 @@ import 'package:first_app/features/home/presentation/chat_box/conversation_setti
 import 'package:first_app/features/home/presentation/widgets/message_input.dart';
 import 'package:first_app/features/home/presentation/widgets/message_list.dart'
     show MessageList;
+import 'package:first_app/features/home/presentation/chat_box/call_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
-import 'package:first_app/features/home/presentation/chat_box/call_screen.dart';
 
 class ChatScreen extends StatefulWidget {
   final int conversationId;
@@ -33,11 +33,10 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create:
-          (_) => ChatProvider(
-            userId: widget.userId,
-            conversationId: widget.conversationId,
-          ),
+      create: (_) => ChatProvider(
+        userId: widget.userId,
+        conversationId: widget.conversationId,
+      ),
       child: Scaffold(
         appBar: AppBar(
           leading: IconButton(
@@ -49,8 +48,7 @@ class _ChatScreenState extends State<ChatScreen> {
           title: Consumer<ChatProvider>(
             builder: (context, provider, child) {
               final conversation = provider.conversation;
-              final participants =
-                  provider.participants; // Get from provider directly
+              final participants = provider.participants;
 
               if (conversation == null) return const Text('Đang tải...');
 
@@ -66,7 +64,6 @@ class _ChatScreenState extends State<ChatScreen> {
                 return Text(conversation.name);
               }
 
-              // Tìm participant khác trong danh sách participants của provider
               final otherParticipant = participants.firstWhere(
                 (p) => p.userId != widget.userId,
                 orElse: () {
@@ -86,7 +83,6 @@ class _ChatScreenState extends State<ChatScreen> {
                 "Selected participant: ID=${otherParticipant.id}, UserID=${otherParticipant.userId}, Name=${otherParticipant.name}",
               );
 
-              // Trả về tên của participant khác
               return Text(otherParticipant.name ?? conversation.name);
             },
           ),
@@ -96,53 +92,42 @@ class _ChatScreenState extends State<ChatScreen> {
               builder: (context, callProvider, child) {
                 return IconButton(
                   icon: Icon(
-                    callProvider.isCalling ? Icons.call_end : Icons.call,
-                    color: callProvider.isCalling ? Colors.red : Colors.green,
+                    callProvider.isCalling ? Icons.call_end : Icons.videocam,
+                    color: callProvider.isCalling ? Colors.red : Colors.black,
                   ),
                   onPressed: () async {
                     try {
                       if (callProvider.isCalling) {
-                        print("end call");
+                        print("Ending call");
                         callProvider.endCall();
                       } else {
-                        final permissionStatus =
-                            await Permission.microphone.request();
-                        if (permissionStatus.isGranted) {
-                          // lấy tên từ conversation để hiện lên màn hình
-                          String name =
-                              Provider.of<ChatProvider>(
-                                context,
-                                listen: false,
-                              ).conversation!.name;
-                          //thực hiện yêu cầu gọi điện
+                        final permissionStatus = await [
+                          Permission.microphone,
+                          Permission.camera,
+                        ].request();
+                        if (permissionStatus[Permission.microphone]!.isGranted &&
+                            permissionStatus[Permission.camera]!.isGranted) {
+                          String name = Provider.of<ChatProvider>(
+                            context,
+                            listen: false,
+                          ).conversation!.name;
                           await callProvider.startCall(
                             widget.userId,
                             widget.conversationId,
                             name,
-                            'voice',
+                            'video', // Sử dụng 'video' thay vì 'voice' để hỗ trợ video call
                           );
-
-                          if (callProvider.isCalling) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder:
-                                    (context) => CallScreen(
-                                      userId: widget.userId,
-                                      conversationId: widget.conversationId,
-                                    ),
-                              ),
-                            );
-                          }
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text('Yêu cầu quyền micro bị từ chối'),
+                              content: Text(
+                                  'Cần cấp quyền micro và camera để thực hiện cuộc gọi'),
                             ),
                           );
                         }
                       }
                     } catch (e) {
+                      print('Error during call: $e');
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text('Lỗi khi thực hiện cuộc gọi: $e'),
@@ -151,7 +136,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     }
                   },
                   tooltip:
-                      callProvider.isCalling ? 'Kết thúc cuộc gọi' : 'Gọi nhóm',
+                      callProvider.isCalling ? 'Kết thúc cuộc gọi' : 'Gọi video',
                 );
               },
             ),
@@ -173,25 +158,21 @@ class _ChatScreenState extends State<ChatScreen> {
                     final result = await Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder:
-                            (context) => ConversationSettingsScreen(
-                              conversation: conversation,
-                              currentUserId: id,
-                              messages: provider.messages,
-                            ),
+                        builder: (context) => ConversationSettingsScreen(
+                          conversation: conversation,
+                          currentUserId: id,
+                          messages: provider.messages,
+                        ),
                       ),
                     );
 
                     if (result == true) {
-                      // User rời nhóm → thoát khỏi ChatScreen luôn
                       Navigator.pop(context);
                     } else if (result is Conversation) {
-                      // Chỉ cập nhật tên → update provider và lưu lại để pop sau
                       Provider.of<ChatProvider>(
                         context,
                         listen: false,
                       ).updateConversation(result);
-
                       setState(() {
                         _updatedConversation = result;
                       });
@@ -202,8 +183,28 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           ],
         ),
-        body: Column(
-          children: [Expanded(child: MessageList()), MessageInput()],
+        body: Stack(
+          children: [
+            Column(
+              children: [
+                Expanded(child: MessageList()),
+                MessageInput(),
+              ],
+            ),
+            Consumer<CallProvider>(
+              builder: (context, callProvider, child) {
+                print('CallProvider state: isCalling=${callProvider.isCalling}, '
+                    'localRenderer=${callProvider.localRenderer != null}, '
+                    'remoteRenderer=${callProvider.remoteRenderer != null}');
+                if (callProvider.isCalling &&
+                    callProvider.localRenderer != null &&
+                    callProvider.remoteRenderer != null) {
+                  return const CallScreen();
+                }
+                return const SizedBox.shrink();
+              },
+            ),
+          ],
         ),
       ),
     );
