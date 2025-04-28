@@ -17,7 +17,10 @@ class UsProfileRepository {
     }
   }
 
-  Future<UserProfile> fetchOtherUserProfile(int viewerId, int targetUserId) async {
+  Future<UserProfile> fetchOtherUserProfile(
+    int viewerId,
+    int targetUserId,
+  ) async {
     final response = await http.get(
       Uri.parse('$baseUrl/view/$targetUserId?viewerId=$viewerId'),
     );
@@ -31,12 +34,10 @@ class UsProfileRepository {
   Future<void> updateUserProfile(UserProfile user) async {
     try {
       var body = jsonEncode(user.toMap());
-    print('Request body: $body');
+      print('Request body: $body');
       final response = await http.put(
         Uri.parse('$baseUrl/update/profile/${user.id}'),
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: {'Content-Type': 'application/json'},
         body: jsonEncode(user.toMap()), // Chuyển UserProfile thành JSON
       );
 
@@ -45,7 +46,9 @@ class UsProfileRepository {
         return;
       } else {
         print("Lỗi 400: ${response.body}");
-        throw Exception('Failed to update user profile: ${response.statusCode} - ${response.body}');
+        throw Exception(
+          'Failed to update user profile: ${response.statusCode} - ${response.body}',
+        );
       }
     } catch (e) {
       throw Exception('Lỗi khi cập nhật thông tin người dùng: $e');
@@ -54,16 +57,15 @@ class UsProfileRepository {
 
   Future<String> uploadImage(File image) async {
     try {
-      var request = http.MultipartRequest(
-        'POST',
-        Uri.parse('$baseUrl/upload'),
-      );
+      var request = http.MultipartRequest('POST', Uri.parse('$baseUrl/upload'));
 
-      request.files.add(await http.MultipartFile.fromPath(
-        'file',
-        image.path,
-        filename: basename(image.path),
-      ));
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'file',
+          image.path,
+          filename: basename(image.path),
+        ),
+      );
 
       var streamedResponse = await request.send();
       var response = await http.Response.fromStream(streamedResponse);
@@ -74,11 +76,19 @@ class UsProfileRepository {
         return jsonData['url']; // Giả sử API trả về { "url": "http://..." }
       } else {
         print('Upload failed: ${response.statusCode} - ${response.body}');
-        throw Exception('Failed to upload image: ${response.statusCode} - ${response.body}');
+        throw Exception(
+          'Failed to upload image: ${response.statusCode} - ${response.body}',
+        );
       }
     } catch (e) {
       print('Error during image upload: $e');
       throw Exception('Error uploading image: $e');
     }
   }
+
+  // Future<String> updateEmail(string email) async {
+  //   try {
+
+  //   }
+  // }
 }

@@ -14,6 +14,7 @@ class MainLayout extends StatelessWidget {
   final int currentUserId;
   final String currentUserName;
   final String userAvatar;
+  final String email;
   final FriendsRepo friendsRepo;
 
   const MainLayout({
@@ -25,6 +26,7 @@ class MainLayout extends StatelessWidget {
     required this.currentUserName,
     required this.userAvatar,
     required this.friendsRepo,
+    required this.email,
   });
 
   void _handleNavigation(BuildContext context, int index) {
@@ -127,6 +129,16 @@ class MainLayout extends StatelessWidget {
             onPressed: () {
               NavigationHelper().goToQrScanner(
                 context,
+                context.read<FriendsBloc>(),
+              );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.settings, color: Colors.blueAccent),
+            onPressed: () {
+              NavigationHelper().goToSetting(
+                context,
+                email,
                 context.read<FriendsBloc>(),
               );
             },

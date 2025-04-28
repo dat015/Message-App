@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:first_app/core/utils/auth_utils.dart';
 import 'package:first_app/data/api/api_client.dart';
+import 'package:first_app/data/dto/register_dto.dart';
 import 'package:first_app/data/repositories/Auth/auth_repository.dart';
 import 'package:first_app/data/repositories/Auth/auth_repository_implement.dart';
 import 'package:first_app/features/auth/presentation/screens/change_password.dart';
@@ -10,7 +11,14 @@ import 'package:flutter/material.dart';
 
 class Otp extends StatefulWidget {
   final String email;
-  Otp({super.key, required this.email});
+  final RegisterDTO? registerDTO;
+  final bool isForRegistration;
+  Otp({
+    super.key,
+    required this.email,
+    this.registerDTO,
+    this.isForRegistration = false,
+  });
   @override
   _OtpState createState() => _OtpState();
 }
@@ -33,61 +41,64 @@ class _OtpState extends State<Otp> {
 
   void _startTimer() {
     const oneSec = Duration(seconds: 1);
-    _timer = Timer.periodic(
-      oneSec,
-      (Timer timer) {
-        if (_remainingTime == 0) {
-          setState(() {
-            timer.cancel();
-          });
-        } else {
-          setState(() {
-            _remainingTime--;
-          });
-        }
-      },
-    );
+    _timer = Timer.periodic(oneSec, (Timer timer) {
+      if (_remainingTime == 0) {
+        setState(() {
+          timer.cancel();
+        });
+      } else {
+        setState(() {
+          _remainingTime--;
+        });
+      }
+    });
   }
 
   Future<void> _resendOTP() async {
     setState(() {
-      _remainingTime = 60; 
+      _remainingTime = 60;
       _startTimer();
     });
-    await sendOTPToServer(context, widget.email, navigate: false);
+    await sendOTPToServer(context, widget.email, navigate: false, isForRegistration: widget.isForRegistration,);
   }
 
-  final List<TextEditingController> _otpControllers =
-      List.generate(6, (_) => TextEditingController());
+  final List<TextEditingController> _otpControllers = List.generate(
+    6,
+    (_) => TextEditingController(),
+  );
 
   Future<void> _verifyOTP(BuildContext context) async {
-  final AuthRepository _authRepository =
-      AuthRepositoryImpl(ApiClient());
-  String otp = _otpControllers.map((controller) => controller.text).join();
+    final AuthRepository _authRepository = AuthRepositoryImpl(ApiClient());
+    String otp = _otpControllers.map((controller) => controller.text).join();
 
-  if (otp.length != 6) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Please enter a valid 6-digit OTP')),
-    );
-    return;
+    if (otp.length != 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a valid 6-digit OTP')),
+      );
+      return;
+    }
+
+    try {
+      final otpResponse = widget.isForRegistration
+          ? await _authRepository.verifyOtpRegister(widget.email, otp)
+          : await _authRepository.verifyOtp(widget.email, otp);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('OTP verified success!')));
+
+      if (widget.isForRegistration && widget.registerDTO != null) {
+        final response = await _authRepository.register(widget.registerDTO!);
+        Navigator.pushReplacementNamed(context, '/login');
+      } else {
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ChangePassword(email: widget.email)));
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to verify OTP: $e')));
+    }
   }
 
-  try {
-    final otpResponse = await _authRepository.verifyOtp(widget.email, otp);
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('OTP verified successfully!')),
-    );
-    
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => ChangePassword(email: widget.email,)),
-    );
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Failed to verify OTP: $e')),
-    );
-  }
-}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -127,11 +138,7 @@ class _OtpState extends State<Otp> {
       alignment: Alignment.topLeft,
       child: GestureDetector(
         onTap: () => Navigator.pop(context),
-        child: const Icon(
-          Icons.arrow_back,
-          size: 32,
-          color: Colors.black54,
-        ),
+        child: const Icon(Icons.arrow_back, size: 32, color: Colors.black54),
       ),
     );
   }
@@ -155,20 +162,22 @@ class _OtpState extends State<Otp> {
 
   // Widget tiêu đề xác thực
   Widget _buildVerificationHeader() {
-    return const Column(
+    return Column(
       children: [
         Text(
-          'VERIFICATION',
-          style: TextStyle(
+          widget.isForRegistration ? 'VERIFY EMAIL' : 'VERIFICATION',
+          style: const TextStyle(
             fontSize: 30,
             fontWeight: FontWeight.w900,
             color: Colors.blue,
           ),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Text(
-          "Enter your OTP code number",
-          style: TextStyle(
+          widget.isForRegistration
+              ? 'Enter the OTP sent to your email to verify your account'
+              : 'Enter your OTP code number',
+          style: const TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.bold,
             color: Colors.black38,
@@ -260,10 +269,7 @@ class _OtpState extends State<Otp> {
         ),
         child: const Text(
           'Verify',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-          ),
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
         ),
       ),
     );
@@ -285,24 +291,24 @@ class _OtpState extends State<Otp> {
         const SizedBox(height: 10),
         _remainingTime > 0
             ? Text(
-                'Resend OTP in $_remainingTime seconds',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black54,
-                ),
-              )
+              'Resend OTP in $_remainingTime seconds',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.black54,
+              ),
+            )
             : GestureDetector(
-                onTap: _resendOTP,
-                child: Text(
-                  'Resend New Code',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w900,
-                    color: lightColorScheme.primary,
-                  ),
+              onTap: _resendOTP,
+              child: Text(
+                'Resend New Code',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w900,
+                  color: lightColorScheme.primary,
                 ),
               ),
+            ),
       ],
     );
   }

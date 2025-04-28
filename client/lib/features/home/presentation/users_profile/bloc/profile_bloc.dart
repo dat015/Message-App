@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:first_app/data/models/user_profile.dart';
-import 'package:first_app/data/repositories/Chat/User_Profile_repo/us_profile_repository.dart';
+import 'package:first_app/data/repositories/User_Profile_repo/us_profile_repository.dart';
 import 'package:first_app/data/repositories/Friends_repo/friends_repo.dart';
 import 'package:first_app/features/home/presentation/users_profile/bloc/profile_event.dart';
 import 'package:first_app/features/home/presentation/users_profile/bloc/profile_state.dart';

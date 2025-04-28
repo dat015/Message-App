@@ -1,6 +1,6 @@
 import 'package:first_app/PlatformClient/config.dart';
 import 'package:first_app/data/models/user_profile.dart';
-import 'package:first_app/data/repositories/Chat/User_Profile_repo/us_profile_repository.dart';
+import 'package:first_app/data/repositories/User_Profile_repo/us_profile_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;

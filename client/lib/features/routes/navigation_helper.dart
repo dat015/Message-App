@@ -12,6 +12,8 @@ import 'package:first_app/features/home/presentation/users_profile/other_us_prof
 import 'package:first_app/features/home/presentation/friends/bloc/friends_bloc.dart';
 import 'package:flutter/material.dart';
 
+import '../home/presentation/setting/setting_screen.dart';
+
 // Class tiện ích để quản lý điều hướng
 class NavigationHelper {
   // Singleton instance để tái sử dụng
@@ -188,6 +190,19 @@ class NavigationHelper {
     await pushScreen(
       context,
       NewQrScannerScreen(friendsBloc: friendsBloc),
+      replace: replace,
+    );
+  }
+
+  Future<void> goToSetting(
+    BuildContext context,
+    String email,
+    FriendsBloc friendsBloc, {
+    bool replace = false,
+  }) async {
+    await pushScreen(
+      context,
+      SettingScreen(email : email),
       replace: replace,
     );
   }

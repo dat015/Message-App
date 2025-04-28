@@ -2,8 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:first_app/data/api/api_client.dart';
 import 'package:first_app/data/models/post.dart';
 import 'package:first_app/data/models/user_profile.dart';
-import 'package:first_app/data/repositories/Chat/User_Profile_repo/us_profile_repository.dart';
+import 'package:first_app/data/repositories/User_Profile_repo/us_profile_repository.dart';
 import 'package:first_app/data/repositories/Post_repo/post_repo.dart';
+import 'package:first_app/features/home/presentation/users_profile/update_avatar_screen.dart';
 import 'package:first_app/features/routes/navigation_helper.dart';
 import 'package:flutter/material.dart';
 
@@ -173,15 +174,15 @@ class _ProfilePageState extends State<ProfilePage> {
                                           color: Colors.white,
                                         ),
                                         onPressed: () {
-                                          ScaffoldMessenger.of(
+                                          Navigator.push(
                                             context,
-                                          ).showSnackBar(
-                                            SnackBar(
-                                              content: Text(
-                                                'Tính năng thay đổi ảnh đại diện sẽ được cập nhật sau',
-                                              ),
-                                              behavior:
-                                                  SnackBarBehavior.floating,
+                                            MaterialPageRoute(
+                                              builder:
+                                                  (context) =>
+                                                      UpdateAvatarScreen(
+                                                        userProfile:
+                                                            user,
+                                                      ),
                                             ),
                                           );
                                         },

@@ -48,6 +48,25 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<OTPsResponse> sendOtpForRegistration(String email) async {
+    try {
+      final response = await _apiClient.post(
+        '/api/Auth/send-otp-registration',
+        data: {'email': email},
+      );
+      if (response['OTPCode'] != "") {
+        return OTPsResponse.fromJson(response);
+      } else {
+        final errorMessage = response['message'] ?? 'Unknown error';
+        throw Exception('Failed to send OTP: $errorMessage');
+      }
+    } catch (e) {
+      print('Send OTP for registration error: $e');
+      throw Exception('Failed to send OTP: $e');
+    }
+  }
+
+  @override
   Future<OTPsResponse> forgetPass(String email) async {
     try {
       final response = await _apiClient.post(
@@ -79,6 +98,31 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       final response = await _apiClient.post(
         '/api/ForgetPassword/verify-otp',
+        data: {'email': email, 'OTPCode': otp},
+      );
+
+      if (response.containsKey('errors')) {
+        final errorMessage =
+            response['errors']['OTPCode']?.join(', ') ?? 'Unknown error';
+        throw Exception('Failed to verify OTP: $errorMessage');
+      }
+
+      return OTPsResponse.fromJson(response);
+    } catch (e) {
+      print('Verify OTP error: $e');
+      throw Exception('Failed to verify OTP: $e');
+    }
+  }
+
+  @override
+  Future<OTPsResponse> verifyOtpRegister(String email, String otp) async {
+    if (email.isEmpty || otp.isEmpty) {
+      throw Exception('Email or OTP cannot be empty');
+    }
+
+    try {
+      final response = await _apiClient.post(
+        '/api/Auth/verify-otp',
         data: {'email': email, 'OTPCode': otp},
       );
 

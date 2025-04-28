@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:first_app/core/utils/auth_utils.dart';
 import 'package:first_app/data/dto/register_dto.dart';
 import 'package:first_app/features/auth/presentation/screens/login.dart';
+import 'package:first_app/features/auth/presentation/screens/otps_form.dart';
 import 'package:first_app/theme/theme.dart';
 import 'package:first_app/features/auth/presentation/widgets/custom_scaffold.dart';
 import 'package:flutter/material.dart';
@@ -37,10 +39,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   // Khởi tạo ApiClient và AuthRepository
   final ApiClient apiClient = ApiClient();
-  late final AuthRepository _authRepository; // Sử dụng 'late' để trì hoãn khởi tạo
+  late final AuthRepository
+  _authRepository; // Sử dụng 'late' để trì hoãn khởi tạo
 
   _SignUpScreenState() {
-    _authRepository = AuthRepositoryImpl(apiClient); // Khởi tạo trong constructor
+    _authRepository = AuthRepositoryImpl(
+      apiClient,
+    ); // Khởi tạo trong constructor
   }
 
   @override
@@ -65,9 +70,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
         });
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Lỗi khi chọn ảnh: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Lỗi khi chọn ảnh: $e')));
     }
   }
 
@@ -98,9 +103,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Future<void> sendDataRegister() async {
     if (_formSignupKey.currentState!.validate()) {
       if (_passwordController.text != _confirmPasswordController.text) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Passwords do not match')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Passwords do not match')));
         return;
       }
       if (_genderRadioBtnVal == -1) {
@@ -122,25 +127,33 @@ class _SignUpScreenState extends State<SignUpScreen> {
         username: _nameController.text,
         password: _passwordController.text,
         email: _emailController.text,
-        avatarUrl: _avatarImage != null ? base64Encode(await _avatarImage!.readAsBytes()) : 'https://i.pravatar.cc/150?img=3',
+        avatarUrl:
+            _avatarImage != null
+                ? base64Encode(await _avatarImage!.readAsBytes())
+                : 'https://i.pravatar.cc/150?img=3',
         birthday: _selectedDate,
         gender: _genderRadioBtnVal == 0, // 0: Male (true), 1: Female (false)
       );
       debugPrint('RegisterDTO: ${jsonEncode(registerDTO.toJson())}');
 
       try {
-        final response = await _authRepository.register(registerDTO);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Registration successful: ${response.token}')),
-        );
-        Navigator.pushReplacement(
+        await sendOTPToServer(context, _emailController.text, isForRegistration: true,);
+
+        Navigator.push(
           context,
-          MaterialPageRoute(builder: (e) => const SignInScreen()),
+          MaterialPageRoute(
+            builder:
+                (context) => Otp(
+                  email: _emailController.text,
+                  registerDTO: registerDTO,
+                  isForRegistration: true,
+                ),
+          ),
         );
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Registration failed: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to send OTP: $e')));
       }
     }
   }
@@ -183,12 +196,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
           children: [
             CircleAvatar(
               radius: 56,
-              backgroundImage: _avatarImage != null
-                  ? FileImage(_avatarImage!) // Sử dụng FileImage cho ảnh
-                  : null,
-              child: _avatarImage == null
-                  ? Icon(Icons.person, size: 60, color: Colors.white)
-                  : null,
+              backgroundImage:
+                  _avatarImage != null
+                      ? FileImage(_avatarImage!) // Sử dụng FileImage cho ảnh
+                      : null,
+              child:
+                  _avatarImage == null
+                      ? Icon(Icons.person, size: 60, color: Colors.white)
+                      : null,
             ),
             Positioned(
               bottom: 0,
@@ -199,7 +214,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   color: Colors.white,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(Icons.camera_alt, size: 24, color: lightColorScheme.primary),
+                child: Icon(
+                  Icons.camera_alt,
+                  size: 24,
+                  color: lightColorScheme.primary,
+                ),
               ),
             ),
           ],

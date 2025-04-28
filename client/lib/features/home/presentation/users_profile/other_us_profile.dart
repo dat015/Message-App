@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:first_app/data/repositories/Chat/User_Profile_repo/us_profile_repository.dart';
+import 'package:first_app/data/repositories/User_Profile_repo/us_profile_repository.dart';
 import 'package:first_app/data/repositories/Friends_repo/friends_repo.dart';
 import 'package:first_app/data/repositories/Story_repo/story_repo.dart';
 import 'package:first_app/data/repositories/Post_repo/post_repo.dart';

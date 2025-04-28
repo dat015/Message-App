@@ -12,8 +12,8 @@ using server.Data;
 namespace Message_app.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250417090811_AddMutualFriendsCountToUser")]
-    partial class AddMutualFriendsCountToUser
+    [Migration("20250426082905_AddIsFirstLoginToUser")]
+    partial class AddIsFirstLoginToUser
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -493,9 +493,8 @@ namespace Message_app.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
-                    b.Property<string>("RelationshipStatus")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<bool>("IsFirstLogin")
+                        .HasColumnType("bit");
 
                     b.Property<string>("avatar_url")
                         .IsRequired()

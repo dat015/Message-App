@@ -37,7 +37,7 @@ void main() async {
   } else {
     await Firebase.initializeApp();
   }
-
+  // setupFCM(null);
   runApp(const MyApp());
 }
 

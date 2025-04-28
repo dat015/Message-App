@@ -11,6 +11,8 @@ namespace server.Services.OTPsService
     {
         Task<OTPsResult> SendOTPForgotPassword(string email);
         Task<OTPsResult> VerifyOTP(string email, string otpCode);
+        Task<OTPsResult> SendOTPRegistration(string email);
+        Task<OTPsResult> VerifyOTPRegister(string email, string otpCode);
     }
 
     // Kết quả trả về từ service

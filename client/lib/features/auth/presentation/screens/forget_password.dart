@@ -22,7 +22,7 @@ class _ForgetPasswordScreenState extends State<ForgetPassword> {
 
   Future<void> _sendOTP(BuildContext context) async {
   if (_formForgetPassKey.currentState!.validate()) {
-    await sendOTPToServer(context, _emailController.text);
+    await sendOTPToServer(context, _emailController.text, isForRegistration: false);
   } else {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Please enter a valid email')),
@@ -90,7 +90,7 @@ class _ForgetPasswordScreenState extends State<ForgetPassword> {
                         child: ElevatedButton(
                           onPressed: () {
                             if (_formForgetPassKey.currentState!.validate()) {
-                              sendOTPToServer(context, _emailController.text);
+                              sendOTPToServer(context, _emailController.text, isForRegistration: false);
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
