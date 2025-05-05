@@ -28,7 +28,7 @@ class AuthRepositoryImpl implements AuthRepository {
       return LoginResponse.fromJson(response);
     } catch (e) {
       print('Login error details: $e');
-      rethrow;
+    throw Exception('Đăng nhập thất bại: $e');
     }
   }
 
@@ -37,13 +37,13 @@ class AuthRepositoryImpl implements AuthRepository {
     print(dto);
     try {
       final response = await _apiClient.post(
-        '/api/Auth/register', // Sửa đường dẫn cho khớp API
+        '/api/Auth/register',
         data: dto.toJson(),
       );
       return LoginResponse.fromJson(response);
     } catch (e) {
       print('Register error: $e');
-      throw Exception('Registration failed: $e');
+      throw Exception('Đăng ký thất bại: $e');
     }
   }
 
@@ -56,13 +56,11 @@ class AuthRepositoryImpl implements AuthRepository {
       );
       if (response['OTPCode'] != "") {
         return OTPsResponse.fromJson(response);
-      } else {
-        final errorMessage = response['message'] ?? 'Unknown error';
-        throw Exception('Failed to send OTP: $errorMessage');
       }
+      throw Exception('OTP không được trả về từ máy chủ');
     } catch (e) {
       print('Send OTP for registration error: $e');
-      throw Exception('Failed to send OTP: $e');
+      throw Exception('Gửi OTP thất bại: $e');
     }
   }
 
@@ -70,29 +68,24 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<OTPsResponse> forgetPass(String email) async {
     try {
       final response = await _apiClient.post(
-        '/api/ForgetPassword/ForgetPass', // Đường dẫn API để gửi OTP
+        '/api/ForgetPassword/ForgetPass',
         data: {'email': email},
       );
 
-      // Giả định response là Map<String, dynamic>
-      // Kiểm tra thành công dựa trên trường trong JSON
       if (response['OTPCode'] != "") {
-        // Hoặc dùng trường khác như 'success'
         return OTPsResponse.fromJson(response);
-      } else {
-        final errorMessage = response['message'] ?? 'Unknown error';
-        throw Exception('Failed to send OTP: $errorMessage');
-      }
+      } 
+      throw Exception('Không có phản hồi từ máy chủ');
     } catch (e) {
       print('Forget password error: $e');
-      throw Exception('Failed to send OTP: $e');
+      throw Exception('Quên mật khẩu thất bại: $e');
     }
   }
 
   @override
   Future<OTPsResponse> verifyOtp(String email, String otp) async {
     if (email.isEmpty || otp.isEmpty) {
-      throw Exception('Email or OTP cannot be empty');
+      throw Exception('Email hoặc mã OTP không được để trống');
     }
 
     try {
@@ -100,24 +93,17 @@ class AuthRepositoryImpl implements AuthRepository {
         '/api/ForgetPassword/verify-otp',
         data: {'email': email, 'OTPCode': otp},
       );
-
-      if (response.containsKey('errors')) {
-        final errorMessage =
-            response['errors']['OTPCode']?.join(', ') ?? 'Unknown error';
-        throw Exception('Failed to verify OTP: $errorMessage');
-      }
-
       return OTPsResponse.fromJson(response);
     } catch (e) {
       print('Verify OTP error: $e');
-      throw Exception('Failed to verify OTP: $e');
+    throw Exception('Xác nhận mã OTP thất bại: $e');
     }
   }
 
   @override
   Future<OTPsResponse> verifyOtpRegister(String email, String otp) async {
     if (email.isEmpty || otp.isEmpty) {
-      throw Exception('Email or OTP cannot be empty');
+      throw Exception('Email hoặc mã OTP không được để trống');
     }
 
     try {
@@ -125,17 +111,10 @@ class AuthRepositoryImpl implements AuthRepository {
         '/api/Auth/verify-otp',
         data: {'email': email, 'OTPCode': otp},
       );
-
-      if (response.containsKey('errors')) {
-        final errorMessage =
-            response['errors']['OTPCode']?.join(', ') ?? 'Unknown error';
-        throw Exception('Failed to verify OTP: $errorMessage');
-      }
-
       return OTPsResponse.fromJson(response);
     } catch (e) {
       print('Verify OTP error: $e');
-      throw Exception('Failed to verify OTP: $e');
+    throw Exception('Xác nhận mã OTP thất bại: $e');
     }
   }
 
@@ -151,7 +130,7 @@ class AuthRepositoryImpl implements AuthRepository {
       );
       return response;
     } catch (e) {
-      throw Exception('Failed to change password: $e');
+    throw Exception('Thay đổi mật khẩu thất bại: $e');
     }
   }
 }

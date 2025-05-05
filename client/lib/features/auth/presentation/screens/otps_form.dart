@@ -59,7 +59,12 @@ class _OtpState extends State<Otp> {
       _remainingTime = 60;
       _startTimer();
     });
-    await sendOTPToServer(context, widget.email, navigate: false, isForRegistration: widget.isForRegistration,);
+    await sendOTPToServer(
+      context,
+      widget.email,
+      navigate: false,
+      isForRegistration: widget.isForRegistration,
+    );
   }
 
   final List<TextEditingController> _otpControllers = List.generate(
@@ -73,29 +78,33 @@ class _OtpState extends State<Otp> {
 
     if (otp.length != 6) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a valid 6-digit OTP')),
+        const SnackBar(
+          content: Text('Vui lòng nhập mã OTP 6 chữ số'),
+          backgroundColor: Colors.red,
+        ),
       );
       return;
     }
 
     try {
-      final otpResponse = widget.isForRegistration
-          ? await _authRepository.verifyOtpRegister(widget.email, otp)
-          : await _authRepository.verifyOtp(widget.email, otp);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('OTP verified success!')));
+      final otpResponse =
+          widget.isForRegistration
+              ? await _authRepository.verifyOtpRegister(widget.email, otp)
+              : await _authRepository.verifyOtp(widget.email, otp);
 
       if (widget.isForRegistration && widget.registerDTO != null) {
         final response = await _authRepository.register(widget.registerDTO!);
         Navigator.pushReplacementNamed(context, '/login');
       } else {
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ChangePassword(email: widget.email)));
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ChangePassword(email: widget.email),
+          ),
+        );
       }
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Failed to verify OTP: $e')));
+      throw Exception('Xác thực OTP thất bại: $e');
     }
   }
 

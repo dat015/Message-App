@@ -103,21 +103,28 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Future<void> sendDataRegister() async {
     if (_formSignupKey.currentState!.validate()) {
       if (_passwordController.text != _confirmPasswordController.text) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Passwords do not match')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Mật khẩu không khớp'),
+            backgroundColor: Colors.red,
+          ),
+        );
         return;
       }
       if (_genderRadioBtnVal == -1) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please select your gender')),
+          const SnackBar(
+            content: Text('Vui lòng chọn giới tính'),
+            backgroundColor: Colors.red,
+          ),
         );
         return;
       }
       if (!agreePersonalData) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Please agree to personal data processing'),
+            content: Text('Vui lòng đồng ý với việc xử lý dữ liệu cá nhân'),
+            backgroundColor: Colors.red,
           ),
         );
         return;
@@ -132,12 +139,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ? base64Encode(await _avatarImage!.readAsBytes())
                 : 'https://i.pravatar.cc/150?img=3',
         birthday: _selectedDate,
-        gender: _genderRadioBtnVal == 0, // 0: Male (true), 1: Female (false)
+        gender: _genderRadioBtnVal == 0,
       );
       debugPrint('RegisterDTO: ${jsonEncode(registerDTO.toJson())}');
 
       try {
-        await sendOTPToServer(context, _emailController.text, isForRegistration: true,);
+        await sendOTPToServer(
+          context,
+          _emailController.text,
+          isForRegistration: true,
+        );
 
         Navigator.push(
           context,
@@ -151,9 +162,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ),
         );
       } catch (e) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Failed to send OTP: $e')));
+        throw Exception('Đăng ký người dùng thất bại: $e');
       }
     }
   }

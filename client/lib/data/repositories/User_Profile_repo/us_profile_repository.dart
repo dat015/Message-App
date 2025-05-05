@@ -7,13 +7,17 @@ import 'package:path/path.dart';
 
 class UsProfileRepository {
   String get baseUrl => '${Config.baseUrl}api/UserProfile';
-  Future<UserProfile> fetchUserProfile(int userId) async {
-    final response = await http.get(Uri.parse('$baseUrl/$userId/profile'));
 
-    if (response.statusCode == 200) {
-      return UserProfile.fromJson(jsonDecode(response.body));
-    } else {
-      throw Exception('Failed to load user profile');
+  Future<UserProfile> fetchUserProfile(int userId) async {
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/$userId/profile'));
+
+      if (response.statusCode == 200) {
+        return UserProfile.fromJson(jsonDecode(response.body));
+      }
+      throw Exception('Tải hồ sơ người dùng thất bại.');
+    } catch (e) {
+      throw Exception('Tải hồ sơ người dùng thất bại: $e');
     }
   }
 
@@ -21,13 +25,16 @@ class UsProfileRepository {
     int viewerId,
     int targetUserId,
   ) async {
-    final response = await http.get(
-      Uri.parse('$baseUrl/view/$targetUserId?viewerId=$viewerId'),
-    );
-    if (response.statusCode == 200) {
-      return UserProfile.fromJson(jsonDecode(response.body));
-    } else {
-      throw Exception('Failed to load other user profile');
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/view/$targetUserId?viewerId=$viewerId'),
+      );
+      if (response.statusCode == 200) {
+        return UserProfile.fromJson(jsonDecode(response.body));
+      }
+      throw Exception('Tải hồ sơ người dùng thất bại.');
+    } catch (e) {
+      throw Exception('Tải hồ sơ người dùng thất bại: $e');
     }
   }
 
@@ -38,20 +45,15 @@ class UsProfileRepository {
       final response = await http.put(
         Uri.parse('$baseUrl/update/profile/${user.id}'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(user.toMap()), // Chuyển UserProfile thành JSON
+        body: jsonEncode(user.toMap()),
       );
 
       if (response.statusCode == 200) {
-        // Cập nhật thành công
         return;
-      } else {
-        print("Lỗi 400: ${response.body}");
-        throw Exception(
-          'Failed to update user profile: ${response.statusCode} - ${response.body}',
-        );
       }
+      throw Exception('Tải hồ sơ người dùng thất bại');
     } catch (e) {
-      throw Exception('Lỗi khi cập nhật thông tin người dùng: $e');
+      throw Exception('Tải hồ sơ người dùng thất bại: $e');
     }
   }
 
@@ -85,10 +87,4 @@ class UsProfileRepository {
       throw Exception('Error uploading image: $e');
     }
   }
-
-  // Future<String> updateEmail(string email) async {
-  //   try {
-
-  //   }
-  // }
 }

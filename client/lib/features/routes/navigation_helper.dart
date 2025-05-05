@@ -1,6 +1,7 @@
 import 'package:first_app/data/models/post.dart';
 import 'package:first_app/data/models/story.dart';
 import 'package:first_app/data/models/user_profile.dart';
+import 'package:first_app/features/auth/presentation/screens/login.dart';
 import 'package:first_app/features/home/presentation/diary/comment_screen.dart';
 import 'package:first_app/features/home/presentation/diary/create_post.dart';
 import 'package:first_app/features/home/presentation/diary/edit_post_screen.dart';
@@ -54,6 +55,17 @@ class NavigationHelper {
       debugPrint('Cannot pop: No previous screen');
       _showErrorSnackBar(context, 'Không thể quay lại');
     }
+  }
+
+  Future<void> goToLogin(
+    BuildContext context, {
+    bool replace = false,
+  }) async {
+    await pushScreen(
+      context,
+      SignInScreen(),
+      replace: replace,
+    );
   }
 
   // Điều hướng đến CreatePostScreen

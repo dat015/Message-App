@@ -6,7 +6,7 @@ import '../../../../data/repositories/Auth/auth_repository.dart';
 import '../../../../data/repositories/Auth/auth_repository_implement.dart';
 
 class ChangePassword extends StatefulWidget {
-  final String email; 
+  final String email;
 
   const ChangePassword({super.key, required this.email});
 
@@ -54,26 +54,22 @@ class _ChangePasswordState extends State<ChangePassword> {
 
       if (newPassword != confirmPassword) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Passwords do not match')),
-        );
-        return;
+        const SnackBar(
+          content: Text('Mật khẩu không khớp!'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
       }
 
-      final AuthRepository authRepository = AuthRepositoryImpl(
-        ApiClient(),
-      );
+      final AuthRepository authRepository = AuthRepositoryImpl(ApiClient());
 
       try {
         await authRepository.changePassword(widget.email, newPassword);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Password changed successfully')),
-        );
 
         Navigator.pushReplacementNamed(context, '/login');
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to change password: $e')),
-        );
+        throw Exception('Tải hồ sơ người dùng thất bại: $e');
       }
     }
   }
