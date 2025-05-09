@@ -21,6 +21,7 @@ namespace server.Models
                 [Required]
                 public DateTime joined_at { get; set; } = DateTime.Now;
                 public string adder { get; set; } = "NO";
+                public string? img_url { get; set; } = null;
                 [Required]
                 public bool is_deleted { get; set; } = false;
                 [ForeignKey("conversation_id")]

@@ -19,6 +19,7 @@ using System.Text.Json.Serialization;
 using server.Services;
 using server.Services.RedisService.ChatStorage;
 using Microsoft.OpenApi.Models;
+using server.Services.RedisService.ConversationStorage;
 
 namespace server.InjectService
 {
@@ -88,6 +89,8 @@ namespace server.InjectService
                 return multiplexer.GetDatabase();
             });
             services.AddSingleton<IChatStorage, ChatStorage>();
+            services.AddSingleton<IConversationStorage, ConversatonStorage>();
+
             services.AddSignalR();
             //scoped: tạo ra 1 instance cho mỗi request
             services.AddScoped<IUploadFileService, UploadFileService>();

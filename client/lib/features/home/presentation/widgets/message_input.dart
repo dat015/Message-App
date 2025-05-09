@@ -56,6 +56,17 @@ class _MessageInputState extends State<MessageInput> {
     });
   }
 
+  // void _handleSubmittedPrivate(String text) {
+  //   if (text.trim().isEmpty && _selectedFile == null) return;
+  //   final provider = Provider.of<ChatProvider>(context, listen: false);
+  //   provider.sendPrivateMessage(text.trim(), _selectedFile);
+  //   _controller.clear();
+  //   setState(() {
+  //     _isComposing = false;
+  //     _selectedFile = null;
+  //   });
+  // }
+
   void _handleTextChange(String text) {
     setState(() {
       _isComposing = text.trim().isNotEmpty || _selectedFile != null;
@@ -96,7 +107,6 @@ class _MessageInputState extends State<MessageInput> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                
                 if (_selectedFile != null)
                   Container(
                     padding: const EdgeInsets.symmetric(

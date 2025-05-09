@@ -1,3 +1,5 @@
+// ignore_for_file: unused_import
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:first_app/data/dto/message_response.dart';
 import 'package:first_app/data/models/messages.dart';
@@ -9,7 +11,6 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 
 class ChatBubble extends StatelessWidget {
   final MessageWithAttachment messageWithAttachment;
@@ -27,15 +28,36 @@ class ChatBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     final message = messageWithAttachment.message;
     final isSentByMe = message.senderId == currentUserId;
+    final isSystemMessage = message.type == 'system'; // Kiểm tra loại tin nhắn
+
+    if (isSystemMessage) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4.0),
+        child: Center(
+          child: Container(
+            constraints: BoxConstraints(
+              maxWidth: MediaQuery.of(context).size.width * 0.75,
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.grey[200],
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: _buildContent(context, isSentByMe),
+          ),
+        ),
+      );
+    }
     final sender = participants.firstWhere(
-      (p) => p.userId == message.senderId,
-      orElse: () => Participants(
-        id: 0,
-        conversationId: message.conversationId,
-        userId: message.senderId,
-        joinedAt: DateTime.now(),
-        isDeleted: false,
-      ),
+      (p) => p.user_id == message.senderId,
+      orElse:
+          () => Participants(
+            id: 0,
+            conversationId: message.conversationId,
+            user_id: message.senderId,
+            joinedAt: DateTime.now(),
+            isDeleted: false,
+          ),
     );
 
     return GestureDetector(
@@ -54,7 +76,7 @@ class ChatBubble extends StatelessWidget {
                 radius: 16,
                 backgroundColor: Colors.grey[300],
                 backgroundImage: NetworkImage(
-                  'https://ui-avatars.com/api/?name=User+${sender.userId}&background=random',
+                  'https://ui-avatars.com/api/?name=User+${sender.user_id}&background=random',
                 ),
               ),
               const SizedBox(width: 8),
@@ -64,27 +86,34 @@ class ChatBubble extends StatelessWidget {
                 constraints: BoxConstraints(
                   maxWidth: MediaQuery.of(context).size.width * 0.75,
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
                 decoration: BoxDecoration(
                   // Nếu tin nhắn bị thu hồi: bỏ màu nền, thêm viền
-                  color: message.isRecalled
-                      ? Colors.transparent
-                      : (isSentByMe ? Colors.blue : Colors.grey[100]),
-                  border: message.isRecalled
-                      ? Border.all(
-                          color: isSentByMe ? Colors.blue : Colors.grey[400]!,
-                          width: 1,
-                        )
-                      : null,
+                  color:
+                      message.isRecalled
+                          ? Colors.transparent
+                          : (isSentByMe ? Colors.blue : Colors.grey[100]),
+                  border:
+                      message.isRecalled
+                          ? Border.all(
+                            color: isSentByMe ? Colors.blue : Colors.grey[400]!,
+                            width: 1,
+                          )
+                          : null,
                   borderRadius: BorderRadius.only(
                     topLeft: const Radius.circular(20),
                     topRight: const Radius.circular(20),
-                    bottomLeft: isSentByMe
-                        ? const Radius.circular(20)
-                        : const Radius.circular(0),
-                    bottomRight: isSentByMe
-                        ? const Radius.circular(0)
-                        : const Radius.circular(20),
+                    bottomLeft:
+                        isSentByMe
+                            ? const Radius.circular(20)
+                            : const Radius.circular(0),
+                    bottomRight:
+                        isSentByMe
+                            ? const Radius.circular(0)
+                            : const Radius.circular(20),
                   ),
                   boxShadow: [
                     BoxShadow(
@@ -96,13 +125,15 @@ class ChatBubble extends StatelessWidget {
                 ),
                 child: Column(
                   crossAxisAlignment:
-                      isSentByMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                      isSentByMe
+                          ? CrossAxisAlignment.end
+                          : CrossAxisAlignment.start,
                   children: [
                     if (!isSentByMe)
                       Padding(
                         padding: const EdgeInsets.only(bottom: 4),
                         child: Text(
-                          'User ${sender.userId}',
+                          'User ${sender.user_id}',
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
@@ -119,9 +150,10 @@ class ChatBubble extends StatelessWidget {
                           DateFormat('HH:mm').format(message.createdAt),
                           style: TextStyle(
                             fontSize: 11,
-                            color: isSentByMe && !message.isRecalled
-                                ? Colors.white70
-                                : Colors.grey[600],
+                            color:
+                                isSentByMe && !message.isRecalled
+                                    ? Colors.white70
+                                    : Colors.grey[600],
                           ),
                         ),
                         if (isSentByMe) ...[
@@ -129,11 +161,12 @@ class ChatBubble extends StatelessWidget {
                           Icon(
                             message.isRead ? Icons.done_all : Icons.done,
                             size: 14,
-                            color: message.isRead
-                                ? Colors.blue[100]
-                                : (isSentByMe && !message.isRecalled
-                                    ? Colors.white70
-                                    : Colors.grey[600]),
+                            color:
+                                message.isRead
+                                    ? Colors.blue[100]
+                                    : (isSentByMe && !message.isRecalled
+                                        ? Colors.white70
+                                        : Colors.grey[600]),
                           ),
                         ],
                       ],
@@ -179,8 +212,10 @@ class ChatBubble extends StatelessWidget {
       final url = attachment.fileUrl!;
 
       // Kiểm tra xem có phải là ảnh không
-      final isImage = attachment.fileType.startsWith('image/') ||
-          (url.contains("res.cloudinary.com") && url.contains("/image/upload")) ||
+      final isImage =
+          attachment.fileType.startsWith('image/') ||
+          (url.contains("res.cloudinary.com") &&
+              url.contains("/image/upload")) ||
           url.toLowerCase().endsWith('.jpg') ||
           url.toLowerCase().endsWith('.jpeg') ||
           url.toLowerCase().endsWith('.png') ||
@@ -201,16 +236,18 @@ class ChatBubble extends StatelessWidget {
             width: 150,
             height: 150,
             fit: BoxFit.cover,
-            placeholder: (context, url) => const SizedBox(
-              width: 150,
-              height: 150,
-              child: Center(child: CircularProgressIndicator()),
-            ),
-            errorWidget: (context, url, error) => const SizedBox(
-              width: 150,
-              height: 150,
-              child: Icon(Icons.error, color: Colors.red),
-            ),
+            placeholder:
+                (context, url) => const SizedBox(
+                  width: 150,
+                  height: 150,
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+            errorWidget:
+                (context, url, error) => const SizedBox(
+                  width: 150,
+                  height: 150,
+                  child: Icon(Icons.error, color: Colors.red),
+                ),
           ),
         );
       }
@@ -277,10 +314,7 @@ class ChatBubble extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 'Nhấn để xem nội dung',
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 12,
-                ),
+                style: TextStyle(color: Colors.grey[600], fontSize: 12),
               ),
             ],
           ),
@@ -298,7 +332,11 @@ class ChatBubble extends StatelessWidget {
     );
   }
 
-  void _showContextMenu(BuildContext context, MessageDTOForAttachment message, bool isSentByMe) {
+  void _showContextMenu(
+    BuildContext context,
+    MessageDTOForAttachment message,
+    bool isSentByMe,
+  ) {
     final RenderBox renderBox = context.findRenderObject() as RenderBox;
     final position = renderBox.localToGlobal(Offset.zero);
 
@@ -311,23 +349,14 @@ class ChatBubble extends StatelessWidget {
         position.dy + renderBox.size.height,
       ),
       items: [
-        const PopupMenuItem<String>(
-          value: 'copy',
-          child: Text('Sao chép'),
-        ),
+        const PopupMenuItem<String>(value: 'copy', child: Text('Sao chép')),
         const PopupMenuItem<String>(
           value: 'forward',
           child: Text('Chuyển tiếp'),
         ),
         if (isSentByMe)
-          const PopupMenuItem<String>(
-            value: 'delete',
-            child: Text('Xóa'),
-          ),
-        const PopupMenuItem<String>(
-          value: 'reply',
-          child: Text('Trả lời'),
-        ),
+          const PopupMenuItem<String>(value: 'delete', child: Text('Xóa')),
+        const PopupMenuItem<String>(value: 'reply', child: Text('Trả lời')),
       ],
     ).then((value) {
       if (value != null) {
@@ -336,30 +365,36 @@ class ChatBubble extends StatelessWidget {
     });
   }
 
-  void _handleMenuSelection(BuildContext context, String value, MessageDTOForAttachment message) {
+  void _handleMenuSelection(
+    BuildContext context,
+    String value,
+    MessageDTOForAttachment message,
+  ) {
     switch (value) {
       case 'copy':
         Clipboard.setData(ClipboardData(text: message.content ?? ''));
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Đã sao chép tin nhắn')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Đã sao chép tin nhắn')));
         break;
       case 'forward':
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Chuyển tiếp tin nhắn')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Chuyển tiếp tin nhắn')));
         break;
-        case 'delete':
-          Provider.of<ChatProvider>(context, listen: false)
-              .deleteMessage(message.id ?? 0);
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Đã xóa tin nhắn')),
-          );
-          break;
+      case 'delete':
+        Provider.of<ChatProvider>(
+          context,
+          listen: false,
+        ).deleteMessage(message.id ?? 0);
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Đã xóa tin nhắn')));
+        break;
       case 'reply':
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Trả lời tin nhắn')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Trả lời tin nhắn')));
         break;
     }
   }

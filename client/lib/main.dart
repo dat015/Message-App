@@ -15,7 +15,7 @@ import 'features/routes/routes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Khởi tạo Supabase
   await Supabase.initialize(
     url: 'https://hqpglsqigydjqafpvshl.supabase.co',
@@ -44,18 +44,21 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => HomeProvider()),
+        
         Provider<WebSocketService>(
-          create: (_) => WebSocketService(
-            url: Config.baseUrlWS,
-            onMessageReceived: (message) {
-              print('Received chat message: ${message.message.content}');
-            },
-          ),
+          create:
+              (_) => WebSocketService(
+                url: Config.baseUrlWS,
+                onMessageReceived: (message) {
+                  print('Received chat message: ${message.message.content}');
+                },
+              ),
         ),
         ChangeNotifierProvider<CallProvider>(
-          create: (context) => CallProvider(
-            webSocketService: context.read<WebSocketService>(),
-          ),
+          create:
+              (context) => CallProvider(
+                webSocketService: context.read<WebSocketService>(),
+              ),
         ),
       ],
       child: const MyApp(),
@@ -65,11 +68,11 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-  static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+  static final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
 
   @override
   Widget build(BuildContext context) {
-
     return MaterialApp(
       navigatorKey: navigatorKey, // Thêm navigatorKey
       debugShowCheckedModeBanner: false,

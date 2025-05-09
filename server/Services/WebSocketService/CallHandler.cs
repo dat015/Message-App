@@ -158,7 +158,7 @@ public class CallHandler
         Console.WriteLine($"Broadcasting to {clients.Count} clients subscribed to conversation {conversationId}: {string.Join(", ", clients.Select(c => c.UserId))}");
         foreach (var client in clients)
         {
-            if (client != sender && client.WebSocket.State == WebSocketState.Open)
+            if (client                                                                                                                                                                                                                       != sender && client.WebSocket.State == WebSocketState.Open)
             {
                 try
                 {

@@ -45,11 +45,11 @@ class HomeProvider with ChangeNotifier {
       for (var conversation in conversations) {
         if (!conversation.isGroup && conversation.participants != null) {
           final otherParticipant = conversation.participants!.firstWhere(
-            (p) => p.userId != userId,
+            (p) => p.user_id != userId,
             orElse: () => Participants(
               id: 0,
               conversationId: conversation.id ?? 0,
-              userId: 0,
+              user_id: 0,
               joinedAt: DateTime.now(),
               isDeleted: false,
               name: conversation.name,
@@ -130,6 +130,6 @@ class HomeProvider with ChangeNotifier {
   }
 
   void disconnectWebSocket() {
-    _webSocketService?.disconnect();
+    // _webSocketService?.disconnect();
   }
 }

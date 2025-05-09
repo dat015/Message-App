@@ -1,11 +1,14 @@
 import 'package:first_app/PlatformClient/config.dart';
 import 'package:first_app/data/api/api_client.dart';
+import 'package:first_app/data/dto/friend_dto.dart';
 import 'package:first_app/data/dto/login_response.dart';
 import 'package:first_app/data/dto/message_response.dart';
 import 'package:first_app/data/models/conversation.dart';
 import 'package:first_app/data/models/participants.dart';
+import 'package:first_app/data/models/user.dart';
 import 'package:first_app/data/repositories/Conversations_repo/conversations_repository.dart';
 import 'package:first_app/data/repositories/Chat/websocket_service.dart';
+import 'package:first_app/data/repositories/Friends_repo/friends_repo.dart';
 import 'package:first_app/data/repositories/Participants_Repo/participants_repo.dart';
 import 'package:first_app/data/repositories/User_Repo/user_repo.dart';
 import 'package:flutter/material.dart';
@@ -25,18 +28,21 @@ class _HomeScreenState extends State<HomeScreen> {
   final UserRepo userRepo = UserRepo();
   List<Conversation> _conversations = [];
   List<Participants> _participants = [];
+  List<FriendDTO> _friends = []; // Danh sách để lưu bạn bè
   late int userId;
   ConversationRepo conversationRepo = ConversationRepo();
   ParticipantsRepo participantsRepo = ParticipantsRepo();
+  FriendsRepo friendRepo = FriendsRepo();
   WebSocketService? _webSocketService;
   Map<int, String> userNames = {}; // Lưu trữ userId -> username
+  late Conversation _new_conversation;
 
   @override
   void initState() {
     userId = widget.user.user!.id;
     print('User ID: $userId');
     super.initState();
-    _fetchConversations(); // Gọi hàm để lấy danh sách ban đầu
+    _fetchFriends();
     _initializeWebSocket();
   }
 
@@ -44,6 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _webSocketService = WebSocketService(
       url: Config.baseUrlWS,
       onMessageReceived: (MessageWithAttachment message) {
+        print("ok");
         updateChatList(message);
       },
     );
@@ -68,9 +75,28 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  Future<void> _fetchFriends() async {
+    try {
+      final friends = await friendRepo.getFriendsDTO(userId);
+      setState(() {
+        _friends = friends;
+      });
+    } catch (e) {
+      print("Lỗi khi lấy danh sách bạn bè: $e");
+    }
+  }
+  void _removeConversation(int conversationId) {
+    setState(() {
+      _conversations.removeWhere((conversation) => conversation.id == conversationId);
+    });
+  }
+
   Future<void> _fetchConversations() async {
     try {
       final conversations = await conversationRepo.getConversations(userId);
+      final conversationFilter =
+          conversations.where((c) => c.lastMessageTime != null).toList();
+
       print("Thanh cong");
       for (var conversation in conversations) {
         print(
@@ -78,24 +104,25 @@ class _HomeScreenState extends State<HomeScreen> {
         );
         if (!conversation.isGroup && conversation.participants != null) {
           final otherParticipant = conversation.participants!.firstWhere(
-            (p) => p.userId != userId,
+            (p) => p.user_id != userId,
             orElse:
                 () => Participants(
                   id: 0,
                   conversationId: conversation.id ?? 0,
-                  userId: 0,
+                  user_id: 0,
                   joinedAt: DateTime.now(),
                   isDeleted: false,
                   name: conversation.name,
                 ),
           );
           conversation.name = otherParticipant.name ?? conversation.name;
+          conversation.img_url = otherParticipant.img_url;
           print("Conversation ${conversation.id}: ${conversation.name}");
           print("Selected participant name: ${otherParticipant.name}");
         }
       }
       setState(() {
-        _conversations = conversations;
+        _conversations = conversationFilter;
       });
     } catch (e) {
       print("Error in _fetchConversations: $e");
@@ -107,61 +134,143 @@ class _HomeScreenState extends State<HomeScreen> {
       return content.replaceFirst("Đã đổi tên nhóm thành ", "");
     } else if (content.startsWith("Đã đổi tên bạn thành ")) {
       return content.replaceFirst("Đã đổi tên bạn thành ", "");
+    } else if (content.startsWith("Đã đổi ảnh nhóm ")) {
+      return content.replaceFirst("Đã đổi ảnh nhóm ", "");
+    } else if (content.startsWith("Đã được thêm vào nhóm ")) {
+      return content.replaceFirst("Đã được thêm vào nhóm ", "");
+    } else if (content.startsWith("Đã được thêm vào nhóm")) {
+      return content.replaceFirst("Đã được thêm vào nhóm", "");
+    } else if (content.startsWith("Đã được thêm bạn ")) {
+      return content.replaceFirst("Đã được thêm bạn ", "");
+    } else if (content.startsWith("Đã được thêm bạn")) {
+      return content.replaceFirst("Đã được thêm bạn", "");
+    } else if (content.startsWith("Đã xóa khỏi nhóm ")) {
+      return content.replaceFirst("Đã xóa khỏi nhóm ", "");
+    } else if (content.startsWith("Đã xóa khỏi nhóm")) {
+      return content.replaceFirst("Đã xóa khỏi nhóm", "");
+    } else if (content.startsWith("Đã xóa bạn ")) {
+      return content.replaceFirst("Đã xóa bạn ", "");
+    } else if (content.startsWith("Đã xóa bạn")) {
+      return content.replaceFirst("Đã xóa bạn", "");
+    } else if (content.startsWith("Đã thêm bạn ")) {
+      return content.replaceFirst("Đã thêm bạn ", "");
+    } else if (content.startsWith("Đã thêm bạn")) {
+      return content.replaceFirst("Đã thêm bạn", "");
     }
     return content;
   }
 
-  // Sử dụng trong code:
-  void updateChatList(MessageWithAttachment newMessage) {
-    setState(() {
-      if (newMessage.message.type == "system" &&
-              (newMessage.message.content?.startsWith(
-                    "Đã đổi tên nhóm thành",
-                  ) ??
-                  false) ||
-          (newMessage.message.content?.startsWith("Đã đổi tên bạn thành") ??
-              false)) {
-        final index = _conversations.indexWhere(
-          (chat) => chat.id == newMessage.message.conversationId,
+  Future<Conversation?> _fetchNewConversation(int conversationId) async {
+    try {
+      final conversation = await conversationRepo.getConversationDto(
+        userId,
+        conversationId,
+      );
+      if (conversation == null) {
+        print("Không tìm thấy conversation $conversationId");
+        return null;
+      }
+      print("Fetched conversation: $conversation");
+
+      // Xử lý participants cho conversation 1:1
+      if (!conversation.isGroup && conversation.participants != null) {
+        final otherParticipant = conversation.participants!.firstWhere(
+          (p) => p.user_id != userId,
+          orElse:
+              () => Participants(
+                id: 0,
+                conversationId: conversation.id ?? 0,
+                user_id: 0,
+                joinedAt: DateTime.now(),
+                isDeleted: false,
+                name: conversation.name,
+              ),
         );
+        conversation.name = otherParticipant.name ?? conversation.name;
+        conversation.img_url = otherParticipant.img_url;
+        // _webSocketService?.connect(userId, conversation.id!);
+      }
 
-        if (index != -1) {
-          // Sử dụng hàm getNewName để lấy tên mới
-          final newName = getNewName(newMessage.message.content ?? '');
+      return conversation;
+    } catch (e) {
+      print("Lỗi khi lấy conversation $conversationId: $e");
+      return null;
+    }
+  }
 
-          // Cập nhật thông tin tin nhắn cuối cùng
-          _conversations[index].lastMessage = newMessage.message.content;
-          _conversations[index].lastMessageTime = newMessage.message.createdAt;
-          _conversations[index].lastMessageSender = "Hệ thống";
 
-          // Di chuyển conversation lên đầu danh sách
-          final updatedConversation = _conversations.removeAt(index);
-          _conversations.insert(0, updatedConversation);
+  // Sử dụng trong code:
+  void updateChatList(MessageWithAttachment newMessage) async {
+    final conversationId = newMessage.message.conversationId;
+    final index = _conversations.indexWhere(
+      (chat) => chat.id == conversationId,
+    );
+
+    // if (index == -1) {
+    //   // Conversation mới, lấy từ server
+    //   final conversation = await _fetchNewConversation(conversationId);
+    //   if (conversation != null) {
+    //     // Cập nhật lastMessage và lastMessageTime
+    //     conversation.lastMessage = newMessage.message.content;
+    //     conversation.lastMessageTime = newMessage.message.createdAt;
+
+    //     setState(() {
+    //       _conversations.insert(0, conversation);
+    //     });
+
+    //     // Subscribe vào kênh WebSocket
+    //     // _webSocketService?.connect(userId, conversationId);
+    //   }
+    // }
+
+    setState(() {
+      if (newMessage.message.type == "system") {
+        if (newMessage.message.content?.startsWith("Đã đổi tên nhóm thành") ??
+            false) {
+          if (index != -1) {
+            final newName = getNewName(newMessage.message.content ?? '');
+            _conversations[index].name = newName;
+            _conversations[index].lastMessage = newMessage.message.content;
+            _conversations[index].lastMessageTime =
+                newMessage.message.createdAt;
+            _conversations[index].lastMessageSender = "Hệ thống";
+            final updatedConversation = _conversations.removeAt(index);
+            _conversations.insert(0, updatedConversation);
+          }
+        } else if (newMessage.message.content?.startsWith("Đã đổi ảnh nhóm") ??
+            false) {
+          if (index != -1) {
+            final newImageUrl = getNewName(newMessage.message.content ?? '');
+            final urlRegExp = RegExp(
+              r'^(https?:\/\/[^\s/$.?#].[^\s]*)$',
+              caseSensitive: false,
+            );
+            if (urlRegExp.hasMatch(newImageUrl)) {
+              _conversations[index].img_url = newImageUrl;
+              _conversations[index].lastMessage = newMessage.message.content;
+              _conversations[index].lastMessageTime =
+                  newMessage.message.createdAt;
+              _conversations[index].lastMessageSender = "Hệ thống";
+              final updatedConversation = _conversations.removeAt(index);
+              _conversations.insert(0, updatedConversation);
+            }
+          }
         }
       } else {
-        final index = _conversations.indexWhere(
-          (chat) => chat.id == newMessage.message.conversationId,
-        );
-
+        // Tin nhắn thông thường
         if (index != -1) {
-          // Cập nhật tin nhắn cuối cùng cho conversation hiện có
           _conversations[index].lastMessage = newMessage.message.content;
           _conversations[index].lastMessageTime = newMessage.message.createdAt;
-
-          // Di chuyển conversation lên đầu danh sách
           final updatedConversation = _conversations.removeAt(index);
+          print("update");  
           _conversations.insert(0, updatedConversation);
         } else {
-          // Tạo conversation mới nếu chưa tồn tại
-          Conversation newConversation = Conversation(
-            id: newMessage.message.conversationId,
-            name: 'New Conversation',
-            createdAt: DateTime.now(),
-            isGroup: false,
-            lastMessage: newMessage.message.content,
-            lastMessageTime: newMessage.message.createdAt,
-          );
-          _conversations.insert(0, newConversation);
+          Conversation new_conversation =
+              _fetchNewConversation(newMessage.message.conversationId)
+                  as Conversation;
+          if (new_conversation != null) {
+            _conversations.insert(0, new_conversation);
+          }
         }
       }
     });
@@ -195,6 +304,115 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Widget _buildFriendsList() {
+    if (_friends.isEmpty) {
+      return const SizedBox(
+        height: 80,
+        child: Center(child: Text('Không tìm thấy bạn bè')),
+      );
+    }
+
+    return SizedBox(
+      height: 90,
+      child: ClipRect(
+        child: GridView.builder(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 1,
+            mainAxisSpacing: 12.0,
+            childAspectRatio: 80 / 80, // Tỷ lệ 1:1
+          ),
+          itemCount: _friends.length,
+          itemBuilder: (context, index) {
+            final friend = _friends[index];
+            if (friend.friendId == null) {
+              return const SizedBox.shrink();
+            }
+            final displayName =
+                friend.username != null && friend.username!.length > 15
+                    ? '${friend.username!.substring(0, 12)}...'
+                    : friend.username ?? 'Không xác định';
+            return GestureDetector(
+              onTap: () async {
+                try {
+                  final conversation = await conversationRepo.openConversation(
+                    userId,
+                    friend.friendId!,
+                  );
+                  var existingConversation = _conversations.firstWhere(
+                    (c) => c.id == conversation.id,
+                    orElse:
+                        () => Conversation(
+                          id: -1, // Use an invalid ID or a placeholder
+                          name: '',
+                          isGroup: false,
+                          createdAt: DateTime.now(),
+                          lastMessage: null,
+                          lastMessageSender: null,
+                          lastMessageTime: null,
+                          img_url: null,
+                          participants: [],
+                        ), // Trả về null nếu không tìm thấy
+                  );
+
+                  // Nếu conversation chưa tồn tại, thêm vào danh sách và kết nối WebSocket
+                  // if (existingConversation == null) {
+                  //   // Kết nối WebSocket cho tất cả participants trong conversation
+                  //   for (var participant in conversation.participants) {
+                  //     _webSocketService?.connect(
+                  //       participant.userId,
+                  //       conversation.id,
+                  //     );
+                  //   }
+                  // }
+
+                  Navigator.pushNamed(
+                    context,
+                    AppRoutes.chat,
+                    arguments: {
+                      'conversationId': conversation.id,
+                      'user_id': userId,
+                      'participantId': friend.friendId,
+                      'websocketService': _webSocketService,
+                      'updateChatListCallback': updateChatList,
+                      'onConversationRemoved': _removeConversation
+                    },
+                  );
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Không thể mở trò chuyện: $e')),
+                  );
+                }
+              },
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircleAvatar(
+                    radius: 30,
+                    backgroundImage: NetworkImage(
+                      friend.avatar ??
+                          'https://thaka.bing.com/th?q=User+Avatar+Icon.png&w=120&h=120&c=1&rs=1&qlt=90&cb=1&dpr=1.5&pid=InlineBlock&mkt=en-WW&cc=VN&setlang=en&adlt=moderate&t=1&mw=247',
+                    ),
+                    backgroundColor: Colors.grey[200],
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    displayName,
+                    style: const TextStyle(fontSize: 13),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
   Widget _buildChatList() {
     if (_conversations.isEmpty) {
       return const Center(child: Text('No conversations found'));
@@ -214,7 +432,8 @@ class _HomeScreenState extends State<HomeScreen> {
               CircleAvatar(
                 radius: 25,
                 backgroundImage: NetworkImage(
-                  'https://via.placeholder.com/150',
+                  chat.img_url ??
+                      'https://thaka.bing.com/th?q=Group+Avatar+Icon.png&w=120&h=120&c=1&rs=1&qlt=90&cb=1&dpr=1.5&pid=InlineBlock&mkt=en-WW&cc=VN&setlang=en&adlt=moderate&t=1&mw=247',
                 ),
                 backgroundColor: Colors.grey[200],
               ),
@@ -276,21 +495,21 @@ class _HomeScreenState extends State<HomeScreen> {
                 // Lọc participants hợp lệ
                 final validParticipants =
                     chat.participants!
-                        .where((p) => p.userId != 0 && !p.isDeleted)
+                        .where((p) => p.user_id != 0 && !p.isDeleted)
                         .toList();
 
                 print(
-                  "Valid Participants: ${validParticipants.map((p) => 'ID: ${p.id}, UserID: ${p.userId}, Name: ${p.name}').join(', ')}",
+                  "Valid Participants: ${validParticipants.map((p) => 'ID: ${p.id}, UserID: ${p.user_id}, Name: ${p.name}').join(', ')}",
                 );
 
                 // Tìm participant khác
                 final otherParticipant = validParticipants.firstWhere(
-                  (p) => p.userId != finalUserId,
+                  (p) => p.user_id != finalUserId,
                   orElse:
                       () => Participants(
                         id: 0,
                         conversationId: finalConversationId ?? 0,
-                        userId: 0,
+                        user_id: 0,
                         joinedAt: DateTime.now(),
                         isDeleted: false,
                         name: '',
@@ -298,12 +517,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
 
                 print(
-                  "Other Participant: ID=${otherParticipant.id}, UserID=${otherParticipant.userId}, Name=${otherParticipant.name}",
+                  "Other Participant: ID=${otherParticipant.id}, UserID=${otherParticipant.user_id}, Name=${otherParticipant.name}",
                 );
 
                 // Gán participantId
-                if (otherParticipant.userId != 0) {
-                  participantId = otherParticipant.userId;
+                if (otherParticipant.user_id != 0) {
+                  participantId = otherParticipant.user_id;
                   print("Selected Participant ID: $participantId");
                 } else {
                   print("No valid participant found, fetching from API...");
@@ -311,28 +530,27 @@ class _HomeScreenState extends State<HomeScreen> {
                     final updatedParticipants = await ParticipantsRepo()
                         .getParticipants(finalConversationId ?? 0);
                     print(
-                      "Fetched Participants: ${updatedParticipants.map((p) => 'ID: ${p.id}, UserID: ${p.userId}, Name: ${p.name}').join(', ')}",
+                      "Fetched Participants: ${updatedParticipants.map((p) => 'ID: ${p.id}, UserID: ${p.user_id}, Name: ${p.name}').join(', ')}",
                     );
                     final updatedOtherParticipant = updatedParticipants
                         .firstWhere(
                           (p) =>
-                              p.userId != finalUserId &&
-                              p.userId != 0 &&
+                              p.user_id != finalUserId &&
+                              p.user_id != 0 &&
                               !p.isDeleted,
                           orElse:
                               () => Participants(
                                 id: 0,
                                 conversationId: finalConversationId ?? 0,
-                                userId: 0,
+                                user_id: 0,
                                 joinedAt: DateTime.now(),
                                 isDeleted: false,
                                 name: '',
                               ),
                         );
-                    if (updatedOtherParticipant.userId != 0) {
-                      participantId = updatedOtherParticipant.userId;
-                      chat.participants =
-                          updatedParticipants; // Cập nhật participants
+                    if (updatedOtherParticipant.user_id != 0) {
+                      participantId = updatedOtherParticipant.user_id;
+                      chat.participants = updatedParticipants;
                       print("Updated Participant ID: $participantId");
                     } else {
                       print("No valid participant after fetch");
@@ -347,26 +565,26 @@ class _HomeScreenState extends State<HomeScreen> {
                   final updatedParticipants = await ParticipantsRepo()
                       .getParticipants(finalConversationId ?? 0);
                   print(
-                    "Fetched Participants: ${updatedParticipants.map((p) => 'ID: ${p.id}, UserID: ${p.userId}, Name: ${p.name}').join(', ')}",
+                    "Fetched Participants: ${updatedParticipants.map((p) => 'ID: ${p.id}, UserID: ${p.user_id}, Name: ${p.name}').join(', ')}",
                   );
                   final updatedOtherParticipant = updatedParticipants
                       .firstWhere(
                         (p) =>
-                            p.userId != finalUserId &&
-                            p.userId != 0 &&
+                            p.user_id != finalUserId &&
+                            p.user_id != 0 &&
                             !p.isDeleted,
                         orElse:
                             () => Participants(
                               id: 0,
                               conversationId: finalConversationId ?? 0,
-                              userId: 0,
+                              user_id: 0,
                               joinedAt: DateTime.now(),
                               isDeleted: false,
                               name: '',
                             ),
                       );
-                  if (updatedOtherParticipant.userId != 0) {
-                    participantId = updatedOtherParticipant.userId;
+                  if (updatedOtherParticipant.user_id != 0) {
+                    participantId = updatedOtherParticipant.user_id;
                     chat.participants = updatedParticipants;
                     print("Updated Participant ID: $participantId");
                   } else {
@@ -390,6 +608,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 'conversationId': finalConversationId,
                 'user_id': finalUserId,
                 'participantId': participantId,
+                'websocketService': _webSocketService,
+                'updateChatListCallback': updateChatList, // Thêm callback
               },
             );
 
@@ -413,7 +633,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void dispose() {
-    _webSocketService?.disconnect();
+    // _webSocketService?.disconnect();
     super.dispose();
   }
 
@@ -425,7 +645,11 @@ class _HomeScreenState extends State<HomeScreen> {
       selectedIndex: _selectedIndex,
       onItemTapped: _onItemTapped,
       body: Column(
-        children: [_buildSearchBar(), Expanded(child: _buildChatList())],
+        children: [
+          _buildSearchBar(),
+          _buildFriendsList(),
+          Expanded(child: _buildChatList()),
+        ],
       ),
     );
   }

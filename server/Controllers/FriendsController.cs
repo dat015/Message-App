@@ -16,6 +16,21 @@ namespace server.Controllers
             _friendService = friendService;
         }
 
+
+        [HttpGet("GetAllFriends/{userId}")]
+        public async Task<IActionResult> GetAllFriends(int userId)
+        {
+            try
+            {
+                var friends = await _friendService.GetAllFriendsAsync(userId);
+                return Ok(new { success = true, friends });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
+
         // Gửi lời mời kết bạn
         [HttpPost("send-request")]
         public async Task<IActionResult> SendFriendRequest([FromBody] FriendRequestDto request)

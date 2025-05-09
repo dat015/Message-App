@@ -14,6 +14,7 @@ using server.DTO;
 using server.Models;
 using server.Services.ConversationService;
 using server.Services.RedisService.ChatStorage;
+using server.Services.RedisService.ConversationStorage;
 using server.Services.UploadService;
 using StackExchange.Redis;
 
@@ -43,9 +44,11 @@ namespace server.Services.WebSocketService
         private readonly CancellationTokenSource _cts = new(); // Token để hủy các tác vụ bất đồng bộ
         private readonly ILogger<webSocket> _logger;
         private readonly IChatStorage _chatStorage;
+        private readonly IConversationStorage _conversationStorage;
         private readonly CallHandler _callHandler;
         public webSocket(IConnectionMultiplexer redis, IServiceProvider serviceProvider,
                          IChatStorage chatStorage,
+                            IConversationStorage conversation,
                          WebSocketOptions options = null,
                          ILogger<webSocket> logger = null)
         {
@@ -55,6 +58,7 @@ namespace server.Services.WebSocketService
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _chatStorage = chatStorage;
             _callHandler = new CallHandler(_redis.GetDatabase(), this);
+            _conversationStorage = conversation;
         }
         public IEnumerable<Client> GetClientsInConversation(int conversationId)
         {
@@ -69,6 +73,70 @@ namespace server.Services.WebSocketService
             var client = _clients.Keys.FirstOrDefault(c => c.UserId == userId && c.WebSocket.State == WebSocketState.Open);
             Console.WriteLine($"GetClient {userId}: {(client != null ? "Found" : "Not found")}");
             return client;
+        }
+        public async Task ConnectUserToConversationChanelAsync(int userId, int conversationId)
+        {
+            var subscriber = _redis.GetSubscriber();
+            var client = GetClient(userId);
+            if (client == null)
+            {
+                Console.WriteLine($"Client {userId} not found");
+                return;
+            }
+            try
+                {
+                    // Subscribe client vào kênh Redis để nhận tin nhắn real-time
+                    await subscriber.SubscribeAsync($"conversation:{conversationId}", async (channel, value) =>
+                    {
+                        if (client.WebSocket.State == WebSocketState.Open)
+                        {
+                            var msg = JsonSerializer.Deserialize<Message>(value);
+                            if (msg.sender_id != client.UserId) // Ngăn chặn vòng lặp vô hạn, Không gửi lại tin nhắn của chính client
+                            {
+                                var bytes = Encoding.UTF8.GetBytes(value);
+                                await client.WebSocket.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, CancellationToken.None);
+                            }
+                        }
+                    });
+                    Console.WriteLine($"User {client.UserId} subscribed to channel conversation:{conversationId}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error subscribing to channel: {ex.Message}");
+                    throw;
+                }
+        }
+        public async Task DisConnectUserToConversationChanelAsync(int userId, int conversationId)
+        {
+            var subscriber = _redis.GetSubscriber();
+            var client = GetClient(userId);
+            if (client == null)
+            {
+                Console.WriteLine($"Client {userId} not found");
+                return;
+            }
+            try
+                {
+                    // UnSubscribe client 
+                    await subscriber.UnsubscribeAsync($"conversation:{conversationId}", async (channel, value) =>
+                    {
+                        if (client.WebSocket.State == WebSocketState.Open)
+                        {
+                            var msg = JsonSerializer.Deserialize<Message>(value);
+                            if (msg.sender_id != client.UserId) // Ngăn chặn vòng lặp vô hạn, Không gửi lại tin nhắn của chính client
+                            {
+                                var bytes = Encoding.UTF8.GetBytes(value);
+                                await client.WebSocket.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, CancellationToken.None);
+                            }
+                        }
+                    });
+                    Console.WriteLine($"User {client.UserId} subscribed to channel conversation:{conversationId}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error subscribing to channel: {ex.Message}");
+                    throw;
+                }
         }
 
         // Xử lý yêu cầu WebSocket từ client
@@ -324,6 +392,19 @@ namespace server.Services.WebSocketService
                 await transaction.CommitAsync();
                 _logger.LogInformation("Transaction committed for message: {MessageId}", new_message.id);
 
+                // Lấy danh sách participantIds từ database
+                var participantIds = await dbContext.Participants
+                    .Where(p => p.conversation_id == conversation.id && !p.is_deleted)
+                    .Select(p => p.user_id)
+                    .ToListAsync();
+
+                // Cập nhật lastMessage và lastMessageTime trong Redis
+                // bool isSaved = await _conversationStorage.UpdateConversationAsync(conversation.id, conversation.lastMessage, conversation.lastMessageTime ?? DateTime.UtcNow, participantIds);
+                // if (!isSaved)
+                // {
+                //     _logger.LogWarning("Failed to update conversation in Redis for conversation ID: {ConversationId}", conversation.id);
+                //     return;
+                // }
                 var messageDTO = new MessageDTOForAttachment
                 {
                     id = new_message.id,

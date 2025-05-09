@@ -19,6 +19,33 @@ namespace server.Controllers
             this.participantSV = participantSV;
         }
 
+        [HttpDelete("leave_group/{conversation_id}/{user_id}")]
+        public async Task<IActionResult> LeaveGroup(int conversation_id, int user_id)
+        {
+            if (conversation_id == 0 || user_id == 0)
+            {
+                return BadRequest("Invalid conversation id or user id");
+            }
+            try
+            {
+                var result = await participantSV.LeaveGroupAsync(conversation_id, user_id);
+                if (result == null)
+                {
+                    return BadRequest("Not found participant");
+                }
+                return Ok(new
+                {
+                    Success = true,
+                    Participant = result
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+        }
+
         [HttpPost("add_member/{conversation_id}/{user_id}")]
         public async Task<IActionResult> AddMember(int conversation_id, int user_id)
         {

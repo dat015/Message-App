@@ -15,6 +15,7 @@ class WebSocketService {
   Function(int, String)? onReceiveIceCandidate; // Loại bỏ final
   Function(int)? onCallEnded; // Loại bỏ final
   bool _isConnected = false;
+  bool get isConnected => _isConnected;
   // Thêm StreamController để phát sự kiện cuộc gọi
   final StreamController<Map<String, dynamic>> _callEvents =
       StreamController.broadcast();

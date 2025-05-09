@@ -5,9 +5,10 @@ import 'package:flutter/foundation.dart';
 class Participants {
   final int id;
   final int conversationId;
-  final int userId;
+  final int user_id;
   final String? role; // Có thể null, giống C#
   String? name; // Có thể null, giống C#
+  String? img_url;
   final DateTime joinedAt;
   final bool isDeleted;
   final Conversation? conversation; // Mối quan hệ ForeignKey, có thể null
@@ -16,13 +17,14 @@ class Participants {
   Participants({
     required this.id,
     required this.conversationId,
-    required this.userId,
+    required this.user_id,
     this.role, // Tùy chọn, không yêu cầu
     this.name, // Tùy chọn, không yêu cầu
     required this.joinedAt,
     required this.isDeleted,
     this.conversation, // Tùy chọn
     this.user, // Tùy chọn
+    this.img_url, // Tùy chọn
   });
 
   factory Participants.fromJson(Map<String, dynamic> json) {
@@ -31,12 +33,13 @@ class Participants {
     return Participants(
       id: json['id'] as int? ?? 0,
       conversationId: json['conversation_id'] as int? ?? 0,
-      userId:
+      user_id:
           userIdRaw is int
               ? userIdRaw
               : int.tryParse(userIdRaw?.toString() ?? '') ?? 0,
       role: json['role'] as String?,
       name: json['name'] as String?,
+      img_url: json['img_url'] as String?,
       joinedAt:
           json['joined_at'] != null
               ? DateTime.parse(json['joined_at'] as String)
@@ -63,13 +66,14 @@ class Participants {
     return {
       'id': id,
       'conversation_id': conversationId,
-      'user_id': userId,
+      'user_id': user_id,
       'role': role,
       'name': name,
       'joined_at': joinedAt.toIso8601String(),
       'is_deleted': isDeleted,
       'conversation': conversation?.toJson(),
       'user': user?.toJson(),
+      'img_url': img_url,
     };
   }
 }

@@ -70,7 +70,9 @@ class CallProvider extends ChangeNotifier {
         throw 'Quyền camera bị từ chối';
       }
 
-      webSocketService.connect(userId, conversationId);
+      if(webSocketService.isConnected == false) {
+        webSocketService.connect(userId, conversationId);
+      }
       _webRTCService = WebRTCService(
         webSocketService,
         userId,

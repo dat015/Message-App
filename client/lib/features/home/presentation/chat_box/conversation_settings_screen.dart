@@ -1,5 +1,6 @@
 import 'package:first_app/data/dto/message_response.dart';
 import 'package:first_app/data/providers/providers.dart';
+import 'package:first_app/data/repositories/Chat/websocket_service.dart';
 import 'package:first_app/data/repositories/Message_Repo/message_repository.dart';
 import 'package:first_app/data/repositories/User_Repo/user_repo.dart';
 import 'package:first_app/features/home/presentation/chat_box/chat.dart';
@@ -16,12 +17,17 @@ class ConversationSettingsScreen extends StatefulWidget {
   final Conversation conversation;
   final int currentUserId;
   final List<MessageWithAttachment> messages;
+  final WebSocketService webSocketService;
+    final Function(int)? onConversationRemoved; // Callback để xóa conversation
+
 
   const ConversationSettingsScreen({
     super.key,
     required this.conversation,
     required this.currentUserId,
-    required this.messages
+    required this.messages,
+    required this.webSocketService,
+    required this.onConversationRemoved
   });
 
   @override
@@ -35,6 +41,8 @@ class _ConversationSettingsScreenState
   final ParticipantsRepo _participantsRepo = ParticipantsRepo();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _nicknameController = TextEditingController();
+  final TextEditingController _imageUrlController =
+      TextEditingController(); //controller cho URL ảnh
   final MessageRepo _messageRepo = MessageRepo();
   final UserRepo _userRepo = UserRepo();
   late ChatScreen _chatScreen;
@@ -46,10 +54,12 @@ class _ConversationSettingsScreenState
   void initState() {
     super.initState();
     _nameController.text = widget.conversation.name;
+    _imageUrlController.text = widget.conversation.img_url ?? '';
     print("user id setting ${widget.currentUserId}");
     _chatScreen = ChatScreen(
       conversationId: widget.conversation.id!,
       userId: widget.currentUserId,
+      websocketService: widget.webSocketService,
     );
     _loadParticipants();
   }
@@ -74,6 +84,45 @@ class _ConversationSettingsScreenState
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Error loading participants: $e')));
+    }
+  }
+
+  Future<void> _updateGroupImage() async {
+    if (_imageUrlController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('URL ảnh không được để trống')),
+      );
+      return;
+    }
+
+    // Kiểm tra định dạng URL cơ bản
+    final urlRegExp = RegExp(
+      r'^(https?:\/\/[^\s/$.?#].[^\s]*)$',
+      caseSensitive: false,
+    );
+    if (!urlRegExp.hasMatch(_imageUrlController.text)) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('URL ảnh không hợp lệ')));
+      return;
+    }
+
+    try {
+      _conversationRepo.updateGroupImage(
+        widget.conversation.id!,
+        _imageUrlController.text,
+      );
+      setState(() {
+        widget.conversation.img_url =
+            _imageUrlController.text; // Cập nhật URL ảnh
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Cập nhật ảnh nhóm thành công')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Lỗi khi cập nhật ảnh nhóm: $e')));
     }
   }
 
@@ -122,7 +171,7 @@ class _ConversationSettingsScreenState
       // Cập nhật danh sách participants local
       final updatedParticipants = [..._participants];
       final participantIndex = updatedParticipants.indexWhere(
-        (p) => p.userId == widget.currentUserId,
+        (p) => p.user_id == widget.currentUserId,
       );
 
       if (participantIndex != -1) {
@@ -130,7 +179,7 @@ class _ConversationSettingsScreenState
         final updatedParticipant = Participants(
           id: updatedParticipants[participantIndex].id,
           conversationId: updatedParticipants[participantIndex].conversationId,
-          userId: updatedParticipants[participantIndex].userId,
+          user_id: updatedParticipants[participantIndex].user_id,
           joinedAt: updatedParticipants[participantIndex].joinedAt,
           isDeleted: updatedParticipants[participantIndex].isDeleted,
           name: _nicknameController.text,
@@ -152,7 +201,6 @@ class _ConversationSettingsScreenState
           lastMessageTime: widget.conversation.lastMessageTime,
           participants: updatedParticipants,
         );
-
         // Trả về conversation đã cập nhật để HomeScreen có thể cập nhật
         Navigator.pop(context, updatedConversation);
       }

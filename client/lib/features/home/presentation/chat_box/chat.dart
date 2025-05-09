@@ -1,7 +1,11 @@
+import 'dart:io';
+
+import 'package:first_app/data/dto/message_response.dart';
 import 'package:first_app/data/models/conversation.dart';
 import 'package:first_app/data/models/participants.dart';
 import 'package:first_app/data/providers/CallProvider.dart';
 import 'package:first_app/data/providers/providers.dart';
+import 'package:first_app/data/repositories/Chat/websocket_service.dart';
 import 'package:first_app/features/home/presentation/chat_box/conversation_settings_screen.dart';
 import 'package:first_app/features/home/presentation/widgets/message_input.dart';
 import 'package:first_app/features/home/presentation/widgets/message_list.dart'
@@ -15,12 +19,19 @@ class ChatScreen extends StatefulWidget {
   final int conversationId;
   final int userId;
   final int? participantId; // nullable
+  final WebSocketService websocketService;
+  final Function(MessageWithAttachment)? updateChatListCallback;
+    final Function(int)? onConversationRemoved; // Callback để xóa conversation
+
 
   const ChatScreen({
     super.key,
     required this.conversationId,
     required this.userId,
     this.participantId,
+    required this.websocketService,
+    this.updateChatListCallback,
+    this.onConversationRemoved
   });
 
   @override
@@ -33,10 +44,13 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => ChatProvider(
-        userId: widget.userId,
-        conversationId: widget.conversationId,
-      ),
+      create:
+          (_) => ChatProvider(
+            userId: widget.userId,
+            conversationId: widget.conversationId,
+            webSocketService: widget.websocketService,
+            updateChatListCallback: widget.updateChatListCallback
+          ),
       child: Scaffold(
         appBar: AppBar(
           leading: IconButton(
@@ -57,7 +71,7 @@ class _ChatScreenState extends State<ChatScreen> {
               );
               print("Current userId: ${widget.userId}");
               print(
-                "Participants from provider: ${participants.map((p) => 'ID: ${p.id}, UserID: ${p.userId}, Name: ${p.name}').join(', ')}",
+                "Participants from provider: ${participants.map((p) => 'ID: ${p.id}, UserID: ${p.user_id}, Name: ${p.name}').join(', ')}",
               );
 
               if (conversation.isGroup) {
@@ -65,13 +79,13 @@ class _ChatScreenState extends State<ChatScreen> {
               }
 
               final otherParticipant = participants.firstWhere(
-                (p) => p.userId != widget.userId,
+                (p) => p.user_id != widget.userId,
                 orElse: () {
                   print("No other participant found");
                   return Participants(
                     id: 0,
                     conversationId: conversation.id ?? 0,
-                    userId: 0,
+                    user_id: 0,
                     joinedAt: DateTime.now(),
                     isDeleted: false,
                     name: conversation.name,
@@ -80,7 +94,7 @@ class _ChatScreenState extends State<ChatScreen> {
               );
 
               print(
-                "Selected participant: ID=${otherParticipant.id}, UserID=${otherParticipant.userId}, Name=${otherParticipant.name}",
+                "Selected participant: ID=${otherParticipant.id}, UserID=${otherParticipant.user_id}, Name=${otherParticipant.name}",
               );
 
               return Text(otherParticipant.name ?? conversation.name);
@@ -101,16 +115,19 @@ class _ChatScreenState extends State<ChatScreen> {
                         print("Ending call");
                         callProvider.endCall();
                       } else {
-                        final permissionStatus = await [
-                          Permission.microphone,
-                          Permission.camera,
-                        ].request();
-                        if (permissionStatus[Permission.microphone]!.isGranted &&
+                        final permissionStatus =
+                            await [
+                              Permission.microphone,
+                              Permission.camera,
+                            ].request();
+                        if (permissionStatus[Permission.microphone]!
+                                .isGranted &&
                             permissionStatus[Permission.camera]!.isGranted) {
-                          String name = Provider.of<ChatProvider>(
-                            context,
-                            listen: false,
-                          ).conversation!.name;
+                          String name =
+                              Provider.of<ChatProvider>(
+                                context,
+                                listen: false,
+                              ).conversation!.name;
                           await callProvider.startCall(
                             widget.userId,
                             widget.conversationId,
@@ -121,7 +138,8 @@ class _ChatScreenState extends State<ChatScreen> {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text(
-                                  'Cần cấp quyền micro và camera để thực hiện cuộc gọi'),
+                                'Cần cấp quyền micro và camera để thực hiện cuộc gọi',
+                              ),
                             ),
                           );
                         }
@@ -136,7 +154,9 @@ class _ChatScreenState extends State<ChatScreen> {
                     }
                   },
                   tooltip:
-                      callProvider.isCalling ? 'Kết thúc cuộc gọi' : 'Gọi video',
+                      callProvider.isCalling
+                          ? 'Kết thúc cuộc gọi'
+                          : 'Gọi video',
                 );
               },
             ),
@@ -158,11 +178,14 @@ class _ChatScreenState extends State<ChatScreen> {
                     final result = await Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ConversationSettingsScreen(
-                          conversation: conversation,
-                          currentUserId: id,
-                          messages: provider.messages,
-                        ),
+                        builder:
+                            (context) => ConversationSettingsScreen(
+                              conversation: conversation,
+                              currentUserId: id,
+                              messages: provider.messages,
+                              webSocketService: widget.websocketService,
+                              onConversationRemoved: widget.onConversationRemoved
+                            ),
                       ),
                     );
 
@@ -185,17 +208,14 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
         body: Stack(
           children: [
-            Column(
-              children: [
-                Expanded(child: MessageList()),
-                MessageInput(),
-              ],
-            ),
+            Column(children: [Expanded(child: MessageList()), MessageInput()]),
             Consumer<CallProvider>(
               builder: (context, callProvider, child) {
-                print('CallProvider state: isCalling=${callProvider.isCalling}, '
-                    'localRenderer=${callProvider.localRenderer != null}, '
-                    'remoteRenderer=${callProvider.remoteRenderer != null}');
+                print(
+                  'CallProvider state: isCalling=${callProvider.isCalling}, '
+                  'localRenderer=${callProvider.localRenderer != null}, '
+                  'remoteRenderer=${callProvider.remoteRenderer != null}',
+                );
                 if (callProvider.isCalling &&
                     callProvider.localRenderer != null &&
                     callProvider.remoteRenderer != null) {

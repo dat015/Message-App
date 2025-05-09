@@ -7,7 +7,10 @@ namespace server.Services.RedisService.ConversationStorage
 {
     public interface IConversationStorage
     {
-        Task<bool> DeleteMemberAsync(string conversationId, string memberId);
+        Task<bool> DeleteMemberAsync(int conversationId, int memberId);
+        Task<bool> DeleteConversationByUserAsync(int conversationId, int userId);
+        Task<bool> AddNewConversationAsync(int conversationId, List<int> members);
+        Task<bool> UpdateConversationAsync(int conversationId, string lastMessage, DateTime lastMessageTime, List<int> memberIds);
         
     }
 }

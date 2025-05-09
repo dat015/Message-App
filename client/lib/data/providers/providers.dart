@@ -20,7 +20,8 @@ class ChatProvider with ChangeNotifier {
   final MessageRepo _messageRepo = MessageRepo();
   final ConversationRepo _conversationRepo = ConversationRepo();
   final ParticipantsRepo _participantsRepo = ParticipantsRepo();
-  late WebSocketService _webSocketService;
+  WebSocketService webSocketService;
+   final Function(MessageWithAttachment)? updateChatListCallback;
 
   List<MessageWithAttachment> _messages = [];
   Conversation? _conversation;
@@ -32,7 +33,12 @@ class ChatProvider with ChangeNotifier {
   Conversation? get conversation => _conversation;
   List<Participants> get participants => _participants;
 
-  ChatProvider({required this.userId, required this.conversationId}) {
+  ChatProvider({
+    required this.userId,
+    required this.conversationId,
+    required this.webSocketService,
+     this.updateChatListCallback,
+  }) {
     _initializeWebSocket();
     _loadData();
   }
@@ -43,18 +49,12 @@ class ChatProvider with ChangeNotifier {
   }
 
   void _initializeWebSocket() {
-    _webSocketService = WebSocketService(
-      url: baseURLWS,
-      onMessageReceived: _onMessageReceived,
-    );
+    // Gán callback cho onMessageReceived
+    //webSocketService.connect(userId, conversationId);
+    webSocketService.onMessageReceived = _onMessageReceived;
     print(
       'Initializing WebSocket for user $userId, conversation $conversationId',
     );
-    try {
-      _webSocketService.connect(userId, conversationId);
-    } catch (e) {
-      print('Failed to initialize WebSocket: $e');
-    }
   }
 
   // Future<void> _handleCallButtonPress(BuildContext context, CallProvider callProvider) async {
@@ -74,7 +74,6 @@ class ChatProvider with ChangeNotifier {
   //   }
   // }
 
-  
   Future<void> _loadData() async {
     print('Loading data for conversation $conversationId and user $userId');
     try {
@@ -91,6 +90,7 @@ class ChatProvider with ChangeNotifier {
             print('Failed to fetch conversation: $e');
             return null;
           });
+      print("fetchedConversation: $fetchedConversation");
 
       final fetchedParticipants = await _participantsRepo
           .getParticipants(conversationId)
@@ -107,18 +107,18 @@ class ChatProvider with ChangeNotifier {
       if (_conversation != null && !_conversation!.isGroup) {
         print("✅ Checking participants:");
         for (var p in _participants) {
-          print("Participant: id=${p.id}, userId=${p.userId}, name=${p.name}");
+          print("Participant: id=${p.id}, userId=${p.user_id}, name=${p.name}");
         }
 
         final others =
             _participants
-                .where((p) => p.userId != 0 && p.userId != userId)
+                .where((p) => p.user_id != 0 && p.user_id != userId)
                 .toList();
 
         if (others.isNotEmpty) {
           final other = others.first;
           print(
-            "✅ Other participant found: ID=${other.id}, UserID=${other.userId}, Name=${other.name}",
+            "✅ Other participant found: ID=${other.id}, UserID=${other.user_id}, Name=${other.name}",
           );
           _conversation!.name = other.name ?? _conversation!.name;
         } else {
@@ -203,7 +203,7 @@ class ChatProvider with ChangeNotifier {
   }
 
   void addMember(int userId, int conversationId) {
-    _webSocketService.addMember(userId, conversationId);
+    webSocketService.addMember(userId, conversationId);
     notifyListeners();
   }
 
@@ -250,7 +250,8 @@ class ChatProvider with ChangeNotifier {
 
         // _messages.add(messageWithAttachment);
         // notifyListeners(); // 🚀 Cập nhật UI ngay
-        _webSocketService.sendMessage(userId, conversationId, content, fileID);
+        webSocketService.sendMessage(userId, conversationId, content, fileID);
+        updateChatListCallback?.call(messageWithAttachment);
         return;
       }
     }
@@ -272,7 +273,8 @@ class ChatProvider with ChangeNotifier {
     );
     //_messages.add(messageWithAttachment);
     // notifyListeners(); // 🚀 Cập nhật UI ngay
-    _webSocketService.sendMessage(userId, conversationId, content, fileID);
+    webSocketService.sendMessage(userId, conversationId, content, fileID);
+    updateChatListCallback?.call(messageWithAttachment);
   }
 
   Future<void> sendPrivateMessage(
@@ -315,7 +317,7 @@ class ChatProvider with ChangeNotifier {
         // notifyListeners(); // 🚀 Cập nhật UI ngay
         print(fileID);
         //gửi tin nhắn
-        _webSocketService.sendPrivateMessage(
+        webSocketService.sendPrivateMessage(
           userId,
           conversationId,
           recipientId,
@@ -342,7 +344,7 @@ class ChatProvider with ChangeNotifier {
     );
     // _messages.add(messageWithAttachment);
     // notifyListeners(); // 🚀 Cập nhật UI ngay
-    _webSocketService.sendPrivateMessage(
+    webSocketService.sendPrivateMessage(
       userId,
       conversationId,
       recipientId,
@@ -353,6 +355,7 @@ class ChatProvider with ChangeNotifier {
 
   void disconnect() {
     print('Disconnecting WebSocket');
-    _webSocketService.disconnect();
+    //webSocketService.disconnect();
+    // super.dispose();
   }
 }

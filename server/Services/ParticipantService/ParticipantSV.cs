@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ using server.DTO;
 using server.Models;
 using server.Services.RedisService;
 using server.Services.RedisService.ChatStorage;
+using server.Services.RedisService.ConversationStorage;
 using server.Services.WebSocketService;
 using StackExchange.Redis;
 
@@ -21,16 +23,73 @@ namespace server.Services.ParticipantService
         private readonly IConnectionMultiplexer _redis;
         private readonly webSocket _webSocket; // Singleton
         private readonly IChatStorage _chatStorage;
+        private readonly IConversationStorage _conversationStorage;
 
-        public ParticipantSV(ApplicationDbContext context, IRedisService redisService, IConnectionMultiplexer redis, webSocket webSocket, IChatStorage chatStorage)
+        public ParticipantSV(IConversationStorage conversationStorage, ApplicationDbContext context, IRedisService redisService, IConnectionMultiplexer redis, webSocket webSocket, IChatStorage chatStorage)
         {
             _context = context;
             _redisService = redisService;
             _redis = redis;
             _webSocket = webSocket; // Inject the singleton instance
             _chatStorage = chatStorage;
+            _conversationStorage = conversationStorage;
         }
 
+        public async Task<Participants> LeaveGroupAsync(int conversation_id, int user_id)
+        {
+            if (conversation_id <= 0 || user_id <= 0)
+            {
+                throw new ArgumentException("Conversation ID hoặc User ID không hợp lệ.");
+            }
+
+            try
+            {
+                // Kiểm tra xem người dùng có phải là thành viên của cuộc trò chuyện không
+                var participant = await _context.Participants
+                    .FirstOrDefaultAsync(p => p.conversation_id == conversation_id && p.user_id == user_id);
+
+                if (participant == null)
+                {
+                    throw new KeyNotFoundException("Người dùng không phải là thành viên của cuộc trò chuyện.");
+                }
+
+                _context.Participants.Remove(participant);
+                await _context.SaveChangesAsync();
+
+                // Tạo tin nhắn hệ thống
+                var message = new MessageDTOForAttachment
+                {
+                    content = $"{participant.name} đã rời khỏi cuộc trò chuyện",
+                    sender_id = user_id,
+                    conversation_id = conversation_id,
+                    type = "system",
+                };
+
+                var messageWithAttachment = new MessageWithAttachment
+                {
+                    Message = message,
+                    Attachment = null
+                };
+                try
+                {
+                    // await _conversationStorage.DeleteConversationByUserAsync(conversation_id, user_id);
+                    await _webSocket.DisConnectUserToConversationChanelAsync(user_id, conversation_id);
+                    await _chatStorage.PublishMessageAsync(messageWithAttachment);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Lỗi khi gửi tin nhắn hệ thống: {ex.Message}");
+                    throw new InvalidOperationException("Không thể gửi tin nhắn hệ thống.", ex);
+                }
+                return participant;
+            }
+            catch (Exception ex)
+            {
+                // Ghi log lỗi chi tiết (sử dụng ILogger thay vì Console)
+                Console.WriteLine($"Lỗi khi người dùng rời nhóm: {ex.Message}");
+                throw new InvalidOperationException("Không thể thực hiện thao tác này.", ex);
+            }
+        }
 
         public async Task<Participants> AddParticipantAsync(int conversation_id, int user_id)
         {
@@ -52,7 +111,7 @@ namespace server.Services.ParticipantService
                 // Kiểm tra người dùng và thành viên cùng lúc
                 var user = await _context.Users
                     .Where(u => u.id == user_id)
-                    .Select(u => new { u.id, u.username })
+                    .Select(u => new { u.id, u.username, u.avatar_url })
                     .FirstOrDefaultAsync();
 
                 if (user == null)
@@ -79,6 +138,7 @@ namespace server.Services.ParticipantService
                         DateTime.UtcNow,
                         TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time")
                     ),
+                    img_url = user.avatar_url,
                     is_deleted = false,
                 };
 
@@ -99,8 +159,39 @@ namespace server.Services.ParticipantService
                     Message = message,
                     Attachment = null
                 };
-
+                await _webSocket.ConnectUserToConversationChanelAsync(user_id, conversation_id);
                 await _chatStorage.PublishMessageAsync(messageWithAttachment);
+
+                
+
+                var redisKey = $"conversation:{conversation_id}";
+
+                var redisValue = await _redisService.GetAsync(redisKey);
+
+                var conversationsUserKey = $"User:{user_id}:conversations";
+                var conversationsUserValue = await _redisService.GetAsync(conversationsUserKey);
+                if (redisValue != null)
+                {
+                    var participants = JsonSerializer.Deserialize<List<Participants>>(redisValue);
+                    if (participants != null)
+                    {
+                        participants.Remove(participant);
+                        await _redisService.SetAsync(redisKey, JsonSerializer.Serialize(participants));
+                    }
+                }
+                if (conversationsUserValue != null)
+                {
+                    var conversations = JsonSerializer.Deserialize<List<Conversation>>(conversationsUserValue);
+                    if (conversations != null)
+                    {
+                        var conversation_redis = conversations.FirstOrDefault(c => c.id == conversation_id);
+                        if (conversation_redis != null)
+                        {
+                            conversations.Remove(conversation_redis);
+                            await _redisService.SetAsync(conversationsUserKey, JsonSerializer.Serialize(conversations));
+                        }
+                    }
+                }
 
                 return participant;
             }
@@ -121,12 +212,24 @@ namespace server.Services.ParticipantService
             try
             {
                 var participants = new List<Participants>();
-                foreach (var id in user_id)
+                // Lấy danh sách user từ DB
+                var users = await _context.Users
+                    .Where(u => user_id.Contains(u.id))
+                    .Select(u => new { u.id, u.username, u.avatar_url })
+                    .ToListAsync();
+                foreach (var user in users)
                 {
                     var participant = new Participants
                     {
                         conversation_id = conversation_id,
-                        user_id = id
+                        user_id = user.id,
+                        name = user.username,
+                        img_url = user.avatar_url,
+                        joined_at = TimeZoneInfo.ConvertTimeFromUtc(
+                            DateTime.UtcNow,
+                            TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time")
+                        ),
+                        is_deleted = false,
                     };
                     participants.Add(participant);
                 }

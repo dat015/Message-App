@@ -10,6 +10,7 @@ class Conversation {
   DateTime? lastMessageTime;
   String? lastMessage;
   String? lastMessageSender;
+  String? img_url;
   List<Message>? messages;
   List<GroupSettings>? groupSettings;
   List<Participants>? participants;
@@ -25,13 +26,14 @@ class Conversation {
     this.messages,
     this.groupSettings,
     this.participants,
+    this.img_url,
   });
 
   factory Conversation.fromJson(Map<String, dynamic> json) {
     return Conversation(
       id: json['id'] as int?,
       name: json['name'] as String? ?? '',
-      isGroup: json['isGroup'] == true || json['isGroup'] == 'true',
+      isGroup: json['is_group'] == true || json['is_group'] == 'true',
       createdAt: json['createdAt'] != null
           ? DateTime.parse(json['createdAt'] as String)
           : DateTime.now(),
@@ -45,6 +47,7 @@ class Conversation {
               .map((item) => Message.fromJson(item as Map<String, dynamic>))
               .toList()
           : null,
+      img_url: json['img_url'] as String?,
       groupSettings: json['groupSettings'] != null && json['groupSettings'] is List
           ? (json['groupSettings'] as List<dynamic>)
               .map((item) => GroupSettings.fromJson(item as Map<String, dynamic>))
@@ -62,7 +65,7 @@ class Conversation {
     return {
       'id': id,
       'name': name,
-      'isGroup': isGroup,
+      'is_group': isGroup,
       'createdAt': createdAt.toIso8601String(),
       'lastMessageTime': lastMessageTime?.toIso8601String(),
       'lastMessage': lastMessage,
@@ -70,6 +73,7 @@ class Conversation {
       'messages': messages?.map((message) => message.toJson()).toList(),
       'groupSettings': groupSettings?.map((settings) => settings.toJson()).toList(),
       'participants': participants?.map((participant) => participant.toJson()).toList(),
+      'img_url': img_url,
     };
   }
 
@@ -85,6 +89,6 @@ class Conversation {
   String toString() {
     return 'Conversation(id: $id, name: $name, isGroup: $isGroup, createdAt: $createdAt, '
         'lastMessageTime: $lastMessageTime, lastMessage: $lastMessage, lastMessageSender: $lastMessageSender, '
-        'messages: ${messages?.length ?? 0}, groupSettings: ${groupSettings?.length ?? 0}, participants: ${participants?.length ?? 0})';
+        'messages: ${messages?.length ?? 0}, groupSettings: ${groupSettings?.length ?? 0}, participants: ${participants?.length ?? 0}, img_url: $img_url)';
   }
 }

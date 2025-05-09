@@ -1,0 +1,66 @@
+2025-04-29 22:34:05.802 +07:00 [INF] Executed DbCommand (35ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [u].[id], [u].[username], [u].[avatar_url]
+FROM [Users] AS [u]
+2025-04-29 22:34:05.972 +07:00 [INF] User profile is available. Using 'C:\Users\Thao\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-04-29 22:34:06.042 +07:00 [WRN] Overriding address(es) 'http://localhost:5053'. Binding to endpoints defined via IConfiguration and/or UseKestrel() instead.
+2025-04-29 22:34:06.051 +07:00 [INF] Now listening on: http://[::]:5053
+2025-04-29 22:34:06.052 +07:00 [INF] Now listening on: http://0.0.0.0:5053
+2025-04-29 22:34:06.052 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-04-29 22:34:06.052 +07:00 [INF] Hosting environment: Development
+2025-04-29 22:34:06.052 +07:00 [INF] Content root path: C:\Users\Thao\source\Flutter\Message_app\server
+2025-04-29 22:37:52.631 +07:00 [INF] Application is shutting down...
+2025-04-29 22:38:01.574 +07:00 [INF] Executed DbCommand (61ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [u].[id], [u].[username], [u].[avatar_url]
+FROM [Users] AS [u]
+2025-04-29 22:38:01.706 +07:00 [INF] User profile is available. Using 'C:\Users\Thao\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-04-29 22:38:01.759 +07:00 [WRN] Overriding address(es) 'http://localhost:5053'. Binding to endpoints defined via IConfiguration and/or UseKestrel() instead.
+2025-04-29 22:38:01.767 +07:00 [INF] Now listening on: http://[::]:5053
+2025-04-29 22:38:01.768 +07:00 [INF] Now listening on: http://0.0.0.0:5053
+2025-04-29 22:38:01.768 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-04-29 22:38:01.768 +07:00 [INF] Hosting environment: Development
+2025-04-29 22:38:01.768 +07:00 [INF] Content root path: C:\Users\Thao\source\Flutter\Message_app\server
+2025-04-29 22:43:27.070 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Auth/login - null null
+2025-04-29 22:43:27.193 +07:00 [INF] CORS policy execution successful.
+2025-04-29 22:43:27.209 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Auth/login - 204 null null 147.1636ms
+2025-04-29 22:43:27.216 +07:00 [INF] Request starting HTTP/1.1 POST http://localhost:5053/api/Auth/login - application/json 53
+2025-04-29 22:43:27.219 +07:00 [INF] CORS policy execution successful.
+2025-04-29 22:43:27.271 +07:00 [INF] CORS policy execution successful.
+2025-04-29 22:43:27.278 +07:00 [WRN] Failed to determine the https port for redirect.
+2025-04-29 22:43:27.362 +07:00 [INF] Executing endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-04-29 22:43:27.449 +07:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(server.DTO.AuthDTO.LoginDTO) on controller Message_app.Controllers.AuthController (Message_app).
+2025-04-29 22:43:28.037 +07:00 [INF] Executed DbCommand (94ms) [Parameters=[@__email_0='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[email] = @__email_0
+2025-04-29 22:43:28.284 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.DTO.AuthDTO.LoginRespose'.
+2025-04-29 22:43:28.395 +07:00 [INF] Executed action Message_app.Controllers.AuthController.Login (Message_app) in 939.3132ms
+2025-04-29 22:43:28.396 +07:00 [INF] Executed endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-04-29 22:43:28.410 +07:00 [INF] Request finished HTTP/1.1 POST http://localhost:5053/api/Auth/login - 200 null application/json; charset=utf-8 1193.4999ms
+2025-04-29 22:43:28.461 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/ws/chat?userId=5 - null null
+2025-04-29 22:43:28.479 +07:00 [INF] CORS policy execution successful.
+2025-04-29 22:43:28.480 +07:00 [INF] CORS policy execution successful.
+2025-04-29 22:43:28.482 +07:00 [INF] Executing endpoint '/ws/chat'
+2025-04-29 22:43:28.629 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_conversations/5 - null null
+2025-04-29 22:43:28.630 +07:00 [INF] CORS policy execution successful.
+2025-04-29 22:43:28.630 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_conversations/5 - null null
+2025-04-29 22:43:28.630 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_conversations/5 - 204 null null 0.6879ms
+2025-04-29 22:43:28.630 +07:00 [INF] CORS policy execution successful.
+2025-04-29 22:43:28.631 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_conversations/5 - 204 null null 0.8021ms
+2025-04-29 22:43:28.632 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Conversation/get_conversations/5 - null null
+2025-04-29 22:43:28.633 +07:00 [INF] CORS policy execution successful.
+2025-04-29 22:43:28.636 +07:00 [INF] CORS policy execution successful.
+2025-04-29 22:43:28.643 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-04-29 22:43:28.660 +07:00 [INF] Route matched with {action = "GetConversations", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetConversations(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-04-29 22:43:28.740 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.DTO.ConversationDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-04-29 22:43:28.753 +07:00 [INF] Executed action server.Controllers.ConversationController.GetConversations (Message_app) in 92.3153ms
+2025-04-29 22:43:28.753 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-04-29 22:43:28.755 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Conversation/get_conversations/5 - 200 null application/json; charset=utf-8 122.6165ms
+2025-04-29 22:43:28.758 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Conversation/get_conversations/5 - null null
+2025-04-29 22:43:28.759 +07:00 [INF] CORS policy execution successful.
+2025-04-29 22:43:28.761 +07:00 [INF] CORS policy execution successful.
+2025-04-29 22:43:28.761 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-04-29 22:43:28.762 +07:00 [INF] Route matched with {action = "GetConversations", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetConversations(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-04-29 22:43:28.765 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.DTO.ConversationDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-04-29 22:43:28.766 +07:00 [INF] Executed action server.Controllers.ConversationController.GetConversations (Message_app) in 4.3506ms
+2025-04-29 22:43:28.766 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-04-29 22:43:28.767 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Conversation/get_conversations/5 - 200 null application/json; charset=utf-8 9.0851ms

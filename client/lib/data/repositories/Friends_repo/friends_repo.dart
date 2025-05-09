@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:first_app/PlatformClient/config.dart';
+import 'package:first_app/data/dto/friend_dto.dart';
 import 'package:first_app/data/dto/friendrequest_withdetails.dart';
 import 'package:first_app/data/models/friendsuggestion.dart';
 import 'package:first_app/data/models/user.dart';
@@ -90,11 +91,22 @@ class FriendsRepo {
     }
   }
 
-  Future<void> sendFriendRequest(int senderId, int receiverId, String username, String avatarUrl) async {
+  Future<void> sendFriendRequest(
+    int senderId,
+    int receiverId,
+    String username,
+    String avatarUrl,
+  ) async {
     final response = await http.post(
       Uri.parse('$baseUrl/send-request'),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'senderId': senderId, 'receiverId': receiverId, 'username' : username, 'status' : 'Pending', 'avatarUrl' : avatarUrl}),
+      body: jsonEncode({
+        'senderId': senderId,
+        'receiverId': receiverId,
+        'username': username,
+        'status': 'Pending',
+        'avatarUrl': avatarUrl,
+      }),
     );
 
     if (response.statusCode != 200) {
@@ -106,65 +118,127 @@ class FriendsRepo {
   }
 
   Future<List<User>> getFriends(int userId) async {
-  final response = await http.get(Uri.parse('$baseUrl/list/$userId'));
+    final response = await http.get(Uri.parse('$baseUrl/list/$userId'));
+    if (response.statusCode == 200) {
+      final jsonResponse = jsonDecode(response.body);
+      bool isSuccess;
+      if (jsonResponse['success'] is bool) {
+        isSuccess = jsonResponse['success'] as bool;
+      } else if (jsonResponse['success'] is String) {
+        isSuccess = jsonResponse['success'].toLowerCase() == 'true';
+      } else {
+        throw Exception('Invalid success value: ${jsonResponse['success']}');
+      }
+
+      if (isSuccess) {
+        final friends = jsonResponse['friends'] as List<dynamic>;
+        return friends.map((json) => User.fromJson(json)).toList();
+      } else {
+        throw Exception('Failed to load friends: ${jsonResponse['message']}');
+      }
+    } else {
+      throw Exception('Failed to load friends: ${response.statusCode}');
+    }
+  }
+
+  Future<List<FriendDTO>> getFriendsDTO(int userId) async {
+  final url = '$baseUrl/GetAllFriends/$userId';
+  final response = await http.get(Uri.parse(url));
+  print('Request URL: $url');
+  print('Response Status: ${response.statusCode}');
+
   if (response.statusCode == 200) {
     final jsonResponse = jsonDecode(response.body);
-    bool isSuccess;
-    if (jsonResponse['success'] is bool) {
-      isSuccess = jsonResponse['success'] as bool;
-    } else if (jsonResponse['success'] is String) {
-      isSuccess = jsonResponse['success'].toLowerCase() == 'true';
+    print('API Response: $jsonResponse');
+
+    List<dynamic> friendsData = [];
+
+    if (jsonResponse is Map<String, dynamic>) {
+      // Xử lý trường hợp response có 'success' và 'friends'
+      final dynamic successRaw = jsonResponse['success'];
+      final bool isSuccess = successRaw == true ||
+          (successRaw is String && successRaw.toLowerCase() == 'true');
+
+      if (!isSuccess) {
+        throw Exception(
+          'Không thể tải danh sách bạn bè: ${jsonResponse['message'] ?? 'Không rõ lỗi'}',
+        );
+      }
+
+      final dynamic friendsWrapper = jsonResponse['friends'];
+      if (friendsWrapper is Map<String, dynamic> && friendsWrapper.containsKey(r'$values')) {
+        final dynamic values = friendsWrapper[r'$values'];
+        if (values is List<dynamic>) {
+          friendsData = values;
+        } else {
+          throw Exception('Giá trị $values không phải danh sách bạn bè hợp lệ');
+        }
+      } else {
+        throw Exception('Không tìm thấy trường trong friends');
+      }
+
+    } else if (jsonResponse is List<dynamic>) {
+      // Trường hợp API trả về list trực tiếp
+      friendsData = jsonResponse;
     } else {
-      throw Exception('Invalid success value: ${jsonResponse['success']}');
+      throw Exception('Phản hồi API không hợp lệ: $jsonResponse');
     }
 
-    if (isSuccess) {
-      final friends = jsonResponse['friends'] as List<dynamic>;
-      return friends.map((json) => User.fromJson(json)).toList();
-    } else {
-      throw Exception('Failed to load friends: ${jsonResponse['message']}');
-    }
+    return friendsData.map((json) => FriendDTO.fromJson(json)).toList();
   } else {
-    throw Exception('Failed to load friends: ${response.statusCode}');
+    throw Exception('Không thể tải danh sách bạn bè: ${response.statusCode}');
   }
 }
 
-  Future<List<FriendRequestWithDetails>> getSentFriendRequests(int userId) async {
-  final response = await http.get(Uri.parse('$baseUrl/get-sent-requests/$userId'));
-  if (response.statusCode == 200) {
-    final jsonResponse = jsonDecode(response.body);
-    bool isSuccess;
-    if (jsonResponse['success'] is bool) {
-      isSuccess = jsonResponse['success'] as bool;
-    } else if (jsonResponse['success'] is String) {
-      isSuccess = jsonResponse['success'].toLowerCase() == 'true';
-    } else {
-      throw Exception('Invalid success value: ${jsonResponse['success']}');
-    }
 
-    if (isSuccess) {
-      final requests = jsonResponse['sentRequests'] as List<dynamic>;
-      return requests.map((json) => FriendRequestWithDetails.fromJson(json)).toList();
+  Future<List<FriendRequestWithDetails>> getSentFriendRequests(
+    int userId,
+  ) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/get-sent-requests/$userId'),
+    );
+    if (response.statusCode == 200) {
+      final jsonResponse = jsonDecode(response.body);
+      bool isSuccess;
+      if (jsonResponse['success'] is bool) {
+        isSuccess = jsonResponse['success'] as bool;
+      } else if (jsonResponse['success'] is String) {
+        isSuccess = jsonResponse['success'].toLowerCase() == 'true';
+      } else {
+        throw Exception('Invalid success value: ${jsonResponse['success']}');
+      }
+
+      if (isSuccess) {
+        final requests = jsonResponse['sentRequests'] as List<dynamic>;
+        return requests
+            .map((json) => FriendRequestWithDetails.fromJson(json))
+            .toList();
+      } else {
+        throw Exception(
+          'Failed to load sent friend requests: ${jsonResponse['message']}',
+        );
+      }
     } else {
-      throw Exception('Failed to load sent friend requests: ${jsonResponse['message']}');
+      throw Exception(
+        'Failed to load sent friend requests: ${response.statusCode}',
+      );
     }
-  } else {
-    throw Exception('Failed to load sent friend requests: ${response.statusCode}');
   }
-}
 
   Future<void> cancelFriendRequest(int senderId, int receiverId) async {
-  final response = await http.post(
-    Uri.parse('$baseUrl/cancel-request'),
-    headers: {'Content-Type': 'application/json'},
-    body: jsonEncode({'senderId': senderId, 'receiverId' : receiverId}),
-  );
+    final response = await http.post(
+      Uri.parse('$baseUrl/cancel-request'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'senderId': senderId, 'receiverId': receiverId}),
+    );
 
-  if (response.statusCode != 200) {
-    final jsonResponse = jsonDecode(response.body);
-    throw Exception('Failed to cancel friend request: ${jsonResponse['message']}');
+    if (response.statusCode != 200) {
+      final jsonResponse = jsonDecode(response.body);
+      throw Exception(
+        'Failed to cancel friend request: ${jsonResponse['message']}',
+      );
+    }
   }
-}
 
   Future<void> unfriend(int userId, int friendId) async {
     final response = await http.post(

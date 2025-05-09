@@ -1,4 +1,6 @@
 import 'package:first_app/data/dto/login_response.dart';
+import 'package:first_app/data/dto/message_response.dart';
+import 'package:first_app/data/repositories/Chat/websocket_service.dart';
 import 'package:first_app/features/auth/presentation/screens/login.dart';
 import 'package:first_app/features/auth/presentation/screens/register.dart';
 import 'package:first_app/features/home/presentation/chat_box/chat.dart';
@@ -27,51 +29,77 @@ class AppRoutes {
           // Xử lý lỗi nếu không nhận được LoginResponse
           print("Error: HomeScreen did not receive LoginResponse");
           return MaterialPageRoute(
-            builder: (_) => const Scaffold(
-              body: Center(child: Text('Lỗi: Không có dữ liệu đăng nhập')),
-            ),
+            builder:
+                (_) => const Scaffold(
+                  body: Center(child: Text('Lỗi: Không có dữ liệu đăng nhập')),
+                ),
           );
         }
 
       // Route cho trang chat
       case chat:
-  final args = settings.arguments as Map<String, dynamic>?;
+        final args = settings.arguments as Map<String, dynamic>?;
 
-  // Kiểm tra các tham số bắt buộc
-  if (args == null || args['conversationId'] == null || args['user_id'] == null) {
-    print("Error: Missing required arguments for ChatScreen");
-    return MaterialPageRoute(
-      builder: (_) => const Scaffold(
-        body: Center(
-          child: Text('Lỗi: Thiếu tham số cuộc trò chuyện hoặc người dùng'),
-        ),
-      ),
-    );
-  }
+        // Kiểm tra các tham số bắt buộc
+        if (args == null ||
+            args['conversationId'] == null ||
+            args['user_id'] == null ||
+            args['websocketService'] == null) {
+          print("Error: Missing required arguments for ChatScreen");
+          return MaterialPageRoute(
+            builder:
+                (_) => const Scaffold(
+                  body: Center(
+                    child: Text(
+                      'Lỗi: Thiếu tham số cuộc trò chuyện hoặc người dùng',
+                    ),
+                  ),
+                ),
+          );
+        }
 
-  // Kiểm tra kiểu dữ liệu
-  if (args['conversationId'] is! int || args['user_id'] is! int) {
-    print("Error: Invalid argument types for ChatScreen");
-    return MaterialPageRoute(
-      builder: (_) => const Scaffold(
-        body: Center(
-          child: Text('Lỗi: Tham số không đúng kiểu dữ liệu'),
-        ),
-      ),
-    );
-  }
+        // Kiểm tra kiểu dữ liệu
+        if (args['conversationId'] is! int ||
+            args['user_id'] is! int ||
+            args['websocketService'] is! WebSocketService) {
+          print("Error: Invalid argument types for ChatScreen");
+          return MaterialPageRoute(
+            builder:
+                (_) => const Scaffold(
+                  body: Center(
+                    child: Text('Lỗi: Tham số không đúng kiểu dữ liệu'),
+                  ),
+                ),
+          );
+        }
 
-  // Lấy participantId nếu có
-  final participantId = args['participantId'] as int?;
+        // Lấy participantId nếu có
+        final participantId = args['participantId'] as int?;
 
-  // Trả về màn hình ChatScreen
-  return MaterialPageRoute(
-    builder: (_) => ChatScreen(
-      conversationId: args['conversationId'] as int,
-      userId: args['user_id'] as int,
-      participantId: participantId, // có thể null
-    ),
-  );
+        // Lấy updateChatListCallback nếu có
+        final updateChatListCallback =
+            args['updateChatListCallback'] is Function
+                ? args['updateChatListCallback']
+                    as Function(MessageWithAttachment)?
+                : null;
+        final onConversationRemoved = 
+            args['onConversationRemoved'] is Function
+                ? args['onConversationRemoved']
+                    as Function(int)?
+                : null;
+
+        // Trả về màn hình ChatScreen
+        return MaterialPageRoute(
+          builder:
+              (_) => ChatScreen(
+                conversationId: args['conversationId'] as int,
+                userId: args['user_id'] as int,
+                participantId: participantId,
+                websocketService: args['websocketService'] as WebSocketService,
+                updateChatListCallback: updateChatListCallback,
+                onConversationRemoved: onConversationRemoved,
+              ),
+        );
 
       // Route cho trang đăng nhập
       case login:
@@ -85,11 +113,12 @@ class AppRoutes {
       default:
         print("Unknown route: ${settings.name}");
         return MaterialPageRoute(
-          builder: (_) => Scaffold(
-            body: Center(
-              child: Text('Không tìm thấy trang: ${settings.name}'),
-            ),
-          ),
+          builder:
+              (_) => Scaffold(
+                body: Center(
+                  child: Text('Không tìm thấy trang: ${settings.name}'),
+                ),
+              ),
         );
     }
   }

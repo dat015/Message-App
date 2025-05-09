@@ -70,6 +70,9 @@ namespace Message_app.Migrations
                     b.Property<DateTime>("created_at")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("img_url")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("is_group")
                         .HasColumnType("bit");
 
@@ -378,6 +381,9 @@ namespace Message_app.Migrations
 
                     b.Property<int>("conversation_id")
                         .HasColumnType("int");
+
+                    b.Property<string>("img_url")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("is_deleted")
                         .HasColumnType("bit");
