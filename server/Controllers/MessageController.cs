@@ -41,7 +41,82 @@ namespace server.Controllers
             _uploadFileSV = uploadFileService;
 
         }
+
+        [HttpDelete("DeleteMessageForMe/{conversation_id}/{user_id}")]
+        public async Task<IActionResult> DeleteMessageConversationForMe(int conversation_id, int user_id)
+        {
+            try
+            {
+                var result = await _messageSV.DeleteMessageConversationForMe(conversation_id, user_id);
+                if (!result)
+                {
+                    return BadRequest(
+                        new
+                        {
+                            success = false,
+                            Message = $"Xóa tin nhắn của conversation có ID {conversation_id} thất bại!"
+                        }
+                    );
+                }
+
+                return Ok(
+                    new
+                    {
+                        success = true,
+                        Message = $"Xóa tin nhắn có ID {conversation_id} thành công!"
+                    }
+                );
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(
+                        new
+                        {
+                            success = false,    
+                            Message = $"Xóa tin nhắn có ID {conversation_id} thất bại!. Lỗi: " + ex.Message
+                        }
+                );
+            }
+        }
+
+
+        [HttpPut("recall_message/{message_id}")]
+        public async Task<IActionResult> recall_message(int message_id)
+        {
+            try
+            {
+                var result = await _messageSV.ReCallMessage(message_id);
+                if (!result)
+                {
+                    return BadRequest(
+                        new
+                        {
+                            Message = $"Thu hồi tin nhắn có ID {message_id} thất bại!"
+                        }
+                    );
+                }
+
+                return Ok(
+                    new
+                    {
+                        Message = $"Thu hồi tin nhắn có ID {message_id} thành công!"
+                    }
+                );
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(
+                        new
+                        {
+                            Message = $"Thu hồi tin nhắn có ID {message_id} thất bại!. Lỗi: " + ex.Message
+                        }
+                );
+            }
+        }
+
+
         [HttpPost("uploadFile")]
+        [Consumes("multipart/form-data")]
         public async Task<IActionResult> UploadFile([FromForm] IFormFile file)
         {
             try
@@ -74,8 +149,8 @@ namespace server.Controllers
                 return BadRequest(new { Error = ex.Message });
             }
         }
-        [HttpGet("getMessages/{conversation_id}")]
-        public async Task<IActionResult> GetMessages(int conversation_id)
+        [HttpGet("getMessages/{conversation_id}/{user_id}")]
+        public async Task<IActionResult> GetMessages(int conversation_id, int user_id)
         {
             if (conversation_id == 0)
             {
@@ -83,7 +158,7 @@ namespace server.Controllers
             }
             try
             {
-                var result = await _messageSV.getMessages(conversation_id);
+                var result = await _messageSV.GetMessagesAsync((long)conversation_id, user_id);
                 if (result == null || !result.Any())
                 {
                     return NotFound("No messages found for this conversation");

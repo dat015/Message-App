@@ -30,43 +30,46 @@ class MainLayout extends StatelessWidget {
   });
 
   void _handleNavigation(BuildContext context, int index) {
-    onItemTapped(index);
+    if (index != selectedIndex) {
+      onItemTapped(index);
+    }
   }
 
   void _showQrCodeDialog(BuildContext context) {
     final friendsBloc = context.read<FriendsBloc>();
     showDialog(
       context: context,
-      builder: (dialogContext) => BlocBuilder<FriendsBloc, FriendsState>(
-        bloc: friendsBloc,
-        builder: (context, state) {
-          if (state is FriendsLoaded && state.qrCodeData != null) {
-            return AlertDialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              title: const Text(
-                'Mã QR của bạn',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              content: Image.memory(
-                Uint8List.fromList(state.qrCodeData!),
-                width: 200,
-                height: 200,
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(dialogContext),
-                  child: const Text('Đóng'),
-                ),
-              ],
-            );
-          }
-          return const AlertDialog(
-            content: Center(child: CircularProgressIndicator()),
-          );
-        },
-      ),
+      builder:
+          (dialogContext) => BlocBuilder<FriendsBloc, FriendsState>(
+            bloc: friendsBloc,
+            builder: (context, state) {
+              if (state is FriendsLoaded && state.qrCodeData != null) {
+                return AlertDialog(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  title: const Text(
+                    'Mã QR của bạn',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  content: Image.memory(
+                    Uint8List.fromList(state.qrCodeData!),
+                    width: 200,
+                    height: 200,
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(dialogContext),
+                      child: const Text('Đóng'),
+                    ),
+                  ],
+                );
+              }
+              return const AlertDialog(
+                content: Center(child: CircularProgressIndicator()),
+              );
+            },
+          ),
     );
   }
 
@@ -82,8 +85,12 @@ class MainLayout extends StatelessWidget {
         leading: Padding(
           padding: const EdgeInsets.only(left: 16),
           child: CircleAvatar(
-            backgroundImage: userAvatar.isNotEmpty ? NetworkImage(userAvatar) : null,
-            child: userAvatar.isEmpty ? const Icon(Icons.person, color: Colors.white) : null,
+            backgroundImage:
+                userAvatar.isNotEmpty ? NetworkImage(userAvatar) : null,
+            child:
+                userAvatar.isEmpty
+                    ? const Icon(Icons.person, color: Colors.white)
+                    : null,
             backgroundColor: userAvatar.isEmpty ? Colors.blueAccent : null,
           ),
         ),
@@ -91,12 +98,12 @@ class MainLayout extends StatelessWidget {
           selectedIndex == 0
               ? 'Đoạn chat'
               : selectedIndex == 1
-                  ? 'Bạn bè'
-                  : selectedIndex == 2
-                      ? 'Bảng tin'
-                      : selectedIndex == 3
-                          ? 'Thông báo'
-                          : 'Cá nhân',
+              ? 'Bạn bè'
+              : selectedIndex == 2
+              ? 'Bảng tin'
+              : selectedIndex == 3
+              ? 'Thông báo'
+              : 'Cá nhân',
           style: const TextStyle(
             color: Colors.blueAccent,
             fontSize: 22,
@@ -238,23 +245,23 @@ class CustomSearchDelegate extends SearchDelegate<String> {
 
   @override
   List<Widget> buildActions(BuildContext context) => [
-        IconButton(
-          icon: const Icon(Icons.clear),
-          onPressed: () {
-            query = '';
-            friendsBloc.add(ResetSearchEvent());
-          },
-        ),
-      ];
+    IconButton(
+      icon: const Icon(Icons.clear),
+      onPressed: () {
+        query = '';
+        friendsBloc.add(ResetSearchEvent());
+      },
+    ),
+  ];
 
   @override
   Widget buildLeading(BuildContext context) => IconButton(
-        icon: const Icon(Icons.arrow_back),
-        onPressed: () {
-          friendsBloc.add(ResetSearchEvent());
-          close(context, '');
-        },
-      );
+    icon: const Icon(Icons.arrow_back),
+    onPressed: () {
+      friendsBloc.add(ResetSearchEvent());
+      close(context, '');
+    },
+  );
 
   @override
   Widget buildResults(BuildContext context) {
@@ -266,9 +273,9 @@ class CustomSearchDelegate extends SearchDelegate<String> {
       bloc: friendsBloc,
       listener: (context, state) {
         if (state is FriendsError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message)),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.message)));
         }
       },
       child: BlocBuilder<FriendsBloc, FriendsState>(
@@ -283,61 +290,101 @@ class CustomSearchDelegate extends SearchDelegate<String> {
                   friendsBloc.add(SearchUsersEvent(query));
                 }
               },
-              child: state.searchResults.isEmpty
-                  ? const Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.search_off, size: 60, color: Colors.grey),
-                          Text('Không tìm thấy người dùng', style: TextStyle(fontSize: 18, color: Colors.grey)),
-                        ],
-                      ),
-                    )
-                  : ListView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      itemCount: state.searchResults.length,
-                      itemBuilder: (context, index) {
-                        final user = state.searchResults[index];
-                        return Card(
-                          margin: const EdgeInsets.symmetric(vertical: 8),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                          child: ListTile(
-                            contentPadding: const EdgeInsets.all(12),
-                            leading: CircleAvatar(
-                              radius: 30,
-                              backgroundImage: user['avatar_url']?.isNotEmpty == true
-                                  ? NetworkImage(user['avatar_url'])
-                                  : null,
-                              child: user['avatar_url']?.isNotEmpty != true
-                                  ? const Icon(Icons.person, color: Colors.grey)
-                                  : null,
+              child:
+                  state.searchResults.isEmpty
+                      ? const Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.search_off,
+                              size: 60,
+                              color: Colors.grey,
                             ),
-                            title: Text(
-                              user['username'] ?? 'Unknown',
-                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                            Text(
+                              'Không tìm thấy người dùng',
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.grey,
+                              ),
                             ),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  user['email'] ?? '',
-                                  style: const TextStyle(fontSize: 14, color: Colors.grey),
+                          ],
+                        ),
+                      )
+                      : ListView.builder(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        itemCount: state.searchResults.length,
+                        itemBuilder: (context, index) {
+                          final user = state.searchResults[index];
+                          return Card(
+                            margin: const EdgeInsets.symmetric(vertical: 8),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: ListTile(
+                              contentPadding: const EdgeInsets.all(12),
+                              leading: CircleAvatar(
+                                radius: 30,
+                                backgroundImage:
+                                    user['avatar_url']?.isNotEmpty == true
+                                        ? NetworkImage(user['avatar_url'])
+                                        : null,
+                                child:
+                                    user['avatar_url']?.isNotEmpty != true
+                                        ? const Icon(
+                                          Icons.person,
+                                          color: Colors.grey,
+                                        )
+                                        : null,
+                              ),
+                              title: Text(
+                                user['username'] ?? 'Unknown',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
                                 ),
-                                if (user['mutualFriendsCount'] > 0)
+                              ),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
                                   Text(
-                                    '${user['mutualFriendsCount']} bạn chung',
-                                    style: const TextStyle(fontSize: 14, color: Colors.grey),
+                                    user['email'] ?? '',
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey,
+                                    ),
                                   ),
-                              ],
+                                  if (user['mutualFriendsCount'] > 0)
+                                    Text(
+                                      '${user['mutualFriendsCount']} bạn chung',
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                ],
+                              ),
+                              onTap:
+                                  () =>
+                                      user['id'] != null
+                                          ? NavigationHelper().goToProfile(
+                                            context,
+                                            currentUserId,
+                                            user['id'],
+                                          )
+                                          : null,
+                              trailing: _buildActionButton(
+                                context,
+                                user,
+                                index,
+                              ),
                             ),
-                            onTap: () => user['id'] != null
-                                ? NavigationHelper().goToProfile(context, currentUserId, user['id'])
-                                : null,
-                            trailing: _buildActionButton(context, user, index),
-                          ),
-                        );
-                      },
-                    ),
+                          );
+                        },
+                      ),
             );
           } else if (state is FriendsError) {
             return Center(child: Text(state.message));
@@ -354,181 +401,249 @@ class CustomSearchDelegate extends SearchDelegate<String> {
 
     return switch (status) {
       'None' => ElevatedButton(
-          onPressed: () {
-            final receiverId = int.tryParse(user['id'].toString());
-            if (receiverId == null || receiverId <= 0) {
-              print('Invalid receiverId: ${user['id']}');
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Không thể gửi lời mời: ID người dùng không hợp lệ')),
-              );
-              return;
-            }
-            print('Sending friend request to user ID: $receiverId');
-            friendsBloc.add(
-              SendFriendRequestEvent(
-                receiverId,
-                user['username'] ?? 'Unknown',
-                user['avatar_url'] ?? '',
-                index,
+        onPressed: () {
+          final receiverId = int.tryParse(user['id'].toString());
+          if (receiverId == null || receiverId <= 0) {
+            print('Invalid receiverId: ${user['id']}');
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                  'Không thể gửi lời mời: ID người dùng không hợp lệ',
+                ),
               ),
             );
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.blueAccent,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            return;
+          }
+          print('Sending friend request to user ID: $receiverId');
+          friendsBloc.add(
+            SendFriendRequestEvent(
+              receiverId,
+              user['username'] ?? 'Unknown',
+              user['avatar_url'] ?? '',
+              index,
+            ),
+          );
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.blueAccent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
           ),
-          child: const Text('Thêm bạn', style: TextStyle(fontSize: 14, color: Colors.white)),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         ),
+        child: const Text(
+          'Thêm bạn',
+          style: TextStyle(fontSize: 14, color: Colors.white),
+        ),
+      ),
       'SentRequest' => Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ElevatedButton(
-              onPressed: null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.grey,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ElevatedButton(
+            onPressed: null,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.grey,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
               ),
-              child: const Text('Đã gửi', style: TextStyle(fontSize: 14, color: Colors.white)),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             ),
-            const SizedBox(width: 8),
-            OutlinedButton(
-              onPressed: () async {
-                final receiverId = int.tryParse(user['id'].toString());
-                if (receiverId == null || receiverId <= 0) {
-                  print('Invalid receiverId: ${user['id']}');
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Không thể hủy: ID người dùng không hợp lệ')),
-                  );
-                  return;
-                }
-                try {
-                  final sentRequests = await friendsRepo.getSentFriendRequests(currentUserId);
-                  final request = sentRequests.firstWhere(
-                    (req) => req.request.receiverId == receiverId,
-                    orElse: () => throw Exception('No friend request found'),
-                  );
-                  final requestId = request.request.id;
-                  print('Canceling friend request for user ID: $receiverId, requestId: $requestId');
-                  friendsBloc.add(
-                    CancelFriendRequestEvent(
-                      requestId,
-                      currentUserId,
-                      receiverId,
-                      user['username'] ?? 'Unknown',
-                      index,
-                    ),
-                  );
-                } catch (e) {
-                  print('Error fetching requestId: $e');
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Không thể hủy: Lỗi khi lấy thông tin yêu cầu')),
-                  );
-                }
-              },
-              style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: Colors.red),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              ),
-              child: const Text('Hủy', style: TextStyle(fontSize: 14, color: Colors.red)),
+            child: const Text(
+              'Đã gửi',
+              style: TextStyle(fontSize: 14, color: Colors.white),
             ),
-          ],
-        ),
-      'Friend' => ElevatedButton(
-          onPressed: null,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.green,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           ),
-          child: const Text('Bạn bè', style: TextStyle(fontSize: 14, color: Colors.white)),
+          const SizedBox(width: 8),
+          OutlinedButton(
+            onPressed: () async {
+              final receiverId = int.tryParse(user['id'].toString());
+              if (receiverId == null || receiverId <= 0) {
+                print('Invalid receiverId: ${user['id']}');
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Không thể hủy: ID người dùng không hợp lệ'),
+                  ),
+                );
+                return;
+              }
+              try {
+                final sentRequests = await friendsRepo.getSentFriendRequests(
+                  currentUserId,
+                );
+                final request = sentRequests.firstWhere(
+                  (req) => req.request.receiverId == receiverId,
+                  orElse: () => throw Exception('No friend request found'),
+                );
+                final requestId = request.request.id;
+                print(
+                  'Canceling friend request for user ID: $receiverId, requestId: $requestId',
+                );
+                friendsBloc.add(
+                  CancelFriendRequestEvent(
+                    requestId,
+                    currentUserId,
+                    receiverId,
+                    user['username'] ?? 'Unknown',
+                    index,
+                  ),
+                );
+              } catch (e) {
+                print('Error fetching requestId: $e');
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                      'Không thể hủy: Lỗi khi lấy thông tin yêu cầu',
+                    ),
+                  ),
+                );
+              }
+            },
+            style: OutlinedButton.styleFrom(
+              side: const BorderSide(color: Colors.red),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            ),
+            child: const Text(
+              'Hủy',
+              style: TextStyle(fontSize: 14, color: Colors.red),
+            ),
+          ),
+        ],
+      ),
+      'Friend' => ElevatedButton(
+        onPressed: null,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.green,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         ),
+        child: const Text(
+          'Bạn bè',
+          style: TextStyle(fontSize: 14, color: Colors.white),
+        ),
+      ),
       'ReceivedRequest' => Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ElevatedButton(
-              onPressed: () async {
-                final senderId = int.tryParse(user['id'].toString());
-                if (senderId == null || senderId <= 0) {
-                  print('Invalid senderId: ${user['id']}');
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Không thể chấp nhận: ID người dùng không hợp lệ')),
-                  );
-                  return;
-                }
-                try {
-                  final receivedRequests = await friendsRepo.getFriendRequests(currentUserId);
-                  final request = receivedRequests.firstWhere(
-                    (req) => req.request.senderId == senderId,
-                    orElse: () => throw Exception('No friend request found'),
-                  );
-                  final requestId = request.request.id;
-                  print('Accepting friend request from user ID: $senderId, requestId: $requestId');
-                  friendsBloc.add(
-                    AcceptFriendRequestEvent(
-                      requestId,
-                      user['username'] ?? 'Unknown',
-                      index,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ElevatedButton(
+            onPressed: () async {
+              final senderId = int.tryParse(user['id'].toString());
+              if (senderId == null || senderId <= 0) {
+                print('Invalid senderId: ${user['id']}');
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                      'Không thể chấp nhận: ID người dùng không hợp lệ',
                     ),
-                  );
-                } catch (e) {
-                  print('Error fetching requestId: $e');
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Không thể chấp nhận: Lỗi khi lấy thông tin yêu cầu')),
-                  );
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              ),
-              child: const Text('Chấp nhận', style: TextStyle(fontSize: 14, color: Colors.white)),
-            ),
-            const SizedBox(width: 8),
-            OutlinedButton(
-              onPressed: () async {
-                final senderId = int.tryParse(user['id'].toString());
-                if (senderId == null || senderId <= 0) {
-                  print('Invalid senderId: ${user['id']}');
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Không thể từ chối: ID người dùng không hợp lệ')),
-                  );
-                  return;
-                }
-                try {
-                  final receivedRequests = await friendsRepo.getFriendRequests(currentUserId);
-                  final request = receivedRequests.firstWhere(
-                    (req) => req.request.senderId == senderId,
-                    orElse: () => throw Exception('No friend request found'),
-                  );
-                  final requestId = request.request.id;
-                  print('Rejecting friend request from user ID: $senderId, requestId: $requestId');
-                  friendsBloc.add(
-                    RejectFriendRequestEvent(
-                      requestId,
-                      user['username'] ?? 'Unknown',
-                      index,
+                  ),
+                );
+                return;
+              }
+              try {
+                final receivedRequests = await friendsRepo.getFriendRequests(
+                  currentUserId,
+                );
+                final request = receivedRequests.firstWhere(
+                  (req) => req.request.senderId == senderId,
+                  orElse: () => throw Exception('No friend request found'),
+                );
+                final requestId = request.request.id;
+                print(
+                  'Accepting friend request from user ID: $senderId, requestId: $requestId',
+                );
+                friendsBloc.add(
+                  AcceptFriendRequestEvent(
+                    requestId,
+                    user['username'] ?? 'Unknown',
+                    index,
+                  ),
+                );
+              } catch (e) {
+                print('Error fetching requestId: $e');
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                      'Không thể chấp nhận: Lỗi khi lấy thông tin yêu cầu',
                     ),
-                  );
-                } catch (e) {
-                  print('Error fetching requestId: $e');
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Không thể từ chối: Lỗi khi lấy thông tin yêu cầu')),
-                  );
-                }
-              },
-              style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: Colors.grey),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  ),
+                );
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
               ),
-              child: const Text('Từ chối', style: TextStyle(fontSize: 14, color: Colors.grey)),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             ),
-          ],
-        ),
+            child: const Text(
+              'Chấp nhận',
+              style: TextStyle(fontSize: 14, color: Colors.white),
+            ),
+          ),
+          const SizedBox(width: 8),
+          OutlinedButton(
+            onPressed: () async {
+              final senderId = int.tryParse(user['id'].toString());
+              if (senderId == null || senderId <= 0) {
+                print('Invalid senderId: ${user['id']}');
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                      'Không thể từ chối: ID người dùng không hợp lệ',
+                    ),
+                  ),
+                );
+                return;
+              }
+              try {
+                final receivedRequests = await friendsRepo.getFriendRequests(
+                  currentUserId,
+                );
+                final request = receivedRequests.firstWhere(
+                  (req) => req.request.senderId == senderId,
+                  orElse: () => throw Exception('No friend request found'),
+                );
+                final requestId = request.request.id;
+                print(
+                  'Rejecting friend request from user ID: $senderId, requestId: $requestId',
+                );
+                friendsBloc.add(
+                  RejectFriendRequestEvent(
+                    requestId,
+                    user['username'] ?? 'Unknown',
+                    index,
+                  ),
+                );
+              } catch (e) {
+                print('Error fetching requestId: $e');
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                      'Không thể từ chối: Lỗi khi lấy thông tin yêu cầu',
+                    ),
+                  ),
+                );
+              }
+            },
+            style: OutlinedButton.styleFrom(
+              side: const BorderSide(color: Colors.grey),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            ),
+            child: const Text(
+              'Từ chối',
+              style: TextStyle(fontSize: 14, color: Colors.grey),
+            ),
+          ),
+        ],
+      ),
       _ => const SizedBox.shrink(),
     };
   }

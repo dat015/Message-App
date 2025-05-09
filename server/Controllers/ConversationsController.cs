@@ -18,6 +18,65 @@ namespace server.Controllers
         {
             _conversationService = conversationService;
         }
+
+        [HttpGet("open_conversation/{user1}/{user2}")]
+        public async Task<IActionResult> OpenConversation(int user1, int user2)
+        {
+            if (user1 == 0 || user2 == 0)
+            {
+                return BadRequest("Invalid user id");
+            }
+            try
+            {
+                var result = await _conversationService.CreateConversation(user1, user2);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+        }
+        [HttpGet("get_conversationDto/{userId}/{conversationId}")]
+        public async Task<IActionResult> GetConversation(int userId, int conversationId)
+        {
+            try
+            {
+                var conversation = await _conversationService.GetConversationDto(userId, conversationId);
+                if (conversation == null)
+                {
+                    return NotFound(new { message = "Conversation not found" });
+                }
+                return Ok(conversation);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, new { message = "Internal server error", error = e.Message });
+            }
+        }
+
+        [HttpPut("update_conversation_name/{conversation_id}")]
+        public async Task<IActionResult> UpdateConversationName(int conversation_id, [FromBody] string name)
+        {
+            if (conversation_id == 0 || string.IsNullOrEmpty(name))
+            {
+                return BadRequest("Invalid conversation id or name");
+            }
+            try
+            {
+                var result = await _conversationService.UpdateConversationName(conversation_id, name);
+                if (result == null)
+                {
+                    return BadRequest("Not found conversation");
+                }
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw ex;
+            }
+        }
         [HttpGet("get_conversations/{userId}")]
         public async Task<IActionResult> GetConversations(int userId)
         {
@@ -28,6 +87,7 @@ namespace server.Controllers
             try
             {
                 var conversations = await _conversationService.GetConversations(userId);
+
                 return Ok(conversations);
             }
             catch (Exception e)

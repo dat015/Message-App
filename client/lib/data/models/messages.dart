@@ -7,6 +7,7 @@ class Message {
   DateTime createdAt;
   int conversationId;
   bool isFile; // Thêm thuộc tính isFile
+  final bool isRecalled;
 
   Message({
     this.id,
@@ -15,6 +16,7 @@ class Message {
     this.type = 'text',
     this.isRead = false,
     DateTime? createdAt,
+    required this.isRecalled,
     required this.conversationId,
     this.isFile = false, // Giá trị mặc định là false
   }) : createdAt = createdAt ?? DateTime.now();
@@ -26,6 +28,7 @@ class Message {
       content: json['content'] ?? "", // Nếu null, dùng chuỗi rỗng
       senderId: json['sender_id'] as int? ?? 0, // Nếu null, mặc định 0
       isRead: json['is_read'] as bool? ?? false, // Nếu null, mặc định false
+      isRecalled: json['isRecalled'] ?? false,
       createdAt:
           json['created_at'] != null
               ? DateTime.tryParse(json['created_at']) ?? DateTime.now()

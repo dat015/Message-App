@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:first_app/data/providers.dart';
+import 'package:first_app/data/providers/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -56,6 +56,17 @@ class _MessageInputState extends State<MessageInput> {
     });
   }
 
+  // void _handleSubmittedPrivate(String text) {
+  //   if (text.trim().isEmpty && _selectedFile == null) return;
+  //   final provider = Provider.of<ChatProvider>(context, listen: false);
+  //   provider.sendPrivateMessage(text.trim(), _selectedFile);
+  //   _controller.clear();
+  //   setState(() {
+  //     _isComposing = false;
+  //     _selectedFile = null;
+  //   });
+  // }
+
   void _handleTextChange(String text) {
     setState(() {
       _isComposing = text.trim().isNotEmpty || _selectedFile != null;
@@ -96,26 +107,6 @@ class _MessageInputState extends State<MessageInput> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (_isTextFieldFocused)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0,
-                      vertical: 8.0,
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.person, color: Colors.grey[600]),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Gửi tin nhắn riêng',
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
                 if (_selectedFile != null)
                   Container(
                     padding: const EdgeInsets.symmetric(

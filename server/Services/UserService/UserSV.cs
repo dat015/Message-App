@@ -221,7 +221,6 @@ namespace server.Services.UserService
 
             return mutualFriendsCount;
         }
-
         // Hàm mới: Xác định trạng thái quan hệ giữa hai người dùng
         public async Task<string> GetRelationshipStatusAsync(int userId, int currentUserId)
         {
@@ -262,6 +261,35 @@ namespace server.Services.UserService
             {
                 Console.WriteLine(e.Message);
                 throw e;
+            }
+        }
+
+        public async Task<List<MemberDTO>> GetMemberForConversationAsync(int conversationId)
+        {
+            if (conversationId <= 0)
+            {
+                throw new ArgumentException("Invalid conversation ID.", nameof(conversationId));
+            }
+            try
+            {
+                var members = await _context.Participants
+                    .Where(p => p.conversation_id == conversationId && !p.is_deleted)
+                    .Select(p => new MemberDTO
+                    {
+                        id = p.user_id,
+                        username = p.name,
+                        adder = p.adder,
+                        avatar_url = p.user.avatar_url,
+                        user_id = p.user.id,
+                        conversation_id = p.conversation_id,
+                    })
+                    .ToListAsync();
+
+                return members ?? new List<MemberDTO>();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error retrieving members: " + ex.Message);
             }
         }
     }

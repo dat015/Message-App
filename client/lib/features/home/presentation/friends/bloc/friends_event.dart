@@ -25,7 +25,12 @@ class SendFriendRequestEvent extends FriendsEvent {
   final String username;
   final String avatarUrl;
   final int index;
-  SendFriendRequestEvent(this.receiverId, this.username, this.avatarUrl, this.index);
+  SendFriendRequestEvent(
+    this.receiverId,
+    this.username,
+    this.avatarUrl,
+    this.index,
+  );
 }
 
 class CancelFriendRequestEvent extends FriendsEvent {
@@ -34,7 +39,13 @@ class CancelFriendRequestEvent extends FriendsEvent {
   final int receiverId;
   final String username;
   final int index;
-  CancelFriendRequestEvent(this.requestId, this.senderId, this.receiverId, this.username, this.index);
+  CancelFriendRequestEvent(
+    this.requestId,
+    this.senderId,
+    this.receiverId,
+    this.username,
+    this.index,
+  );
 }
 
 class UnfriendEvent extends FriendsEvent {
@@ -57,3 +68,5 @@ class SearchUsersEvent extends FriendsEvent {
 }
 
 class ResetSearchEvent extends FriendsEvent {}
+
+class LoadFriendSuggestionsEvent extends FriendsEvent {}

@@ -1,10 +1,16 @@
+import 'package:first_app/PlatformClient/config.dart';
+import 'package:first_app/data/providers/CallProvider.dart';
+import 'package:first_app/data/providers/home_provider.dart';
+import 'package:first_app/data/providers/providers.dart';
+import 'package:first_app/data/repositories/Chat/websocket_service.dart';
 import 'package:first_app/data/repositories/AI_Post_Repo/comment_suggestion_repo.dart';
 import 'package:first_app/features/auth/presentation/screens/login.dart';
 import 'package:first_app/features/home/presentation/ai_caption/bloc_comments/comment_suggestion_state.dart';
 import 'package:first_app/theme/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:firebase_core/firebase_core.dart'; // Thêm Firebase Core
+import 'package:flutter/foundation.dart' show kIsWeb; // Để kiểm tra nền tảng
+import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:first_app/data/api/api_client.dart';
@@ -37,12 +43,37 @@ void main() async {
   } else {
     await Firebase.initializeApp();
   }
-  // setupFCM(null);
-  runApp(const MyApp());
+
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => HomeProvider()),
+        
+        Provider<WebSocketService>(
+          create:
+              (_) => WebSocketService(
+                url: Config.baseUrlWS,
+                onMessageReceived: (message) {
+                  print('Received chat message: ${message.message.content}');
+                },
+              ),
+        ),
+        ChangeNotifierProvider<CallProvider>(
+          create:
+              (context) => CallProvider(
+                webSocketService: context.read<WebSocketService>(),
+              ),
+        ),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+  static final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
 
   @override
   Widget build(BuildContext context) {

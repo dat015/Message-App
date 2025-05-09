@@ -13,6 +13,8 @@ using server.Data;
 using server.DTO;
 using server.Models;
 using server.Services.ConversationService;
+using server.Services.RedisService.ChatStorage;
+using server.Services.RedisService.ConversationStorage;
 using server.Services.UploadService;
 using StackExchange.Redis;
 
@@ -40,16 +42,102 @@ namespace server.Services.WebSocketService
         private readonly IConversation _conversation;
         private readonly WebSocketOptions _options;          // Cấu hình tùy chọn
         private readonly CancellationTokenSource _cts = new(); // Token để hủy các tác vụ bất đồng bộ
-        private readonly Cloudinary _cloudinary;
         private readonly ILogger<webSocket> _logger;
-        public webSocket(IConnectionMultiplexer redis, IServiceProvider serviceProvider, WebSocketOptions options = null, ILogger<webSocket> logger = null)
+        private readonly IChatStorage _chatStorage;
+        private readonly IConversationStorage _conversationStorage;
+        private readonly CallHandler _callHandler;
+        public webSocket(IConnectionMultiplexer redis, IServiceProvider serviceProvider,
+                         IChatStorage chatStorage,
+                            IConversationStorage conversation,
+                         WebSocketOptions options = null,
+                         ILogger<webSocket> logger = null)
         {
             _redis = redis ?? throw new ArgumentNullException(nameof(redis));              // Redis không được null
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider)); // Service provider không được null
             _options = options ?? new WebSocketOptions();                                 // Sử dụng cấu hình mặc định nếu không cung cấp
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _chatStorage = chatStorage;
+            _callHandler = new CallHandler(_redis.GetDatabase(), this);
+            _conversationStorage = conversation;
         }
-
+        public IEnumerable<Client> GetClientsInConversation(int conversationId)
+        {
+            var clients = _clients.Keys
+                .Where(c => c.ConversationIds.Contains(conversationId) && c.WebSocket.State == WebSocketState.Open)
+                .ToList();
+            Console.WriteLine($"GetClientsInConversation {conversationId}: Found {clients.Count} clients: {string.Join(", ", clients.Select(c => c.UserId))}");
+            return clients;
+        }
+        public Client GetClient(int userId)
+        {
+            var client = _clients.Keys.FirstOrDefault(c => c.UserId == userId && c.WebSocket.State == WebSocketState.Open);
+            Console.WriteLine($"GetClient {userId}: {(client != null ? "Found" : "Not found")}");
+            return client;
+        }
+        public async Task ConnectUserToConversationChanelAsync(int userId, int conversationId)
+        {
+            var subscriber = _redis.GetSubscriber();
+            var client = GetClient(userId);
+            if (client == null)
+            {
+                Console.WriteLine($"Client {userId} not found");
+                return;
+            }
+            try
+                {
+                    // Subscribe client vào kênh Redis để nhận tin nhắn real-time
+                    await subscriber.SubscribeAsync($"conversation:{conversationId}", async (channel, value) =>
+                    {
+                        if (client.WebSocket.State == WebSocketState.Open)
+                        {
+                            var msg = JsonSerializer.Deserialize<Message>(value);
+                            if (msg.sender_id != client.UserId) // Ngăn chặn vòng lặp vô hạn, Không gửi lại tin nhắn của chính client
+                            {
+                                var bytes = Encoding.UTF8.GetBytes(value);
+                                await client.WebSocket.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, CancellationToken.None);
+                            }
+                        }
+                    });
+                    Console.WriteLine($"User {client.UserId} subscribed to channel conversation:{conversationId}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error subscribing to channel: {ex.Message}");
+                    throw;
+                }
+        }
+        public async Task DisConnectUserToConversationChanelAsync(int userId, int conversationId)
+        {
+            var subscriber = _redis.GetSubscriber();
+            var client = GetClient(userId);
+            if (client == null)
+            {
+                Console.WriteLine($"Client {userId} not found");
+                return;
+            }
+            try
+                {
+                    // UnSubscribe client 
+                    await subscriber.UnsubscribeAsync($"conversation:{conversationId}", async (channel, value) =>
+                    {
+                        if (client.WebSocket.State == WebSocketState.Open)
+                        {
+                            var msg = JsonSerializer.Deserialize<Message>(value);
+                            if (msg.sender_id != client.UserId) // Ngăn chặn vòng lặp vô hạn, Không gửi lại tin nhắn của chính client
+                            {
+                                var bytes = Encoding.UTF8.GetBytes(value);
+                                await client.WebSocket.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, CancellationToken.None);
+                            }
+                        }
+                    });
+                    Console.WriteLine($"User {client.UserId} subscribed to channel conversation:{conversationId}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error subscribing to channel: {ex.Message}");
+                    throw;
+                }
+        }
 
         // Xử lý yêu cầu WebSocket từ client
         public async Task HandleWebSocket(HttpContext context)
@@ -107,10 +195,34 @@ namespace server.Services.WebSocketService
                         {
                             await HandleBootup(client, message);
                         }
+                        else if (message.type == "startCall" ||
+                         message.type == "acceptCall" ||
+                         message.type == "offer" ||
+                         message.type == "answer" ||
+                         message.type == "iceCandidate" ||
+                         message.type == "endCall")
+                        {
+                            await _callHandler.HandleCallMessage(client, message);
+                        }
                         else if (!string.IsNullOrEmpty(message.content))// Xử lý tin nhắn bình thường
                         {
                             await HandleMessage(client, message);
                         }
+                        else if (message.type == "system_addMember")// Xử lý thêm thành viên vào nhóm
+                        {
+                            var userId = message.sender_id;
+                            var conversationId = message.conversation_id;
+                            await AddMemberToConversation(conversationId, userId);
+                        }
+                        else if (message.type == "ping")// Xử lý heartbeat từ client
+                        {
+                            Console.WriteLine($"Received ping from client {client.UserId}");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Unknown message type: {message.type}");
+                        }
+
                     }
                 }
                 catch (JsonException ex)
@@ -148,17 +260,30 @@ namespace server.Services.WebSocketService
             foreach (var conversationId in client.ConversationIds)
             {
                 // Đồng bộ dữ liệu từ DB lên Redis nếu Redis không có
-                var recentKey = $"conversation:{conversationId}:recent";
+                var recentKey = $"conversation:{conversationId}:messages";
                 if (!await db.KeyExistsAsync(recentKey))
                 {
                     var messages = await dbContext.Messages
                         .Where(m => m.conversation_id == conversationId)
                         .OrderByDescending(m => m.created_at)
                         .Take(50)
+                        .Select(m => new MessageDTOForAttachment
+                        {
+                            id = m.id,
+                            conversation_id = m.conversation_id,
+                            sender_id = m.sender_id,
+                            content = m.content,
+                            created_at = m.created_at,
+                            isFile = m.isFile,
+                            type = m.type,
+                            isRecalled = m.isRecalled
+                        })
                         .ToListAsync();
 
-                    var messagesJson = JsonSerializer.Serialize(messages);
-                    await db.StringSetAsync(recentKey, messagesJson, TimeSpan.FromHours(24));// Lưu vào Redis với TTL 24h
+                    foreach (var msg in messages)
+                    {
+                        await _chatStorage.SaveMessageAsync(msg, null);
+                    }
                 }
 
                 try
@@ -177,17 +302,6 @@ namespace server.Services.WebSocketService
                         }
                     });
                     Console.WriteLine($"User {client.UserId} subscribed to channel conversation:{conversationId}");
-
-                    // Thông báo người dùng tham gia phòng
-                    var joinMessage = new Message
-                    {
-                        type = "system",
-                        content = $"User {client.UserId} joined the conversation",
-                        sender_id = client.UserId,
-                        conversation_id = conversationId,
-                        created_at = DateTime.UtcNow
-                    };
-                    // await PublishMessage(joinMessage);
                 }
                 catch (Exception ex)
                 {
@@ -196,16 +310,48 @@ namespace server.Services.WebSocketService
                 }
             }
         }
+        private async Task AddMemberToConversation(int conversationId, int userId)
+        {
+            using var scope = _serviceProvider.CreateScope();
+            var conversationSV = scope.ServiceProvider.GetRequiredService<IConversation>();
+
+            var participant = await conversationSV.AddMemberToGroup(conversationId, userId);
+            if (participant == null)
+            {
+                throw new Exception($"Failed to add user {userId} to conversation {conversationId}");
+            }
+
+            var notification = new MessageDTOForAttachment
+            {
+                id = 0,
+                type = "system",
+                content = $"User {participant.name} has been added to the group.",
+                sender_id = userId,
+                conversation_id = conversationId,
+                created_at = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"))
+            };
+            var message = new MessageWithAttachment
+            {
+                Message = notification,
+                Attachment = null
+            };
+            await _chatStorage.PublishMessageAsync(message);
+        }
         private async Task HandleMessage(Client client, MessageDTO message)
         {
-            _logger.LogInformation($"Handling message: {message.content}");
-            message.created_at = DateTime.UtcNow;
-            Attachment existing_attachment = null;
+            _logger.LogInformation("Handling message from user {UserId}: {Content}", message.sender_id, message.content);
+            message.created_at = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
 
             using var scope = _serviceProvider.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            using var transaction = await dbContext.Database.BeginTransactionAsync();
+            var conversation = await dbContext.Conversations.FindAsync(message.conversation_id);
+            if (conversation == null)
+            {
+                _logger.LogWarning("Conversation with ID {ConversationId} not found", message.conversation_id);
+                return;
+            }
 
+            using var transaction = await dbContext.Database.BeginTransactionAsync();
             try
             {
                 var new_message = new Message
@@ -214,39 +360,51 @@ namespace server.Services.WebSocketService
                     sender_id = message.sender_id,
                     conversation_id = message.conversation_id,
                     content = message.content,
-                    created_at = DateTime.UtcNow
+                    created_at = message.created_at,
+                    isFile = message.fileID != null
                 };
 
                 dbContext.Messages.Add(new_message);
                 await dbContext.SaveChangesAsync();
-                _logger.LogInformation($"Message saved to DB: {new_message.id}");
+                _logger.LogInformation("Message saved to DB with ID: {MessageId}", new_message.id);
 
+                conversation.lastMessageTime = new_message.created_at;
+                conversation.lastMessage = message.content;
+                dbContext.Conversations.Update(conversation);
+
+                Attachment existing_attachment = null;
                 if (message.fileID != null)
                 {
-                    _logger.LogInformation($"Processing attachment with ID {message.fileID}");
                     existing_attachment = await dbContext.Attachments.FindAsync(message.fileID);
-
                     if (existing_attachment == null)
                     {
-                        _logger.LogWarning($"Attachment with ID {message.fileID} not found!");
+                        _logger.LogWarning("Attachment with ID {FileId} not found", message.fileID);
+                        await transaction.RollbackAsync();
                         return;
                     }
 
                     existing_attachment.message_id = new_message.id;
                     existing_attachment.is_temporary = false;
-                    new_message.isFile = true;
-
-                    dbContext.Messages.Update(new_message);
                     dbContext.Attachments.Update(existing_attachment);
-                    await dbContext.SaveChangesAsync();
                 }
 
+                await dbContext.SaveChangesAsync();
                 await transaction.CommitAsync();
-                _logger.LogInformation($"Transaction committed for message: {new_message.id}");
+                _logger.LogInformation("Transaction committed for message: {MessageId}", new_message.id);
 
-                var db = _redis.GetDatabase();
+                // Lấy danh sách participantIds từ database
+                var participantIds = await dbContext.Participants
+                    .Where(p => p.conversation_id == conversation.id && !p.is_deleted)
+                    .Select(p => p.user_id)
+                    .ToListAsync();
 
-                // Convert sang DTO để tránh vòng lặp khi serialize
+                // Cập nhật lastMessage và lastMessageTime trong Redis
+                // bool isSaved = await _conversationStorage.UpdateConversationAsync(conversation.id, conversation.lastMessage, conversation.lastMessageTime ?? DateTime.UtcNow, participantIds);
+                // if (!isSaved)
+                // {
+                //     _logger.LogWarning("Failed to update conversation in Redis for conversation ID: {ConversationId}", conversation.id);
+                //     return;
+                // }
                 var messageDTO = new MessageDTOForAttachment
                 {
                     id = new_message.id,
@@ -256,7 +414,8 @@ namespace server.Services.WebSocketService
                     type = new_message.type,
                     isFile = new_message.isFile,
                     created_at = new_message.created_at,
-                    conversation_id = new_message.conversation_id
+                    conversation_id = new_message.conversation_id,
+                    isRecalled = new_message.isRecalled
                 };
 
                 AttachmentDTOForAttachment attachmentDTO = null;
@@ -266,7 +425,7 @@ namespace server.Services.WebSocketService
                     {
                         id = existing_attachment.id,
                         file_url = existing_attachment.file_url,
-                        FileSize = existing_attachment.FileSize,
+                        fileSize = existing_attachment.FileSize,
                         file_type = existing_attachment.file_type,
                         uploaded_at = existing_attachment.uploaded_at,
                         is_temporary = existing_attachment.is_temporary,
@@ -274,76 +433,55 @@ namespace server.Services.WebSocketService
                     };
                 }
 
-                var messageDataGroup = new MessageWithAttachment
+                var messageWithAttachment = new MessageWithAttachment
                 {
                     Message = messageDTO,
                     Attachment = attachmentDTO
                 };
 
-                var redisKey = $"message:{message.conversation_id}:{new_message.id}";
-                var messageJson = JsonSerializer.Serialize(messageDataGroup);
-                await db.StringSetAsync(redisKey, messageJson);
-                _logger.LogInformation($"Message saved to Redis: {messageJson}");
+                // Lưu tin nhắn vào Redis
+                await _chatStorage.SaveMessageAsync(messageDTO, attachmentDTO);
 
                 if (message.type == "private" && message.content.Contains("recipient_id:"))
                 {
                     int recipientId = ParseRecipentId(message.content);
-                    if (recipientId <= 0) return;
+                    if (recipientId <= 0)
+                    {
+                        _logger.LogWarning("Invalid recipient ID in private message");
+                        return;
+                    }
 
-                    var sender_id = message.sender_id;
-                    var box = _conversation.CreateConversation(sender_id, recipientId);
-
+                    var box = _conversation.CreateConversation(new_message.sender_id, recipientId);
                     if (box != null && new_message.conversation_id != box.Id)
                     {
                         new_message.conversation_id = box.Id;
                         dbContext.Messages.Update(new_message);
                         await dbContext.SaveChangesAsync();
 
+                        await _chatStorage.UpdateMessageConversationAsync(new_message.id, box.Id);
                         messageDTO.conversation_id = new_message.conversation_id;
+                        messageWithAttachment.Message = messageDTO;
 
-                        redisKey = $"message:{message.conversation_id}:{new_message.id}";
-                        messageJson = JsonSerializer.Serialize(new MessageWithAttachment
-                        {
-                            Message = messageDTO,
-                            Attachment = attachmentDTO
-                        });
-
-                        await db.StringSetAsync(redisKey, messageJson);
+                        // Thêm user và recipient vào conversation mới
+                        await _chatStorage.AddUserConversationAsync(new_message.sender_id, box.Id);
+                        await _chatStorage.AddUserConversationAsync(recipientId, box.Id);
                     }
 
-                    try
-                    {
-                        await HandlePrivateMessage(new_message, recipientId);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex, "Error in HandlePrivateMessage");
-                    }
+                    await HandlePrivateMessage(new_message, recipientId);
                 }
                 else
                 {
-                    try
-                    {
-                        await PublishMessage(messageDataGroup);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex, "PublishMessage failed");
-                    }
+                    await _chatStorage.PublishMessageAsync(messageWithAttachment);
                 }
-
-                var conversationKey = $"conversation:{message.conversation_id}:recent";
-                await db.ListRightPushAsync(conversationKey, messageJson);
-                await db.ListTrimAsync(conversationKey, -50, -1);
-                await db.KeyExpireAsync(conversationKey, TimeSpan.FromHours(24));
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                _logger.LogError(ex, "Transaction failed while handling message.");
+                _logger.LogError(ex, "Transaction failed while handling message");
                 throw;
             }
         }
+
 
 
         private int ParseRecipentId(string content)
@@ -380,7 +518,7 @@ namespace server.Services.WebSocketService
         }
 
         //nếu tin nhắn nhóm thì dùng redis để pub lên channel để các thành viên có thể nhận được
-        private async Task PublishMessage(MessageWithAttachment message)
+        public async Task PublishMessage(MessageWithAttachment message)
         {
             var subscriber = _redis.GetSubscriber();
             var messageJson = JsonSerializer.Serialize(message);
@@ -391,27 +529,23 @@ namespace server.Services.WebSocketService
         private async Task CleanupClient(Client client)
         {
             var subscriber = _redis.GetSubscriber();
+            var db = _redis.GetDatabase();
             foreach (var conversationId in client.ConversationIds)
             {
-                try
+                await subscriber.UnsubscribeAsync($"conversation:{conversationId}");
+                var callDataJson = await db.StringGetAsync($"call:{conversationId}");
+                if (!callDataJson.IsNullOrEmpty)
                 {
-                    await subscriber.UnsubscribeAsync($"conversation:{conversationId}");
-                    var leaveMessage = new Message
+                    var callMessage = new MessageDTO
                     {
-                        type = "system",
-                        content = $"User {client.UserId} left the conversation",
+                        type = "endCall",
                         sender_id = client.UserId,
-                        conversation_id = conversationId,
-                        created_at = DateTime.UtcNow
+                        conversation_id = conversationId
                     };
-                    // await PublishMessage(leaveMessage);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error unsubscribing from channel: {ex.Message}");
-                    throw;
+                    await _callHandler.HandleCallMessage(client, callMessage);
                 }
             }
+            _clients.TryRemove(client, out _);
         }
 
         // Gửi heartbeat định kỳ để kiểm tra kết nối
@@ -452,6 +586,11 @@ namespace server.Services.WebSocketService
             }
             _clients.Clear(); // Xóa danh sách client
             _redis?.Dispose(); // Đóng kết nối Redis
+        }
+
+        public static implicit operator WebSocket(webSocket v)
+        {
+            throw new NotImplementedException();
         }
     }
 

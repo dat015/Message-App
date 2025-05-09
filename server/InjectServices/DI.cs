@@ -17,6 +17,9 @@ using CloudinaryDotNet;
 using server.Services.UploadService;
 using System.Text.Json.Serialization;
 using server.Services;
+using server.Services.RedisService.ChatStorage;
+using Microsoft.OpenApi.Models;
+using server.Services.RedisService.ConversationStorage;
 using server.Services.ImageDescriptionService;
 using server.Services.TempOTPStoreSV;
 using server.Services.SettingService;
@@ -41,7 +44,11 @@ namespace server.InjectService
                 options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
             }); // Thêm JsonOptions để xử lý vòng lặp tham chiếu
             services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen();
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Message App API", Version = "v1" });
+                c.OperationFilter<AddFileParamTypesOperationFilter>();
+            }); 
             //config sqlserver
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
@@ -79,6 +86,14 @@ namespace server.InjectService
                 var redisConfiguration = ConfigurationOptions.Parse(configuration["Redis:ConnectionString"]);
                 return ConnectionMultiplexer.Connect(redisConfiguration);
             });
+            services.AddSingleton<IDatabase>(sp =>
+            {
+                var multiplexer = sp.GetRequiredService<IConnectionMultiplexer>();
+                return multiplexer.GetDatabase();
+            });
+            services.AddSingleton<IChatStorage, ChatStorage>();
+            services.AddSingleton<IConversationStorage, ConversatonStorage>();
+
             services.AddSignalR();
             //scoped: tạo ra 1 instance cho mỗi request
             services.AddScoped<IUploadFileService, UploadFileService>();

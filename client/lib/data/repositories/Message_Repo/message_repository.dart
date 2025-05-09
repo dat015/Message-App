@@ -9,10 +9,13 @@ import '../Chat/websocket_service.dart';
 
 class MessageRepo {
   var api_client = ApiClient();
-  Future<List<MessageWithAttachment>> getMessages(int conversationId) async {
+  Future<List<MessageWithAttachment>> getMessages(
+    int conversationId,
+    int userId,
+  ) async {
     try {
       final response = await api_client.get(
-        '/api/Message/getMessages/$conversationId',
+        '/api/Message/getMessages/$conversationId/$userId',
       );
       print("Response: $response"); // Debug
 
@@ -85,6 +88,59 @@ class MessageRepo {
     } catch (e) {
       print("Error uploading file: $e");
       return {'fileId': 0, 'fileUrl': ''};
+    }
+  }
+
+  Future<List<MessageWithAttachment>> searchMessages(
+    int conversationId,
+    String query,
+  ) async {
+    try {
+      final response = await api_client.get(
+        '/api/Message/searchMessages/$conversationId/$query',
+      );
+      if (response is List<MessageWithAttachment>) {
+        return response;
+      }
+      throw Exception('Failed to search messages');
+    } catch (e) {
+      throw Exception('Failed to search messages');
+    }
+  }
+
+  Future<void> deleteMessage(int messageId) async {
+    try {
+      final response = await api_client.put(
+        '/api/Message/recall_message/$messageId',
+      );
+      // Kiểm tra phản hồi từ API nếu cần
+      if (response['success'] != true) {
+        throw Exception(
+          'Failed to recall message: ${response['message'] ?? 'Unknown error'}',
+        );
+      }
+    } catch (e) {
+      // Truyền lỗi chi tiết từ ApiClient
+      rethrow; // Ném lại lỗi để tầng trên xử lý
+    }
+  }
+
+  Future<void> deleteMessageConversation(
+    int conversation_id,
+    int user_id,
+  ) async {
+    try {
+       final response = await api_client.delete(
+        '/api/Message/DeleteMessageForMe/$conversation_id/$user_id',
+      );
+      // Kiểm tra phản hồi từ API nếu cần
+      if (response['success'] != true) {
+        throw Exception(
+          'Failed to recall message: ${response['message'] ?? 'Unknown error'}',
+        );
+      }
+    } catch (e) {
+      rethrow;
     }
   }
 }

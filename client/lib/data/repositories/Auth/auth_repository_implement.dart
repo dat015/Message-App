@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:first_app/data/dto/otp_response.dart';
 import 'package:first_app/data/dto/register_dto.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../api/api_client.dart';
 import '../../dto/login_response.dart';
 import 'auth_repository.dart';
@@ -25,11 +28,19 @@ class AuthRepositoryImpl implements AuthRepository {
         ),
       );
       print('Login response received: $response');
+      await saveLoginInfo(LoginResponse.fromJson(response));
       return LoginResponse.fromJson(response);
     } catch (e) {
       print('Login error details: $e');
     throw Exception('Đăng nhập thất bại: $e');
     }
+  }
+
+  Future<void> saveLoginInfo(LoginResponse response) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('token', response.token ?? '');
+    await prefs.setString('user', jsonEncode(response.user));
+    print('Login info saved to SharedPreferences');
   }
 
   @override

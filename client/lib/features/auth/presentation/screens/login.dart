@@ -1,9 +1,10 @@
 import 'package:first_app/data/dto/login_response.dart';
-import 'package:first_app/data/storage/starage_service.dart';
+import 'package:first_app/data/storage/storage_service.dart';
 import 'package:first_app/features/auth/presentation/screens/forget_password.dart';
 import 'package:first_app/features/auth/presentation/screens/register.dart';
 import 'package:first_app/features/auth/presentation/widgets/custom_scaffold.dart';
-import 'package:first_app/features/home/presentation/screens/home_screen.dart';
+import 'package:first_app/features/home/presentation/screens/home_screen/home_screen.dart';
+import 'package:first_app/features/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import '../../../../data/api/api_client.dart';

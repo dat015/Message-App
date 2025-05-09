@@ -10,10 +10,7 @@ class ApiClient {
     Map<String, String>? headers,
   }) {
     _dio = Dio(
-      BaseOptions(
-        baseUrl: Config.baseUrl,
-        receiveTimeout: receiveTimeout,
-      ),
+      BaseOptions(baseUrl: Config.baseUrl, receiveTimeout: receiveTimeout),
     );
 
     // Thêm interceptor để xử lý CORS
@@ -89,13 +86,14 @@ class ApiClient {
     dynamic data,
     Map<String, dynamic>? queryParameters,
     Options? options,
+    Map<String, String>? headers,
   }) async {
     try {
       final response = await _dio.put(
         path,
         data: data,
         queryParameters: queryParameters,
-        options: options,
+        options: Options(headers: headers),
       );
       return _handleResponse(response);
     } on DioException catch (e) {

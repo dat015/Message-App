@@ -1,3 +1,4 @@
+using server.DTO;
 using server.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -17,5 +18,6 @@ namespace server.Services
         Task<List<FriendRequestDto>> GetSentFriendRequestsAsync(int userId);
         Task<bool> UnfriendAsync(int userId, int friendId);
         Task SyncUsersToRedisAsync();
+        Task<List<FriendDTO>> GetAllFriendsAsync(int userId);
     }
 }

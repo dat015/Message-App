@@ -15,11 +15,13 @@ namespace server.Models
                 [Required]
                 public int conversation_id { get; set; }
                 [Required]
-
                 public int user_id { get; set; }
+                public string? role { get; set; }
+                public string? name { get; set; }
                 [Required]
-
                 public DateTime joined_at { get; set; } = DateTime.Now;
+                public string adder { get; set; } = "NO";
+                public string? img_url { get; set; } = null;
                 [Required]
                 public bool is_deleted { get; set; } = false;
                 [ForeignKey("conversation_id")]

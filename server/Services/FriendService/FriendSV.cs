@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
 using StackExchange.Redis;
+using server.DTO;
+using Microsoft.VisualBasic;
 
 namespace server.Services
 {
@@ -116,6 +118,24 @@ namespace server.Services
             });
             await _webSocketFriendSV.SendRequestRejectedNotificationAsync(request.SenderId, message);
         }
+        public async Task<List<FriendDTO>> GetAllFriendsAsync(int userId)
+        {
+            if (userId == 0)
+            {
+                throw new ArgumentException("User ID cannot be zero.");
+            }
+            var friends = await _context.Friends
+                .Where(f => f.UserId1 == userId || f.UserId2 == userId)
+                .Select(f => new FriendDTO
+                {
+                    username = f.UserId1 == userId ? f.User2.username : f.User1.username,
+                    avatar = f.UserId1 == userId ? f.User2.avatar_url : f.User1.avatar_url,
+                    friendId = f.UserId1 == userId ? f.User2.id : f.User1.id,
+                    userId = userId
+                })
+                .ToListAsync();
+            return friends ?? new List<FriendDTO>();
+        }
 
         public async Task<List<User>> GetFriendsAsync(int userId)
         {
@@ -138,7 +158,6 @@ namespace server.Services
 
                 friend.MutualFriendsCount = userFriends.Intersect(friendFriends).Count();
             }
-
             return friends;
         }
 

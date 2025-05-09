@@ -19,7 +19,10 @@ namespace server.Models
         public bool is_group {get; set;} = false;
         [Required]
         public DateTime created_at {get; set;}
-
+        public DateTime? lastMessageTime {get; set;}= null;
+        public string? lastMessage {get; set;}= null;
+        public string? lastMessageSender {get; set;}= null;
+        public string? img_url {get; set;}= null;
         public ICollection<Message>? Messages {get; set;}
         public ICollection<GroupSettings>? GroupSettings {get; set;}
         public ICollection<Participants>? Participants {get; set;}

@@ -25,5 +25,7 @@ namespace server.Services.UserService
         Task<User> ExistUser(int id);
         Task<int> GetMutualFriendsCountAsync(int userId, int currentUserId);
         Task<string> GetRelationshipStatusAsync(int userId, int currentUserId);
+        Task<List<MemberDTO>> GetMemberForConversationAsync(int conversationId);
+        
     }
 }

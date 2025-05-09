@@ -70,8 +70,20 @@ namespace Message_app.Migrations
                     b.Property<DateTime>("created_at")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("img_url")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("is_group")
                         .HasColumnType("bit");
+
+                    b.Property<string>("lastMessage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("lastMessageSender")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("lastMessageTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("name")
                         .IsRequired()
@@ -212,6 +224,9 @@ namespace Message_app.Migrations
                     b.Property<bool>("isFile")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("isRecalled")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("is_read")
                         .HasColumnType("bit");
 
@@ -228,6 +243,32 @@ namespace Message_app.Migrations
                     b.HasIndex("sender_id");
 
                     b.ToTable("Messages");
+                });
+
+            modelBuilder.Entity("server.Models.MessageDeletion", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<DateTime>("cleared_at")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("conversation_id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("user_id")
+                        .HasColumnType("int");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("conversation_id");
+
+                    b.HasIndex("user_id");
+
+                    b.ToTable("messageDeletions");
                 });
 
             modelBuilder.Entity("server.Models.MessageStatus", b =>
@@ -334,14 +375,27 @@ namespace Message_app.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
+                    b.Property<string>("adder")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("conversation_id")
                         .HasColumnType("int");
+
+                    b.Property<string>("img_url")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("is_deleted")
                         .HasColumnType("bit");
 
                     b.Property<DateTime>("joined_at")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("role")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("user_id")
                         .HasColumnType("int");
@@ -624,6 +678,25 @@ namespace Message_app.Migrations
                     b.Navigation("conversation");
 
                     b.Navigation("sender");
+                });
+
+            modelBuilder.Entity("server.Models.MessageDeletion", b =>
+                {
+                    b.HasOne("server.Models.Conversation", "conversation")
+                        .WithMany()
+                        .HasForeignKey("conversation_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("server.Models.User", "user")
+                        .WithMany()
+                        .HasForeignKey("user_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("conversation");
+
+                    b.Navigation("user");
                 });
 
             modelBuilder.Entity("server.Models.MessageStatus", b =>

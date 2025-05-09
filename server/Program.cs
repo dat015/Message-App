@@ -11,7 +11,7 @@ using server.Services.UserService;
 using server.Services.TempOTPStoreSV; // Thêm namespace cho UserQrService
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.WebHost.UseUrls("http://localhost:5053");
 builder.Configuration
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
@@ -42,6 +42,10 @@ builder.Services.AddAuthentication(option =>
     };
 });
 
+builder.WebHost.UseKestrel(options =>
+{
+    options.ListenAnyIP(5053); // Lắng nghe tất cả IP trên cổng 5053
+});
 
 builder.Services.Inject(builder.Configuration);
 
@@ -73,7 +77,7 @@ using (var scope = app.Services.CreateScope())
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Message App API V1"));
 }
 app.UseStaticFiles();
 app.UseCors("AllowAll");

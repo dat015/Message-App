@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using server.Data;
+using server.DTO;
 using server.Services.ParticipantService;
 
 namespace server.Controllers
@@ -18,24 +19,111 @@ namespace server.Controllers
             this.participantSV = participantSV;
         }
 
+        [HttpDelete("leave_group/{conversation_id}/{user_id}")]
+        public async Task<IActionResult> LeaveGroup(int conversation_id, int user_id)
+        {
+            if (conversation_id == 0 || user_id == 0)
+            {
+                return BadRequest("Invalid conversation id or user id");
+            }
+            try
+            {
+                var result = await participantSV.LeaveGroupAsync(conversation_id, user_id);
+                if (result == null)
+                {
+                    return BadRequest("Not found participant");
+                }
+                return Ok(new
+                {
+                    Success = true,
+                    Participant = result
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+        }
+
+        [HttpPost("add_member/{conversation_id}/{user_id}")]
+        public async Task<IActionResult> AddMember(int conversation_id, int user_id)
+        {
+            if (conversation_id == 0 || user_id == 0)
+            {
+                return BadRequest("Invalid conversation id or user id");
+            }
+            try
+            {
+                var result = await participantSV.AddParticipantAsync(conversation_id, user_id);
+                if (result == null)
+                {
+                    return BadRequest("Not found participant");
+                }
+                return Ok(new
+                {
+                    Success = true,
+                    Participant = result
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+        }
+
+        [HttpPut("update_nickname/{userId}/{conversation_id}")]
+        public async Task<IActionResult> UpdateNickName(int userId, int conversation_id, [FromBody] NicknameUpdateRequest request)
+        {
+            Console.WriteLine($"userId: {userId}, conversation_id: {conversation_id}, nickname: {request.Nickname}");
+            if (conversation_id == 0 || string.IsNullOrEmpty(request.Nickname))
+            {
+                return BadRequest("Invalid conversation id or nickname");
+            }
+            try
+            {
+                var result = await participantSV.updateNickName(userId, conversation_id, request.Nickname);
+                if (!result)
+                {
+                    return BadRequest("Not found participant");
+                }
+                return Ok(new
+                {
+                    Success = true
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+        }
+
         [HttpGet("get_participants/{conversation_id}")]
-        public async Task<IActionResult> GetParticipants(int conversation_id){
-            if(conversation_id == 0){
+        public async Task<IActionResult> GetParticipants(int conversation_id)
+        {
+            if (conversation_id == 0)
+            {
                 return BadRequest("Invalid conversation id");
             }
 
-            try{
+            try
+            {
                 var result = await participantSV.GetParticipants(conversation_id);
-                if(result == null){
+                if (result == null)
+                {
                     return BadRequest("Not found participant");
                 }
                 return Ok(
-                    new {
+                    new
+                    {
                         participants = result
                     }
                 );
             }
-            catch(Exception ex){
+            catch (Exception ex)
+            {
                 Console.WriteLine(ex.Message);
                 throw ex;
             }

@@ -5,11 +5,14 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.IdentityModel.Tokens;
 using server.Data;
 using server.DTO;
 using server.Models;
 using server.Services.RedisService;
+using server.Services.RedisService.ChatStorage;
+using server.Services.WebSocketService;
 using StackExchange.Redis;
 
 namespace server.Services.MessageService
@@ -20,12 +23,26 @@ namespace server.Services.MessageService
         private readonly ApplicationDbContext _context;
         private readonly IRedisService _redisService;
         private readonly IConnectionMultiplexer _redis;
+        private readonly ILogger<MessagesV> _logger;
+        private readonly webSocket _webSocket;
+        private readonly IChatStorage _chatStorage;
+        private readonly IDatabase _redisDatabase;
 
-        public MessagesV(IConnectionMultiplexer redis, ApplicationDbContext context, IRedisService redisService)
+        public MessagesV(IConnectionMultiplexer redis,
+                            ApplicationDbContext context,
+                            IRedisService redisService,
+                            ILogger<MessagesV> logger,
+                            webSocket webSocket,
+                            IChatStorage chatStorage,
+                            IDatabase redisDatabase)
         {
             _context = context;
             _redisService = redisService;
             _redis = redis;
+            _logger = logger;
+            _webSocket = webSocket;
+            _chatStorage = chatStorage;
+            _redisDatabase = redisDatabase;
         }
         public async Task addNewMessage(Message message)
         {
@@ -41,69 +58,124 @@ namespace server.Services.MessageService
             }
         }
 
-        // private async Task CacheMessage(Message message)
-        // {
-        //     var key = $"conversation:{message.conversation_id}:messages";
-        //     await _redisService.SortedSetAddKey(key, System.Text.Json.JsonSerializer.Serialize(message), message.created_at.Ticks);
-        //     await _redisService.KeyExpireAsync(key, TimeSpan.FromHours(24));
-        // }
-        public async Task<List<MessageWithAttachment>> getMessages(int conversation_id, DateTime? fromDate = null)
+        public async Task<bool> DeleteMessageConversationForMe(int conversation_id, int user_id)
         {
-            var db = _redis.GetDatabase();
-            var conversationKey = $"conversation:{conversation_id}:recent";
-
-            // Xử lý Redis key không đúng kiểu
-            var keyType = await db.KeyTypeAsync(conversationKey);
-            if (keyType != RedisType.List && keyType != RedisType.None)
+            if (conversation_id <= 0 || user_id <= 0)
             {
-                Console.WriteLine($"Warning: Redis key {conversationKey} is not a List. Deleting key.");
-                await db.KeyDeleteAsync(conversationKey);
+                throw new Exception("conversation id is not valid");
             }
-
-            // Lấy tin nhắn từ Redis nếu fromDate không có (trang đầu)
-            if (!fromDate.HasValue)
+            try
             {
-                var messagesJson = await db.ListRangeAsync(conversationKey, 0, -1);
-                if (messagesJson.Length > 0)
-                {
-                    var messagesFromRedis = messagesJson
-                        .Select(m =>
-                        {
-                            try
-                            {
-                                return JsonSerializer.Deserialize<MessageWithAttachment>(m!);
-                            }
-                            catch
-                            {
-                                return null;
-                            }
-                        })
-                        .Where(m => m != null)
-                        .OrderByDescending(o => o!.Message.created_at)
-                        .ToList();
+                // Kiểm tra xem conversation và user có tồn tại không
+                var existinConversation = await _context.Conversations.FindAsync(conversation_id);
+                var existingUser = await _context.Users.FindAsync(user_id);
 
-                    if (messagesFromRedis.Any())
-                        return messagesFromRedis!;
+                if (existinConversation == null || existingUser == null)
+                {
+                    return false;
+                }
+
+                // Lấy thời điểm xóa hiện tại
+                var clearedAt = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
+                var clearedAtTimestamp = ((DateTimeOffset)clearedAt).ToUnixTimeSeconds(); // Chuyển sang Unix timestamp
+
+                // Kiểm tra xem đã có bản ghi xóa tin nhắn trong cơ sở dữ liệu chưa
+                var existingDeletionMessage = await _context.messageDeletions
+                    .Where(e => e.user_id == user_id && e.conversation_id == conversation_id)
+                    .FirstOrDefaultAsync();
+
+                // Nếu đã tồn tại, cập nhật thời gian
+                if (existingDeletionMessage != null)
+                {
+                    existingDeletionMessage.cleared_at = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));;
+                    _context.messageDeletions.Update(existingDeletionMessage);
+                }
+                else
+                {
+                    // Nếu chưa tồn tại, tạo bản ghi mới
+                    var new_deletionMessage = new MessageDeletion
+                    {
+                        user_id = user_id,
+                        conversation_id = conversation_id,
+                        cleared_at = clearedAt
+                    };
+                    _context.messageDeletions.Add(new_deletionMessage);
+                }
+
+                // Lưu thay đổi vào cơ sở dữ liệu
+                await _context.SaveChangesAsync();
+
+                // Lưu cleared_at vào Redis
+                var clearedAtKey = $"user:{user_id}:conversation:{conversation_id}:cleared_at";
+                await _redisDatabase.StringSetAsync(clearedAtKey, clearedAtTimestamp);
+
+                // Đặt TTL (7 ngày) để tiết kiệm bộ nhớ
+                await _redisDatabase.KeyExpireAsync(clearedAtKey, TimeSpan.FromDays(7));
+
+                // Xóa cache liên quan (nếu cần)
+                await _chatStorage.DeleteMessageAsync(conversation_id, user_id);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+
+
+        public Task<bool> DeleteMessageForMe(int message_id)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public async Task<List<MessageWithAttachment>> GetMessagesAsync(long conversationId, int user_id, DateTime? fromDate = null)
+        {
+            try
+            {
+                // Lấy tin nhắn từ Redis qua ChatStorage
+                var messages = await _chatStorage.GetMessagesAsync(conversationId, user_id, fromDate);
+                if (messages.Any())
+                {
+                    _logger.LogInformation("Retrieved {MessageCount} messages from Redis for conversation {ConversationId} and user {UserId}", messages.Count, conversationId, user_id);
+                    return messages;
                 }
             }
+            catch (RedisConnectionException ex)
+            {
+                _logger.LogError(ex, "Redis unavailable, falling back to database for conversation {ConversationId}", conversationId);
+            }
 
-            // Truy vấn từ DB
+            // Fallback sang cơ sở dữ liệu
+            var clearedAt = await _context.messageDeletions
+                .Where(md => md.user_id == user_id && md.conversation_id == conversationId)
+                .Select(md => md.cleared_at)
+                .FirstOrDefaultAsync();
+
             var query = _context.Messages
-                .Where(m => m.conversation_id == conversation_id);
+                .Where(m => m.conversation_id == conversationId);
+
+            // Lọc tin nhắn có created_at > cleared_at
+            if (clearedAt != default(DateTime))
+            {
+                query = query.Where(m => m.created_at > clearedAt);
+            }
 
             if (fromDate.HasValue)
             {
                 query = query.Where(m => m.created_at <= fromDate.Value);
             }
 
-            var messages = await query
+            var dbMessages = await query
                 .OrderByDescending(m => m.created_at)
                 .Include(m => m.Attachments)
                 .Take(50)
                 .ToListAsync();
 
             // Mapping sang DTO
-            var messageWithAttachment = messages
+            var messagesWithAttachment = dbMessages
                 .Select(m => new MessageWithAttachment
                 {
                     Message = new MessageDTOForAttachment
@@ -122,7 +194,7 @@ namespace server.Services.MessageService
                         {
                             id = m.Attachments.First().id,
                             file_url = m.Attachments.First().file_url,
-                            FileSize = m.Attachments.First().FileSize,
+                            fileSize = m.Attachments.First().FileSize,
                             file_type = m.Attachments.First().file_type,
                             uploaded_at = m.Attachments.First().uploaded_at,
                             is_temporary = m.Attachments.First().is_temporary,
@@ -132,19 +204,72 @@ namespace server.Services.MessageService
                 })
                 .ToList();
 
-            // Cache nếu là trang đầu
-            if (messageWithAttachment.Any() && !fromDate.HasValue)
+            // Cache vào Redis nếu là trang đầu
+            if (messagesWithAttachment.Any() && !fromDate.HasValue)
             {
-                var serializedMessages = messageWithAttachment
-                    .Select(m => (RedisValue)JsonSerializer.Serialize(m))
-                    .ToArray();
-
-                await db.ListRightPushAsync(conversationKey, serializedMessages);
-                await db.ListTrimAsync(conversationKey, -50, -1); // giữ tối đa 50 tin nhắn
-                await db.KeyExpireAsync(conversationKey, TimeSpan.FromHours(24));
+                try
+                {
+                    foreach (var msg in messagesWithAttachment)
+                    {
+                        await _chatStorage.SaveMessageAsync(msg.Message, msg.Attachment);
+                    }
+                    _logger.LogInformation("Cached {MessageCount} messages to Redis for conversation {ConversationId}", messagesWithAttachment.Count, conversationId);
+                }
+                catch (RedisConnectionException ex)
+                {
+                    _logger.LogError(ex, "Failed to cache messages to Redis for conversation {ConversationId}", conversationId);
+                }
             }
 
-            return messageWithAttachment;
+            return messagesWithAttachment;
+        }
+
+
+        public async Task<bool> ReCallMessage(int message_id)
+        {
+            if (message_id <= 0)
+            {
+                throw new ArgumentException("Invalid message ID");
+            }
+
+            try
+            {
+                var existingMessage = await _context.Messages
+                    .Where(e => e.id == message_id && !e.isRecalled)
+                    .FirstOrDefaultAsync();
+
+                if (existingMessage == null)
+                {
+                    _logger.LogWarning("Message {MessageId} not found or already recalled", message_id);
+                    return false;
+                }
+
+                existingMessage.isRecalled = true;
+                existingMessage.content = "Tin nhắn đã được thu hồi"; // Cập nhật content trong DB
+                _context.Messages.Update(existingMessage);
+                await _context.SaveChangesAsync();
+                _logger.LogInformation("Message {MessageId} marked as recalled in database", message_id);
+
+                await _chatStorage.UpdateMessageRecallAsync(message_id, existingMessage.conversation_id);
+                _logger.LogInformation("Message {MessageId} recall status updated in Redis", message_id);
+
+                return true;
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Failed to update message {MessageId} in database", message_id);
+                throw new Exception("Database error while recalling message", ex);
+            }
+            catch (RedisConnectionException ex)
+            {
+                _logger.LogError(ex, "Failed to update message {MessageId} in Redis", message_id);
+                return true; // DB đã cập nhật, bỏ qua lỗi Redis
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error while recalling message {MessageId}", message_id);
+                throw;
+            }
         }
 
 
