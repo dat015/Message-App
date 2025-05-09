@@ -30,7 +30,7 @@ class FriendsLoaded extends FriendsState {
     List<FriendSuggestion>? friendSuggestions,
     List<User>? friends,
     List<int>? qrCodeData,
-    dynamic scannedUser,
+    ScannedUser? scannedUser,
   }) {
     return FriendsLoaded(
       friendRequests: friendRequests ?? this.friendRequests,
@@ -43,12 +43,13 @@ class FriendsLoaded extends FriendsState {
   }
 }
 
+class FriendsSearchSuccess extends FriendsState {
+  final List<dynamic> searchResults;
+
+  FriendsSearchSuccess({required this.searchResults});
+}
+
 class FriendsError extends FriendsState {
   final String message;
   FriendsError(this.message);
-}
-
-class FriendsSearchSuccess extends FriendsState {
-  final List<dynamic> searchResults;
-  FriendsSearchSuccess(this.searchResults);
 }

@@ -1,11 +1,15 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:first_app/core/utils/auth_utils.dart';
 import 'package:first_app/data/dto/register_dto.dart';
 import 'package:first_app/features/auth/presentation/screens/login.dart';
+import 'package:first_app/features/auth/presentation/screens/otps_form.dart';
 import 'package:first_app/theme/theme.dart';
 import 'package:first_app/features/auth/presentation/widgets/custom_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:first_app/data/api/api_client.dart';
 import '../../../../data/repositories/Auth/auth_repository.dart';
@@ -30,13 +34,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool _obscureText = true;
   int _genderRadioBtnVal = -1;
   DateTime? _selectedDate;
+  File? _avatarImage;
+  final ImagePicker _picker = ImagePicker();
 
   // Khởi tạo ApiClient và AuthRepository
   final ApiClient apiClient = ApiClient();
-  late final AuthRepository _authRepository; // Sử dụng 'late' để trì hoãn khởi tạo
+  late final AuthRepository
+  _authRepository; // Sử dụng 'late' để trì hoãn khởi tạo
 
   _SignUpScreenState() {
-    _authRepository = AuthRepositoryImpl(apiClient); // Khởi tạo trong constructor
+    _authRepository = AuthRepositoryImpl(
+      apiClient,
+    ); // Khởi tạo trong constructor
   }
 
   @override
@@ -47,6 +56,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
     _confirmPasswordController.dispose();
     _dateController.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickImage() async {
+    try {
+      final pickedFile = await _picker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 80, // Giảm chất lượng để tối ưu kích thước
+      );
+      if (pickedFile != null) {
+        setState(() {
+          _avatarImage = File(pickedFile.path);
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Lỗi khi chọn ảnh: $e')));
+    }
   }
 
   // Hàm xử lý thay đổi giới tính
@@ -77,20 +104,27 @@ class _SignUpScreenState extends State<SignUpScreen> {
     if (_formSignupKey.currentState!.validate()) {
       if (_passwordController.text != _confirmPasswordController.text) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Passwords do not match')),
+          const SnackBar(
+            content: Text('Mật khẩu không khớp'),
+            backgroundColor: Colors.red,
+          ),
         );
         return;
       }
       if (_genderRadioBtnVal == -1) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please select your gender')),
+          const SnackBar(
+            content: Text('Vui lòng chọn giới tính'),
+            backgroundColor: Colors.red,
+          ),
         );
         return;
       }
       if (!agreePersonalData) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Please agree to personal data processing'),
+            content: Text('Vui lòng đồng ý với việc xử lý dữ liệu cá nhân'),
+            backgroundColor: Colors.red,
           ),
         );
         return;
@@ -100,25 +134,35 @@ class _SignUpScreenState extends State<SignUpScreen> {
         username: _nameController.text,
         password: _passwordController.text,
         email: _emailController.text,
-        avatarUrl: 'https://i.pravatar.cc/150?img=3',
+        avatarUrl:
+            _avatarImage != null
+                ? base64Encode(await _avatarImage!.readAsBytes())
+                : 'https://i.pravatar.cc/150?img=3',
         birthday: _selectedDate,
-        gender: _genderRadioBtnVal == 0, // 0: Male (true), 1: Female (false)
+        gender: _genderRadioBtnVal == 0,
       );
       debugPrint('RegisterDTO: ${jsonEncode(registerDTO.toJson())}');
 
       try {
-        final response = await _authRepository.register(registerDTO);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Registration successful: ${response.token}')),
-        );
-        Navigator.pushReplacement(
+        await sendOTPToServer(
           context,
-          MaterialPageRoute(builder: (e) => const SignInScreen()),
+          _emailController.text,
+          isForRegistration: true,
+        );
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder:
+                (context) => Otp(
+                  email: _emailController.text,
+                  registerDTO: registerDTO,
+                  isForRegistration: true,
+                ),
+          ),
         );
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Registration failed: $e')),
-        );
+        throw Exception('Đăng ký người dùng thất bại: $e');
       }
     }
   }
@@ -131,6 +175,63 @@ class _SignUpScreenState extends State<SignUpScreen> {
         fontWeight: FontWeight.w600,
         color: Colors.black,
         fontSize: 30.0,
+      ),
+    );
+  }
+
+  Widget _buildAvatarPicker() {
+    return GestureDetector(
+      onTap: _pickImage,
+      child: Container(
+        width: 120,
+        height: 120,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: LinearGradient(
+            colors: [lightColorScheme.primary, lightColorScheme.secondary],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 8,
+              offset: Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            CircleAvatar(
+              radius: 56,
+              backgroundImage:
+                  _avatarImage != null
+                      ? FileImage(_avatarImage!) // Sử dụng FileImage cho ảnh
+                      : null,
+              child:
+                  _avatarImage == null
+                      ? Icon(Icons.person, size: 60, color: Colors.white)
+                      : null,
+            ),
+            Positioned(
+              bottom: 0,
+              right: 0,
+              child: Container(
+                padding: EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.camera_alt,
+                  size: 24,
+                  color: lightColorScheme.primary,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -413,6 +514,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
+                      _buildAvatarPicker(),
+                      const SizedBox(height: 20.0),
                       _buildHeader(),
                       const SizedBox(height: 40.0),
                       _buildNameField(),

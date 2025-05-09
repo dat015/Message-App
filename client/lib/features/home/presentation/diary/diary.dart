@@ -1,17 +1,21 @@
 import 'package:first_app/data/models/post.dart';
+import 'package:first_app/data/models/story.dart';
 import 'package:first_app/data/repositories/Post_repo/post_repo.dart';
-import 'package:first_app/features/home/presentation/diary/create_post.dart';
+import 'package:first_app/data/repositories/Story_repo/story_repo.dart';
+import 'package:first_app/features/routes/navigation_helper.dart'; 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Diary extends StatefulWidget {
   final int currentUserId;
   final String currentUserName;
+  final String userAvatar;
 
   const Diary({
     Key? key,
     required this.currentUserId,
     required this.currentUserName,
+    required this.userAvatar,
   }) : super(key: key);
 
   @override
@@ -20,274 +24,316 @@ class Diary extends StatefulWidget {
 
 class _DiaryState extends State<Diary> {
   final PostRepo _postService = PostRepo();
+  final StoryRepository _storyRepo = StoryRepository();
+
+  // Xóa bài viết
+  Future<void> _deletePost(String postId) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Xóa bài viết'),
+        content: const Text('Bạn có chắc muốn xóa bài viết này?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Hủy'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Xóa', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      try {
+        await _postService.deletePost(postId);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Xóa bài viết thành công')),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Lỗi: $e')),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          return SingleChildScrollView(
+    return RefreshIndicator(
+      onRefresh: () async {
+        setState(() {});
+      },
+      child: CustomScrollView(
+        slivers: [
+          // Main Content
+          SliverToBoxAdapter(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Search bar
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: screenWidth * 0.04,
-                    vertical: screenHeight * 0.01,
+                // Create Post Card
+                Card(
+                  margin: const EdgeInsets.all(12),
+                  elevation: 1,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  color: Colors.blue,
-                  child: Row(
-                    children: [
-                      const Icon(Icons.search, color: Colors.white),
-                      SizedBox(width: screenWidth * 0.04),
-                      Expanded(
-                        child: Text(
-                          'Tìm kiếm',
-                          style: TextStyle(
-                            color: Colors.white.withOpacity(0.8),
-                            fontSize: screenWidth * 0.045,
-                          ),
-                        ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.all(screenWidth * 0.01),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.white, width: 2),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Icon(
-                          Icons.add_photo_alternate_outlined,
-                          color: Colors.white,
-                          size: screenWidth * 0.06,
-                        ),
-                      ),
-                      SizedBox(width: screenWidth * 0.04),
-                      Stack(
-                        alignment: Alignment.topRight,
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: InkWell(
+                      onTap: () {
+                        NavigationHelper().goToCreatePost(
+                          context,
+                          widget.currentUserId,
+                          widget.currentUserName,
+                          widget.userAvatar,
+                        );
+                      },
+                      child: Row(
                         children: [
-                          Icon(
-                            Icons.notifications_outlined,
-                            color: Colors.white,
-                            size: screenWidth * 0.07,
+                          CircleAvatar(
+                            radius: 20,
+                            backgroundImage: NetworkImage(widget.userAvatar),
                           ),
-                          Container(
-                            padding: EdgeInsets.all(screenWidth * 0.01),
-                            decoration: const BoxDecoration(
-                              color: Colors.red,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Text(
-                              '5',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: screenWidth * 0.025,
-                                fontWeight: FontWeight.bold,
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 10,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade100,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                'Hôm nay bạn thế nào?',
+                                style: TextStyle(
+                                  color: Colors.grey.shade700,
+                                  fontSize: 16,
+                                ),
                               ),
                             ),
                           ),
                         ],
                       ),
-                    ],
-                  ),
-                ),
-
-                // Today's status
-                Padding(
-                  padding: EdgeInsets.all(screenWidth * 0.04),
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (context) => CreatePostScreen(
-                                currentUserId: widget.currentUserId,
-                                currentUserName: widget.currentUserName,
-                              ),
-                        ),
-                      );
-                    },
-                    child: Row(
-                      children: [
-                        CircleAvatar(
-                          radius: screenWidth * 0.05,
-                          backgroundImage: const AssetImage('/images/avt.jpg'),
-                        ),
-                        SizedBox(width: screenWidth * 0.04),
-                        Text(
-                          'Hôm nay bạn thế nào?',
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: screenWidth * 0.04,
-                          ),
-                        ),
-                      ],
                     ),
                   ),
                 ),
 
-                // Media options
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
+                // Media Options
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 12),
                   child: Wrap(
-                    spacing: screenWidth * 0.02,
-                    runSpacing: screenHeight * 0.01,
+                    spacing: 8,
+                    runSpacing: 8,
                     children: [
                       _buildMediaOption(
                         Icons.image,
                         'Ảnh',
-                        Colors.green,
-                        screenWidth,
+                        Colors.green.shade600,
                       ),
                       _buildMediaOption(
-                        Icons.videocam,
+                        Icons.videocam_rounded,
                         'Video',
-                        Colors.purple,
-                        screenWidth,
+                        Colors.purple.shade600,
                       ),
                       _buildMediaOption(
-                        Icons.photo_album,
+                        Icons.photo_album_rounded,
                         'Album',
-                        Colors.blue,
-                        screenWidth,
-                      ),
-                      _buildMediaOption(
-                        Icons.access_time,
-                        'Kỷ niệm',
-                        Colors.orange,
-                        screenWidth,
+                        Colors.blue.shade600,
                       ),
                     ],
                   ),
                 ),
 
-                SizedBox(height: screenHeight * 0.02),
+                const SizedBox(height: 16),
+                const Divider(height: 1),
+                const SizedBox(height: 16),
 
-                // "Khoảnh khắc" section
+                // "Khoảnh khắc" Section Header
                 Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: screenWidth * 0.04,
-                    vertical: screenHeight * 0.01,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Khoảnh khắc',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
+                ),
+
+                // Stories List
+                SizedBox(
+                  height: 200,
+                  child: StreamBuilder<List<Story>>(
+                    stream: _storyRepo.getAllStories(widget.currentUserId.toString()),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return Center(child: Text('Lỗi: ${snapshot.error}'));
+                      }
+
+                      if (!snapshot.hasData) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+
+                      final stories = snapshot.data!;
+                      return ListView(
+                        scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        children: [
+                          _buildStoryCard(
+                            widget.userAvatar,
+                            'Tạo mới',
+                            widget.userAvatar,
+                            isCreateNew: true,
+                            onTap: () {
+                              NavigationHelper().goToCreateStory(
+                                context,
+                                widget.currentUserId.toString(),
+                                widget.currentUserName,
+                                widget.userAvatar,
+                              );
+                            },
+                          ),
+                          ...stories.map((story) => Padding(
+                                padding: const EdgeInsets.only(left: 10),
+                                child: _buildStoryCard(
+                                  story.authorAvatar,
+                                  story.authorName,
+                                  story.isImage ? story.imageUrl! : story.authorAvatar,
+                                  isCreateNew: false,
+                                  onTap: () {
+                                    NavigationHelper().goToStory(
+                                      context,
+                                      widget.currentUserId.toString(),
+                                      [story],
+                                    );
+                                  },
+                                ),
+                              )).toList(),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+
+                const SizedBox(height: 8),
+                const Divider(height: 1, thickness: 6, color: Color(0xFFF5F5F5)),
+                const SizedBox(height: 8),
+
+                // Posts Section Header
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   child: Text(
-                    'Khoảnh khắc',
+                    'Bảng tin của bạn',
                     style: TextStyle(
-                      fontSize: screenWidth * 0.045,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
-
-                // Moments/Stories
-                SizedBox(
-                  height: screenHeight * 0.3,
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: screenWidth * 0.04,
-                    ),
-                    children: [
-                      _buildStoryCard(
-                        'Tạo mới',
-                        '/images/avt.jpg',
-                        isCreateNew: true,
-                        width: screenWidth,
-                        height: screenHeight,
-                      ),
-                      SizedBox(width: screenWidth * 0.025),
-                      _buildStoryCard(
-                        'Đức Quý',
-                        '/images/illustration-3.png',
-                        isCreateNew: false,
-                        width: screenWidth,
-                        height: screenHeight,
-                      ),
-                    ],
-                  ),
-                ),
-
-                Divider(
-                  height: 1,
-                  thickness: 1,
-                  color: const Color(0xFFEEEEEE),
-                  indent: screenWidth * 0.04,
-                  endIndent: screenWidth * 0.04,
-                ),
-
-                // Posts section
-                // Thay thế phần StreamBuilder hiện tại
-                StreamBuilder<QuerySnapshot>(
-                  stream:
-                      FirebaseFirestore.instance
-                          .collection('posts')
-                          .where(
-                            'authorId',
-                            isEqualTo: widget.currentUserId.toString(),
-                          )
-                          .orderBy('createdAt', descending: true)
-                          .snapshots(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasError) {
-                      // Kiểm tra nếu lỗi là do thiếu index
-                      if (snapshot.error.toString().contains(
-                        'The query requires an index',
-                      )) {
-                        return Center(
-                          child: Padding(
-                            padding: EdgeInsets.all(screenWidth * 0.04),
-                            child: const Text(
-                              'Đang cấu hình hệ thống...\nVui lòng đợi trong giây lát và thử lại.',
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        );
-                      }
-                      return Center(child: Text('Lỗi: ${snapshot.error}'));
-                    }
-
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-
-                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                      return Center(
-                        child: Padding(
-                          padding: EdgeInsets.all(screenWidth * 0.04),
-                          child: const Text('Chưa có bài viết nào'),
-                        ),
-                      );
-                    }
-
-                    return Column(
-                      children:
-                          snapshot.data!.docs.map((doc) {
-                            final postData = doc.data() as Map<String, dynamic>;
-                            final post = Post.fromMap(doc.id, postData);
-
-                            return _buildPostItem(
-                              profileImage: '/images/loginill.png',
-                              username: post.authorName ?? 'Unknown',
-                              action: post.content ?? '',
-                              timeAgo: _formatTimeAgo(post.createdAt),
-                              postImage:
-                                  post.imageUrl ?? '/images/register.png',
-                              likeCount: 13,
-                              commentCount: 1,
-                              screenWidth: screenWidth,
-                            );
-                          }).toList(),
-                    );
-                  },
-                ),
               ],
             ),
-          );
-        },
+          ),
+
+          // Posts List
+          StreamBuilder<List<Post>>(
+            stream: _postService.getPosts(widget.currentUserId.toString()),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return SliverToBoxAdapter(
+                  child: Center(child: Text('Lỗi: ${snapshot.error}')),
+                );
+              }
+
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const SliverToBoxAdapter(
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              }
+
+              if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                return SliverToBoxAdapter(
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(32),
+                      child: Column(
+                        children: [
+                          Icon(
+                            Icons.article_outlined,
+                            size: 64,
+                            color: Colors.grey.shade400,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'Chưa có bài viết nào',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              NavigationHelper().goToCreatePost(
+                                context,
+                                widget.currentUserId,
+                                widget.currentUserName,
+                                widget.userAvatar,
+                              );
+                            },
+                            icon: const Icon(Icons.add),
+                            label: const Text('Tạo bài viết mới'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue.shade700,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 10,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }
+
+              return SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    final post = snapshot.data![index];
+                    return _buildPostItem(
+                      profileImage: widget.userAvatar,
+                      username: post.authorName ?? 'Unknown',
+                      timeAgo: _formatTimeAgo(post.createdAt),
+                      content: post.content ?? '',
+                      postImage: post.imageUrl ?? '/images/register.png',
+                      postId: post.id!,
+                      post: post,
+                    );
+                  },
+                  childCount: snapshot.data!.length,
+                ),
+              );
+            },
+          ),
+        ],
       ),
     );
   }
@@ -315,106 +361,145 @@ class _DiaryState extends State<Diary> {
     IconData icon,
     String label,
     Color color,
-    double screenWidth,
   ) {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: screenWidth * 0.04,
-        vertical: screenWidth * 0.02,
-      ),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(screenWidth * 0.05),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, color: color, size: screenWidth * 0.06),
-          SizedBox(width: screenWidth * 0.02),
-          Text(
-            label,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: screenWidth * 0.035,
-            ),
+    return Material(
+      color: Colors.grey.shade100,
+      borderRadius: BorderRadius.circular(20),
+      child: InkWell(
+        onTap: () {
+          // Implement media option functionality
+        },
+        borderRadius: BorderRadius.circular(20),
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 10,
           ),
-        ],
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, color: color, size: 22),
+              const SizedBox(width: 8),
+              Text(
+                label,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                  color: Colors.grey.shade800,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 
   Widget _buildStoryCard(
+    String avatar,
     String name,
     String imagePath, {
     required bool isCreateNew,
-    required double width,
-    required double height,
+    required VoidCallback onTap,
   }) {
-    return Container(
-      width: width * 0.4,
-      height: height * 0.3,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(width * 0.03),
-        image: DecorationImage(image: AssetImage(imagePath), fit: BoxFit.cover),
-      ),
-      child: Stack(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(width * 0.03),
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Colors.transparent, Colors.black.withOpacity(0.7)],
-              ),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 120,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.grey.shade300, width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 3,
+              offset: const Offset(0, 2),
             ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(width * 0.03),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (isCreateNew)
-                  Container(
-                    padding: EdgeInsets.all(width * 0.025),
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Colors.blue, Colors.purple],
-                      ),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.add,
-                      color: Colors.white,
-                      size: width * 0.06,
-                    ),
-                  )
-                else
-                  Container(
-                    padding: EdgeInsets.all(width * 0.005),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.white, width: 2),
-                      shape: BoxShape.circle,
-                    ),
-                    child: CircleAvatar(
-                      radius: width * 0.04,
-                      backgroundImage: const AssetImage('/images/apple.png'),
-                    ),
-                  ),
-                SizedBox(height: width * 0.02),
-                Text(
-                  name,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: width * 0.04,
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: Image.network(
+                  imagePath,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    color: Colors.grey.shade200,
+                    child: const Icon(Icons.broken_image, color: Colors.grey),
                   ),
                 ),
-              ],
-            ),
+              ),
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.transparent,
+                        Colors.black.withOpacity(0.7),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (isCreateNew)
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [Colors.blue.shade600, Colors.purple.shade600],
+                            ),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.add,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        )
+                      else
+                        Container(
+                          padding: const EdgeInsets.all(2),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.white, width: 2),
+                            shape: BoxShape.circle,
+                          ),
+                          child: CircleAvatar(
+                            radius: 14,
+                            backgroundImage: NetworkImage(avatar),
+                          ),
+                        ),
+                      const SizedBox(height: 8),
+                      Text(
+                        name,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -422,165 +507,241 @@ class _DiaryState extends State<Diary> {
   Widget _buildPostItem({
     required String profileImage,
     required String username,
-    required String action,
+    required String content,
     required String timeAgo,
     required String postImage,
-    required int likeCount,
-    required int commentCount,
-    required double screenWidth,
+    required String postId,
+    required Post post,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Post header
-        Padding(
-          padding: EdgeInsets.all(screenWidth * 0.04),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CircleAvatar(
-                radius: screenWidth * 0.05,
-                backgroundImage: AssetImage(profileImage),
-              ),
-              SizedBox(width: screenWidth * 0.03),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    RichText(
-                      text: TextSpan(
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: screenWidth * 0.04,
+    final isOwnPost = post.authorId.toString() == widget.currentUserId.toString();
+
+    final authorAvatars = post.authorAvatar;
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+      elevation: 1,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Post header
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CircleAvatar(
+                  radius: 20,
+                  backgroundImage: NetworkImage(authorAvatars),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        username,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
                         ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        timeAgo,
+                        style: TextStyle(
+                          color: Colors.grey.shade600,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (isOwnPost)
+                IconButton(
+                  icon: Icon(
+                    Icons.more_horiz,
+                    color: Colors.grey.shade600,
+                  ),
+                  onPressed: () {
+                    showModalBottomSheet(
+                      context: context,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                      ),
+                      builder: (context) => Column(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          TextSpan(
-                            text: username,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ListTile(
+                            leading: const Icon(Icons.edit),
+                            title: const Text('Chỉnh sửa bài viết'),
+                            onTap: () {
+                              NavigationHelper().pop(context); // Đóng bottom sheet
+                              NavigationHelper().goToEditPost(
+                                context,
+                                post,
+                                widget.currentUserId.toString(),
+                                widget.currentUserName,
+                                widget.userAvatar,
+                              );
+                            },
                           ),
-                          TextSpan(text: ' $action'),
+                          ListTile(
+                            leading: const Icon(Icons.delete, color: Colors.red),
+                            title: const Text(
+                              'Xóa bài viết',
+                              style: TextStyle(color: Colors.red),
+                            ),
+                            onTap: () {
+                              NavigationHelper().pop(context); // Đóng bottom sheet
+                              _deletePost(postId);
+                            },
+                          ),
                         ],
                       ),
-                    ),
-                    SizedBox(height: screenWidth * 0.01),
-                    Text(
-                      timeAgo,
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                        fontSize: screenWidth * 0.035,
-                      ),
-                    ),
-                  ],
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+
+          // Post content
+          if (content.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              child: Text(
+                content,
+                style: const TextStyle(fontSize: 16),
+              ),
+            ),
+
+          // Post image
+          if (postImage != '/images/register.png')
+            Container(
+              margin: const EdgeInsets.only(top: 8),
+              constraints: const BoxConstraints(
+                maxHeight: 400,
+              ),
+              width: double.infinity,
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(12),
+                  bottomRight: Radius.circular(12),
+                ),
+                child: Image.network(
+                  postImage,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Image.asset(
+                    '/images/face.png',
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
-              Icon(
-                Icons.more_horiz,
-                color: Colors.grey[600],
-                size: screenWidth * 0.06,
-              ),
-            ],
-          ),
-        ),
+            ),
 
-        // Post image
-        Image.network(
-          postImage,
-          width: double.infinity,
-          fit: BoxFit.cover,
-          errorBuilder:
-              (context, error, stackTrace) => Image.asset(
-                '/images/face.png',
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
-        ),
+          // Post actions
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: Row(
+              children: [
+                Expanded(
+                  child: StreamBuilder<DocumentSnapshot>(
+                    stream: FirebaseFirestore.instance.collection('posts').doc(postId).snapshots(),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData || !snapshot.data!.exists) {
+                        return const SizedBox();
+                      }
 
-        // Post actions
-        Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: screenWidth * 0.04,
-            vertical: screenWidth * 0.02,
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: TextButton.icon(
-                  onPressed: () {},
+                      final postData = snapshot.data!.data() as Map<String, dynamic>;
+                      final post = Post.fromMap(postId, postData);
+                      final isLiked = post.likes.contains(widget.currentUserId.toString());
+
+                      return TextButton.icon(
+                        onPressed: () async {
+                          try {
+                            await _postService.toggleLike(
+                              postId,
+                              widget.currentUserId.toString(),
+                            );
+                          } catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Lỗi: $e')),
+                            );
+                          }
+                        },
+                        icon: Icon(
+                          isLiked ? Icons.favorite : Icons.favorite_border,
+                          color: isLiked ? Colors.red : Colors.grey.shade600,
+                          size: 20,
+                        ),
+                        label: Text(
+                          '${post.likes.length}',
+                          style: TextStyle(
+                            color: Colors.grey.shade600,
+                            fontSize: 14,
+                          ),
+                        ),
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                          foregroundColor: Colors.grey.shade600,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                TextButton.icon(
+                  onPressed: () {
+                    NavigationHelper().goToComment(
+                      context,
+                      postId,
+                      widget.currentUserId.toString(),
+                      widget.currentUserName,
+                      widget.userAvatar,
+                      post.content ?? '',
+                    );
+                  },
                   icon: Icon(
-                    Icons.thumb_up_alt_outlined,
-                    color: Colors.grey,
-                    size: screenWidth * 0.05,
+                    Icons.chat_bubble_outline,
+                    color: Colors.grey.shade600,
+                    size: 20,
                   ),
-                  label: Text(
-                    'Thích',
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: screenWidth * 0.035,
-                    ),
+                  label: StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('comments')
+                        .where('postId', isEqualTo: postId)
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return const Text(
+                          '0',
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 14,
+                          ),
+                        );
+                      }
+                      final commentCount = snapshot.data!.docs.length;
+                      return Text(
+                        '$commentCount',
+                        style: TextStyle(
+                          color: Colors.grey.shade600,
+                          fontSize: 14,
+                        ),
+                      );
+                    },
                   ),
-                  style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    foregroundColor: Colors.grey.shade600,
+                  ),
                 ),
-              ),
-              Row(
-                children: [
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: screenWidth * 0.02,
-                      vertical: screenWidth * 0.01,
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.favorite,
-                          color: Colors.red,
-                          size: screenWidth * 0.05,
-                        ),
-                        Icon(
-                          Icons.emoji_emotions,
-                          color: Colors.amber,
-                          size: screenWidth * 0.05,
-                        ),
-                        SizedBox(width: screenWidth * 0.01),
-                        Text(
-                          '$likeCount',
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: screenWidth * 0.035,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(width: screenWidth * 0.02),
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: screenWidth * 0.02,
-                      vertical: screenWidth * 0.01,
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.chat_bubble_outline,
-                          color: Colors.grey[600],
-                          size: screenWidth * 0.05,
-                        ),
-                        SizedBox(width: screenWidth * 0.01),
-                        Text(
-                          '$commentCount',
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: screenWidth * 0.035,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

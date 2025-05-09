@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 2025-05-04 14:31:26.855 +07:00 [INF] Executed DbCommand (37ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
 SELECT [u].[id], [u].[username], [u].[avatar_url]
 FROM [Users] AS [u]
@@ -1315,3 +1316,14 @@ WHERE [p].[user_id] = @__client_UserId_0 AND [p].[is_deleted] = CAST(0 AS bit)
 2025-05-04 14:57:35.648 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/ws/chat?userId=5 - 101 null null 135858.586ms
 2025-05-04 14:57:35.648 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.9:5053/ws/chat?userId=2 - 101 null null 127132.6135ms
 2025-05-04 14:57:35.648 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/ws/chat?userId=5 - 101 null null 170595.1677ms
+=======
+2025-05-04 20:12:51.156 +07:00 [INF] Executed DbCommand (191ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [u].[id], [u].[username], [u].[avatar_url]
+FROM [Users] AS [u]
+2025-05-04 20:12:57.833 +07:00 [INF] User profile is available. Using 'C:\Users\luong\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-05-04 20:12:58.131 +07:00 [INF] Now listening on: http://0.0.0.0:5053
+2025-05-04 20:12:58.136 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-05-04 20:12:58.137 +07:00 [INF] Hosting environment: Development
+2025-05-04 20:12:58.137 +07:00 [INF] Content root path: D:\StudioProject\Message-App\server
+2025-05-04 20:59:16.248 +07:00 [INF] Application is shutting down...
+>>>>>>> f648e4cce1ab0ce0404e5bdf3adf58835ea95784

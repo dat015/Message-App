@@ -77,11 +77,11 @@ namespace server.Controllers
         }
         
         [HttpGet("search")]
-        public async Task<IActionResult> SearchUsers([FromQuery] string username, [FromQuery] int senderId)
+        public async Task<IActionResult> SearchUsers([FromQuery] string email, [FromQuery] int senderId)
         {
             try
             {
-                var users = await _friendService.SearchUsersByUsernameAsync(username, senderId);
+                var users = await _friendService.SearchUsersByEmailAsync(email, senderId);
                 return Ok(users);
             }
             catch (Exception ex)

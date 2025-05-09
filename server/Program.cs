@@ -7,7 +7,8 @@ using server.Data;
 using server.InjectService;
 using server.Services.WebSocketService;
 using server.Services;
-using server.Services.UserService; // Thêm namespace cho UserQrService
+using server.Services.UserService;
+using server.Services.TempOTPStoreSV; // Thêm namespace cho UserQrService
 
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.UseUrls("http://localhost:5053");
@@ -59,6 +60,7 @@ builder.Host.UseSerilog();
 // Đăng ký các service
 builder.Services.AddSingleton<IWebSocketFriendSV, WebSocketFriendSV>();
 builder.Services.AddScoped<IUserSV, UserSV>();
+builder.Services.AddSingleton<TempOTPStore>();
 
 builder.Services.AddMemoryCache();
 
@@ -77,6 +79,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Message App API V1"));
 }
+app.UseStaticFiles();
 app.UseCors("AllowAll");
 app.MapControllers();
 app.UseRouting();

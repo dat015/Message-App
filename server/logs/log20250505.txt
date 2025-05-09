@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 2025-05-05 15:21:08.793 +07:00 [INF] Executed DbCommand (23ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
 SELECT [u].[id], [u].[username], [u].[avatar_url]
 FROM [Users] AS [u]
@@ -30,6 +31,119 @@ WHERE [u].[email] = @__email_0
 2025-05-05 15:24:21.351 +07:00 [INF] Route matched with {action = "GetConversations", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetConversations(Int32) on controller server.Controllers.ConversationController (Message_app).
 2025-05-05 15:24:21.351 +07:00 [INF] Route matched with {action = "GetConversations", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetConversations(Int32) on controller server.Controllers.ConversationController (Message_app).
 2025-05-05 15:24:21.457 +07:00 [INF] Executed DbCommand (19ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+=======
+2025-05-05 23:23:30.439 +07:00 [INF] Executed DbCommand (167ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [u].[id], [u].[username], [u].[avatar_url]
+FROM [Users] AS [u]
+2025-05-05 23:23:37.325 +07:00 [INF] User profile is available. Using 'C:\Users\luong\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-05-05 23:23:37.694 +07:00 [INF] Now listening on: http://0.0.0.0:5053
+2025-05-05 23:23:37.701 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-05-05 23:23:37.703 +07:00 [INF] Hosting environment: Development
+2025-05-05 23:23:37.703 +07:00 [INF] Content root path: D:\StudioProject\Message-App\server
+2025-05-05 23:48:56.566 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/ForgetPassword/ForgetPass - null null
+2025-05-05 23:48:56.896 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:48:56.940 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/ForgetPassword/ForgetPass - 204 null null 384.0422ms
+2025-05-05 23:48:56.957 +07:00 [INF] Request starting HTTP/1.1 POST http://localhost:5053/api/ForgetPassword/ForgetPass - application/json 37
+2025-05-05 23:48:56.998 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:48:57.139 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:48:57.151 +07:00 [WRN] Failed to determine the https port for redirect.
+2025-05-05 23:48:58.704 +07:00 [INF] Executing endpoint 'Message_app.Controllers.ForgetPasswordController.ForgotPassword (Message_app)'
+2025-05-05 23:48:58.767 +07:00 [INF] Route matched with {action = "ForgotPassword", controller = "ForgetPassword"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] ForgotPassword(server.Models.OTPsDTO) on controller Message_app.Controllers.ForgetPasswordController (Message_app).
+2025-05-05 23:48:59.924 +07:00 [INF] Executed DbCommand (207ms) [Parameters=[@__email_0='?' (Size = 450)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[email] = @__email_0
+2025-05-05 23:48:59.948 +07:00 [INF] Executing BadRequestObjectResult, writing value of type '<>f__AnonymousType2`1[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-05-05 23:49:00.009 +07:00 [INF] Executed action Message_app.Controllers.ForgetPasswordController.ForgotPassword (Message_app) in 1237.4295ms
+2025-05-05 23:49:00.011 +07:00 [INF] Executed endpoint 'Message_app.Controllers.ForgetPasswordController.ForgotPassword (Message_app)'
+2025-05-05 23:49:00.080 +07:00 [INF] Request finished HTTP/1.1 POST http://localhost:5053/api/ForgetPassword/ForgetPass - 400 null application/json; charset=utf-8 3129.8189ms
+2025-05-05 23:50:23.627 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/ForgetPassword/ForgetPass - null null
+2025-05-05 23:50:23.639 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:50:23.640 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/ForgetPassword/ForgetPass - 204 null null 12.8547ms
+2025-05-05 23:50:23.642 +07:00 [INF] Request starting HTTP/1.1 POST http://localhost:5053/api/ForgetPassword/ForgetPass - application/json 37
+2025-05-05 23:50:23.642 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:50:23.651 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:50:23.655 +07:00 [INF] Executing endpoint 'Message_app.Controllers.ForgetPasswordController.ForgotPassword (Message_app)'
+2025-05-05 23:50:23.657 +07:00 [INF] Route matched with {action = "ForgotPassword", controller = "ForgetPassword"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] ForgotPassword(server.Models.OTPsDTO) on controller Message_app.Controllers.ForgetPasswordController (Message_app).
+2025-05-05 23:50:24.225 +07:00 [INF] Executed DbCommand (16ms) [Parameters=[@__email_0='?' (Size = 450)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[email] = @__email_0
+2025-05-05 23:50:24.372 +07:00 [INF] Executed DbCommand (5ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [o].[Id], [o].[ExpiryDate], [o].[IsUsed], [o].[OTPCode], [o].[UserId]
+FROM [OTPs] AS [o]
+WHERE [o].[UserId] = @__userId_0
+ORDER BY [o].[ExpiryDate] DESC
+2025-05-05 23:50:24.590 +07:00 [INF] Executed DbCommand (8ms) [Parameters=[@p0='?' (DbType = DateTime2), @p1='?' (DbType = Boolean), @p2='?' (Size = 6), @p3='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [OTPs] ([ExpiryDate], [IsUsed], [OTPCode], [UserId])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3);
+2025-05-05 23:50:28.031 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType4`2[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-05-05 23:50:28.041 +07:00 [INF] Executed action Message_app.Controllers.ForgetPasswordController.ForgotPassword (Message_app) in 4383.5868ms
+2025-05-05 23:50:28.041 +07:00 [INF] Executed endpoint 'Message_app.Controllers.ForgetPasswordController.ForgotPassword (Message_app)'
+2025-05-05 23:50:28.042 +07:00 [INF] Request finished HTTP/1.1 POST http://localhost:5053/api/ForgetPassword/ForgetPass - 200 null application/json; charset=utf-8 4399.7235ms
+2025-05-05 23:50:47.500 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Auth/login - null null
+2025-05-05 23:50:47.501 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:50:47.503 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Auth/login - 204 null null 2.6056ms
+2025-05-05 23:50:47.505 +07:00 [INF] Request starting HTTP/1.1 POST http://localhost:5053/api/Auth/login - application/json 62
+2025-05-05 23:50:47.505 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:50:47.505 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:50:47.512 +07:00 [INF] Executing endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-05-05 23:50:47.583 +07:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(server.DTO.AuthDTO.LoginDTO) on controller Message_app.Controllers.AuthController (Message_app).
+2025-05-05 23:50:47.713 +07:00 [INF] Executed DbCommand (26ms) [Parameters=[@__email_0='?' (Size = 450)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[email] = @__email_0
+2025-05-05 23:50:48.003 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.DTO.AuthDTO.LoginRespose'.
+2025-05-05 23:50:48.059 +07:00 [INF] Executed action Message_app.Controllers.AuthController.Login (Message_app) in 475.6567ms
+2025-05-05 23:50:48.059 +07:00 [INF] Executed endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-05-05 23:50:48.060 +07:00 [INF] Request finished HTTP/1.1 POST http://localhost:5053/api/Auth/login - 200 null application/json; charset=utf-8 554.7288ms
+2025-05-05 23:50:49.178 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_conversations/30 - null null
+2025-05-05 23:50:49.178 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:50:49.179 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_conversations/30 - 204 null null 1.3111ms
+2025-05-05 23:50:49.181 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Conversation/get_conversations/30 - null null
+2025-05-05 23:50:49.206 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:50:49.206 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:50:49.207 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-05-05 23:50:49.231 +07:00 [INF] Route matched with {action = "GetConversations", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetConversations(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-05-05 23:50:49.641 +07:00 [INF] Executed DbCommand (6ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [c].[id], [c].[created_at], [c].[is_group], [c].[name]
+FROM [Participants] AS [p]
+INNER JOIN [Conversations] AS [c] ON [p].[conversation_id] = [c].[id]
+WHERE [p].[user_id] = @__userId_0 AND [p].[is_deleted] = CAST(0 AS bit)
+2025-05-05 23:50:49.643 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.Models.Conversation, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-05-05 23:50:49.646 +07:00 [INF] Executed action server.Controllers.ConversationController.GetConversations (Message_app) in 415.5904ms
+2025-05-05 23:50:49.647 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-05-05 23:50:49.647 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Conversation/get_conversations/30 - 200 null application/json; charset=utf-8 466.2667ms
+2025-05-05 23:50:51.874 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/UserProfile/30/profile - null null
+2025-05-05 23:50:51.875 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:50:51.904 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:50:51.905 +07:00 [INF] Executing endpoint 'server.Controllers.UserProfileController.GetUserProfile (Message_app)'
+2025-05-05 23:50:51.915 +07:00 [INF] Route matched with {action = "GetUserProfile", controller = "UserProfile"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetUserProfile(Int32) on controller server.Controllers.UserProfileController (Message_app).
+2025-05-05 23:50:52.204 +07:00 [WRN] Compiling a query which loads related collections for more than one collection navigation, either via 'Include' or through projection, but no 'QuerySplittingBehavior' has been configured. By default, Entity Framework will use 'QuerySplittingBehavior.SingleQuery', which can potentially result in slow query performance. See https://go.microsoft.com/fwlink/?linkid=2134277 for more information. To identify the query that's triggering this warning call 'ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))'.
+2025-05-05 23:50:52.275 +07:00 [INF] Executed DbCommand (62ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [t].[id], [t].[avatar_url], [t].[bio], [t].[birthday], [t].[created_at], [t].[email], [t].[gender], [t].[interests], [t].[location], [t].[password], [t].[passwordSalt], [t].[username], [f].[Id], [f].[CreatedAt], [f].[UserId1], [f].[UserId2], [f0].[Id], [f0].[CreatedAt], [f0].[UserId1], [f0].[UserId2]
+FROM (
+    SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+    FROM [Users] AS [u]
+    WHERE [u].[id] = @__userId_0
+) AS [t]
+LEFT JOIN [Friends] AS [f] ON [t].[id] = [f].[UserId1]
+LEFT JOIN [Friends] AS [f0] ON [t].[id] = [f0].[UserId2]
+ORDER BY [t].[id], [f].[Id]
+2025-05-05 23:50:52.377 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType19`11[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.DateOnly, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.DateTime, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Nullable`1[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-05-05 23:50:52.396 +07:00 [INF] Executed action server.Controllers.UserProfileController.GetUserProfile (Message_app) in 480.4553ms
+2025-05-05 23:50:52.396 +07:00 [INF] Executed endpoint 'server.Controllers.UserProfileController.GetUserProfile (Message_app)'
+2025-05-05 23:50:52.396 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/UserProfile/30/profile - 200 null application/json; charset=utf-8 522.1235ms
+2025-05-05 23:51:04.353 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/friends/list/30 - null null
+2025-05-05 23:51:04.353 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:51:04.354 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:51:04.354 +07:00 [INF] Executing endpoint 'server.Controllers.FriendsController.GetFriendsAsync (Message_app)'
+2025-05-05 23:51:04.359 +07:00 [INF] Route matched with {action = "GetFriends", controller = "Friends"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetFriendsAsync(Int32) on controller server.Controllers.FriendsController (Message_app).
+2025-05-05 23:51:04.466 +07:00 [INF] Executed DbCommand (7ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+>>>>>>> f648e4cce1ab0ce0404e5bdf3adf58835ea95784
 SELECT CASE
     WHEN [f].[UserId1] = @__userId_0 THEN CAST(1 AS bit)
     ELSE CAST(0 AS bit)
@@ -38,13 +152,18 @@ FROM [Friends] AS [f]
 INNER JOIN [Users] AS [u] ON [f].[UserId2] = [u].[id]
 INNER JOIN [Users] AS [u0] ON [f].[UserId1] = [u0].[id]
 WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+<<<<<<< HEAD
 2025-05-05 15:24:21.473 +07:00 [INF] Executed DbCommand (4ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+=======
+2025-05-05 23:51:04.532 +07:00 [INF] Executed DbCommand (44ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+>>>>>>> f648e4cce1ab0ce0404e5bdf3adf58835ea95784
 SELECT CASE
     WHEN [f].[UserId1] = @__userId_0 THEN [f].[UserId2]
     ELSE [f].[UserId1]
 END
 FROM [Friends] AS [f]
 WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+<<<<<<< HEAD
 2025-05-05 15:24:21.480 +07:00 [INF] Executed DbCommand (22ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
 SELECT [c].[id], [c].[name], [c].[is_group], [c].[created_at], [c].[lastMessage], [c].[lastMessageTime], [c].[img_url], [t].[Id], [t].[UserId], [t].[ConversationId], [t].[Name], [t].[IsDeleted], [t].[img_url]
 FROM [Conversations] AS [c]
@@ -59,12 +178,16 @@ WHERE EXISTS (
     WHERE [c].[id] = [p].[conversation_id] AND [p].[user_id] = @__userId_0 AND [p].[is_deleted] = CAST(0 AS bit))
 ORDER BY [c].[id]
 2025-05-05 15:24:21.480 +07:00 [INF] Executed DbCommand (3ms) [Parameters=[@__friend_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+=======
+2025-05-05 23:51:04.551 +07:00 [INF] Executed DbCommand (4ms) [Parameters=[@__friend_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+>>>>>>> f648e4cce1ab0ce0404e5bdf3adf58835ea95784
 SELECT CASE
     WHEN [f].[UserId1] = @__friend_id_0 THEN [f].[UserId2]
     ELSE [f].[UserId1]
 END
 FROM [Friends] AS [f]
 WHERE [f].[UserId1] = @__friend_id_0 OR [f].[UserId2] = @__friend_id_0
+<<<<<<< HEAD
 2025-05-05 15:24:21.480 +07:00 [INF] Executed DbCommand (18ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
 SELECT [c].[id], [c].[name], [c].[is_group], [c].[created_at], [c].[lastMessage], [c].[lastMessageTime], [c].[img_url], [t].[Id], [t].[UserId], [t].[ConversationId], [t].[Name], [t].[IsDeleted], [t].[img_url]
 FROM [Conversations] AS [c]
@@ -79,19 +202,52 @@ WHERE EXISTS (
     WHERE [c].[id] = [p].[conversation_id] AND [p].[user_id] = @__userId_0 AND [p].[is_deleted] = CAST(0 AS bit))
 ORDER BY [c].[id]
 2025-05-05 15:24:21.483 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__friend_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+=======
+2025-05-05 23:51:04.557 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__friend_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+>>>>>>> f648e4cce1ab0ce0404e5bdf3adf58835ea95784
 SELECT CASE
     WHEN [f].[UserId1] = @__friend_id_0 THEN [f].[UserId2]
     ELSE [f].[UserId1]
 END
 FROM [Friends] AS [f]
 WHERE [f].[UserId1] = @__friend_id_0 OR [f].[UserId2] = @__friend_id_0
+<<<<<<< HEAD
 2025-05-05 15:24:21.484 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[@__friend_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+=======
+2025-05-05 23:51:04.559 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType9`2[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[server.Models.User, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-05-05 23:51:04.564 +07:00 [INF] Executed action server.Controllers.FriendsController.GetFriendsAsync (Message_app) in 204.8984ms
+2025-05-05 23:51:04.564 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.GetFriendsAsync (Message_app)'
+2025-05-05 23:51:04.564 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/friends/list/30 - 200 null application/json; charset=utf-8 211.6522ms
+2025-05-05 23:51:04.624 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/friends/list/30 - null null
+2025-05-05 23:51:04.626 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:51:04.681 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:51:04.681 +07:00 [INF] Executing endpoint 'server.Controllers.FriendsController.GetFriendsAsync (Message_app)'
+2025-05-05 23:51:04.682 +07:00 [INF] Route matched with {action = "GetFriends", controller = "Friends"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetFriendsAsync(Int32) on controller server.Controllers.FriendsController (Message_app).
+2025-05-05 23:51:04.693 +07:00 [INF] Executed DbCommand (2ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN CAST(1 AS bit)
+    ELSE CAST(0 AS bit)
+END, [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username], [u0].[id], [u0].[avatar_url], [u0].[bio], [u0].[birthday], [u0].[created_at], [u0].[email], [u0].[gender], [u0].[interests], [u0].[location], [u0].[password], [u0].[passwordSalt], [u0].[username]
+FROM [Friends] AS [f]
+INNER JOIN [Users] AS [u] ON [f].[UserId2] = [u].[id]
+INNER JOIN [Users] AS [u0] ON [f].[UserId1] = [u0].[id]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-05-05 23:51:04.696 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-05-05 23:51:04.726 +07:00 [INF] Executed DbCommand (23ms) [Parameters=[@__friend_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+>>>>>>> f648e4cce1ab0ce0404e5bdf3adf58835ea95784
 SELECT CASE
     WHEN [f].[UserId1] = @__friend_id_0 THEN [f].[UserId2]
     ELSE [f].[UserId1]
 END
 FROM [Friends] AS [f]
 WHERE [f].[UserId1] = @__friend_id_0 OR [f].[UserId2] = @__friend_id_0
+<<<<<<< HEAD
 2025-05-05 15:24:21.485 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType6`2[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[server.Models.User, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
 2025-05-05 15:24:21.493 +07:00 [INF] Executed action server.Controllers.FriendsController.GetFriendsAsync (Message_app) in 144.4621ms
 2025-05-05 15:24:21.493 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.GetFriendsAsync (Message_app)'
@@ -113,3 +269,564 @@ WHERE [p].[user_id] = @__client_UserId_0 AND [p].[is_deleted] = CAST(0 AS bit)
 2025-05-05 15:24:58.595 +07:00 [INF] Application is shutting down...
 2025-05-05 15:25:28.614 +07:00 [INF] Executed endpoint '/ws/chat'
 2025-05-05 15:25:28.615 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.9:5053/ws/chat?userId=2 - 101 null null 66668.0565ms
+=======
+2025-05-05 23:51:04.731 +07:00 [INF] Executed DbCommand (3ms) [Parameters=[@__friend_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__friend_id_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__friend_id_0 OR [f].[UserId2] = @__friend_id_0
+2025-05-05 23:51:04.732 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType9`2[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[server.Models.User, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-05-05 23:51:04.739 +07:00 [INF] Executed action server.Controllers.FriendsController.GetFriendsAsync (Message_app) in 57.0301ms
+2025-05-05 23:51:04.739 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.GetFriendsAsync (Message_app)'
+2025-05-05 23:51:04.739 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/friends/list/30 - 200 null application/json; charset=utf-8 115.0214ms
+2025-05-05 23:51:05.308 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/friends/list/30 - null null
+2025-05-05 23:51:05.309 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:51:05.309 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:51:05.309 +07:00 [INF] Executing endpoint 'server.Controllers.FriendsController.GetFriendsAsync (Message_app)'
+2025-05-05 23:51:05.309 +07:00 [INF] Route matched with {action = "GetFriends", controller = "Friends"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetFriendsAsync(Int32) on controller server.Controllers.FriendsController (Message_app).
+2025-05-05 23:51:05.313 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN CAST(1 AS bit)
+    ELSE CAST(0 AS bit)
+END, [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username], [u0].[id], [u0].[avatar_url], [u0].[bio], [u0].[birthday], [u0].[created_at], [u0].[email], [u0].[gender], [u0].[interests], [u0].[location], [u0].[password], [u0].[passwordSalt], [u0].[username]
+FROM [Friends] AS [f]
+INNER JOIN [Users] AS [u] ON [f].[UserId2] = [u].[id]
+INNER JOIN [Users] AS [u0] ON [f].[UserId1] = [u0].[id]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-05-05 23:51:05.315 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-05-05 23:51:05.317 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__friend_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__friend_id_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__friend_id_0 OR [f].[UserId2] = @__friend_id_0
+2025-05-05 23:51:05.319 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__friend_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__friend_id_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__friend_id_0 OR [f].[UserId2] = @__friend_id_0
+2025-05-05 23:51:05.320 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType9`2[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[server.Models.User, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-05-05 23:51:05.322 +07:00 [INF] Executed action server.Controllers.FriendsController.GetFriendsAsync (Message_app) in 13.149ms
+2025-05-05 23:51:05.323 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.GetFriendsAsync (Message_app)'
+2025-05-05 23:51:05.323 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/friends/list/30 - 200 null application/json; charset=utf-8 14.7535ms
+2025-05-05 23:51:18.041 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/friends/requests/received/30 - null null
+2025-05-05 23:51:18.042 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:51:18.042 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:51:18.042 +07:00 [INF] Executing endpoint 'server.Controllers.FriendsController.GetReceivedFriendRequests (Message_app)'
+2025-05-05 23:51:18.048 +07:00 [INF] Route matched with {action = "GetReceivedFriendRequests", controller = "Friends"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetReceivedFriendRequests(Int32) on controller server.Controllers.FriendsController (Message_app).
+2025-05-05 23:51:18.176 +07:00 [INF] Executed DbCommand (33ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [f].[Id], [f].[SenderId], [f].[ReceiverId], [u].[username] AS [Username], [u].[avatar_url] AS [AvatarUrl], [f].[Status], [f].[CreatedAt], 0 AS [MutualFriendsCount]
+FROM [FriendRequests] AS [f]
+INNER JOIN [Users] AS [u] ON [f].[SenderId] = [u].[id]
+WHERE [f].[ReceiverId] = @__userId_0 AND [f].[Status] = N'Pending'
+2025-05-05 23:51:18.179 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType11`2[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[FriendRequestDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-05-05 23:51:18.311 +07:00 [INF] Executed action server.Controllers.FriendsController.GetReceivedFriendRequests (Message_app) in 262.9818ms
+2025-05-05 23:51:18.312 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.GetReceivedFriendRequests (Message_app)'
+2025-05-05 23:51:18.312 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/friends/requests/received/30 - 200 null application/json; charset=utf-8 270.349ms
+2025-05-05 23:51:18.316 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/friends/requests/received/30 - null null
+2025-05-05 23:51:18.316 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:51:18.317 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:51:18.317 +07:00 [INF] Executing endpoint 'server.Controllers.FriendsController.GetReceivedFriendRequests (Message_app)'
+2025-05-05 23:51:18.317 +07:00 [INF] Route matched with {action = "GetReceivedFriendRequests", controller = "Friends"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetReceivedFriendRequests(Int32) on controller server.Controllers.FriendsController (Message_app).
+2025-05-05 23:51:18.426 +07:00 [INF] Executed DbCommand (13ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [f].[Id], [f].[SenderId], [f].[ReceiverId], [u].[username] AS [Username], [u].[avatar_url] AS [AvatarUrl], [f].[Status], [f].[CreatedAt], 0 AS [MutualFriendsCount]
+FROM [FriendRequests] AS [f]
+INNER JOIN [Users] AS [u] ON [f].[SenderId] = [u].[id]
+WHERE [f].[ReceiverId] = @__userId_0 AND [f].[Status] = N'Pending'
+2025-05-05 23:51:18.426 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType11`2[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[FriendRequestDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-05-05 23:51:18.427 +07:00 [INF] Executed action server.Controllers.FriendsController.GetReceivedFriendRequests (Message_app) in 109.7921ms
+2025-05-05 23:51:18.427 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.GetReceivedFriendRequests (Message_app)'
+2025-05-05 23:51:18.427 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/friends/requests/received/30 - 200 null application/json; charset=utf-8 111.5131ms
+2025-05-05 23:51:18.451 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/friends/requests/received/30 - null null
+2025-05-05 23:51:18.452 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:51:18.452 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:51:18.452 +07:00 [INF] Executing endpoint 'server.Controllers.FriendsController.GetReceivedFriendRequests (Message_app)'
+2025-05-05 23:51:18.452 +07:00 [INF] Route matched with {action = "GetReceivedFriendRequests", controller = "Friends"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetReceivedFriendRequests(Int32) on controller server.Controllers.FriendsController (Message_app).
+2025-05-05 23:51:18.458 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [f].[Id], [f].[SenderId], [f].[ReceiverId], [u].[username] AS [Username], [u].[avatar_url] AS [AvatarUrl], [f].[Status], [f].[CreatedAt], 0 AS [MutualFriendsCount]
+FROM [FriendRequests] AS [f]
+INNER JOIN [Users] AS [u] ON [f].[SenderId] = [u].[id]
+WHERE [f].[ReceiverId] = @__userId_0 AND [f].[Status] = N'Pending'
+2025-05-05 23:51:18.459 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType11`2[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[FriendRequestDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-05-05 23:51:18.459 +07:00 [INF] Executed action server.Controllers.FriendsController.GetReceivedFriendRequests (Message_app) in 6.8455ms
+2025-05-05 23:51:18.459 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.GetReceivedFriendRequests (Message_app)'
+2025-05-05 23:51:18.459 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/friends/requests/received/30 - 200 null application/json; charset=utf-8 8.1872ms
+2025-05-05 23:51:18.497 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/friends/requests/received/30 - null null
+2025-05-05 23:51:18.497 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:51:18.497 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:51:18.497 +07:00 [INF] Executing endpoint 'server.Controllers.FriendsController.GetReceivedFriendRequests (Message_app)'
+2025-05-05 23:51:18.497 +07:00 [INF] Route matched with {action = "GetReceivedFriendRequests", controller = "Friends"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetReceivedFriendRequests(Int32) on controller server.Controllers.FriendsController (Message_app).
+2025-05-05 23:51:18.531 +07:00 [INF] Executed DbCommand (5ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [f].[Id], [f].[SenderId], [f].[ReceiverId], [u].[username] AS [Username], [u].[avatar_url] AS [AvatarUrl], [f].[Status], [f].[CreatedAt], 0 AS [MutualFriendsCount]
+FROM [FriendRequests] AS [f]
+INNER JOIN [Users] AS [u] ON [f].[SenderId] = [u].[id]
+WHERE [f].[ReceiverId] = @__userId_0 AND [f].[Status] = N'Pending'
+2025-05-05 23:51:18.532 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType11`2[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[FriendRequestDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-05-05 23:51:18.532 +07:00 [INF] Executed action server.Controllers.FriendsController.GetReceivedFriendRequests (Message_app) in 34.6041ms
+2025-05-05 23:51:18.532 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.GetReceivedFriendRequests (Message_app)'
+2025-05-05 23:51:18.532 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/friends/requests/received/30 - 200 null application/json; charset=utf-8 35.5235ms
+2025-05-05 23:51:18.615 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/friends/get-sent-requests/30 - null null
+2025-05-05 23:51:18.616 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:51:18.616 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:51:18.616 +07:00 [INF] Executing endpoint 'server.Controllers.FriendsController.GetSentFriendRequests (Message_app)'
+2025-05-05 23:51:18.657 +07:00 [INF] Route matched with {action = "GetSentFriendRequests", controller = "Friends"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetSentFriendRequests(Int32) on controller server.Controllers.FriendsController (Message_app).
+2025-05-05 23:51:18.944 +07:00 [INF] Executed DbCommand (111ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [f].[Id], [f].[SenderId], [f].[ReceiverId], [u].[username] AS [Username], [u].[avatar_url] AS [AvatarUrl], [f].[Status], [f].[CreatedAt], 0 AS [MutualFriendsCount]
+FROM [FriendRequests] AS [f]
+INNER JOIN [Users] AS [u] ON [f].[ReceiverId] = [u].[id]
+WHERE [f].[SenderId] = @__userId_0 AND [f].[Status] = N'Pending'
+2025-05-05 23:51:18.949 +07:00 [INF] Executed DbCommand (3ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-05-05 23:51:19.055 +07:00 [INF] Executed DbCommand (73ms) [Parameters=[@__request_ReceiverId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__request_ReceiverId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__request_ReceiverId_0 OR [f].[UserId2] = @__request_ReceiverId_0
+2025-05-05 23:51:19.057 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType13`2[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[FriendRequestDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-05-05 23:51:19.062 +07:00 [INF] Executed action server.Controllers.FriendsController.GetSentFriendRequests (Message_app) in 404.4159ms
+2025-05-05 23:51:19.062 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.GetSentFriendRequests (Message_app)'
+2025-05-05 23:51:19.062 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/friends/get-sent-requests/30 - 200 null application/json; charset=utf-8 446.6915ms
+2025-05-05 23:51:19.067 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/friends/get-sent-requests/30 - null null
+2025-05-05 23:51:19.067 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:51:19.067 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:51:19.068 +07:00 [INF] Executing endpoint 'server.Controllers.FriendsController.GetSentFriendRequests (Message_app)'
+2025-05-05 23:51:19.068 +07:00 [INF] Route matched with {action = "GetSentFriendRequests", controller = "Friends"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetSentFriendRequests(Int32) on controller server.Controllers.FriendsController (Message_app).
+2025-05-05 23:51:19.125 +07:00 [INF] Executed DbCommand (7ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [f].[Id], [f].[SenderId], [f].[ReceiverId], [u].[username] AS [Username], [u].[avatar_url] AS [AvatarUrl], [f].[Status], [f].[CreatedAt], 0 AS [MutualFriendsCount]
+FROM [FriendRequests] AS [f]
+INNER JOIN [Users] AS [u] ON [f].[ReceiverId] = [u].[id]
+WHERE [f].[SenderId] = @__userId_0 AND [f].[Status] = N'Pending'
+2025-05-05 23:51:19.129 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-05-05 23:51:19.157 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/friends/suggestions/30 - null null
+2025-05-05 23:51:19.157 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:51:19.158 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:51:19.158 +07:00 [INF] Executing endpoint 'server.Controllers.FriendsController.GetFriendSuggestions (Message_app)'
+2025-05-05 23:51:19.161 +07:00 [INF] Executed DbCommand (31ms) [Parameters=[@__request_ReceiverId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__request_ReceiverId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__request_ReceiverId_0 OR [f].[UserId2] = @__request_ReceiverId_0
+2025-05-05 23:51:19.162 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType13`2[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[FriendRequestDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-05-05 23:51:19.163 +07:00 [INF] Executed action server.Controllers.FriendsController.GetSentFriendRequests (Message_app) in 92.348ms
+2025-05-05 23:51:19.163 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.GetSentFriendRequests (Message_app)'
+2025-05-05 23:51:19.164 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/friends/get-sent-requests/30 - 200 null application/json; charset=utf-8 96.6631ms
+2025-05-05 23:51:19.201 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/friends/get-sent-requests/30 - null null
+2025-05-05 23:51:19.202 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:51:19.202 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:51:19.202 +07:00 [INF] Executing endpoint 'server.Controllers.FriendsController.GetSentFriendRequests (Message_app)'
+2025-05-05 23:51:19.202 +07:00 [INF] Route matched with {action = "GetSentFriendRequests", controller = "Friends"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetSentFriendRequests(Int32) on controller server.Controllers.FriendsController (Message_app).
+2025-05-05 23:51:19.203 +07:00 [INF] Route matched with {action = "GetFriendSuggestions", controller = "Friends"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetFriendSuggestions(Int32) on controller server.Controllers.FriendsController (Message_app).
+2025-05-05 23:51:19.301 +07:00 [INF] Executed DbCommand (81ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [f].[Id], [f].[SenderId], [f].[ReceiverId], [u].[username] AS [Username], [u].[avatar_url] AS [AvatarUrl], [f].[Status], [f].[CreatedAt], 0 AS [MutualFriendsCount]
+FROM [FriendRequests] AS [f]
+INNER JOIN [Users] AS [u] ON [f].[ReceiverId] = [u].[id]
+WHERE [f].[SenderId] = @__userId_0 AND [f].[Status] = N'Pending'
+2025-05-05 23:51:19.304 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-05-05 23:51:19.310 +07:00 [INF] Executed DbCommand (3ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[id] = @__userId_0
+2025-05-05 23:51:19.372 +07:00 [INF] Executed DbCommand (57ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-05-05 23:51:19.434 +07:00 [INF] Executed DbCommand (56ms) [Parameters=[@__friendId_0='?' (DbType = Int32), @__8__locals1_userId_1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__friendId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE ([f].[UserId1] = @__friendId_0 OR [f].[UserId2] = @__friendId_0) AND [f].[UserId1] <> @__8__locals1_userId_1 AND [f].[UserId2] <> @__8__locals1_userId_1
+2025-05-05 23:51:19.437 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__friendId_0='?' (DbType = Int32), @__8__locals1_userId_1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__friendId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE ([f].[UserId1] = @__friendId_0 OR [f].[UserId2] = @__friendId_0) AND [f].[UserId1] <> @__8__locals1_userId_1 AND [f].[UserId2] <> @__8__locals1_userId_1
+2025-05-05 23:51:19.441 +07:00 [INF] Executed DbCommand (2ms) [Parameters=[@__request_ReceiverId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__request_ReceiverId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__request_ReceiverId_0 OR [f].[UserId2] = @__request_ReceiverId_0
+2025-05-05 23:51:19.441 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType13`2[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[FriendRequestDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-05-05 23:51:19.442 +07:00 [INF] Executed action server.Controllers.FriendsController.GetSentFriendRequests (Message_app) in 239.5176ms
+2025-05-05 23:51:19.442 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.GetSentFriendRequests (Message_app)'
+2025-05-05 23:51:19.443 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/friends/get-sent-requests/30 - 200 null application/json; charset=utf-8 241.2033ms
+2025-05-05 23:51:19.445 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/friends/get-sent-requests/30 - null null
+2025-05-05 23:51:19.445 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:51:19.446 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:51:19.446 +07:00 [INF] Executing endpoint 'server.Controllers.FriendsController.GetSentFriendRequests (Message_app)'
+2025-05-05 23:51:19.447 +07:00 [INF] Route matched with {action = "GetSentFriendRequests", controller = "Friends"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetSentFriendRequests(Int32) on controller server.Controllers.FriendsController (Message_app).
+2025-05-05 23:51:19.519 +07:00 [INF] Executed DbCommand (68ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [f].[Id], [f].[SenderId], [f].[ReceiverId], [u].[username] AS [Username], [u].[avatar_url] AS [AvatarUrl], [f].[Status], [f].[CreatedAt], 0 AS [MutualFriendsCount]
+FROM [FriendRequests] AS [f]
+INNER JOIN [Users] AS [u] ON [f].[ReceiverId] = [u].[id]
+WHERE [f].[SenderId] = @__userId_0 AND [f].[Status] = N'Pending'
+2025-05-05 23:51:19.520 +07:00 [INF] Executed DbCommand (76ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [f].[ReceiverId]
+FROM [FriendRequests] AS [f]
+WHERE [f].[SenderId] = @__userId_0
+2025-05-05 23:51:19.525 +07:00 [INF] Executed DbCommand (5ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-05-05 23:51:19.577 +07:00 [INF] Executed DbCommand (50ms) [Parameters=[@__request_ReceiverId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__request_ReceiverId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__request_ReceiverId_0 OR [f].[UserId2] = @__request_ReceiverId_0
+2025-05-05 23:51:19.578 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType13`2[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[FriendRequestDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-05-05 23:51:19.579 +07:00 [INF] Executed action server.Controllers.FriendsController.GetSentFriendRequests (Message_app) in 131.9575ms
+2025-05-05 23:51:19.579 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.GetSentFriendRequests (Message_app)'
+2025-05-05 23:51:19.580 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/friends/get-sent-requests/30 - 200 null application/json; charset=utf-8 135.0587ms
+2025-05-05 23:51:19.583 +07:00 [INF] Executed DbCommand (58ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [f].[SenderId]
+FROM [FriendRequests] AS [f]
+WHERE [f].[ReceiverId] = @__userId_0
+2025-05-05 23:51:19.597 +07:00 [INF] Executed DbCommand (2ms) [Parameters=[@__fof_Key_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[id] = @__fof_Key_0
+2025-05-05 23:51:19.657 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType12`2[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[FriendSuggestionDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-05-05 23:51:19.662 +07:00 [INF] Executed action server.Controllers.FriendsController.GetFriendSuggestions (Message_app) in 459.3599ms
+2025-05-05 23:51:19.662 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.GetFriendSuggestions (Message_app)'
+2025-05-05 23:51:19.662 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/friends/suggestions/30 - 200 null application/json; charset=utf-8 505.1738ms
+2025-05-05 23:51:19.664 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/friends/suggestions/30 - null null
+2025-05-05 23:51:19.665 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:51:19.665 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:51:19.665 +07:00 [INF] Executing endpoint 'server.Controllers.FriendsController.GetFriendSuggestions (Message_app)'
+2025-05-05 23:51:19.665 +07:00 [INF] Route matched with {action = "GetFriendSuggestions", controller = "Friends"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetFriendSuggestions(Int32) on controller server.Controllers.FriendsController (Message_app).
+2025-05-05 23:51:19.670 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[id] = @__userId_0
+2025-05-05 23:51:19.718 +07:00 [INF] Executed DbCommand (33ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-05-05 23:51:19.721 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__friendId_0='?' (DbType = Int32), @__8__locals1_userId_1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__friendId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE ([f].[UserId1] = @__friendId_0 OR [f].[UserId2] = @__friendId_0) AND [f].[UserId1] <> @__8__locals1_userId_1 AND [f].[UserId2] <> @__8__locals1_userId_1
+2025-05-05 23:51:19.724 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__friendId_0='?' (DbType = Int32), @__8__locals1_userId_1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__friendId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE ([f].[UserId1] = @__friendId_0 OR [f].[UserId2] = @__friendId_0) AND [f].[UserId1] <> @__8__locals1_userId_1 AND [f].[UserId2] <> @__8__locals1_userId_1
+2025-05-05 23:51:19.725 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [f].[ReceiverId]
+FROM [FriendRequests] AS [f]
+WHERE [f].[SenderId] = @__userId_0
+2025-05-05 23:51:19.727 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [f].[SenderId]
+FROM [FriendRequests] AS [f]
+WHERE [f].[ReceiverId] = @__userId_0
+2025-05-05 23:51:19.730 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__fof_Key_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[id] = @__fof_Key_0
+2025-05-05 23:51:19.731 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType12`2[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[FriendSuggestionDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-05-05 23:51:19.731 +07:00 [INF] Executed action server.Controllers.FriendsController.GetFriendSuggestions (Message_app) in 65.9389ms
+2025-05-05 23:51:19.731 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.GetFriendSuggestions (Message_app)'
+2025-05-05 23:51:19.732 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/friends/suggestions/30 - 200 null application/json; charset=utf-8 67.233ms
+2025-05-05 23:51:19.734 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/friends/suggestions/30 - null null
+2025-05-05 23:51:19.734 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:51:19.734 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:51:19.734 +07:00 [INF] Executing endpoint 'server.Controllers.FriendsController.GetFriendSuggestions (Message_app)'
+2025-05-05 23:51:19.735 +07:00 [INF] Route matched with {action = "GetFriendSuggestions", controller = "Friends"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetFriendSuggestions(Int32) on controller server.Controllers.FriendsController (Message_app).
+2025-05-05 23:51:19.754 +07:00 [INF] Executed DbCommand (12ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[id] = @__userId_0
+2025-05-05 23:51:19.792 +07:00 [INF] Executed DbCommand (35ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-05-05 23:51:19.810 +07:00 [INF] Executed DbCommand (17ms) [Parameters=[@__friendId_0='?' (DbType = Int32), @__8__locals1_userId_1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__friendId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE ([f].[UserId1] = @__friendId_0 OR [f].[UserId2] = @__friendId_0) AND [f].[UserId1] <> @__8__locals1_userId_1 AND [f].[UserId2] <> @__8__locals1_userId_1
+2025-05-05 23:51:19.814 +07:00 [INF] Executed DbCommand (2ms) [Parameters=[@__friendId_0='?' (DbType = Int32), @__8__locals1_userId_1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__friendId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE ([f].[UserId1] = @__friendId_0 OR [f].[UserId2] = @__friendId_0) AND [f].[UserId1] <> @__8__locals1_userId_1 AND [f].[UserId2] <> @__8__locals1_userId_1
+2025-05-05 23:51:19.817 +07:00 [INF] Executed DbCommand (2ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [f].[ReceiverId]
+FROM [FriendRequests] AS [f]
+WHERE [f].[SenderId] = @__userId_0
+2025-05-05 23:51:19.920 +07:00 [INF] Executed DbCommand (100ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [f].[SenderId]
+FROM [FriendRequests] AS [f]
+WHERE [f].[ReceiverId] = @__userId_0
+2025-05-05 23:51:19.922 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__fof_Key_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[id] = @__fof_Key_0
+2025-05-05 23:51:19.924 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType12`2[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[FriendSuggestionDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-05-05 23:51:19.925 +07:00 [INF] Executed action server.Controllers.FriendsController.GetFriendSuggestions (Message_app) in 190.1035ms
+2025-05-05 23:51:19.925 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.GetFriendSuggestions (Message_app)'
+2025-05-05 23:51:19.925 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/friends/suggestions/30 - 200 null application/json; charset=utf-8 191.5345ms
+2025-05-05 23:51:20.135 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/friends/suggestions/30 - null null
+2025-05-05 23:51:20.135 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:51:20.135 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:51:20.135 +07:00 [INF] Executing endpoint 'server.Controllers.FriendsController.GetFriendSuggestions (Message_app)'
+2025-05-05 23:51:20.135 +07:00 [INF] Route matched with {action = "GetFriendSuggestions", controller = "Friends"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetFriendSuggestions(Int32) on controller server.Controllers.FriendsController (Message_app).
+2025-05-05 23:51:20.138 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[id] = @__userId_0
+2025-05-05 23:51:20.142 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/friends/list/30 - null null
+2025-05-05 23:51:20.142 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:51:20.143 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:51:20.143 +07:00 [INF] Executing endpoint 'server.Controllers.FriendsController.GetFriendsAsync (Message_app)'
+2025-05-05 23:51:20.143 +07:00 [INF] Route matched with {action = "GetFriends", controller = "Friends"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetFriendsAsync(Int32) on controller server.Controllers.FriendsController (Message_app).
+2025-05-05 23:51:20.144 +07:00 [INF] Executed DbCommand (4ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-05-05 23:51:20.165 +07:00 [INF] Executed DbCommand (20ms) [Parameters=[@__friendId_0='?' (DbType = Int32), @__8__locals1_userId_1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__friendId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE ([f].[UserId1] = @__friendId_0 OR [f].[UserId2] = @__friendId_0) AND [f].[UserId1] <> @__8__locals1_userId_1 AND [f].[UserId2] <> @__8__locals1_userId_1
+2025-05-05 23:51:20.166 +07:00 [INF] Executed DbCommand (17ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN CAST(1 AS bit)
+    ELSE CAST(0 AS bit)
+END, [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username], [u0].[id], [u0].[avatar_url], [u0].[bio], [u0].[birthday], [u0].[created_at], [u0].[email], [u0].[gender], [u0].[interests], [u0].[location], [u0].[password], [u0].[passwordSalt], [u0].[username]
+FROM [Friends] AS [f]
+INNER JOIN [Users] AS [u] ON [f].[UserId2] = [u].[id]
+INNER JOIN [Users] AS [u0] ON [f].[UserId1] = [u0].[id]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-05-05 23:51:20.169 +07:00 [INF] Executed DbCommand (2ms) [Parameters=[@__friendId_0='?' (DbType = Int32), @__8__locals1_userId_1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__friendId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE ([f].[UserId1] = @__friendId_0 OR [f].[UserId2] = @__friendId_0) AND [f].[UserId1] <> @__8__locals1_userId_1 AND [f].[UserId2] <> @__8__locals1_userId_1
+2025-05-05 23:51:20.169 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-05-05 23:51:20.174 +07:00 [INF] Executed DbCommand (3ms) [Parameters=[@__friend_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__friend_id_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__friend_id_0 OR [f].[UserId2] = @__friend_id_0
+2025-05-05 23:51:20.175 +07:00 [INF] Executed DbCommand (3ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [f].[ReceiverId]
+FROM [FriendRequests] AS [f]
+WHERE [f].[SenderId] = @__userId_0
+2025-05-05 23:51:20.177 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [f].[SenderId]
+FROM [FriendRequests] AS [f]
+WHERE [f].[ReceiverId] = @__userId_0
+2025-05-05 23:51:20.177 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__friend_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__friend_id_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__friend_id_0 OR [f].[UserId2] = @__friend_id_0
+2025-05-05 23:51:20.177 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType9`2[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[server.Models.User, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-05-05 23:51:20.178 +07:00 [INF] Executed action server.Controllers.FriendsController.GetFriendsAsync (Message_app) in 34.7008ms
+2025-05-05 23:51:20.178 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.GetFriendsAsync (Message_app)'
+2025-05-05 23:51:20.178 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/friends/list/30 - 200 null application/json; charset=utf-8 36.3721ms
+2025-05-05 23:51:20.189 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/friends/list/30 - null null
+2025-05-05 23:51:20.189 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:51:20.189 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:51:20.190 +07:00 [INF] Executing endpoint 'server.Controllers.FriendsController.GetFriendsAsync (Message_app)'
+2025-05-05 23:51:20.193 +07:00 [INF] Route matched with {action = "GetFriends", controller = "Friends"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetFriendsAsync(Int32) on controller server.Controllers.FriendsController (Message_app).
+2025-05-05 23:51:20.197 +07:00 [INF] Executed DbCommand (18ms) [Parameters=[@__fof_Key_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[id] = @__fof_Key_0
+2025-05-05 23:51:20.197 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType12`2[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[FriendSuggestionDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-05-05 23:51:20.198 +07:00 [INF] Executed action server.Controllers.FriendsController.GetFriendSuggestions (Message_app) in 62.4002ms
+2025-05-05 23:51:20.198 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.GetFriendSuggestions (Message_app)'
+2025-05-05 23:51:20.198 +07:00 [INF] Executed DbCommand (3ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN CAST(1 AS bit)
+    ELSE CAST(0 AS bit)
+END, [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username], [u0].[id], [u0].[avatar_url], [u0].[bio], [u0].[birthday], [u0].[created_at], [u0].[email], [u0].[gender], [u0].[interests], [u0].[location], [u0].[password], [u0].[passwordSalt], [u0].[username]
+FROM [Friends] AS [f]
+INNER JOIN [Users] AS [u] ON [f].[UserId2] = [u].[id]
+INNER JOIN [Users] AS [u0] ON [f].[UserId1] = [u0].[id]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-05-05 23:51:20.198 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/friends/suggestions/30 - 200 null application/json; charset=utf-8 63.5982ms
+2025-05-05 23:51:20.255 +07:00 [INF] Executed DbCommand (53ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-05-05 23:51:20.284 +07:00 [INF] Executed DbCommand (3ms) [Parameters=[@__friend_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__friend_id_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__friend_id_0 OR [f].[UserId2] = @__friend_id_0
+2025-05-05 23:51:20.287 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__friend_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__friend_id_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__friend_id_0 OR [f].[UserId2] = @__friend_id_0
+2025-05-05 23:51:20.287 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType9`2[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[server.Models.User, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-05-05 23:51:20.290 +07:00 [INF] Executed action server.Controllers.FriendsController.GetFriendsAsync (Message_app) in 97.7773ms
+2025-05-05 23:51:20.291 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.GetFriendsAsync (Message_app)'
+2025-05-05 23:51:20.291 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/friends/list/30 - 200 null application/json; charset=utf-8 102.4989ms
+2025-05-05 23:51:20.316 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/friends/list/30 - null null
+2025-05-05 23:51:20.316 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:51:20.317 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:51:20.317 +07:00 [INF] Executing endpoint 'server.Controllers.FriendsController.GetFriendsAsync (Message_app)'
+2025-05-05 23:51:20.317 +07:00 [INF] Route matched with {action = "GetFriends", controller = "Friends"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetFriendsAsync(Int32) on controller server.Controllers.FriendsController (Message_app).
+2025-05-05 23:51:20.395 +07:00 [INF] Executed DbCommand (4ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN CAST(1 AS bit)
+    ELSE CAST(0 AS bit)
+END, [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username], [u0].[id], [u0].[avatar_url], [u0].[bio], [u0].[birthday], [u0].[created_at], [u0].[email], [u0].[gender], [u0].[interests], [u0].[location], [u0].[password], [u0].[passwordSalt], [u0].[username]
+FROM [Friends] AS [f]
+INNER JOIN [Users] AS [u] ON [f].[UserId2] = [u].[id]
+INNER JOIN [Users] AS [u0] ON [f].[UserId1] = [u0].[id]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-05-05 23:51:20.398 +07:00 [INF] Executed DbCommand (2ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-05-05 23:51:20.400 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__friend_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__friend_id_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__friend_id_0 OR [f].[UserId2] = @__friend_id_0
+2025-05-05 23:51:20.423 +07:00 [INF] Executed DbCommand (12ms) [Parameters=[@__friend_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__friend_id_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__friend_id_0 OR [f].[UserId2] = @__friend_id_0
+2025-05-05 23:51:20.425 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType9`2[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[server.Models.User, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-05-05 23:51:20.426 +07:00 [INF] Executed action server.Controllers.FriendsController.GetFriendsAsync (Message_app) in 69.8023ms
+2025-05-05 23:51:20.427 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.GetFriendsAsync (Message_app)'
+2025-05-05 23:51:20.427 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/friends/list/30 - 200 null application/json; charset=utf-8 111.055ms
+2025-05-05 23:51:20.429 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/friends/list/30 - null null
+2025-05-05 23:51:20.430 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:51:20.430 +07:00 [INF] CORS policy execution successful.
+2025-05-05 23:51:20.430 +07:00 [INF] Executing endpoint 'server.Controllers.FriendsController.GetFriendsAsync (Message_app)'
+2025-05-05 23:51:20.431 +07:00 [INF] Route matched with {action = "GetFriends", controller = "Friends"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetFriendsAsync(Int32) on controller server.Controllers.FriendsController (Message_app).
+2025-05-05 23:51:20.437 +07:00 [INF] Executed DbCommand (3ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN CAST(1 AS bit)
+    ELSE CAST(0 AS bit)
+END, [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username], [u0].[id], [u0].[avatar_url], [u0].[bio], [u0].[birthday], [u0].[created_at], [u0].[email], [u0].[gender], [u0].[interests], [u0].[location], [u0].[password], [u0].[passwordSalt], [u0].[username]
+FROM [Friends] AS [f]
+INNER JOIN [Users] AS [u] ON [f].[UserId2] = [u].[id]
+INNER JOIN [Users] AS [u0] ON [f].[UserId1] = [u0].[id]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-05-05 23:51:20.458 +07:00 [INF] Executed DbCommand (20ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-05-05 23:51:20.468 +07:00 [INF] Executed DbCommand (9ms) [Parameters=[@__friend_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__friend_id_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__friend_id_0 OR [f].[UserId2] = @__friend_id_0
+2025-05-05 23:51:20.493 +07:00 [INF] Executed DbCommand (21ms) [Parameters=[@__friend_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__friend_id_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__friend_id_0 OR [f].[UserId2] = @__friend_id_0
+2025-05-05 23:51:20.494 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType9`2[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[server.Models.User, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-05-05 23:51:20.496 +07:00 [INF] Executed action server.Controllers.FriendsController.GetFriendsAsync (Message_app) in 65.2823ms
+2025-05-05 23:51:20.496 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.GetFriendsAsync (Message_app)'
+2025-05-05 23:51:20.496 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/friends/list/30 - 200 null application/json; charset=utf-8 67.0347ms
+2025-05-05 23:51:47.780 +07:00 [INF] Application is shutting down...
+>>>>>>> f648e4cce1ab0ce0404e5bdf3adf58835ea95784

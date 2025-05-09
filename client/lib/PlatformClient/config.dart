@@ -13,7 +13,7 @@ class Config {
       // Nếu là thiết bị thật thì dùng IP LAN
       return _isPhysicalDevice()
           ? 'http://$localNetworkIP:5053/' // 👈 Điện thoại thật
-          : 'http://10.0.2.2:5053/';       // 👈 Emulator
+          : 'http://10.0.2.2:5053/'; // 👈 Emulator
     } else if (Platform.isWindows) {
       return 'http://localhost:5053/';
     } else {
@@ -32,7 +32,6 @@ class Config {
       return 'localhost:6379,abortConnect=false';
     }
   }
-   
 
   static String get baseUrlWS {
     if (kIsWeb) {
@@ -45,13 +44,14 @@ class Config {
       return 'ws://localhost:5053/ws/chat';
     }
   }
-    static String get baseUrlWSFriend {
+
+  static String get baseUrlWSFriend {
     if (kIsWeb) {
       return 'ws://localhost:5053/ws/friend';
     } else if (Platform.isAndroid) {
       return _isPhysicalDevice()
           ? 'ws://$localNetworkIP:5053/ws/friend'
-          : 'ws://10.0.2.2:5053/ws/friend'; 
+          : 'ws://10.0.2.2:5053/ws/friend';
     } else {
       return 'ws://localhost:5053/ws/friend';
     }

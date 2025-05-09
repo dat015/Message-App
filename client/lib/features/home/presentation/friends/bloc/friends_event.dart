@@ -25,7 +25,12 @@ class SendFriendRequestEvent extends FriendsEvent {
   final String username;
   final String avatarUrl;
   final int index;
-  SendFriendRequestEvent(this.receiverId, this.username, this.avatarUrl, this.index);
+  SendFriendRequestEvent(
+    this.receiverId,
+    this.username,
+    this.avatarUrl,
+    this.index,
+  );
 }
 
 class CancelFriendRequestEvent extends FriendsEvent {
@@ -34,7 +39,13 @@ class CancelFriendRequestEvent extends FriendsEvent {
   final int receiverId;
   final String username;
   final int index;
-  CancelFriendRequestEvent(this.requestId, this.senderId, this.receiverId, this.username, this.index);
+  CancelFriendRequestEvent(
+    this.requestId,
+    this.senderId,
+    this.receiverId,
+    this.username,
+    this.index,
+  );
 }
 
 class UnfriendEvent extends FriendsEvent {
@@ -44,14 +55,18 @@ class UnfriendEvent extends FriendsEvent {
   UnfriendEvent(this.friendId, this.username, this.index);
 }
 
-class SearchUsersEvent extends FriendsEvent {
-  final String query;
-  SearchUsersEvent(this.query);
-}
-
 class GenerateUserQrCodeEvent extends FriendsEvent {} // Sự kiện tạo mã QR
 
 class ScanQrCodeEvent extends FriendsEvent {
   final String qrCodeContent;
   ScanQrCodeEvent(this.qrCodeContent); // Sự kiện quét mã QR
 }
+
+class SearchUsersEvent extends FriendsEvent {
+  final String query;
+  SearchUsersEvent(this.query);
+}
+
+class ResetSearchEvent extends FriendsEvent {}
+
+class LoadFriendSuggestionsEvent extends FriendsEvent {}

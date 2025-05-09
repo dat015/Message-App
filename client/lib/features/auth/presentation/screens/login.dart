@@ -16,17 +16,16 @@ class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
 
   @override
-  State<SignInScreen> createState() => _SignUpScreenState();
+  State<SignInScreen> createState() => _SignInScreenState();
 }
 
-class _SignUpScreenState extends State<SignInScreen> {
+class _SignInScreenState extends State<SignInScreen> {
   final _formSignInKey = GlobalKey<FormState>();
   bool rememberPassword = false;
   bool _obscureText = true;
-
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  // Hàm tạo tiêu đề
+
   Widget _buildHeader() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -51,7 +50,7 @@ class _SignUpScreenState extends State<SignInScreen> {
       ],
     );
   }
-  
+
   Future<void> sendDataLogin() async {
     if (_formSignInKey.currentState!.validate()) {
       String email = _emailController.text;
@@ -62,10 +61,8 @@ class _SignUpScreenState extends State<SignInScreen> {
 
       try {
         final response = await _authRepository.login(email, password);
-
         final userData = {
-          "user":
-              response.user?.toJson(), // Giả sử user có phương thức `toJson()`
+          "user": response.user?.toJson(),
           "token": response.token,
         };
         var user_response = LoginResponse(
@@ -73,29 +70,34 @@ class _SignUpScreenState extends State<SignInScreen> {
           token: response.token,
         );
 
-        // 🌟 Lưu vào storage (Web + Mobile)
         await StorageService.saveUserData("user_data", userData);
-
-        // 🔄 Chuyển hướng đến HomeScreen
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (_) => HomeScreen(user: user_response)),
         );
       } catch (e) {
+        String errorMessage = 'Login failed. Please try again.';
+        if (e.toString().contains('Invalid credentials')) {
+          errorMessage = 'Incorrect email or password.';
+        } else if (e.toString().contains('User not found')) {
+          errorMessage = 'Email not registered.';
+        }
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('Login failed: $e')));
+        ).showSnackBar(SnackBar(content: Text(errorMessage)));
       }
     }
   }
 
-  // Hàm tạo trường nhập email
   Widget _buildEmailField() {
     return TextFormField(
       controller: _emailController,
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'Please enter Email';
+        }
+        if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+          return 'Please enter a valid Email';
         }
         return null;
       },
@@ -109,7 +111,6 @@ class _SignUpScreenState extends State<SignInScreen> {
     );
   }
 
-  // Hàm tạo trường nhập mật khẩu
   Widget _buildPasswordField() {
     return TextFormField(
       obscureText: _obscureText,
@@ -139,7 +140,6 @@ class _SignUpScreenState extends State<SignInScreen> {
     );
   }
 
-  // Hàm tạo phần "Remember me" và "Forget password"
   Widget _buildOptionsRow() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -177,7 +177,6 @@ class _SignUpScreenState extends State<SignInScreen> {
     );
   }
 
-  // Hàm tạo nút "Sign In"
   Widget _buildSignInButton() {
     return SizedBox(
       width: double.infinity,
@@ -185,14 +184,6 @@ class _SignUpScreenState extends State<SignInScreen> {
         onPressed: () {
           if (_formSignInKey.currentState!.validate()) {
             sendDataLogin();
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text(
-                  'Please agree to the processing of personal data',
-                ),
-              ),
-            );
           }
         },
         child: const Text('SIGN IN'),
@@ -200,7 +191,6 @@ class _SignUpScreenState extends State<SignInScreen> {
     );
   }
 
-  // Hàm tạo phần phân cách "Sign up with"
   Widget _buildDivider() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -219,7 +209,6 @@ class _SignUpScreenState extends State<SignInScreen> {
     );
   }
 
-  // Hàm tạo các biểu tượng mạng xã hội
   Widget _buildSocialIcons() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -232,7 +221,6 @@ class _SignUpScreenState extends State<SignInScreen> {
     );
   }
 
-  // Hàm tạo phần "Don't have an account?"
   Widget _buildSignUpLink() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,

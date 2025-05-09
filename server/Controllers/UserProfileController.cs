@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using server.Models;
 using server.Services;
 using System.Threading.Tasks;
 
@@ -42,13 +43,57 @@ namespace server.Controllers
             }
         }
 
+        [HttpPut("update/profile/{userId}")]
+        public async Task<IActionResult> UpdateProfile(int userId, [FromBody] UpdateProfileDTO updateProfileDTO)
+        {
+            if (updateProfileDTO == null)
+            {
+                return BadRequest(new { message = "Invalid profile data" });
+            }
+
+            var updatedUser = new User
+            {
+                id = userId,
+                username = updateProfileDTO.Username,
+                bio = updateProfileDTO.Bio,
+                interests = updateProfileDTO.Interests,
+                location = updateProfileDTO.Location,
+                birthday = updateProfileDTO.Birthday,
+                gender = updateProfileDTO.gender
+            };
+
+            try
+            {
+                var user = await _userProfileService.UpdateProfile(userId, updatedUser);
+                return Ok(new { message = "Profile updated successfully", user });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+        
+        [HttpPost("upload")]
+        public async Task<IActionResult> UploadImage(IFormFile file)
+        {
+            try
+            {
+                var fileUrl = await _userProfileService.UploadImageAsync(file, Request);
+                return Ok(new { url = fileUrl });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error uploading image", error = ex.Message });
+            }
+        }
+
         [HttpGet("view/{targetUserId}")]
         public async Task<IActionResult> GetUserProfileById(int targetUserId, [FromQuery] int viewerId)
         {
             try
             {
                 var user = await _userProfileService.GetUserProfileByIdAsync(viewerId, targetUserId);
-                return Ok(new   
+                return Ok(new
                 {
                     user.id,
                     user.username,

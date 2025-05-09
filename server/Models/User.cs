@@ -25,6 +25,7 @@ namespace server.Models
 
         [Required(ErrorMessage = "Email is required.")]
         [EmailAddress(ErrorMessage = "Invalid email format.")]
+        [MaxLength(450)]
         public string email { get; set; }
 
         [Url(ErrorMessage = "Invalid URL format.")]
@@ -46,6 +47,9 @@ namespace server.Models
         
         [NotMapped]
         public int? MutualFriendsCount { get; set; }
+        
+        [NotMapped]
+        public string RelationshipStatus { get; set; }
 
         public ICollection<Story>? stories { get; set; }
         public ICollection<StoryReaction>? storyReactions { get; set; }

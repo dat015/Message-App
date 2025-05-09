@@ -20,7 +20,7 @@ namespace server.Models
 
         [Required(ErrorMessage = "Status is required.")]
         [StringLength(20, ErrorMessage = "Status cannot exceed 20 characters.")]
-        public string Status { get; set; } // Ví dụ: "Pending", "Accepted", "Rejected"
+        public string Status { get; set; }
 
         [Required(ErrorMessage = "CreatedAt is required.")]
         public DateTime CreatedAt { get; set; }

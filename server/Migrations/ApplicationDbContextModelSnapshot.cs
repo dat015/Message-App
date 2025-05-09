@@ -544,6 +544,9 @@ namespace Message_app.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
+                    b.Property<bool>("IsFirstLogin")
+                        .HasColumnType("bit");
+
                     b.Property<string>("avatar_url")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -560,7 +563,8 @@ namespace Message_app.Migrations
 
                     b.Property<string>("email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<bool>("gender")
                         .HasColumnType("bit");

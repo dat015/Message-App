@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 2025-05-01 00:02:01.439 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Auth/login - null null
 2025-05-01 00:02:01.449 +07:00 [INF] CORS policy execution successful.
 2025-05-01 00:02:01.450 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Auth/login - 204 null null 10.8765ms
@@ -831,3 +832,14 @@ WHERE [p].[conversation_id] = @__conversation_id_0
 2025-05-01 06:21:57.584 +07:00 [INF] Executed endpoint '/ws/chat'
 2025-05-01 06:21:57.585 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.9:5053/ws/chat?userId=2 - 101 null null 566448.1418ms
 2025-05-01 06:21:57.585 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/ws/chat?userId=5 - 101 null null 592546.6403ms
+=======
+2025-05-01 15:41:14.996 +07:00 [INF] Executed DbCommand (146ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [u].[id], [u].[username], [u].[avatar_url]
+FROM [Users] AS [u]
+2025-05-01 15:41:21.289 +07:00 [INF] User profile is available. Using 'C:\Users\luong\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-05-01 15:41:21.469 +07:00 [INF] Now listening on: http://0.0.0.0:5053
+2025-05-01 15:41:21.474 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-05-01 15:41:21.475 +07:00 [INF] Hosting environment: Development
+2025-05-01 15:41:21.475 +07:00 [INF] Content root path: D:\StudioProject\Message-App\server
+2025-05-01 15:44:13.967 +07:00 [INF] Application is shutting down...
+>>>>>>> f648e4cce1ab0ce0404e5bdf3adf58835ea95784

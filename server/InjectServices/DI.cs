@@ -20,6 +20,9 @@ using server.Services;
 using server.Services.RedisService.ChatStorage;
 using Microsoft.OpenApi.Models;
 using server.Services.RedisService.ConversationStorage;
+using server.Services.ImageDescriptionService;
+using server.Services.TempOTPStoreSV;
+using server.Services.SettingService;
 
 namespace server.InjectService
 {
@@ -104,6 +107,9 @@ namespace server.InjectService
             services.AddScoped<IUserQrService, UserQrService>();
             services.AddScoped<IUserProfileSV, UserProfileSV>();
             services.AddScoped<IWebSocketFriendSV, WebSocketFriendSV>();
+            services.AddScoped<IAIPostSV, AIPostSV>();
+            services.AddScoped<ISettingSV, SettingSV>();
+            services.AddScoped<IImageDescriptionSV, ImageDescriptionService>();
             services.AddScoped<AuthorizationJWT>();
         }
 

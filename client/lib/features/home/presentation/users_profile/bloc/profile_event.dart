@@ -11,4 +11,6 @@ class AcceptFriendRequestEvent extends OtherProfileEvent {}
 
 class CancelFriendRequestEvent extends OtherProfileEvent {}
 
+class RejectFriendRequestEvent extends OtherProfileEvent {}
+
 class UnfriendEvent extends OtherProfileEvent {}

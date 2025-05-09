@@ -65,20 +65,15 @@ namespace server.Services.UserService
                 };
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
-                var db = _redis.GetDatabase();
-                var userKey = $"user:by_username:{user.username}";
-                await db.HashSetAsync(userKey, new HashEntry[]
-                {
-                    new HashEntry("id", user.id),
-                    new HashEntry("username", user.username),
-                    new HashEntry("avatarUrl", user.avatar_url ?? "")
-                });
                 return user;
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                Console.WriteLine("Exception: " + ex.Message);
+                Console.WriteLine("InnerException: " + ex.InnerException?.Message);
+                throw; // giữ nguyên lỗi gốc
             }
+
         }
 
         public Task<User> GetUserByIdAsync(int id)
@@ -204,14 +199,7 @@ namespace server.Services.UserService
             _context.Users.Update(user);
 
             await _context.SaveChangesAsync();
-            var db = _redis.GetDatabase();
             var userKey = $"user:by_username:{user.username}";
-            await db.HashSetAsync(userKey, new HashEntry[]
-            {
-                new HashEntry("id", user.id),
-                new HashEntry("username", user.username),
-                new HashEntry("avatarUrl", user.avatar_url ?? "")
-            });
         }
 
         public async Task<int> GetMutualFriendsCountAsync(int userId, int currentUserId)

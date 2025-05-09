@@ -11,7 +11,7 @@ namespace server.Services
         Task AcceptFriendRequestAsync(int requestId);
         Task RejectFriendRequestAsync(int requestId);
         Task<List<User>> GetFriendsAsync(int userId);
-        Task<List<User>> SearchUsersByUsernameAsync(string usernameQuery, int currentUserId);
+        Task<List<User>> SearchUsersByEmailAsync(string email, int currentUserId);
         Task<bool> CancelFriendRequestAsync(int senderId, int receiverId);
         Task<List<FriendRequestDto>> GetReceivedFriendRequestsAsync(int userId);
         Task<List<FriendSuggestionDto>> GetFriendSuggestionsAsync(int userId);

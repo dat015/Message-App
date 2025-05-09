@@ -6,22 +6,18 @@ import 'package:first_app/features/auth/presentation/screens/register.dart';
 import 'package:first_app/features/home/presentation/chat_box/chat.dart';
 import 'package:first_app/features/home/presentation/screens/home_screen/home_screen.dart';
 import 'package:flutter/material.dart';
+import 'navigation_helper.dart'; // Import NavigationHelper
 
-// Quản lý các route trong ứng dụng
 class AppRoutes {
-  // Định nghĩa các route dưới dạng constant
-  static const String home = '/'; // Trang chủ
-  static const String login = '/login'; // Trang đăng nhập
-  static const String register = '/register'; // Trang đăng ký
-  static const String chat = '/chat'; // Trang chat
+  static const String home = '/';
+  static const String login = '/login';
+  static const String register = '/register';
+  static const String chat = '/chat';
 
-  // Hàm tạo route động dựa trên RouteSettings
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
-      // Route cho trang chủ
       case home:
-        print("Received arguments for home: ${settings.arguments}");
-        // Kiểm tra xem arguments có phải là LoginResponse không
+        debugPrint("Received arguments for home: ${settings.arguments}");
         if (settings.arguments is LoginResponse) {
           final user = settings.arguments as LoginResponse;
           return MaterialPageRoute(builder: (_) => HomeScreen(user: user));
@@ -35,8 +31,13 @@ class AppRoutes {
                 ),
           );
         }
+        debugPrint("Error: HomeScreen did not receive LoginResponse");
+        return MaterialPageRoute(
+          builder: (_) => const Scaffold(
+            body: Center(child: Text('Lỗi: Không có dữ liệu đăng nhập')),
+          ),
+        );
 
-      // Route cho trang chat
       case chat:
         final args = settings.arguments as Map<String, dynamic>?;
 
@@ -101,17 +102,14 @@ class AppRoutes {
               ),
         );
 
-      // Route cho trang đăng nhập
       case login:
         return MaterialPageRoute(builder: (_) => SignInScreen());
 
-      // Route cho trang đăng ký
       case register:
         return MaterialPageRoute(builder: (_) => SignUpScreen());
 
-      // Route mặc định cho trường hợp không khớp
       default:
-        print("Unknown route: ${settings.name}");
+        debugPrint("Unknown route: ${settings.name}");
         return MaterialPageRoute(
           builder:
               (_) => Scaffold(

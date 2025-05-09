@@ -3,13 +3,17 @@ import 'package:first_app/data/providers/CallProvider.dart';
 import 'package:first_app/data/providers/home_provider.dart';
 import 'package:first_app/data/providers/providers.dart';
 import 'package:first_app/data/repositories/Chat/websocket_service.dart';
+import 'package:first_app/data/repositories/AI_Post_Repo/comment_suggestion_repo.dart';
 import 'package:first_app/features/auth/presentation/screens/login.dart';
+import 'package:first_app/features/home/presentation/ai_caption/bloc_comments/comment_suggestion_state.dart';
 import 'package:first_app/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart'; // Thêm Firebase Core
 import 'package:flutter/foundation.dart' show kIsWeb; // Để kiểm tra nền tảng
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:first_app/data/api/api_client.dart';
 
 import 'features/routes/routes.dart';
 
@@ -23,7 +27,7 @@ void main() async {
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhxcGdsc3FpZ3lkanFhZnB2c2hsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM1ODk3OTksImV4cCI6MjA1OTE2NTc5OX0.VypvOSQvRYyLkz3DcUZ6xjqPduOwQkCb07PH_BJzWPE',
   );
 
-  // Khởi tạo Firebase (nếu vẫn cần)
+  // Khởi tạo Firebase
   if (kIsWeb) {
     await Firebase.initializeApp(
       options: const FirebaseOptions(
@@ -73,14 +77,24 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      navigatorKey: navigatorKey, // Thêm navigatorKey
-      debugShowCheckedModeBanner: false,
-      initialRoute: AppRoutes.login,
-      onGenerateRoute: AppRoutes.generateRoute,
-      title: 'Flutter Demo',
-      theme: lightMode,
-      home: const SignInScreen(),
+    // Khởi tạo ApiClient và CommentSuggestionService
+    final apiClient = ApiClient(); // Cấu hình base URL nếu cần
+    final commentSuggestionService = CommentSuggestionService(apiClient);
+
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => CommentSuggestionBloc(commentSuggestionService),
+        ),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        initialRoute: AppRoutes.login,
+        onGenerateRoute: AppRoutes.generateRoute,
+        title: 'Flutter Demo',
+        theme: lightMode,
+        home: const SignInScreen(),
+      ),
     );
   }
 }
