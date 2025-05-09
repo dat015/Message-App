@@ -14,7 +14,8 @@ class Story {
   final DateTime expiresAt;
   final List<String> viewers;
   final Map<String, String> reactions;
-  final String visibility; // Thêm trường visibility
+  final String visibility;
+  final bool isHighlighted;
 
   Story({
     required this.id,
@@ -30,7 +31,8 @@ class Story {
     required this.expiresAt,
     this.viewers = const [],
     this.reactions = const {},
-    this.visibility = 'public', // Mặc định là công khai
+    this.visibility = 'public',
+    this.isHighlighted = false,
   });
 
   factory Story.fromMap(String id, Map<String, dynamic> map) {
@@ -50,6 +52,7 @@ class Story {
         viewers: List<String>.from(map['viewers'] ?? []),
         reactions: Map<String, String>.from(map['reactions'] ?? {}),
         visibility: map['visibility'] ?? 'public',
+        isHighlighted: map['isHighlighted'] ?? false,
       );
     } catch (e) {
       print('Error parsing story: $e');
@@ -71,7 +74,8 @@ class Story {
       'musicDuration': musicDuration,
       'viewers': viewers,
       'reactions': reactions,
-      'visibility': visibility, // Thêm vào map
+      'visibility': visibility,
+      'isHighlighted': isHighlighted,
     };
   }
 

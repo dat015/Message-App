@@ -640,8 +640,29 @@ class OtherProfilePage extends StatelessWidget {
     switch (friendStatus) {
       case "friend":
         return ElevatedButton.icon(
-          onPressed:
-              () => context.read<OtherProfileBloc>().add(UnfriendEvent()),
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder:
+                  (context) => AlertDialog(
+                    title: Text('Hủy kết bạn'),
+                    content: Text('Bạn có chắc muốn hủy kết bạn không?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: Text('Không'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          context.read<OtherProfileBloc>().add(UnfriendEvent());
+                          Navigator.of(context).pop();
+                        },
+                        child: Text('Có'),
+                      ),
+                    ],
+                  ),
+            );
+          },
           icon: Icon(Icons.person),
           label: Text('Bạn bè'),
           style: ElevatedButton.styleFrom(
@@ -654,6 +675,7 @@ class OtherProfilePage extends StatelessWidget {
             elevation: 0,
           ),
         );
+
       case "pending":
         return ElevatedButton.icon(
           onPressed:
@@ -674,10 +696,36 @@ class OtherProfilePage extends StatelessWidget {
         );
       case "sent":
         return ElevatedButton.icon(
-          onPressed:
-              () => context.read<OtherProfileBloc>().add(
-                CancelFriendRequestEvent(),
-              ),
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder:
+                  (context) => AlertDialog(
+                    title: Text('Hủy lời mời kết bạn'),
+                    content: Text(
+                      'Bạn có chắc muốn hủy lời mời kết bạn đã gửi không?',
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed:
+                            () => Navigator.of(context).pop(),
+                        child: Text('Không'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          context.read<OtherProfileBloc>().add(
+                            CancelFriendRequestEvent(),
+                          );
+                          Navigator.of(
+                            context,
+                          ).pop();
+                        },
+                        child: Text('Có'),
+                      ),
+                    ],
+                  ),
+            );
+          },
           icon: Icon(Icons.hourglass_empty),
           label: Text('Đã gửi lời mời'),
           style: ElevatedButton.styleFrom(
@@ -690,6 +738,7 @@ class OtherProfilePage extends StatelessWidget {
             elevation: 0,
           ),
         );
+
       default:
         return ElevatedButton.icon(
           onPressed:
@@ -1268,7 +1317,8 @@ class OtherProfilePage extends StatelessWidget {
                       child: TextButton.icon(
                         onPressed: () async {
                           final profileRepo = UsProfileRepository();
-                          final currentUser = await profileRepo.fetchUserProfile(viewerId);
+                          final currentUser = await profileRepo
+                              .fetchUserProfile(viewerId);
                           NavigationHelper().goToComment(
                             context as BuildContext,
                             postId,

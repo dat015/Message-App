@@ -55,8 +55,6 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) => CommentSuggestionBloc(commentSuggestionService),
         ),
-        // Thêm các Bloc khác nếu cần, ví dụ:
-        // BlocProvider(create: (context) => Ot herBloc()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
