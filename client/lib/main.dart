@@ -37,7 +37,7 @@ void main() async {
   } else {
     await Firebase.initializeApp();
   }
-
+  // setupFCM(null);
   runApp(const MyApp());
 }
 
@@ -55,8 +55,6 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) => CommentSuggestionBloc(commentSuggestionService),
         ),
-        // Thêm các Bloc khác nếu cần, ví dụ:
-        // BlocProvider(create: (context) => OtherBloc()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

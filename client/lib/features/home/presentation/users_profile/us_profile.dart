@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:first_app/data/api/api_client.dart';
 import 'package:first_app/data/models/post.dart';
+import 'package:first_app/data/models/story.dart';
 import 'package:first_app/data/models/user_profile.dart';
-import 'package:first_app/data/repositories/Chat/User_Profile_repo/us_profile_repository.dart';
+import 'package:first_app/data/repositories/Story_repo/story_repo.dart';
+import 'package:first_app/data/repositories/User_Profile_repo/us_profile_repository.dart';
 import 'package:first_app/data/repositories/Post_repo/post_repo.dart';
+import 'package:first_app/features/home/presentation/users_profile/update_avatar_screen.dart';
 import 'package:first_app/features/routes/navigation_helper.dart';
 import 'package:flutter/material.dart';
 
@@ -26,6 +29,7 @@ class _ProfilePageState extends State<ProfilePage> {
   late Future<UserProfile> userProfileFuture;
   final UsProfileRepository _usProfileRepository = UsProfileRepository();
   final PostRepo _postService = PostRepo();
+  final StoryRepository _storyRepo = StoryRepository();
 
   // Ánh xạ sở thích với icon
   final Map<String, IconData> _interestIcons = {
@@ -64,6 +68,71 @@ class _ProfilePageState extends State<ProfilePage> {
     userProfileFuture = _usProfileRepository.fetchUserProfile(widget.userId);
   }
 
+  // void _showStorySelectionDialog(BuildContext context) {
+  //   showDialog(
+  //     context: context,
+  //     builder:
+  //         (context) => AlertDialog(
+  //           title: Text('Chọn nội dung đáng chú ý'),
+  //           content: Container(
+  //             width: double.maxFinite,
+  //             height: 300,
+  //             child: StreamBuilder<List<Story>>(
+  //               stream: _storyRepo.getUserStories(
+  //                 widget.userId.toString(),
+  //                 widget.userId.toString(),
+  //               ),
+  //               builder: (context, snapshot) {
+  //                 if (snapshot.connectionState == ConnectionState.waiting) {
+  //                   return Center(child: CircularProgressIndicator());
+  //                 }
+  //                 if (snapshot.hasError ||
+  //                     !snapshot.hasData ||
+  //                     snapshot.data!.isEmpty) {
+  //                   return Center(child: Text('Chưa có story nào'));
+  //                 }
+  //                 final stories = snapshot.data!;
+  //                 return ListView.builder(
+  //                   itemCount: stories.length,
+  //                   itemBuilder: (context, index) {
+  //                     final story = stories[index];
+  //                     return ListTile(
+  //                       leading:
+  //                           story.isImage
+  //                               ? Image.network(
+  //                                 story.imageUrl!,
+  //                                 width: 50,
+  //                                 height: 50,
+  //                                 fit: BoxFit.cover,
+  //                               )
+  //                               : Icon(Icons.videocam),
+  //                       title: Text('Story ${index + 1}'),
+  //                       trailing: Checkbox(
+  //                         value: story.isHighlighted,
+  //                         onChanged: (value) async {
+  //                           await _storyRepo.markStoryAsHighlighted(
+  //                             story.id,
+  //                             value ?? false,
+  //                           );
+  //                           setState(() {}); // Cập nhật UI
+  //                         },
+  //                       ),
+  //                     );
+  //                   },
+  //                 );
+  //               },
+  //             ),
+  //           ),
+  //           actions: [
+  //             TextButton(
+  //               onPressed: () => Navigator.pop(context),
+  //               child: Text('Đóng'),
+  //             ),
+  //           ],
+  //         ),
+  //   );
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -97,6 +166,8 @@ class _ProfilePageState extends State<ProfilePage> {
               );
             } else if (snapshot.hasData) {
               final user = snapshot.data!;
+              final isOwnProfile =
+                  widget.userId.toString() == user.id.toString();
               return CustomScrollView(
                 slivers: [
                   // Profile Header với ảnh bìa và ảnh đại diện
@@ -173,15 +244,14 @@ class _ProfilePageState extends State<ProfilePage> {
                                           color: Colors.white,
                                         ),
                                         onPressed: () {
-                                          ScaffoldMessenger.of(
+                                          Navigator.push(
                                             context,
-                                          ).showSnackBar(
-                                            SnackBar(
-                                              content: Text(
-                                                'Tính năng thay đổi ảnh đại diện sẽ được cập nhật sau',
-                                              ),
-                                              behavior:
-                                                  SnackBarBehavior.floating,
+                                            MaterialPageRoute(
+                                              builder:
+                                                  (context) =>
+                                                      UpdateAvatarScreen(
+                                                        userProfile: user,
+                                                      ),
                                             ),
                                           );
                                         },
@@ -359,6 +429,75 @@ class _ProfilePageState extends State<ProfilePage> {
                                               )
                                               .toList(),
                                     ),
+                                    // if (isOwnProfile)
+                                    //   ElevatedButton(
+                                    //     onPressed:
+                                    //         () => _showStorySelectionDialog(
+                                    //           context,
+                                    //         ),
+                                    //     child: Text('Nội dung đáng chú ý'),
+                                    //     style: ElevatedButton.styleFrom(
+                                    //       backgroundColor:
+                                    //           Theme.of(context).primaryColor,
+                                    //       foregroundColor: Colors.white,
+                                    //     ),
+                                    //   ),
+                                    // StreamBuilder<List<Story>>(
+                                    //   stream: _storyRepo.getHighlightedStories(
+                                    //     widget.userId.toString(),
+                                    //   ),
+                                    //   builder: (context, snapshot) {
+                                    //     if (snapshot.connectionState ==
+                                    //         ConnectionState.waiting) {
+                                    //       return Center(
+                                    //         child: CircularProgressIndicator(),
+                                    //       );
+                                    //     }
+                                    //     if (!snapshot.hasData ||
+                                    //         snapshot.data!.isEmpty) {
+                                    //       return Padding(
+                                    //         padding: EdgeInsets.symmetric(
+                                    //           vertical: 8,
+                                    //         ),
+                                    //         child: Text(
+                                    //           'Chưa có nội dung đáng chú ý',
+                                    //         ),
+                                    //       );
+                                    //     }
+                                    //     final stories = snapshot.data!;
+                                    //     return SizedBox(
+                                    //       height: 100,
+                                    //       child: ListView.builder(
+                                    //         scrollDirection: Axis.horizontal,
+                                    //         itemCount: stories.length,
+                                    //         itemBuilder: (context, index) {
+                                    //           final story = stories[index];
+                                    //           return Padding(
+                                    //             padding: EdgeInsets.only(
+                                    //               right: 8,
+                                    //             ),
+                                    //             child: ClipRRect(
+                                    //               borderRadius:
+                                    //                   BorderRadius.circular(8),
+                                    //               child:
+                                    //                   story.isImage
+                                    //                       ? Image.network(
+                                    //                         story.imageUrl!,
+                                    //                         width: 80,
+                                    //                         height: 80,
+                                    //                         fit: BoxFit.cover,
+                                    //                       )
+                                    //                       : Icon(
+                                    //                         Icons.videocam,
+                                    //                         size: 80,
+                                    //                       ),
+                                    //             ),
+                                    //           );
+                                    //         },
+                                    //       ),
+                                    //     );
+                                    //   },
+                                    // ),
                                   ],
                                 ),
                             ],

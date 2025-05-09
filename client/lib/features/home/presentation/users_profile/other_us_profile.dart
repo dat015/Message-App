@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:first_app/data/repositories/Chat/User_Profile_repo/us_profile_repository.dart';
+import 'package:first_app/data/repositories/User_Profile_repo/us_profile_repository.dart';
 import 'package:first_app/data/repositories/Friends_repo/friends_repo.dart';
 import 'package:first_app/data/repositories/Story_repo/story_repo.dart';
 import 'package:first_app/data/repositories/Post_repo/post_repo.dart';
@@ -640,8 +640,29 @@ class OtherProfilePage extends StatelessWidget {
     switch (friendStatus) {
       case "friend":
         return ElevatedButton.icon(
-          onPressed:
-              () => context.read<OtherProfileBloc>().add(UnfriendEvent()),
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder:
+                  (context) => AlertDialog(
+                    title: Text('Hủy kết bạn'),
+                    content: Text('Bạn có chắc muốn hủy kết bạn không?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: Text('Không'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          context.read<OtherProfileBloc>().add(UnfriendEvent());
+                          Navigator.of(context).pop();
+                        },
+                        child: Text('Có'),
+                      ),
+                    ],
+                  ),
+            );
+          },
           icon: Icon(Icons.person),
           label: Text('Bạn bè'),
           style: ElevatedButton.styleFrom(
@@ -654,6 +675,7 @@ class OtherProfilePage extends StatelessWidget {
             elevation: 0,
           ),
         );
+
       case "pending":
         return ElevatedButton.icon(
           onPressed:
@@ -674,10 +696,36 @@ class OtherProfilePage extends StatelessWidget {
         );
       case "sent":
         return ElevatedButton.icon(
-          onPressed:
-              () => context.read<OtherProfileBloc>().add(
-                CancelFriendRequestEvent(),
-              ),
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder:
+                  (context) => AlertDialog(
+                    title: Text('Hủy lời mời kết bạn'),
+                    content: Text(
+                      'Bạn có chắc muốn hủy lời mời kết bạn đã gửi không?',
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed:
+                            () => Navigator.of(context).pop(),
+                        child: Text('Không'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          context.read<OtherProfileBloc>().add(
+                            CancelFriendRequestEvent(),
+                          );
+                          Navigator.of(
+                            context,
+                          ).pop();
+                        },
+                        child: Text('Có'),
+                      ),
+                    ],
+                  ),
+            );
+          },
           icon: Icon(Icons.hourglass_empty),
           label: Text('Đã gửi lời mời'),
           style: ElevatedButton.styleFrom(
@@ -690,6 +738,7 @@ class OtherProfilePage extends StatelessWidget {
             elevation: 0,
           ),
         );
+
       default:
         return ElevatedButton.icon(
           onPressed:
@@ -1268,7 +1317,8 @@ class OtherProfilePage extends StatelessWidget {
                       child: TextButton.icon(
                         onPressed: () async {
                           final profileRepo = UsProfileRepository();
-                          final currentUser = await profileRepo.fetchUserProfile(viewerId);
+                          final currentUser = await profileRepo
+                              .fetchUserProfile(viewerId);
                           NavigationHelper().goToComment(
                             context as BuildContext,
                             postId,

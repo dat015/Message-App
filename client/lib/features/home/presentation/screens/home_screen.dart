@@ -27,6 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
   late int userId;
   late String userAvatar;
   late String userName;
+  late String email;
   ConversationRepo conversationRepo = ConversationRepo();
 
   @override
@@ -194,6 +195,7 @@ class _HomeScreenState extends State<HomeScreen> {
         currentUserId: userId,
         currentUserName: widget.user.user!.username,
         userAvatar: widget.user.user!.avatarUrl,
+        email: widget.user.user!.email,
         friendsRepo: friendsRepo,
       )
     );

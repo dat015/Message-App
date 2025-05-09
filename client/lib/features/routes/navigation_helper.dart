@@ -1,6 +1,7 @@
 import 'package:first_app/data/models/post.dart';
 import 'package:first_app/data/models/story.dart';
 import 'package:first_app/data/models/user_profile.dart';
+import 'package:first_app/features/auth/presentation/screens/login.dart';
 import 'package:first_app/features/home/presentation/diary/comment_screen.dart';
 import 'package:first_app/features/home/presentation/diary/create_post.dart';
 import 'package:first_app/features/home/presentation/diary/edit_post_screen.dart';
@@ -11,6 +12,8 @@ import 'package:first_app/features/home/presentation/users_profile/edit_profile_
 import 'package:first_app/features/home/presentation/users_profile/other_us_profile.dart';
 import 'package:first_app/features/home/presentation/friends/bloc/friends_bloc.dart';
 import 'package:flutter/material.dart';
+
+import '../home/presentation/setting/setting_screen.dart';
 
 // Class tiện ích để quản lý điều hướng
 class NavigationHelper {
@@ -52,6 +55,17 @@ class NavigationHelper {
       debugPrint('Cannot pop: No previous screen');
       _showErrorSnackBar(context, 'Không thể quay lại');
     }
+  }
+
+  Future<void> goToLogin(
+    BuildContext context, {
+    bool replace = false,
+  }) async {
+    await pushScreen(
+      context,
+      SignInScreen(),
+      replace: replace,
+    );
   }
 
   // Điều hướng đến CreatePostScreen
@@ -188,6 +202,19 @@ class NavigationHelper {
     await pushScreen(
       context,
       NewQrScannerScreen(friendsBloc: friendsBloc),
+      replace: replace,
+    );
+  }
+
+  Future<void> goToSetting(
+    BuildContext context,
+    String email,
+    FriendsBloc friendsBloc, {
+    bool replace = false,
+  }) async {
+    await pushScreen(
+      context,
+      SettingScreen(email : email),
       replace: replace,
     );
   }

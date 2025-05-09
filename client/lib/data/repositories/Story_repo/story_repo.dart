@@ -74,7 +74,6 @@ class StoryRepository {
     }
   }
 
-  // Phương thức uploadMedia không thay đổi
   Future<String> _uploadMedia({
     required XFile file,
     required String userId,
@@ -129,7 +128,6 @@ class StoryRepository {
     }
   }
 
-  // Lấy tất cả story
   Stream<List<Story>> getAllStories(String currentUserId) {
     return _firestore
         .collection('stories')
@@ -171,12 +169,15 @@ class StoryRepository {
             return filteredStories;
           } catch (e) {
             print('Error in getAllStories: $e');
-            return []; // Trả về danh sách rỗng nếu có lỗi
+            return [];
           }
         });
   }
 
-  Stream<List<Story>> getUserStories(String currentUserId, String profileUserId) {
+  Stream<List<Story>> getUserStories(
+    String currentUserId,
+    String profileUserId,
+  ) {
     return _firestore
         .collection('stories')
         .where('authorId', isEqualTo: profileUserId)
@@ -189,15 +190,16 @@ class StoryRepository {
           final isFriend = friendIds.contains(currentUserId);
           return snapshot.docs
               .map((doc) => Story.fromMap(doc.id, doc.data()))
-              .where((story) =>
-                  story.visibility == 'public' ||
-                  (story.visibility == 'friends' &&
-                      (isFriend || story.authorId == currentUserId)))
+              .where(
+                (story) =>
+                    story.visibility == 'public' ||
+                    (story.visibility == 'friends' &&
+                        (isFriend || story.authorId == currentUserId)),
+              )
               .toList();
         });
   }
 
-  // Lấy danh sách story từ bạn bè
   Stream<List<Story>> getFriendsStories(String currentUserId) {
     return _firestore
         .collection('stories')
@@ -242,7 +244,6 @@ class StoryRepository {
     }
   }
 
-  // Đánh dấu story đã xem
   Future<void> markStoryAsViewed(String storyId, String userId) async {
     try {
       await _firestore.collection('stories').doc(storyId).update({
@@ -254,7 +255,6 @@ class StoryRepository {
     }
   }
 
-  // Thêm hoặc cập nhật cảm xúc
   Future<void> addReaction(
     String storyId,
     String userId,
@@ -270,7 +270,6 @@ class StoryRepository {
     }
   }
 
-  // Xóa cảm xúc
   Future<void> removeReaction(String storyId, String userId) async {
     try {
       await _firestore.collection('stories').doc(storyId).update({
@@ -282,7 +281,6 @@ class StoryRepository {
     }
   }
 
-  // Xóa story đã hết hạn
   Future<void> deleteExpiredStories() async {
     try {
       final expiredStories =
@@ -298,5 +296,31 @@ class StoryRepository {
     } catch (e) {
       print('Error deleting expired stories: $e');
     }
+  }
+
+  Future<void> markStoryAsHighlighted(
+    String storyId,
+    bool isHighlighted,
+  ) async {
+    try {
+      await _firestore.collection('stories').doc(storyId).update({
+        'isHighlighted': isHighlighted,
+      });
+    } catch (e) {
+      throw Exception('Lỗi khi thêm sotry nổi bật: $e');
+    }
+  }
+
+  Stream<List<Story>> getHighlightedStories(String currentUserId) {
+    return _firestore
+        .collection('stories')
+        .where('authorId', isEqualTo: currentUserId)
+        .where('isHighlighted', isEqualTo: true)
+        .snapshots()
+        .map((snapshot) {
+          return snapshot.docs
+              .map((doc) => Story.fromMap(doc.id, doc.data()))
+              .toList();
+        });
   }
 }
