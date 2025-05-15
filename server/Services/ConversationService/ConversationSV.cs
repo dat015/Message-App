@@ -9,6 +9,7 @@ using server.DTO;
 using server.Models;
 using server.Services.ParticipantService;
 using server.Services.RedisService;
+using server.Services.RedisService.ChatStorage;
 using server.Services.UserService;
 using server.Services.WebSocketService;
 
@@ -21,14 +22,16 @@ namespace server.Services.ConversationService
         private readonly IParticipant _participant;
         private readonly IRedisService _redisService;
         private readonly webSocket _webSocket; // Singleton
-        
-        public ConversationSV(ApplicationDbContext context, IUserSV userSV, IParticipant participant, IRedisService redisService, webSocket webSocket)
+        private readonly IChatStorage _chatStorage;
+
+        public ConversationSV(ApplicationDbContext context, IChatStorage chatStorage, IUserSV userSV, IParticipant participant, IRedisService redisService, webSocket webSocket)
         {
             _webSocket = webSocket; // Inject the singleton instance
             _context = context;
             _userSV = userSV;
             _participant = participant;
             _redisService = redisService;
+            _chatStorage = chatStorage;
         }
 
         public async Task<Participants> AddMemberToGroup(int conversation_id, int userId)
@@ -276,65 +279,65 @@ namespace server.Services.ConversationService
             }
         }
 
-            public async Task<List<ConversationDto>> GetConversations(int userId)
+        public async Task<List<ConversationDto>> GetConversations(int userId)
+        {
+            try
             {
-                try
-                {
-                    // // Key lưu danh sách conversation của user trong Redis
-                    // string conversationKey = $"conversation:{userId}";
-                    // // Lấy dữ liệu từ Redis
-                    // var dataCache = await _redisService.GetAsync(conversationKey);
-                    // if (!string.IsNullOrEmpty(dataCache))
-                    // {
-                    //     Console.WriteLine($"Tìm thấy cache trong Redis cho key: {conversationKey}");
-                    //     // Chuyển đổi dữ liệu từ Redis thành List<ConversationDto>
-                    //     var conversationsFromCache = JsonSerializer.Deserialize<List<ConversationDto>>(dataCache);
-                    //     return conversationsFromCache ?? new List<ConversationDto>();
-                    // }
+                // // Key lưu danh sách conversation của user trong Redis
+                // string conversationKey = $"conversation:{userId}";
+                // // Lấy dữ liệu từ Redis
+                // var dataCache = await _redisService.GetAsync(conversationKey);
+                // if (!string.IsNullOrEmpty(dataCache))
+                // {
+                //     Console.WriteLine($"Tìm thấy cache trong Redis cho key: {conversationKey}");
+                //     // Chuyển đổi dữ liệu từ Redis thành List<ConversationDto>
+                //     var conversationsFromCache = JsonSerializer.Deserialize<List<ConversationDto>>(dataCache);
+                //     return conversationsFromCache ?? new List<ConversationDto>();
+                // }
 
-                    // // Nếu không có trong Redis, lấy từ database
-                    // Console.WriteLine($"Không tìm thấy cache cho key: {conversationKey}, lấy từ database...");
-                    var conversations = await _context.Conversations
-                        .Where(c => c.Participants.Any(p => p.user_id == userId))
-                        .Select(c => new ConversationDto
-                        {
-                            Id = c.id,
-                            Name = c.name,
-                            is_group = c.is_group,
-                            CreatedAt = c.created_at,
-                            LastMessage = c.lastMessage,
-                            LastMessageTime = c.lastMessageTime,
-                            img_url = c.img_url,
-                            Participants = c.Participants
-                                .Where(p => !p.is_deleted)
-                                .Select(p => new ParticipantDto
-                                {
-                                    Id = p.id,
-                                        user_id = p.user_id,
-                                    ConversationId = p.conversation_id,
-                                    Name = p.name,
-                                    IsDeleted = p.is_deleted,
-                                    img_url = p.img_url
-                                }).ToList()
-                        })
-                        .ToListAsync();
+                // // Nếu không có trong Redis, lấy từ database
+                // Console.WriteLine($"Không tìm thấy cache cho key: {conversationKey}, lấy từ database...");
+                var conversations = await _context.Conversations
+                    .Where(c => c.Participants.Any(p => p.user_id == userId))
+                    .Select(c => new ConversationDto
+                    {
+                        Id = c.id,
+                        Name = c.name,
+                        is_group = c.is_group,
+                        CreatedAt = c.created_at,
+                        LastMessage = c.lastMessage,
+                        LastMessageTime = c.lastMessageTime,
+                        img_url = c.img_url,
+                        Participants = c.Participants
+                            .Where(p => !p.is_deleted)
+                            .Select(p => new ParticipantDto
+                            {
+                                Id = p.id,
+                                user_id = p.user_id,
+                                ConversationId = p.conversation_id,
+                                Name = p.name,
+                                IsDeleted = p.is_deleted,
+                                img_url = p.img_url
+                            }).ToList()
+                    })
+                    .ToListAsync();
 
-                    // // Lưu vào Redis để dùng sau
-                    // if (conversations.Any())
-                    // {
-                    //     var conversationsJson = JsonSerializer.Serialize(conversations);
-                    //     await _redisService.SetAsync(conversationKey, conversationsJson, TimeSpan.FromHours(24)); // TTL 24h
-                    //     Console.WriteLine($"Lưu conversations vào Redis với key: {conversationKey}");
-                    // }
+                // // Lưu vào Redis để dùng sau
+                // if (conversations.Any())
+                // {
+                //     var conversationsJson = JsonSerializer.Serialize(conversations);
+                //     await _redisService.SetAsync(conversationKey, conversationsJson, TimeSpan.FromHours(24)); // TTL 24h
+                //     Console.WriteLine($"Lưu conversations vào Redis với key: {conversationKey}");
+                // }
 
-                    return conversations ?? new List<ConversationDto>();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine($"Lỗi trong GetConversations: {e.Message}");
-                    throw; // Ném lỗi để controller xử lý, tránh trả về dữ liệu không đầy đủ
-                }
+                return conversations ?? new List<ConversationDto>();
             }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Lỗi trong GetConversations: {e.Message}");
+                throw; // Ném lỗi để controller xử lý, tránh trả về dữ liệu không đầy đủ
+            }
+        }
         public async Task<Conversation> get_conversation(int conversation_id)
         {
             try
@@ -375,6 +378,48 @@ namespace server.Services.ConversationService
             {
                 Console.WriteLine(e.Message);
                 throw e;
+            }
+        }
+
+        public async Task<Conversation> UpdateConversationImage(int conversation_id, string image)
+        {
+            if (conversation_id == 0 || string.IsNullOrEmpty(image))
+            {
+                return null;
+            }
+            try
+            {
+                var existing_conversation = await _context.Conversations.FindAsync(conversation_id);
+                if(existing_conversation == null)
+                {
+                    throw new Exception("Conversation not found");
+                }
+                existing_conversation.img_url = image;
+                _context.Conversations.Update(existing_conversation);
+                await _context.SaveChangesAsync();
+                var message = new MessageDTOForAttachment
+                {
+                    content = $"Đã đổi ảnh nhóm {image}",
+                    type = "system",
+                    conversation_id = conversation_id,
+                    sender_id = 0,
+                    created_at = DateTime.Now,
+
+                };
+                var messageWithAttachment = new MessageWithAttachment
+                {
+                    Message = message,
+                    Attachment = null // Không có attachment trong trường hợp này
+                };
+                await _chatStorage.SaveMessageAsync(message, null);
+                await _webSocket.PublishMessage(messageWithAttachment);
+  
+                return existing_conversation;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error in UpdateConversationImage: {e.Message}");
+                throw; // Ném lại ngoại lệ để caller xử lý
             }
         }
 
@@ -429,7 +474,7 @@ namespace server.Services.ConversationService
                 };
 
 
-
+                await _chatStorage.SaveMessageAsync(message, null);
                 await _webSocket.PublishMessage(messageWithAttachment);
                 return conversation;
             }

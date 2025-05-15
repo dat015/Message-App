@@ -18,6 +18,7 @@ import 'package:first_app/features/home/presentation/friends/friends.dart';
 import 'package:first_app/features/home/presentation/users_profile/us_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import '../../../../routes/routes.dart';
 import '../layout/main_layout.dart';
 
@@ -102,7 +103,8 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void _removeConversation(int conversationId) {
+  void removeConversation(int conversationId) {
+    print("REMOVE $conversationId");
     setState(() {
       _conversations.removeWhere(
         (conversation) => conversation.id == conversationId,
@@ -142,6 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
       }
       setState(() {
         _conversations = conversationFilter;
+        _conversationsFuture = Future.value(conversationFilter);
       });
       return conversationFilter;
     } catch (e) {
@@ -167,8 +170,8 @@ class _HomeScreenState extends State<HomeScreen> {
       return content.replaceFirst("Đã được thêm bạn", "");
     } else if (content.startsWith("Đã xóa khỏi nhóm ")) {
       return content.replaceFirst("Đã xóa khỏi nhóm ", "");
-    } else if (content.startsWith("Đã xóa khỏi nhóm")) {
-      return content.replaceFirst("Đã xóa khỏi nhóm", "");
+    } else if (content.startsWith("Đã rời khỏi nhóm")) {
+      return content.replaceFirst("Đã rời khỏi nhóm", "");
     } else if (content.startsWith("Đã xóa bạn ")) {
       return content.replaceFirst("Đã xóa bạn ", "");
     } else if (content.startsWith("Đã xóa bạn")) {
@@ -219,80 +222,101 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  String _formatMessageTime(DateTime time) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final messageDay = DateTime(time.year, time.month, time.day);
+
+    if (messageDay == today) {
+      return DateFormat('HH:mm').format(time);
+    } else if (messageDay == today.subtract(Duration(days: 1))) {
+      return 'Yesterday';
+    } else {
+      return DateFormat('dd/MM/yyyy').format(time);
+    }
+  }
+
   // Sử dụng trong code:
-  void updateChatList(MessageWithAttachment newMessage) async {
-    final conversationId = newMessage.message.conversationId;
+  void updateChatList(MessageWithAttachment newMessage) {
+    if (newMessage.message.conversationId == null ||
+        newMessage.message.content == null) {
+      print("Invalid message received");
+      return;
+    }
+
+    final conversationId = newMessage.message.conversationId!;
     final index = _conversations.indexWhere(
       (chat) => chat.id == conversationId,
     );
 
-    // if (index == -1) {
-    //   // Conversation mới, lấy từ server
-    //   final conversation = await _fetchNewConversation(conversationId);
-    //   if (conversation != null) {
-    //     // Cập nhật lastMessage và lastMessageTime
-    //     conversation.lastMessage = newMessage.message.content;
-    //     conversation.lastMessageTime = newMessage.message.createdAt;
-
-    //     setState(() {
-    //       _conversations.insert(0, conversation);
-    //     });
-
-    //     // Subscribe vào kênh WebSocket
-    //     // _webSocketService?.connect(userId, conversationId);
-    //   }
-    // }
-
     setState(() {
-      if (newMessage.message.type == "system") {
-        if (newMessage.message.content?.startsWith("Đã đổi tên nhóm thành") ??
-            false) {
-          if (index != -1) {
-            final newName = getNewName(newMessage.message.content ?? '');
-            _conversations[index].name = newName;
-            _conversations[index].lastMessage = newMessage.message.content;
-            _conversations[index].lastMessageTime =
-                newMessage.message.createdAt;
-            _conversations[index].lastMessageSender = "Hệ thống";
-            final updatedConversation = _conversations.removeAt(index);
-            _conversations.insert(0, updatedConversation);
-          }
-        } else if (newMessage.message.content?.startsWith("Đã đổi ảnh nhóm") ??
-            false) {
-          if (index != -1) {
-            final newImageUrl = getNewName(newMessage.message.content ?? '');
-            final urlRegExp = RegExp(
-              r'^(https?:\/\/[^\s/$.?#].[^\s]*)$',
-              caseSensitive: false,
-            );
-            if (urlRegExp.hasMatch(newImageUrl)) {
-              _conversations[index].img_url = newImageUrl;
-              _conversations[index].lastMessage = newMessage.message.content;
-              _conversations[index].lastMessageTime =
-                  newMessage.message.createdAt;
-              _conversations[index].lastMessageSender = "Hệ thống";
-              final updatedConversation = _conversations.removeAt(index);
-              _conversations.insert(0, updatedConversation);
-            }
-          }
-        }
+      Conversation? conversation;
+
+      // Nếu conversation đã tồn tại
+      if (index != -1) {
+        conversation = _conversations[index];
+        _conversations.removeAt(index);
       } else {
-        // Tin nhắn thông thường
-        if (index != -1) {
-          _conversations[index].lastMessage = newMessage.message.content;
-          _conversations[index].lastMessageTime = newMessage.message.createdAt;
-          final updatedConversation = _conversations.removeAt(index);
-          print("update");
-          _conversations.insert(0, updatedConversation);
-        } else {
-          Conversation new_conversation =
-              _fetchNewConversation(newMessage.message.conversationId)
-                  as Conversation;
-          if (new_conversation != null) {
-            _conversations.insert(0, new_conversation);
+        // Tạo conversation tạm thời nếu không tìm thấy
+        conversation = Conversation(
+          id: conversationId,
+          name: 'Unknown',
+          createdAt: newMessage.message.createdAt ?? DateTime.now(),
+          isGroup: false, // Có thể cần kiểm tra thêm từ API
+          lastMessage: newMessage.message.content,
+          lastMessageTime: newMessage.message.createdAt,
+        );
+        // Gọi API để lấy thông tin conversation đầy đủ
+        _fetchNewConversation(conversationId).then((newConversation) {
+          if (newConversation != null) {
+            print("new conversation $newConversation");
+            setState(() {
+              final idx = _conversations.indexWhere(
+                (c) => c.id == conversationId,
+              );
+              if (idx != -1) {
+                _conversations[idx] = newConversation;
+              } else {
+                _conversations.insert(0, newConversation);
+              }
+              print("Thêm hoặc cập nhật conversation mới: $conversationId");
+            });
+          }
+        });
+      }
+
+      // Cập nhật thông tin conversation
+      if (newMessage.message.type == "system") {
+        conversation.lastMessage = newMessage.message.content;
+        conversation.lastMessageSender = "Hệ thống";
+        conversation.lastMessageTime = newMessage.message.createdAt;
+
+        if (newMessage.message.content!.startsWith("Đã đổi tên nhóm thành ")) {
+          conversation.name = getNewName(newMessage.message.content!);
+        } else if (newMessage.message.content!.startsWith("Đã đổi ảnh nhóm ")) {
+          final newImageUrl = getNewName(newMessage.message.content!);
+          final urlRegExp = RegExp(
+            r'^(https?:\/\/[^\s/$.?#].[^\s]*)$',
+            caseSensitive: false,
+          );
+          if (urlRegExp.hasMatch(newImageUrl)) {
+            conversation.img_url = newImageUrl;
           }
         }
       }
+      else if(newMessage.message.content!.startsWith("Đã rời khỏi nhóm ")){
+        removeConversation(conversationId);
+        return;
+      } else {
+        // Tin nhắn thông thường
+        conversation.lastMessage = newMessage.message.content;
+        conversation.lastMessageSender =
+            null; // Có thể lấy tên người gửi nếu cần
+        conversation.lastMessageTime = newMessage.message.createdAt;
+      }
+
+      _conversations.insert(0, conversation);
+      print("Cập nhật conversation: $conversationId");
     });
   }
 
@@ -398,7 +422,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       'participantId': friend.friendId,
                       'websocketService': _webSocketService,
                       'updateChatListCallback': updateChatList,
-                      'onConversationRemoved': _removeConversation,
+                      'onConversationRemoved': removeConversation,
                     },
                   );
                 } catch (e) {
@@ -436,238 +460,240 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildChatList() {
-    return FutureBuilder<List<Conversation>>(
-      future: _conversationsFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(child: Text('No conversations found'));
-        }
+    if (_conversations.isEmpty) {
+      return FutureBuilder<List<Conversation>>(
+        future: _conversationsFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text('No conversations found'));
+          }
 
-        final conversations = snapshot.data!;
-        return ListView.builder(
-          itemCount: conversations.length,
-          itemBuilder: (context, index) {
-            final chat = conversations[index];
-            return ListTile(
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 16.0,
-                vertical: 8.0,
-              ),
-              leading: Stack(
-                children: [
-                  CircleAvatar(
-                    radius: 25,
-                    backgroundImage: NetworkImage(
-                      chat.img_url ??
-                          'https://thaka.bing.com/th?q=Group+Avatar+Icon.png&w=120&h=120&c=1&rs=1&qlt=90&cb=1&dpr=1.5&pid=InlineBlock&mkt=en-WW&cc=VN&setlang=en&adlt=moderate&t=1&mw=247',
-                    ),
-                    backgroundColor: Colors.grey[200],
-                  ),
-                  if (!chat.isGroup)
-                    Positioned(
-                      right: 0,
-                      bottom: 0,
-                      child: Container(
-                        width: 14,
-                        height: 14,
-                        decoration: BoxDecoration(
-                          color: Colors.green,
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 2),
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-              title: Text(
-                chat.name,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 16,
+          // Cập nhật _conversations sau khi dữ liệu được tải
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            setState(() {
+              _conversations = snapshot.data!;
+            });
+          });
+
+          return _buildConversationListView(snapshot.data!);
+        },
+      );
+    }
+
+    return _buildConversationListView(_conversations);
+  }
+
+  Widget _buildConversationListView(List<Conversation> conversations) {
+    if (conversations.isEmpty) {
+      return const Center(child: Text('No conversations found'));
+    }
+
+    return ListView.builder(
+      itemCount: conversations.length,
+      itemBuilder: (context, index) {
+        final chat = conversations[index];
+        return ListTile(
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16.0,
+            vertical: 8.0,
+          ),
+          leading: Stack(
+            children: [
+              CircleAvatar(
+                radius: 25,
+                backgroundImage: NetworkImage(
+                  chat.img_url ??
+                      'https://thaka.bing.com/th?q=Group+Avatar+Icon.png&w=120&h=120&c=1&rs=1&qlt=90&cb=1&dpr=1.5&pid=InlineBlock&mkt=en-WW&cc=VN&setlang=en&adlt=moderate&t=1&mw=247',
                 ),
+                backgroundColor: Colors.grey[200],
               ),
-              subtitle: Text(
-                chat.lastMessage ?? 'No messages yet',
-                style: const TextStyle(
-                  color: Colors.grey,
-                  fontWeight: FontWeight.normal,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              trailing: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    chat.lastMessageTime != null
-                        ? chat.lastMessageTime!.toString().substring(11, 16)
-                        : chat.createdAt.toString().substring(11, 16),
-                    style: TextStyle(color: Colors.grey[600], fontSize: 12),
+              if (!chat.isGroup)
+                Positioned(
+                  right: 0,
+                  bottom: 0,
+                  child: Container(
+                    width: 14,
+                    height: 14,
+                    decoration: BoxDecoration(
+                      color: Colors.green,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white, width: 2),
+                    ),
                   ),
-                ],
+                ),
+            ],
+          ),
+          title: Text(
+            chat.name,
+            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+          ),
+          subtitle: Text(
+            chat.lastMessage ?? 'No messages yet',
+            style: const TextStyle(
+              color: Colors.grey,
+              fontWeight: FontWeight.normal,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          trailing: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                _formatMessageTime(chat.lastMessageTime ?? chat.createdAt),
+                style: TextStyle(color: Colors.grey[600], fontSize: 12),
               ),
-              onTap: () async {
-                final int? finalConversationId =
-                    chat.id != null
-                        ? (chat.id is int
-                            ? chat.id
-                            : int.parse(chat.id.toString()))
-                        : 0;
-                final int finalUserId =
-                    userId != null
-                        ? (userId is int
-                            ? userId
-                            : int.parse(userId.toString()))
-                        : 0;
-                int? participantId;
+            ],
+          ),
+          onTap: () async {
+            final int? finalConversationId =
+                chat.id != null
+                    ? (chat.id is int ? chat.id : int.parse(chat.id.toString()))
+                    : 0;
+            final int finalUserId =
+                userId is int ? userId : int.parse(userId.toString());
+            int? participantId;
 
-                if (!chat.isGroup && finalConversationId != 0) {
-                  print("Current User ID: $finalUserId");
-                  print("Conversation ID: $finalConversationId");
+            if (!chat.isGroup && finalConversationId != 0) {
+              print("Current User ID: $finalUserId");
+              print("Conversation ID: $finalConversationId");
 
-                  // Kiểm tra participants
-                  if (chat.participants != null &&
-                      chat.participants!.isNotEmpty) {
-                    // Lọc participants hợp lệ
-                    final validParticipants =
-                        chat.participants!
-                            .where((p) => p.user_id != 0 && !p.isDeleted)
-                            .toList();
-
-                    print(
-                      "Valid Participants: ${validParticipants.map((p) => 'ID: ${p.id}, UserID: ${p.user_id}, Name: ${p.name}').join(', ')}",
-                    );
-
-                    // Tìm participant khác
-                    final otherParticipant = validParticipants.firstWhere(
-                      (p) => p.user_id != finalUserId,
-                      orElse:
-                          () => Participants(
-                            id: 0,
-                            conversationId: finalConversationId ?? 0,
-                            user_id: 0,
-                            joinedAt: DateTime.now(),
-                            isDeleted: false,
-                            name: '',
-                          ),
-                    );
-
-                    print(
-                      "Other Participant: ID=${otherParticipant.id}, UserID=${otherParticipant.user_id}, Name=${otherParticipant.name}",
-                    );
-
-                    // Gán participantId
-                    if (otherParticipant.user_id != 0) {
-                      participantId = otherParticipant.user_id;
-                      print("Selected Participant ID: $participantId");
-                    } else {
-                      print("No valid participant found, fetching from API...");
-                      try {
-                        final updatedParticipants = await ParticipantsRepo()
-                            .getParticipants(finalConversationId ?? 0);
-                        print(
-                          "Fetched Participants: ${updatedParticipants.map((p) => 'ID: ${p.id}, UserID: ${p.user_id}, Name: ${p.name}').join(', ')}",
-                        );
-                        final updatedOtherParticipant = updatedParticipants
-                            .firstWhere(
-                              (p) =>
-                                  p.user_id != finalUserId &&
-                                  p.user_id != 0 &&
-                                  !p.isDeleted,
-                              orElse:
-                                  () => Participants(
-                                    id: 0,
-                                    conversationId: finalConversationId ?? 0,
-                                    user_id: 0,
-                                    joinedAt: DateTime.now(),
-                                    isDeleted: false,
-                                    name: '',
-                                  ),
-                            );
-                        if (updatedOtherParticipant.user_id != 0) {
-                          participantId = updatedOtherParticipant.user_id;
-                          chat.participants = updatedParticipants;
-                          print("Updated Participant ID: $participantId");
-                        } else {
-                          print("No valid participant after fetch");
-                        }
-                      } catch (e) {
-                        print("Error fetching participants: $e");
-                      }
-                    }
-                  } else {
-                    print("No participants found, fetching from API...");
-                    try {
-                      final updatedParticipants = await ParticipantsRepo()
-                          .getParticipants(finalConversationId ?? 0);
-                      print(
-                        "Fetched Participants: ${updatedParticipants.map((p) => 'ID: ${p.id}, UserID: ${p.user_id}, Name: ${p.name}').join(', ')}",
-                      );
-                      final updatedOtherParticipant = updatedParticipants
-                          .firstWhere(
-                            (p) =>
-                                p.user_id != finalUserId &&
-                                p.user_id != 0 &&
-                                !p.isDeleted,
-                            orElse:
-                                () => Participants(
-                                  id: 0,
-                                  conversationId: finalConversationId ?? 0,
-                                  user_id: 0,
-                                  joinedAt: DateTime.now(),
-                                  isDeleted: false,
-                                  name: '',
-                                ),
-                          );
-                      if (updatedOtherParticipant.user_id != 0) {
-                        participantId = updatedOtherParticipant.user_id;
-                        chat.participants = updatedParticipants;
-                        print("Updated Participant ID: $participantId");
-                      } else {
-                        print("No valid participant after fetch");
-                      }
-                    } catch (e) {
-                      print("Error fetching participants: $e");
-                    }
-                  }
-                } else {
-                  print("Group chat or invalid conversation ID");
-                }
+              if (chat.participants != null && chat.participants!.isNotEmpty) {
+                final validParticipants =
+                    chat.participants!
+                        .where((p) => p.user_id != 0 && !p.isDeleted)
+                        .toList();
 
                 print(
-                  "Navigating to ChatScreen with Participant ID: $participantId",
-                );
-                final result = await Navigator.pushNamed(
-                  context,
-                  AppRoutes.chat,
-                  arguments: {
-                    'conversationId': finalConversationId,
-                    'user_id': finalUserId,
-                    'participantId': participantId,
-                    'websocketService': _webSocketService,
-                    'updateChatListCallback': updateChatList, // Thêm callback
-                  },
+                  "Valid Participants: ${validParticipants.map((p) => 'ID: ${p.id}, UserID: ${p.user_id}, Name: ${p.name}').join(', ')}",
                 );
 
-                // Xử lý kết quả từ ChatScreen
-                if (result is Conversation) {
-                  _fetchConversations();
-                  setState(() {
-                    final index = _conversations.indexWhere(
-                      (c) => c.id == result.id,
+                final otherParticipant = validParticipants.firstWhere(
+                  (p) => p.user_id != finalUserId,
+                  orElse:
+                      () => Participants(
+                        id: 0,
+                        conversationId: finalConversationId ?? 0,
+                        user_id: 0,
+                        joinedAt: DateTime.now(),
+                        isDeleted: false,
+                        name: '',
+                      ),
+                );
+
+                print(
+                  "Other Participant: ID=${otherParticipant.id}, UserID=${otherParticipant.user_id}, Name=${otherParticipant.name}",
+                );
+
+                if (otherParticipant.user_id != 0) {
+                  participantId = otherParticipant.user_id;
+                  print("Selected Participant ID: $participantId");
+                } else {
+                  print("No valid participant found, fetching from API...");
+                  try {
+                    final updatedParticipants = await ParticipantsRepo()
+                        .getParticipants(finalConversationId ?? 0);
+                    print(
+                      "Fetched Participants: ${updatedParticipants.map((p) => 'ID: ${p.id}, UserID: ${p.user_id}, Name: ${p.name}').join(', ')}",
                     );
-                    if (index != -1) {
-                      _conversations[index] = result;
+                    final updatedOtherParticipant = updatedParticipants
+                        .firstWhere(
+                          (p) =>
+                              p.user_id != finalUserId &&
+                              p.user_id != 0 &&
+                              !p.isDeleted,
+                          orElse:
+                              () => Participants(
+                                id: 0,
+                                conversationId: finalConversationId ?? 0,
+                                user_id: 0,
+                                joinedAt: DateTime.now(),
+                                isDeleted: false,
+                                name: '',
+                              ),
+                        );
+                    if (updatedOtherParticipant.user_id != 0) {
+                      participantId = updatedOtherParticipant.user_id;
+                      chat.participants = updatedParticipants;
+                      print("Updated Participant ID: $participantId");
+                    } else {
+                      print("No valid participant after fetch");
                     }
-                  });
+                  } catch (e) {
+                    print("Error fetching participants: $e");
+                  }
                 }
+              } else {
+                print("No participants found, fetching from API...");
+                try {
+                  final updatedParticipants = await ParticipantsRepo()
+                      .getParticipants(finalConversationId ?? 0);
+                  print(
+                    "Fetched Participants: ${updatedParticipants.map((p) => 'ID: ${p.id}, UserID: ${p.user_id}, Name: ${p.name}').join(', ')}",
+                  );
+                  final updatedOtherParticipant = updatedParticipants
+                      .firstWhere(
+                        (p) =>
+                            p.user_id != finalUserId &&
+                            p.user_id != 0 &&
+                            !p.isDeleted,
+                        orElse:
+                            () => Participants(
+                              id: 0,
+                              conversationId: finalConversationId ?? 0,
+                              user_id: 0,
+                              joinedAt: DateTime.now(),
+                              isDeleted: false,
+                              name: '',
+                            ),
+                      );
+                  if (updatedOtherParticipant.user_id != 0) {
+                    participantId = updatedOtherParticipant.user_id;
+                    chat.participants = updatedParticipants;
+                    print("Updated Participant ID: $participantId");
+                  } else {
+                    print("No valid participant after fetch");
+                  }
+                } catch (e) {
+                  print("Error fetching participants: $e");
+                }
+              }
+            } else {
+              print("Group chat or invalid conversation ID");
+            }
+
+            print(
+              "Navigating to ChatScreen with Participant ID: $participantId",
+            );
+            final result = await Navigator.pushNamed(
+              context,
+              AppRoutes.chat,
+              arguments: {
+                'conversationId': finalConversationId,
+                'user_id': finalUserId,
+                'participantId': participantId,
+                'websocketService': _webSocketService,
+                'updateChatListCallback': updateChatList,
               },
             );
+
+            if (result is Conversation) {
+              setState(() {
+                final index = _conversations.indexWhere(
+                  (c) => c.id == result.id,
+                );
+                if (index != -1) {
+                  _conversations[index] = result;
+                } else {
+                  _conversations.insert(0, result);
+                }
+              });
+            }
           },
         );
       },

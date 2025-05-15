@@ -64,7 +64,9 @@ namespace server.Services.RedisService.ChatStorage
                     new HashEntry("uploaded_at", attachment?.uploaded_at.ToString("O") ?? ""),
                     new HashEntry("is_temporary", attachment?.is_temporary == true ? "true" : "false"),
                 };
+                //lưu message vào redis với key tương ứng
                 await db.HashSetAsync(messageKey, messageHash);
+                //cho thời gian sống là 7 ngày
                 await db.KeyExpireAsync(messageKey, TimeSpan.FromDays(7)); // TTL 7 ngày
                 _logger.LogInformation("Saved message {MessageId} to Redis", message.id);
 

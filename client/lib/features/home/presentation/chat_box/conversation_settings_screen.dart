@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:first_app/data/dto/message_response.dart';
 import 'package:first_app/data/providers/providers.dart';
 import 'package:first_app/data/repositories/Chat/websocket_service.dart';
@@ -11,6 +13,7 @@ import 'package:first_app/data/models/conversation.dart';
 import 'package:first_app/data/models/participants.dart';
 import 'package:first_app/data/repositories/Conversations_repo/conversations_repository.dart';
 import 'package:first_app/data/repositories/Participants_Repo/participants_repo.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 class ConversationSettingsScreen extends StatefulWidget {
@@ -18,8 +21,8 @@ class ConversationSettingsScreen extends StatefulWidget {
   final int currentUserId;
   final List<MessageWithAttachment> messages;
   final WebSocketService webSocketService;
-    final Function(int)? onConversationRemoved; // Callback để xóa conversation
-
+  final Function(int) onConversationRemoved; // Callback để xóa conversation
+  final Function(MessageWithAttachment)? updateChatListCallback;
 
   const ConversationSettingsScreen({
     super.key,
@@ -27,7 +30,8 @@ class ConversationSettingsScreen extends StatefulWidget {
     required this.currentUserId,
     required this.messages,
     required this.webSocketService,
-    required this.onConversationRemoved
+    required this.onConversationRemoved,
+    required this.updateChatListCallback,
   });
 
   @override
@@ -47,6 +51,9 @@ class _ConversationSettingsScreenState
   final UserRepo _userRepo = UserRepo();
   late ChatScreen _chatScreen;
   List<Participants> _participants = [];
+  XFile? _pickedImage;
+  String? _groupImageUrl; // Biến để lưu URL ảnh tạm thời
+  bool _isUploading = false; // Biến để theo dõi trạng thái tải
 
   bool _isLoading = true;
 
@@ -55,11 +62,14 @@ class _ConversationSettingsScreenState
     super.initState();
     _nameController.text = widget.conversation.name;
     _imageUrlController.text = widget.conversation.img_url ?? '';
+    _groupImageUrl = widget.conversation.img_url; // Khởi tạo giá trị ban đầu
     print("user id setting ${widget.currentUserId}");
     _chatScreen = ChatScreen(
       conversationId: widget.conversation.id!,
       userId: widget.currentUserId,
       websocketService: widget.webSocketService,
+      onConversationRemoved: widget.onConversationRemoved,
+      updateChatListCallback: widget.updateChatListCallback,
     );
     _loadParticipants();
   }
@@ -87,38 +97,77 @@ class _ConversationSettingsScreenState
     }
   }
 
-  Future<void> _updateGroupImage() async {
-    if (_imageUrlController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('URL ảnh không được để trống')),
-      );
-      return;
-    }
+  Future<void> _pickImage() async {
+    final ImagePicker _picker = ImagePicker();
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
 
-    // Kiểm tra định dạng URL cơ bản
-    final urlRegExp = RegExp(
-      r'^(https?:\/\/[^\s/$.?#].[^\s]*)$',
-      caseSensitive: false,
-    );
-    if (!urlRegExp.hasMatch(_imageUrlController.text)) {
+    if (image != null) {
+      setState(() {
+        _pickedImage = image;
+      });
+      await _uploadImage(image);
+    }
+  }
+
+  Future<void> _uploadImage(XFile image) async {
+    setState(() {
+      _isUploading = true;
+    });
+    try {
+      final upload = await _messageRepo.uploadFile(image);
+      var fileUrl = upload['fileUrl'];
+      if (fileUrl != null) {
+        setState(() {
+          _groupImageUrl = fileUrl;
+          _imageUrlController.text = fileUrl;
+          _pickedImage = null;
+          _updateGroupImage();
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Tải ảnh lên thất bại: Không nhận được URL'),
+          ),
+        );
+      }
+    } catch (e) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('URL ảnh không hợp lệ')));
-      return;
+      ).showSnackBar(SnackBar(content: Text('Lỗi khi tải ảnh lên: $e')));
+    } finally {
+      setState(() {
+        _isUploading = false;
+      });
     }
+  }
 
+  void _updateGroupImage() {
     try {
       _conversationRepo.updateGroupImage(
         widget.conversation.id!,
         _imageUrlController.text,
       );
       setState(() {
-        widget.conversation.img_url =
-            _imageUrlController.text; // Cập nhật URL ảnh
+        _groupImageUrl = _imageUrlController.text;
       });
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Cập nhật ảnh nhóm thành công')),
       );
+      final newMessage = MessageDTOForAttachment(
+        id: DateTime.now().millisecondsSinceEpoch, // ID tạm thời
+        senderId: widget.currentUserId,
+        content: "Đã cập nhật ảnh đại diện nhóm",
+        createdAt: DateTime.now(),
+        conversationId: widget.conversation.id!,
+        isRead: true,
+        isFile: false,
+        isRecalled: false,
+      );
+      var messageWithAttachment = MessageWithAttachment(
+        message: newMessage,
+        attachment: null,
+      );
+      widget.updateChatListCallback!(messageWithAttachment);
     } catch (e) {
       ScaffoldMessenger.of(
         context,
@@ -145,6 +194,21 @@ class _ConversationSettingsScreenState
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Cập nhật tên nhóm thành công')),
       );
+      final newMessage = MessageDTOForAttachment(
+        id: DateTime.now().millisecondsSinceEpoch, // ID tạm thời
+        senderId: widget.currentUserId,
+        content: "Đã cập nhật tên nhóm thành ${_nameController.text}",
+        createdAt: DateTime.now(),
+        conversationId: widget.conversation.id!,
+        isRead: true,
+        isFile: false,
+        isRecalled: false,
+      );
+      var messageWithAttachment = MessageWithAttachment(
+        message: newMessage,
+        attachment: null,
+      );
+      widget.updateChatListCallback!(messageWithAttachment);
     } catch (e) {
       ScaffoldMessenger.of(
         context,
@@ -241,6 +305,21 @@ class _ConversationSettingsScreenState
           widget.conversation.id!,
           widget.currentUserId,
         );
+        final newMessage = MessageDTOForAttachment(
+          id: DateTime.now().millisecondsSinceEpoch, // ID tạm thời
+          senderId: widget.currentUserId,
+          content: "Đã rời khỏi nhóm ${widget.conversation.name}",
+          createdAt: DateTime.now(),
+          conversationId: widget.conversation.id!,
+          isRead: true,
+          isFile: false,
+          isRecalled: false,
+        );
+        var messageWithAttachment = MessageWithAttachment(
+          message: newMessage,
+          attachment: null,
+        );
+        widget.updateChatListCallback!(messageWithAttachment);
         if (mounted) {
           Navigator.pop(context, true);
         }
@@ -248,6 +327,7 @@ class _ConversationSettingsScreenState
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text('Lỗi khi rời nhóm: $e')));
+        print("Lỗi khi rời nhóm: $e");
       }
     }
   }
@@ -302,10 +382,17 @@ class _ConversationSettingsScreenState
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(
-              context,
-              widget.conversation,
-            ); // Trả về conversation đã cập nhật
+            final updatedConversation = Conversation(
+              id: widget.conversation.id,
+              name: widget.conversation.name,
+              createdAt: widget.conversation.createdAt,
+              isGroup: widget.conversation.isGroup,
+              lastMessage: widget.conversation.lastMessage,
+              lastMessageTime: widget.conversation.lastMessageTime,
+              img_url: _groupImageUrl,
+              participants: widget.conversation.participants,
+            );
+            Navigator.pop(context, updatedConversation);
           },
         ),
         title: Text(
@@ -335,14 +422,38 @@ class _ConversationSettingsScreenState
                           CircleAvatar(
                             radius: 50,
                             backgroundColor: Colors.white,
-                            child: Text(
-                              widget.conversation.name[0].toUpperCase(),
-                              style: const TextStyle(
-                                fontSize: 40,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
+                            backgroundImage:
+                                _pickedImage != null
+                                    ? FileImage(File(_pickedImage!.path))
+                                    : (_groupImageUrl != null &&
+                                            _groupImageUrl!.isNotEmpty
+                                        ? NetworkImage(_groupImageUrl!)
+                                        : null),
+                            onBackgroundImageError:
+                                _groupImageUrl != null &&
+                                        _groupImageUrl!.isNotEmpty
+                                    ? (error, stackTrace) {
+                                      print(
+                                        'Error loading group image: $error',
+                                      );
+                                    }
+                                    : null,
+                            child:
+                                _pickedImage == null &&
+                                        (_groupImageUrl == null ||
+                                            _groupImageUrl!.isEmpty)
+                                    ? Text(
+                                      widget.conversation.name.isNotEmpty
+                                          ? widget.conversation.name[0]
+                                              .toUpperCase()
+                                          : 'G',
+                                      style: const TextStyle(
+                                        fontSize: 40,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    )
+                                    : null,
                           ),
                           const SizedBox(height: 16),
                           Text(
@@ -387,6 +498,41 @@ class _ConversationSettingsScreenState
                                     icon: const Icon(Icons.save),
                                     onPressed: _updateGroupName,
                                   ),
+                                ],
+                              ),
+                            ),
+                          if (widget.conversation.isGroup)
+                            _buildSettingTile(
+                              title: 'Ảnh nhóm',
+                              subtitle: 'Chọn hoặc thay đổi ảnh nhóm',
+                              icon: Icons.image,
+                              trailing: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      _isUploading
+                                          ? const CircularProgressIndicator()
+                                          : ElevatedButton(
+                                            onPressed: _pickImage,
+                                            child: const Text('Chọn ảnh'),
+                                          ),
+                                    ],
+                                  ),
+                                  // if (_pickedImage != null)
+                                  //   Padding(
+                                  //     padding: const EdgeInsets.only(top: 8),
+                                  //     child: Image.file(
+                                  //       File(_pickedImage!.path),
+                                  //       height: 50,
+                                  //       width: 50,
+                                  //       fit: BoxFit.cover,
+                                  //       errorBuilder:
+                                  //           (context, error, stackTrace) =>
+                                  //               const Icon(Icons.error),
+                                  //     ),
+                                  //   ),
                                 ],
                               ),
                             ),

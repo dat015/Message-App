@@ -84,27 +84,27 @@ namespace server.Services.WebSocketService
                 return;
             }
             try
+            {
+                // Subscribe client vào kênh Redis để nhận tin nhắn real-time
+                await subscriber.SubscribeAsync($"conversation:{conversationId}", async (channel, value) =>
                 {
-                    // Subscribe client vào kênh Redis để nhận tin nhắn real-time
-                    await subscriber.SubscribeAsync($"conversation:{conversationId}", async (channel, value) =>
+                    if (client.WebSocket.State == WebSocketState.Open)
                     {
-                        if (client.WebSocket.State == WebSocketState.Open)
+                        var msg = JsonSerializer.Deserialize<Message>(value);
+                        if (msg.sender_id != client.UserId) // Ngăn chặn vòng lặp vô hạn, Không gửi lại tin nhắn của chính client
                         {
-                            var msg = JsonSerializer.Deserialize<Message>(value);
-                            if (msg.sender_id != client.UserId) // Ngăn chặn vòng lặp vô hạn, Không gửi lại tin nhắn của chính client
-                            {
-                                var bytes = Encoding.UTF8.GetBytes(value);
-                                await client.WebSocket.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, CancellationToken.None);
-                            }
+                            var bytes = Encoding.UTF8.GetBytes(value);
+                            await client.WebSocket.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, CancellationToken.None);
                         }
-                    });
-                    Console.WriteLine($"User {client.UserId} subscribed to channel conversation:{conversationId}");
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error subscribing to channel: {ex.Message}");
-                    throw;
-                }
+                    }
+                });
+                Console.WriteLine($"User {client.UserId} subscribed to channel conversation:{conversationId}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error subscribing to channel: {ex.Message}");
+                throw;
+            }
         }
         public async Task DisConnectUserToConversationChanelAsync(int userId, int conversationId)
         {
@@ -116,27 +116,27 @@ namespace server.Services.WebSocketService
                 return;
             }
             try
+            {
+                // UnSubscribe client 
+                await subscriber.UnsubscribeAsync($"conversation:{conversationId}", async (channel, value) =>
                 {
-                    // UnSubscribe client 
-                    await subscriber.UnsubscribeAsync($"conversation:{conversationId}", async (channel, value) =>
+                    if (client.WebSocket.State == WebSocketState.Open)
                     {
-                        if (client.WebSocket.State == WebSocketState.Open)
+                        var msg = JsonSerializer.Deserialize<Message>(value);
+                        if (msg.sender_id != client.UserId) // Ngăn chặn vòng lặp vô hạn, Không gửi lại tin nhắn của chính client
                         {
-                            var msg = JsonSerializer.Deserialize<Message>(value);
-                            if (msg.sender_id != client.UserId) // Ngăn chặn vòng lặp vô hạn, Không gửi lại tin nhắn của chính client
-                            {
-                                var bytes = Encoding.UTF8.GetBytes(value);
-                                await client.WebSocket.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, CancellationToken.None);
-                            }
+                            var bytes = Encoding.UTF8.GetBytes(value);
+                            await client.WebSocket.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, CancellationToken.None);
                         }
-                    });
-                    Console.WriteLine($"User {client.UserId} subscribed to channel conversation:{conversationId}");
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error subscribing to channel: {ex.Message}");
-                    throw;
-                }
+                    }
+                });
+                Console.WriteLine($"User {client.UserId} subscribed to channel conversation:{conversationId}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error subscribing to channel: {ex.Message}");
+                throw;
+            }
         }
 
         // Xử lý yêu cầu WebSocket từ client
@@ -150,6 +150,7 @@ namespace server.Services.WebSocketService
 
             var webSocket = await context.WebSockets.AcceptWebSocketAsync();
             var client = new Client { WebSocket = webSocket };
+            
             _clients.TryAdd(client, true);
 
             Console.WriteLine($"New client connected. Total clients: {_clients.Count}, Remote: {context.Connection.RemoteIpAddress}");
@@ -240,10 +241,25 @@ namespace server.Services.WebSocketService
                    message.sender_id > 0 &&
                    message.conversation_id > 0;
         }
+        private Client GetClientByUserId(int userId)
+        {
+            return _clients.Keys.FirstOrDefault(c => c.UserId == userId && c.WebSocket.State == WebSocketState.Open);
+        }
+
 
         private async Task HandleBootup(Client client, MessageDTO message)
         {
             client.UserId = message.sender_id;
+
+            // Ngăn chặn kết nối trùng lặp
+            var existingClient = GetClientByUserId(client.UserId);
+            if (existingClient != null && existingClient != client)
+            {
+                Console.WriteLine($"User {client.UserId} is already connected. Closing previous connection.");
+                await existingClient.WebSocket.CloseAsync(WebSocketCloseStatus.PolicyViolation, "Another connection opened", CancellationToken.None);
+                _clients.TryRemove(existingClient, out _);
+            }
+
             using var scope = _serviceProvider.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             // Lấy conversation_ids từ database

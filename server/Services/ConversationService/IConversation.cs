@@ -17,5 +17,6 @@ namespace server.Services.ConversationService
         Task<Participants> AddMemberToGroup(int conversation_id, int userId);
         Task<Conversation> UpdateConversationName(int conversation_id, string name);
         Task<ConversationDto?> GetConversationDto(int userId, int conversationId);
+        Task<Conversation> UpdateConversationImage(int conversation_id, string image);
     }
 }
