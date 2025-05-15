@@ -77,6 +77,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
     // Khởi tạo ApiClient và CommentSuggestionService
     final apiClient = ApiClient(); // Cấu hình base URL nếu cần
     final commentSuggestionService = CommentSuggestionService(apiClient);
@@ -88,6 +89,7 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
+        navigatorKey: navigatorKey, // Thêm navigatorKey
         debugShowCheckedModeBanner: false,
         initialRoute: AppRoutes.login,
         onGenerateRoute: AppRoutes.generateRoute,

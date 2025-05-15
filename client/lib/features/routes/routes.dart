@@ -33,9 +33,10 @@ class AppRoutes {
         }
         debugPrint("Error: HomeScreen did not receive LoginResponse");
         return MaterialPageRoute(
-          builder: (_) => const Scaffold(
-            body: Center(child: Text('Lỗi: Không có dữ liệu đăng nhập')),
-          ),
+          builder:
+              (_) => const Scaffold(
+                body: Center(child: Text('Lỗi: Không có dữ liệu đăng nhập')),
+              ),
         );
 
       case chat:
@@ -83,11 +84,10 @@ class AppRoutes {
                 ? args['updateChatListCallback']
                     as Function(MessageWithAttachment)?
                 : null;
-        final onConversationRemoved = 
-            args['onConversationRemoved'] is Function
-                ? args['onConversationRemoved']
-                    as Function(int)?
-                : null;
+        final onConversationRemoved =
+    args['onConversationRemoved'] is Function
+        ? args['onConversationRemoved'] as Function(int)
+        : (int _) {};
 
         // Trả về màn hình ChatScreen
         return MaterialPageRoute(

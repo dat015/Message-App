@@ -1,3 +1,4 @@
+import 'package:first_app/PlatformClient/config.dart';
 import 'package:first_app/data/repositories/Chat/websocket_service.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 
@@ -30,12 +31,13 @@ class WebRTCService {
       print(
         'Renderers initialized: local=${_localRenderer.srcObject}, remote=${_remoteRenderer.srcObject}',
       );
+      var ip = Config.localNetworkIP;
 
       final config = {
         'iceServers': [
           {'urls': 'stun:stun.l.google.com:19302'},
           {
-            'urls': 'turn:172.16.11.129:3478',
+            'urls': 'turn:$ip:3478',
             'username': 'test',
             'credential': 'test',
           },
