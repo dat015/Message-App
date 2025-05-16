@@ -1,6 +1,8 @@
 import 'dart:io' as io if (dart.library.html) 'dart:html';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:first_app/data/models/user_profile.dart';
 import 'package:first_app/data/repositories/Friends_repo/friends_repo.dart';
+import 'package:first_app/data/repositories/User_Profile_repo/us_profile_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supa;
 import 'package:first_app/data/models/post.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -12,6 +14,7 @@ class PostRepo {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final supa.SupabaseClient _supabase = supa.Supabase.instance.client;
   final FriendsRepo _friendRepo = FriendsRepo();
+  final UsProfileRepository _userRepo = UsProfileRepository();
   Future<void> createPost({
     required String currentUserId,
     required String content,
@@ -221,4 +224,34 @@ class PostRepo {
       throw Exception('Lỗi khi lấy bài viết: $e');
     }
   }
+
+  Future<List<UserProfile>> getUsersFromLikerIds(List<String> likerIds) async {
+  List<UserProfile> users = [];
+  for (var idStr in likerIds) {
+    try {
+      int userId = int.parse(idStr);
+      UserProfile user = await _userRepo.fetchUserProfile(userId);
+      users.add(user);
+    } catch (e) {
+      print('Lỗi khi lấy userId $idStr: $e');
+      // Có thể bỏ qua user lỗi
+    }
+  }
+  return users;
+}
+
+
+  Future<List<UserProfile>> getPostLikers(List<String> likerIds) async {
+  if (likerIds.isEmpty) return [];
+
+  try {
+    // Gọi API lấy user từng người theo danh sách likerIds
+    List<UserProfile> users = await getUsersFromLikerIds(likerIds);
+    return users;
+  } catch (e) {
+    print('Lỗi khi lấy danh sách người thích: $e');
+    return [];
+  }
+}
+
 }

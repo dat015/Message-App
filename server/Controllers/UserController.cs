@@ -57,7 +57,7 @@ namespace server.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                throw ex;
+                return BadRequest("Error retrieving user: " + ex.Message);
             }
         }
 

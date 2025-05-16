@@ -1,8 +1,10 @@
 import 'package:first_app/data/models/post.dart';
 import 'package:first_app/data/models/story.dart';
+import 'package:first_app/data/models/user.dart';
+import 'package:first_app/data/models/user_profile.dart';
 import 'package:first_app/data/repositories/Post_repo/post_repo.dart';
 import 'package:first_app/data/repositories/Story_repo/story_repo.dart';
-import 'package:first_app/features/routes/navigation_helper.dart'; 
+import 'package:first_app/features/routes/navigation_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -30,20 +32,21 @@ class _DiaryState extends State<Diary> {
   Future<void> _deletePost(String postId) async {
     final confirm = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Xóa bài viết'),
-        content: const Text('Bạn có chắc muốn xóa bài viết này?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Hủy'),
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Xóa bài viết'),
+            content: const Text('Bạn có chắc muốn xóa bài viết này?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Hủy'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text('Xóa', style: TextStyle(color: Colors.red)),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Xóa', style: TextStyle(color: Colors.red)),
-          ),
-        ],
-      ),
     );
 
     if (confirm == true) {
@@ -53,9 +56,9 @@ class _DiaryState extends State<Diary> {
           const SnackBar(content: Text('Xóa bài viết thành công')),
         );
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Lỗi: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Lỗi: $e')));
       }
     }
   }
@@ -177,7 +180,9 @@ class _DiaryState extends State<Diary> {
                 SizedBox(
                   height: 200,
                   child: StreamBuilder<List<Story>>(
-                    stream: _storyRepo.getAllStories(widget.currentUserId.toString()),
+                    stream: _storyRepo.getAllStories(
+                      widget.currentUserId.toString(),
+                    ),
                     builder: (context, snapshot) {
                       if (snapshot.hasError) {
                         return Center(child: Text('Lỗi: ${snapshot.error}'));
@@ -190,7 +195,10 @@ class _DiaryState extends State<Diary> {
                       final stories = snapshot.data!;
                       return ListView(
                         scrollDirection: Axis.horizontal,
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
                         children: [
                           _buildStoryCard(
                             widget.userAvatar,
@@ -206,22 +214,28 @@ class _DiaryState extends State<Diary> {
                               );
                             },
                           ),
-                          ...stories.map((story) => Padding(
-                                padding: const EdgeInsets.only(left: 10),
-                                child: _buildStoryCard(
-                                  story.authorAvatar,
-                                  story.authorName,
-                                  story.isImage ? story.imageUrl! : story.authorAvatar,
-                                  isCreateNew: false,
-                                  onTap: () {
-                                    NavigationHelper().goToStory(
-                                      context,
-                                      widget.currentUserId.toString(),
-                                      [story],
-                                    );
-                                  },
+                          ...stories
+                              .map(
+                                (story) => Padding(
+                                  padding: const EdgeInsets.only(left: 10),
+                                  child: _buildStoryCard(
+                                    story.authorAvatar,
+                                    story.authorName,
+                                    story.isImage
+                                        ? story.imageUrl!
+                                        : story.authorAvatar,
+                                    isCreateNew: false,
+                                    onTap: () {
+                                      NavigationHelper().goToStory(
+                                        context,
+                                        widget.currentUserId.toString(),
+                                        [story],
+                                      );
+                                    },
+                                  ),
                                 ),
-                              )).toList(),
+                              )
+                              .toList(),
                         ],
                       );
                     },
@@ -229,7 +243,11 @@ class _DiaryState extends State<Diary> {
                 ),
 
                 const SizedBox(height: 8),
-                const Divider(height: 1, thickness: 6, color: Color(0xFFF5F5F5)),
+                const Divider(
+                  height: 1,
+                  thickness: 6,
+                  color: Color(0xFFF5F5F5),
+                ),
                 const SizedBox(height: 8),
 
                 // Posts Section Header
@@ -237,10 +255,7 @@ class _DiaryState extends State<Diary> {
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   child: Text(
                     'Bảng tin của bạn',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
               ],
@@ -315,21 +330,18 @@ class _DiaryState extends State<Diary> {
               }
 
               return SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final post = snapshot.data![index];
-                    return _buildPostItem(
-                      profileImage: widget.userAvatar,
-                      username: post.authorName ?? 'Unknown',
-                      timeAgo: _formatTimeAgo(post.createdAt),
-                      content: post.content ?? '',
-                      postImage: post.imageUrl ?? '/images/register.png',
-                      postId: post.id!,
-                      post: post,
-                    );
-                  },
-                  childCount: snapshot.data!.length,
-                ),
+                delegate: SliverChildBuilderDelegate((context, index) {
+                  final post = snapshot.data![index];
+                  return _buildPostItem(
+                    profileImage: widget.userAvatar,
+                    username: post.authorName ?? 'Unknown',
+                    timeAgo: _formatTimeAgo(post.createdAt),
+                    content: post.content ?? '',
+                    postImage: post.imageUrl ?? '/images/register.png',
+                    postId: post.id!,
+                    post: post,
+                  );
+                }, childCount: snapshot.data!.length),
               );
             },
           ),
@@ -357,11 +369,7 @@ class _DiaryState extends State<Diary> {
     }
   }
 
-  Widget _buildMediaOption(
-    IconData icon,
-    String label,
-    Color color,
-  ) {
+  Widget _buildMediaOption(IconData icon, String label, Color color) {
     return Material(
       color: Colors.grey.shade100,
       borderRadius: BorderRadius.circular(20),
@@ -371,10 +379,7 @@ class _DiaryState extends State<Diary> {
         },
         borderRadius: BorderRadius.circular(20),
         child: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 10,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -425,10 +430,14 @@ class _DiaryState extends State<Diary> {
                 child: Image.network(
                   imagePath,
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Container(
-                    color: Colors.grey.shade200,
-                    child: const Icon(Icons.broken_image, color: Colors.grey),
-                  ),
+                  errorBuilder:
+                      (context, error, stackTrace) => Container(
+                        color: Colors.grey.shade200,
+                        child: const Icon(
+                          Icons.broken_image,
+                          color: Colors.grey,
+                        ),
+                      ),
                 ),
               ),
               Positioned.fill(
@@ -460,7 +469,10 @@ class _DiaryState extends State<Diary> {
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
-                              colors: [Colors.blue.shade600, Colors.purple.shade600],
+                              colors: [
+                                Colors.blue.shade600,
+                                Colors.purple.shade600,
+                              ],
                             ),
                             shape: BoxShape.circle,
                           ),
@@ -504,6 +516,191 @@ class _DiaryState extends State<Diary> {
     );
   }
 
+  void _showLikersModal(Post post) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder:
+          (context) => Container(
+            height: MediaQuery.of(context).size.height * 0.6,
+            decoration: BoxDecoration(
+              color: Colors.grey[900],
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(20),
+              ),
+            ),
+            child: StreamBuilder<DocumentSnapshot>(
+              stream:
+                  FirebaseFirestore.instance
+                      .collection('posts')
+                      .doc(post.id)
+                      .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  );
+                }
+                if (snapshot.hasError ||
+                    !snapshot.hasData ||
+                    !snapshot.data!.exists) {
+                  return const Center(
+                    child: Text(
+                      'Lỗi khi tải dữ liệu bài viết',
+                      style: TextStyle(color: Colors.white70),
+                    ),
+                  );
+                }
+
+                final likers = post.likes;
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Người thích (${likers.length})',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.close, color: Colors.white),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Divider(color: Colors.white24),
+                    if (likers.isEmpty)
+                      Expanded(
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Icons.favorite_border,
+                                size: 48,
+                                color: Colors.white38,
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                'Chưa có ai thích bài viết này',
+                                style: TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    else
+                      Expanded(
+                        child: FutureBuilder<List<UserProfile>>(
+                          future: _postService.getPostLikers(likers),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                child: CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.white,
+                                  ),
+                                ),
+                              );
+                            }
+                            if (snapshot.hasError || !snapshot.hasData) {
+                              return const Center(
+                                child: Text(
+                                  'Lỗi khi tải danh sách người thích',
+                                  style: TextStyle(color: Colors.white70),
+                                ),
+                              );
+                            }
+
+                            final userInfos = snapshot.data!;
+                            return ListView.builder(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
+                              itemCount: userInfos.length,
+                              itemBuilder: (context, index) {
+                                final userInfo = userInfos[index];
+                                return Container(
+                                  margin: const EdgeInsets.only(bottom: 8),
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      CircleAvatar(
+                                        radius: 20,
+                                        backgroundImage:
+                                            userInfo.username.isNotEmpty
+                                                ? NetworkImage(
+                                                  userInfo.avatarUrl!,
+                                                )
+                                                : null,
+                                        child:
+                                            userInfo.avatarUrl == null
+                                                ? const Icon(
+                                                  Icons.person,
+                                                  size: 24,
+                                                  color: Colors.white,
+                                                )
+                                                : null,
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: Text(
+                                          userInfo.username,
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: const EdgeInsets.all(6),
+                                        decoration: BoxDecoration(
+                                          color: Colors.red.withOpacity(0.2),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: const Icon(
+                                          Icons.favorite,
+                                          color: Colors.red,
+                                          size: 18,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                  ],
+                );
+              },
+            ),
+          ),
+    );
+  }
+
   Widget _buildPostItem({
     required String profileImage,
     required String username,
@@ -513,15 +710,14 @@ class _DiaryState extends State<Diary> {
     required String postId,
     required Post post,
   }) {
-    final isOwnPost = post.authorId.toString() == widget.currentUserId.toString();
-
+    final isOwnPost =
+        post.authorId.toString() == widget.currentUserId.toString();
     final authorAvatars = post.authorAvatar;
+
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
       elevation: 1,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -559,71 +755,67 @@ class _DiaryState extends State<Diary> {
                   ),
                 ),
                 if (isOwnPost)
-                IconButton(
-                  icon: Icon(
-                    Icons.more_horiz,
-                    color: Colors.grey.shade600,
-                  ),
-                  onPressed: () {
-                    showModalBottomSheet(
-                      context: context,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-                      ),
-                      builder: (context) => Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          ListTile(
-                            leading: const Icon(Icons.edit),
-                            title: const Text('Chỉnh sửa bài viết'),
-                            onTap: () {
-                              NavigationHelper().pop(context); // Đóng bottom sheet
-                              NavigationHelper().goToEditPost(
-                                context,
-                                post,
-                                widget.currentUserId.toString(),
-                                widget.currentUserName,
-                                widget.userAvatar,
-                              );
-                            },
+                  IconButton(
+                    icon: Icon(Icons.more_horiz, color: Colors.grey.shade600),
+                    onPressed: () {
+                      showModalBottomSheet(
+                        context: context,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(16),
                           ),
-                          ListTile(
-                            leading: const Icon(Icons.delete, color: Colors.red),
-                            title: const Text(
-                              'Xóa bài viết',
-                              style: TextStyle(color: Colors.red),
+                        ),
+                        builder:
+                            (context) => Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                ListTile(
+                                  leading: const Icon(Icons.edit),
+                                  title: const Text('Chỉnh sửa bài viết'),
+                                  onTap: () {
+                                    NavigationHelper().pop(context);
+                                    NavigationHelper().goToEditPost(
+                                      context,
+                                      post,
+                                      widget.currentUserId.toString(),
+                                      widget.currentUserName,
+                                      widget.userAvatar,
+                                    );
+                                  },
+                                ),
+                                ListTile(
+                                  leading: const Icon(
+                                    Icons.delete,
+                                    color: Colors.red,
+                                  ),
+                                  title: const Text(
+                                    'Xóa bài viết',
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                  onTap: () {
+                                    NavigationHelper().pop(context);
+                                    _deletePost(postId);
+                                  },
+                                ),
+                              ],
                             ),
-                            onTap: () {
-                              NavigationHelper().pop(context); // Đóng bottom sheet
-                              _deletePost(postId);
-                            },
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
+                      );
+                    },
+                  ),
               ],
             ),
           ),
-
           // Post content
           if (content.isNotEmpty)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-              child: Text(
-                content,
-                style: const TextStyle(fontSize: 16),
-              ),
+              child: Text(content, style: const TextStyle(fontSize: 16)),
             ),
-
           // Post image
           if (postImage != '/images/register.png')
             Container(
               margin: const EdgeInsets.only(top: 8),
-              constraints: const BoxConstraints(
-                maxHeight: 400,
-              ),
+              constraints: const BoxConstraints(maxHeight: 400),
               width: double.infinity,
               child: ClipRRect(
                 borderRadius: const BorderRadius.only(
@@ -633,111 +825,144 @@ class _DiaryState extends State<Diary> {
                 child: Image.network(
                   postImage,
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Image.asset(
-                    '/images/face.png',
-                    fit: BoxFit.cover,
-                  ),
+                  errorBuilder:
+                      (context, error, stackTrace) =>
+                          Image.asset('/images/face.png', fit: BoxFit.cover),
                 ),
               ),
             ),
-
           // Post actions
           Padding(
             padding: const EdgeInsets.all(12),
-            child: Row(
-              children: [
-                Expanded(
-                  child: StreamBuilder<DocumentSnapshot>(
-                    stream: FirebaseFirestore.instance.collection('posts').doc(postId).snapshots(),
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData || !snapshot.data!.exists) {
-                        return const SizedBox();
-                      }
+            child: StreamBuilder<DocumentSnapshot>(
+              stream:
+                  FirebaseFirestore.instance
+                      .collection('posts')
+                      .doc(postId)
+                      .snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData || !snapshot.data!.exists) {
+                  return const SizedBox();
+                }
+                final postData = snapshot.data!.data() as Map<String, dynamic>;
+                final post = Post.fromMap(postId, postData);
+                final isLiked = post.likes.contains(
+                  widget.currentUserId.toString(),
+                );
 
-                      final postData = snapshot.data!.data() as Map<String, dynamic>;
-                      final post = Post.fromMap(postId, postData);
-                      final isLiked = post.likes.contains(widget.currentUserId.toString());
-
-                      return TextButton.icon(
-                        onPressed: () async {
-                          try {
-                            await _postService.toggleLike(
-                              postId,
-                              widget.currentUserId.toString(),
-                            );
-                          } catch (e) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Lỗi: $e')),
+                return Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(
+                        isLiked ? Icons.favorite : Icons.favorite_border,
+                        color: isLiked ? Colors.red : Colors.grey.shade600,
+                        size: 20,
+                      ),
+                      onPressed: () async {
+                        try {
+                          await _postService.toggleLike(
+                            postId,
+                            widget.currentUserId.toString(),
+                          );
+                        } catch (e) {
+                          ScaffoldMessenger.of(
+                            context,
+                          ).showSnackBar(SnackBar(content: Text('Lỗi: $e')));
+                        }
+                      },
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        if (post.likes.isNotEmpty) {
+                          _showLikersModal(post);
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Chưa có ai thích bài viết này'),
+                            ),
+                          );
+                        }
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.black54,
+                          borderRadius: BorderRadius.circular(24),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.favorite,
+                              color: Colors.red,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              '${post.likes.length}',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const Spacer(),
+                    TextButton.icon(
+                      onPressed: () {
+                        NavigationHelper().goToComment(
+                          context,
+                          postId,
+                          widget.currentUserId.toString(),
+                          widget.currentUserName,
+                          widget.userAvatar,
+                          post.content ?? '',
+                        );
+                      },
+                      icon: Icon(
+                        Icons.chat_bubble_outline,
+                        color: Colors.grey.shade600,
+                        size: 20,
+                      ),
+                      label: StreamBuilder<QuerySnapshot>(
+                        stream:
+                            FirebaseFirestore.instance
+                                .collection('comments')
+                                .where('postId', isEqualTo: postId)
+                                .snapshots(),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData) {
+                            return const Text(
+                              '0',
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 14,
+                              ),
                             );
                           }
+                          final commentCount = snapshot.data!.docs.length;
+                          return Text(
+                            '$commentCount',
+                            style: TextStyle(
+                              color: Colors.grey.shade600,
+                              fontSize: 14,
+                            ),
+                          );
                         },
-                        icon: Icon(
-                          isLiked ? Icons.favorite : Icons.favorite_border,
-                          color: isLiked ? Colors.red : Colors.grey.shade600,
-                          size: 20,
-                        ),
-                        label: Text(
-                          '${post.likes.length}',
-                          style: TextStyle(
-                            color: Colors.grey.shade600,
-                            fontSize: 14,
-                          ),
-                        ),
-                        style: TextButton.styleFrom(
-                          padding: EdgeInsets.zero,
-                          foregroundColor: Colors.grey.shade600,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                TextButton.icon(
-                  onPressed: () {
-                    NavigationHelper().goToComment(
-                      context,
-                      postId,
-                      widget.currentUserId.toString(),
-                      widget.currentUserName,
-                      widget.userAvatar,
-                      post.content ?? '',
-                    );
-                  },
-                  icon: Icon(
-                    Icons.chat_bubble_outline,
-                    color: Colors.grey.shade600,
-                    size: 20,
-                  ),
-                  label: StreamBuilder<QuerySnapshot>(
-                    stream: FirebaseFirestore.instance
-                        .collection('comments')
-                        .where('postId', isEqualTo: postId)
-                        .snapshots(),
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData) {
-                        return const Text(
-                          '0',
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 14,
-                          ),
-                        );
-                      }
-                      final commentCount = snapshot.data!.docs.length;
-                      return Text(
-                        '$commentCount',
-                        style: TextStyle(
-                          color: Colors.grey.shade600,
-                          fontSize: 14,
-                        ),
-                      );
-                    },
-                  ),
-                  style: TextButton.styleFrom(
-                    padding: EdgeInsets.zero,
-                    foregroundColor: Colors.grey.shade600,
-                  ),
-                ),
-              ],
+                      ),
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        foregroundColor: Colors.grey.shade600,
+                      ),
+                    ),
+                  ],
+                );
+              },
             ),
           ),
         ],
