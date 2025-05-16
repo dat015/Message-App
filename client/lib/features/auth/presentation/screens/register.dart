@@ -102,6 +102,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
   // Hàm gửi dữ liệu đăng ký
   Future<void> sendDataRegister() async {
     if (_formSignupKey.currentState!.validate()) {
+      // Check if avatar image is selected
+      if (_avatarImage == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Vui lòng chọn ảnh đại diện'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
       if (_passwordController.text != _confirmPasswordController.text) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -134,10 +144,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         username: _nameController.text,
         password: _passwordController.text,
         email: _emailController.text,
-        avatarUrl:
-            _avatarImage != null
-                ? base64Encode(await _avatarImage!.readAsBytes())
-                : 'https://i.pravatar.cc/150?img=3',
+        avatarUrl: base64Encode(await _avatarImage!.readAsBytes()),
         birthday: _selectedDate,
         gender: _genderRadioBtnVal == 0,
       );
@@ -264,6 +271,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
         if (value == null || value.isEmpty) {
           return 'Please enter Email';
         }
+        // Email format validation using regex
+        if (!RegExp(
+          r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+        ).hasMatch(value)) {
+          return 'Please enter a valid email address';
+        }
         return null;
       },
       decoration: InputDecoration(
@@ -285,6 +298,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'Please enter Password';
+        }
+        if (value.length < 6) {
+          return 'Password must be at least 6 characters long';
+        }
+        if (!RegExp(r'^[A-Z]').hasMatch(value)) {
+          return 'Password must start with an uppercase letter';
+        }
+        if (!RegExp(r'[0-9]').hasMatch(value)) {
+          return 'Password must contain at least one digit';
+        }
+        if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value)) {
+          return 'Password must contain at least one special character';
         }
         return null;
       },
@@ -336,6 +361,29 @@ class _SignUpScreenState extends State<SignUpScreen> {
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'Please enter Date of Birth';
+        }
+        // Parse the date from DD/MM/YYYY format
+        try {
+          final parts = value.split('/');
+          if (parts.length != 3) {
+            return 'Invalid date format. Use DD/MM/YYYY';
+          }
+          final day = int.parse(parts[0]);
+          final month = int.parse(parts[1]);
+          final year = int.parse(parts[2]);
+          final dob = DateTime(year, month, day);
+          final today = DateTime.now();
+          // Calculate age
+          int age = today.year - dob.year;
+          if (today.month < dob.month ||
+              (today.month == dob.month && today.day < dob.day)) {
+            age--;
+          }
+          if (age < 18) {
+            return 'You must be at least 18 years old';
+          }
+        } catch (e) {
+          return 'Invalid date format';
         }
         return null;
       },

@@ -50,14 +50,10 @@ namespace server.Models
         
         [NotMapped]
         public string RelationshipStatus { get; set; }
-
-        public ICollection<Story>? stories { get; set; }
-        public ICollection<StoryReaction>? storyReactions { get; set; }
         public ICollection<Notification>? notifications { get; set; }
         public ICollection<Role_of_User>? role_of_users { get; set; }
         public ICollection<Message>? messages { get; set; }
         public ICollection<Participants>? participants { get; set; }
-        public ICollection<StoryViewers>? storyViewers { get; set; }
         public ICollection<GroupSettings>? groupSettings { get; set; }
         public ICollection<MessageStatus>? messageStatuses { get; set; }
         [InverseProperty("Sender")]

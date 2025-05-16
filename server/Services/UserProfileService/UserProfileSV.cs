@@ -49,6 +49,7 @@ namespace server.Services
             user.location = updatedUser.location;
             user.birthday = updatedUser.birthday;
             user.gender = updatedUser.gender;
+            user.avatar_url = updatedUser.avatar_url;
 
             _context.Users.Update(user);
             await _context.SaveChangesAsync();

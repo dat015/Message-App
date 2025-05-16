@@ -591,14 +591,14 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                             onTap: _takePhoto,
                             screenWidth: screenWidth,
                           ),
-                          SizedBox(width: screenWidth * 0.03),
-                          _buildOptionButton(
-                            icon: Icons.tag,
-                            label: 'Gắn thẻ',
-                            color: Colors.orange,
-                            onTap: _tagFriends,
-                            screenWidth: screenWidth,
-                          ),
+                          // SizedBox(width: screenWidth * 0.03),
+                          // _buildOptionButton(
+                          //   icon: Icons.tag,
+                          //   label: 'Gắn thẻ',
+                          //   color: Colors.orange,
+                          //   onTap: _tagFriends,
+                          //   screenWidth: screenWidth,
+                          // ),
                           SizedBox(width: screenWidth * 0.03),
                           _buildOptionButton(
                             icon: Icons.auto_awesome,

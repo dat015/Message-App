@@ -54,12 +54,12 @@ class _ChangePasswordState extends State<ChangePassword> {
 
       if (newPassword != confirmPassword) {
         ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Mật khẩu không khớp!'),
-          backgroundColor: Colors.red,
-        ),
-      );
-      return;
+          const SnackBar(
+            content: Text('Mật khẩu không khớp!'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
       }
 
       final AuthRepository authRepository = AuthRepositoryImpl(ApiClient());
@@ -81,10 +81,19 @@ class _ChangePasswordState extends State<ChangePassword> {
       obscuringCharacter: '*',
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return 'Please enter new password';
+          return 'Please enter Password';
         }
         if (value.length < 6) {
-          return 'Password must be at least 6 characters';
+          return 'Password must be at least 6 characters long';
+        }
+        if (!RegExp(r'^[A-Z]').hasMatch(value)) {
+          return 'Password must start with an uppercase letter';
+        }
+        if (!RegExp(r'[0-9]').hasMatch(value)) {
+          return 'Password must contain at least one digit';
+        }
+        if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value)) {
+          return 'Password must contain at least one special character';
         }
         return null;
       },

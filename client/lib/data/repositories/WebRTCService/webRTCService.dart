@@ -35,7 +35,7 @@ class WebRTCService {
         'iceServers': [
           {'urls': 'stun:stun.l.google.com:19302'},
           {
-            'urls': 'turn:172.16.11.129:3478',
+            'urls': 'turn:192.168.1.23:3478',
             'username': 'test',
             'credential': 'test',
           },

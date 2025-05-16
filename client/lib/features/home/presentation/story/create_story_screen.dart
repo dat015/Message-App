@@ -1027,38 +1027,38 @@ class _CreateStoryScreenState extends State<CreateStoryScreen> with SingleTicker
                     },
                     color: _primaryColor,
                   ),
-                _buildCircleButton(
-                  icon: Icons.filter,
-                  label: 'Bộ lọc',
-                  onPressed: () {
-                    _showFilterOptions();
-                  },
-                  color: Colors.orangeAccent,
-                ),
-                _buildCircleButton(
-                  icon: Icons.text_fields,
-                  label: 'Thêm chữ',
-                  onPressed: () {
-                    _showTextEditor();
-                  },
-                  color: Colors.pinkAccent,
-                ),
-                _buildCircleButton(
-                  icon: Icons.emoji_emotions,
-                  label: 'Sticker',
-                  onPressed: () {
-                    _showError('Tính năng sẽ sớm ra mắt!');
-                  },
-                  color: Colors.amberAccent,
-                ),
-                _buildCircleButton(
-                  icon: Icons.brush,
-                  label: 'Vẽ',
-                  onPressed: () {
-                    _showError('Tính năng sẽ sớm ra mắt!');
-                  },
-                  color: Colors.purpleAccent,
-                ),
+                // _buildCircleButton(
+                //   icon: Icons.filter,
+                //   label: 'Bộ lọc',
+                //   onPressed: () {
+                //     _showFilterOptions();
+                //   },
+                //   color: Colors.orangeAccent,
+                // ),
+                // _buildCircleButton(
+                //   icon: Icons.text_fields,
+                //   label: 'Thêm chữ',
+                //   onPressed: () {
+                //     _showTextEditor();
+                //   },
+                //   color: Colors.pinkAccent,
+                // ),
+                // _buildCircleButton(
+                //   icon: Icons.emoji_emotions,
+                //   label: 'Sticker',
+                //   onPressed: () {
+                //     _showError('Tính năng sẽ sớm ra mắt!');
+                //   },
+                //   color: Colors.amberAccent,
+                // ),
+                // _buildCircleButton(
+                //   icon: Icons.brush,
+                //   label: 'Vẽ',
+                //   onPressed: () {
+                //     _showError('Tính năng sẽ sớm ra mắt!');
+                //   },
+                //   color: Colors.purpleAccent,
+                // ),
               ],
             ),
           ),

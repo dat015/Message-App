@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Message_app.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class UpdateStoryReactionForeignKeys : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,7 +19,11 @@ namespace Message_app.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     is_group = table.Column<bool>(type: "bit", nullable: false),
-                    created_at = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    lastMessageTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    lastMessage = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    lastMessageSender = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    img_url = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -48,14 +52,14 @@ namespace Message_app.Migrations
                     username = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     password = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     passwordSalt = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    email = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
                     avatar_url = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     birthday = table.Column<DateOnly>(type: "date", nullable: false),
                     created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
                     gender = table.Column<bool>(type: "bit", nullable: false),
-                    interests = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    location = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    bio = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false)
+                    interests = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    location = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    bio = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -81,12 +85,14 @@ namespace Message_app.Migrations
                         name: "FK_FriendRequests_Users_ReceiverId",
                         column: x => x.ReceiverId,
                         principalTable: "Users",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_FriendRequests_Users_SenderId",
                         column: x => x.SenderId,
                         principalTable: "Users",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -107,12 +113,14 @@ namespace Message_app.Migrations
                         name: "FK_Friends_Users_UserId1",
                         column: x => x.UserId1,
                         principalTable: "Users",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Friends_Users_UserId2",
                         column: x => x.UserId2,
                         principalTable: "Users",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -137,12 +145,41 @@ namespace Message_app.Migrations
                         name: "FK_GroupSettings_Conversations_ConversationId",
                         column: x => x.ConversationId,
                         principalTable: "Conversations",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_GroupSettings_Users_CreatedBy",
                         column: x => x.CreatedBy,
                         principalTable: "Users",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "messageDeletions",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    user_id = table.Column<int>(type: "int", nullable: false),
+                    conversation_id = table.Column<int>(type: "int", nullable: false),
+                    cleared_at = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_messageDeletions", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_messageDeletions_Conversations_conversation_id",
+                        column: x => x.conversation_id,
+                        principalTable: "Conversations",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_messageDeletions_Users_user_id",
+                        column: x => x.user_id,
+                        principalTable: "Users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -157,7 +194,8 @@ namespace Message_app.Migrations
                     type = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     isFile = table.Column<bool>(type: "bit", nullable: false),
                     created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    conversation_id = table.Column<int>(type: "int", nullable: false)
+                    conversation_id = table.Column<int>(type: "int", nullable: false),
+                    isRecalled = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -166,12 +204,14 @@ namespace Message_app.Migrations
                         name: "FK_Messages_Conversations_conversation_id",
                         column: x => x.conversation_id,
                         principalTable: "Conversations",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Messages_Users_sender_id",
                         column: x => x.sender_id,
                         principalTable: "Users",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -216,7 +256,8 @@ namespace Message_app.Migrations
                         name: "FK_Notifications_Users_user_id",
                         column: x => x.user_id,
                         principalTable: "Users",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -237,7 +278,8 @@ namespace Message_app.Migrations
                         name: "FK_OTPs_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -248,7 +290,11 @@ namespace Message_app.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     conversation_id = table.Column<int>(type: "int", nullable: false),
                     user_id = table.Column<int>(type: "int", nullable: false),
+                    role = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     joined_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    adder = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    img_url = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     is_deleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -258,12 +304,14 @@ namespace Message_app.Migrations
                         name: "FK_Participants_Conversations_conversation_id",
                         column: x => x.conversation_id,
                         principalTable: "Conversations",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Participants_Users_user_id",
                         column: x => x.user_id,
                         principalTable: "Users",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -282,33 +330,14 @@ namespace Message_app.Migrations
                         name: "FK_Role_of_User_Role_role_id",
                         column: x => x.role_id,
                         principalTable: "Role",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Role_of_User_Users_user_id",
                         column: x => x.user_id,
                         principalTable: "Users",
-                        principalColumn: "id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Stories",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    user_id = table.Column<int>(type: "int", nullable: false),
-                    content = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    expires_at = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Stories", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_Stories_Users_user_id",
-                        column: x => x.user_id,
-                        principalTable: "Users",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -331,58 +360,6 @@ namespace Message_app.Migrations
                         name: "FK_Attachments_Messages_message_id",
                         column: x => x.message_id,
                         principalTable: "Messages",
-                        principalColumn: "id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "StoryReactions",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    user_id = table.Column<int>(type: "int", nullable: false),
-                    story_id = table.Column<int>(type: "int", nullable: false),
-                    reaction_type = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    is_deleted = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_StoryReactions", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_StoryReactions_Stories_story_id",
-                        column: x => x.story_id,
-                        principalTable: "Stories",
-                        principalColumn: "id");
-                    table.ForeignKey(
-                        name: "FK_StoryReactions_Users_user_id",
-                        column: x => x.user_id,
-                        principalTable: "Users",
-                        principalColumn: "id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "StoryViewers",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    story_id = table.Column<int>(type: "int", nullable: false),
-                    user_id = table.Column<int>(type: "int", nullable: false),
-                    viewed_at = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_StoryViewers", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_StoryViewers_Stories_story_id",
-                        column: x => x.story_id,
-                        principalTable: "Stories",
-                        principalColumn: "id");
-                    table.ForeignKey(
-                        name: "FK_StoryViewers_Users_user_id",
-                        column: x => x.user_id,
-                        principalTable: "Users",
                         principalColumn: "id");
                 });
 
@@ -421,6 +398,16 @@ namespace Message_app.Migrations
                 name: "IX_GroupSettings_CreatedBy",
                 table: "GroupSettings",
                 column: "CreatedBy");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_messageDeletions_conversation_id",
+                table: "messageDeletions",
+                column: "conversation_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_messageDeletions_user_id",
+                table: "messageDeletions",
+                column: "user_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Messages_conversation_id",
@@ -466,31 +453,6 @@ namespace Message_app.Migrations
                 name: "IX_Role_of_User_user_id",
                 table: "Role_of_User",
                 column: "user_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Stories_user_id",
-                table: "Stories",
-                column: "user_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_StoryReactions_story_id",
-                table: "StoryReactions",
-                column: "story_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_StoryReactions_user_id",
-                table: "StoryReactions",
-                column: "user_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_StoryViewers_story_id",
-                table: "StoryViewers",
-                column: "story_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_StoryViewers_user_id",
-                table: "StoryViewers",
-                column: "user_id");
         }
 
         /// <inheritdoc />
@@ -509,6 +471,9 @@ namespace Message_app.Migrations
                 name: "GroupSettings");
 
             migrationBuilder.DropTable(
+                name: "messageDeletions");
+
+            migrationBuilder.DropTable(
                 name: "MessageStatus");
 
             migrationBuilder.DropTable(
@@ -524,19 +489,10 @@ namespace Message_app.Migrations
                 name: "Role_of_User");
 
             migrationBuilder.DropTable(
-                name: "StoryReactions");
-
-            migrationBuilder.DropTable(
-                name: "StoryViewers");
-
-            migrationBuilder.DropTable(
                 name: "Messages");
 
             migrationBuilder.DropTable(
                 name: "Role");
-
-            migrationBuilder.DropTable(
-                name: "Stories");
 
             migrationBuilder.DropTable(
                 name: "Conversations");

@@ -18,9 +18,6 @@ namespace server.Data
             public DbSet<Participants> Participants { get; set; }
             public DbSet<Role_of_User> Role_of_User { get; set; }
             public DbSet<Role> Role { get; set; }
-            public DbSet<Story> Stories { get; set; }
-            public DbSet<StoryReaction> StoryReactions { get; set; }
-            public DbSet<StoryViewers> StoryViewers { get; set; }
             public DbSet<OTPs> OTPs { get; set; }
             public DbSet<FriendRequest> FriendRequests { get; set; }
             public DbSet<Friend> Friends { get; set; }

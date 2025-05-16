@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:first_app/core/utils/auth_utils.dart';
 import 'package:first_app/data/api/api_client.dart';
 import 'package:first_app/data/dto/register_dto.dart';
@@ -103,9 +104,21 @@ class _OtpState extends State<Otp> {
           ),
         );
       }
-    } catch (e) {
-      throw Exception('Xác thực OTP thất bại: $e');
-    }
+    } catch (e, stackTrace) {
+    log(
+      'Lỗi xác thực OTP: $e',
+      name: '_verifyOTP',
+      error: e,
+      stackTrace: stackTrace,
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Xác thực OTP thất bại. Vui lòng thử lại.'),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
   }
 
   @override
@@ -163,7 +176,7 @@ class _OtpState extends State<Otp> {
         shape: BoxShape.circle,
       ),
       child: Image.asset(
-        '../assets/images/illustration-3.png',
+        'assets/images/illustration-3.png',
         fit: BoxFit.contain,
       ),
     );
