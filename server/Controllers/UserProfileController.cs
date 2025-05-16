@@ -51,6 +51,17 @@ namespace server.Controllers
                 return BadRequest(new { message = "Invalid profile data" });
             }
 
+            // 🔍 Log dữ liệu nhận được từ client
+            Console.WriteLine("== Received UpdateProfileDTO ==");
+            Console.WriteLine($"UserId: {userId}");
+            Console.WriteLine($"Username: {updateProfileDTO.Username}");
+            Console.WriteLine($"Bio: {updateProfileDTO.Bio}");
+            Console.WriteLine($"Interests: {updateProfileDTO.Interests}");
+            Console.WriteLine($"Location: {updateProfileDTO.Location}");
+            Console.WriteLine($"Birthday: {updateProfileDTO.Birthday}");
+            Console.WriteLine($"Gender: {updateProfileDTO.gender}");
+            Console.WriteLine($"AvatarUrl: {updateProfileDTO.AvatarUrl}");
+
             var updatedUser = new User
             {
                 id = userId,
@@ -59,7 +70,8 @@ namespace server.Controllers
                 interests = updateProfileDTO.Interests,
                 location = updateProfileDTO.Location,
                 birthday = updateProfileDTO.Birthday,
-                gender = updateProfileDTO.gender
+                gender = updateProfileDTO.gender,
+                avatar_url = updateProfileDTO.AvatarUrl
             };
 
             try
@@ -69,10 +81,12 @@ namespace server.Controllers
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"❌ Error updating profile: {ex.Message}");
                 return BadRequest(new { message = ex.Message });
             }
         }
-        
+
+
         [HttpPost("upload")]
         public async Task<IActionResult> UploadImage(IFormFile file)
         {

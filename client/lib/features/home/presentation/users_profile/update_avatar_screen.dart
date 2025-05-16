@@ -7,7 +7,8 @@ import 'package:first_app/data/models/user_profile.dart';
 
 class UpdateAvatarScreen extends StatefulWidget {
   final UserProfile userProfile;
-  const UpdateAvatarScreen({Key? key, required this.userProfile}) : super(key: key);
+  const UpdateAvatarScreen({Key? key, required this.userProfile})
+    : super(key: key);
 
   @override
   _UpdateAvatarScreenState createState() => _UpdateAvatarScreenState();
@@ -42,6 +43,7 @@ class _UpdateAvatarScreenState extends State<UpdateAvatarScreen> {
 
   Future<void> _updateAvatar() async {
     if (_selectedImage == null) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Vui lòng chọn ảnh'),
@@ -52,16 +54,21 @@ class _UpdateAvatarScreenState extends State<UpdateAvatarScreen> {
       return;
     }
 
+    if (!mounted) return;
     setState(() => _isLoading = true);
-    try {
-      // Upload ảnh lên server
-      final imageUrl = await _profileRepo.uploadImage(_selectedImage!);
 
-      // Cập nhật profile với URL ảnh mới
+    try {
+      final imageUrl = await _profileRepo.uploadImage(_selectedImage!);
+      print("✅ Image URL returned: $imageUrl"); // Check if value exists
+      if (imageUrl.isEmpty) {
+        throw Exception('URL ảnh trả về rỗng');
+      }
+
       final updatedProfile = widget.userProfile.copyWith(avatarUrl: imageUrl);
+      print("✅ avatarUrl copied: $imageUrl");
+      print("📦 updatedProfile.avatarUrl: ${updatedProfile.avatarUrl}");
       await _profileRepo.updateUserProfile(updatedProfile);
 
-      // Nếu chọn chia sẻ lên bảng tin
       if (_shareToFeed) {
         await _postRepo.createPost(
           currentUserId: widget.userProfile.id.toString(),
@@ -73,6 +80,7 @@ class _UpdateAvatarScreenState extends State<UpdateAvatarScreen> {
         );
       }
 
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Row(
@@ -86,8 +94,10 @@ class _UpdateAvatarScreenState extends State<UpdateAvatarScreen> {
           behavior: SnackBarBehavior.floating,
         ),
       );
+
       Navigator.pop(context);
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Lỗi: $e'),
@@ -96,6 +106,7 @@ class _UpdateAvatarScreenState extends State<UpdateAvatarScreen> {
         ),
       );
     } finally {
+      if (!mounted) return;
       setState(() => _isLoading = false);
     }
   }
@@ -103,7 +114,7 @@ class _UpdateAvatarScreenState extends State<UpdateAvatarScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
@@ -139,39 +150,44 @@ class _UpdateAvatarScreenState extends State<UpdateAvatarScreen> {
                                 color: Colors.black.withOpacity(0.1),
                                 blurRadius: 10,
                                 spreadRadius: 2,
-                              )
+                              ),
                             ],
                           ),
-                          child: _selectedImage != null
-                              ? ClipOval(
-                                  child: Image.file(
-                                    _selectedImage!,
-                                    fit: BoxFit.cover,
-                                    width: 220,
-                                    height: 220,
-                                  ),
-                                )
-                              : widget.userProfile.avatarUrl!.isNotEmpty
+                          child:
+                              _selectedImage != null
                                   ? ClipOval(
-                                      child: Image.network(
-                                        widget.userProfile.avatarUrl!,
-                                        fit: BoxFit.cover,
-                                        width: 220,
-                                        height: 220,
-                                        errorBuilder: (context, error, stackTrace) {
-                                          return Icon(
-                                            Icons.person,
-                                            size: 100,
-                                            color: Colors.grey.shade400,
-                                          );
-                                        },
-                                      ),
-                                    )
-                                  : Icon(
-                                      Icons.person,
-                                      size: 100,
-                                      color: Colors.grey.shade400,
+                                    child: Image.file(
+                                      _selectedImage!,
+                                      fit: BoxFit.cover,
+                                      width: 220,
+                                      height: 220,
                                     ),
+                                  )
+                                  : widget.userProfile.avatarUrl!.isNotEmpty
+                                  ? ClipOval(
+                                    child: Image.network(
+                                      widget.userProfile.avatarUrl!,
+                                      fit: BoxFit.cover,
+                                      width: 220,
+                                      height: 220,
+                                      errorBuilder: (
+                                        context,
+                                        error,
+                                        stackTrace,
+                                      ) {
+                                        return Icon(
+                                          Icons.person,
+                                          size: 100,
+                                          color: Colors.grey.shade400,
+                                        );
+                                      },
+                                    ),
+                                  )
+                                  : Icon(
+                                    Icons.person,
+                                    size: 100,
+                                    color: Colors.grey.shade400,
+                                  ),
                         ),
                         Positioned(
                           bottom: 5,
@@ -182,45 +198,51 @@ class _UpdateAvatarScreenState extends State<UpdateAvatarScreen> {
                                 context: context,
                                 backgroundColor: Colors.white,
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                                  borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(20),
+                                  ),
                                 ),
-                                builder: (context) => Container(
-                                  padding: EdgeInsets.symmetric(vertical: 20),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        'Chọn ảnh từ',
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                builder:
+                                    (context) => Container(
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: 20,
                                       ),
-                                      SizedBox(height: 20),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          _buildImageSourceOption(
-                                            icon: Icons.photo_library,
-                                            label: 'Thư viện',
-                                            onTap: () {
-                                              Navigator.pop(context);
-                                              _pickImage();
-                                            },
+                                          Text(
+                                            'Chọn ảnh từ',
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
-                                          _buildImageSourceOption(
-                                            icon: Icons.camera_alt,
-                                            label: 'Máy ảnh',
-                                            onTap: () {
-                                              Navigator.pop(context);
-                                              _takePhoto();
-                                            },
+                                          SizedBox(height: 20),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
+                                            children: [
+                                              _buildImageSourceOption(
+                                                icon: Icons.photo_library,
+                                                label: 'Thư viện',
+                                                onTap: () {
+                                                  Navigator.pop(context);
+                                                  _pickImage();
+                                                },
+                                              ),
+                                              _buildImageSourceOption(
+                                                icon: Icons.camera_alt,
+                                                label: 'Máy ảnh',
+                                                onTap: () {
+                                                  Navigator.pop(context);
+                                                  _takePhoto();
+                                                },
+                                              ),
+                                            ],
                                           ),
                                         ],
                                       ),
-                                    ],
-                                  ),
-                                ),
+                                    ),
                               );
                             },
                             child: Container(
@@ -228,7 +250,10 @@ class _UpdateAvatarScreenState extends State<UpdateAvatarScreen> {
                               decoration: BoxDecoration(
                                 color: theme.primaryColor,
                                 shape: BoxShape.circle,
-                                border: Border.all(color: Colors.white, width: 2),
+                                border: Border.all(
+                                  color: Colors.white,
+                                  width: 2,
+                                ),
                               ),
                               child: Icon(
                                 Icons.camera_alt,
@@ -275,7 +300,9 @@ class _UpdateAvatarScreenState extends State<UpdateAvatarScreen> {
                               ),
                               value: _shareToFeed,
                               activeColor: theme.primaryColor,
-                              onChanged: (value) => setState(() => _shareToFeed = value),
+                              onChanged:
+                                  (value) =>
+                                      setState(() => _shareToFeed = value),
                             ),
                             if (_shareToFeed) ...[
                               Divider(),
@@ -285,7 +312,10 @@ class _UpdateAvatarScreenState extends State<UpdateAvatarScreen> {
                                 trailing: DropdownButton<String>(
                                   value: _visibility,
                                   underline: Container(),
-                                  icon: Icon(Icons.arrow_drop_down, color: theme.primaryColor),
+                                  icon: Icon(
+                                    Icons.arrow_drop_down,
+                                    color: theme.primaryColor,
+                                  ),
                                   items: [
                                     DropdownMenuItem(
                                       value: 'public',
@@ -310,7 +340,9 @@ class _UpdateAvatarScreenState extends State<UpdateAvatarScreen> {
                                       ),
                                     ),
                                   ],
-                                  onChanged: (value) => setState(() => _visibility = value!),
+                                  onChanged:
+                                      (value) =>
+                                          setState(() => _visibility = value!),
                                 ),
                               ),
                             ],
@@ -326,30 +358,32 @@ class _UpdateAvatarScreenState extends State<UpdateAvatarScreen> {
             ElevatedButton(
               onPressed: _isLoading ? null : _updateAvatar,
               style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white, backgroundColor: theme.primaryColor,
+                foregroundColor: Colors.white,
+                backgroundColor: theme.primaryColor,
                 padding: EdgeInsets.symmetric(vertical: 15),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
                 elevation: 2,
               ),
-              child: _isLoading
-                  ? SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                        strokeWidth: 2,
+              child:
+                  _isLoading
+                      ? SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
+                      )
+                      : Text(
+                        'CẬP NHẬT ẢNH ĐẠI DIỆN',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1,
+                        ),
                       ),
-                    )
-                  : Text(
-                      'CẬP NHẬT ẢNH ĐẠI DIỆN',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1,
-                      ),
-                    ),
             ),
           ],
         ),
@@ -373,17 +407,10 @@ class _UpdateAvatarScreenState extends State<UpdateAvatarScreen> {
               color: Theme.of(context).primaryColor.withOpacity(0.1),
               shape: BoxShape.circle,
             ),
-            child: Icon(
-              icon,
-              size: 30,
-              color: Theme.of(context).primaryColor,
-            ),
+            child: Icon(icon, size: 30, color: Theme.of(context).primaryColor),
           ),
           SizedBox(height: 8),
-          Text(
-            label,
-            style: TextStyle(fontSize: 14),
-          ),
+          Text(label, style: TextStyle(fontSize: 14)),
         ],
       ),
     );

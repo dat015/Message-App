@@ -43,7 +43,6 @@ class _HomeScreenState extends State<HomeScreen> {
   WebSocketService? _webSocketService;
   Map<int, String> userNames = {}; // Lưu trữ userId -> username
   late Conversation _new_conversation;
-  late FriendsBloc friendsBloc;
   late Future<List<Conversation>> _conversationsFuture;
   late String userAvatar;
   late String userName;
@@ -727,7 +726,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void dispose() {
-    friendsBloc.close();
+    _webSocketService?.disconnect();
     super.dispose();
   }
 

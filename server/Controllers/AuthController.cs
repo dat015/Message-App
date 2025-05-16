@@ -62,7 +62,7 @@ namespace Message_app.Controllers
                 Console.WriteLine($"Failed to register user with email: {model.email}");
                 return BadRequest(new { Message = "Invalid client request." });
             }
-
+            _tempOTPStore.MarkOTPAsUsed(model.email, otp.OTPCode);
             Console.WriteLine($"User registered successfully with email: {model.email}");
             return Ok(new { Message = "Registration successful.", User = user });
         }
@@ -126,7 +126,7 @@ namespace Message_app.Controllers
                 return BadRequest(new { Message = "Invalid OTP." });
             }
 
-            _tempOTPStore.MarkOTPAsUsed(dto.email, dto.OTPCode);
+            // _tempOTPStore.MarkOTPAsUsed(dto.email, dto.OTPCode);
             Console.WriteLine($"OTP {dto.OTPCode} for email {dto.email} verified and marked as used.");
 
             return Ok(new { Message = "OTP verified successfully." });

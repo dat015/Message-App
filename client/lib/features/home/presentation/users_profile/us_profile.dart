@@ -339,8 +339,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   border: Border.all(color: Colors.grey[200]!),
                                 ),
                                 child: Text(
-                                  user.bio ??
-                                      'Hãy tạo bài viết đầu tiên của bạn\nHy vọng biết được thông tin của bạn',
+                                  user.bio ?? '',
                                   style: TextStyle(
                                     color: Colors.black87,
                                     fontSize: 14,
@@ -732,6 +731,8 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _deletePost(String postId) async {
+    if (!mounted) return;
+
     final confirm = await showDialog<bool>(
       context: context,
       builder:
@@ -751,13 +752,18 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
     );
 
+    if (!mounted) return;
+
     if (confirm == true) {
       try {
         await _postService.deletePost(postId);
+
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Xóa bài viết thành công')),
         );
       } catch (e) {
+        if (!mounted) return;
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text('Lỗi: $e')));
