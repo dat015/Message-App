@@ -433,6 +433,7 @@ class WebSocketService {
     if (_isConnected && _channel != null) {
       try {
         _channel!.sink.close();
+        
         print("WebSocket connection closed");
       } catch (e) {
         print("Error closing WebSocket: $e");

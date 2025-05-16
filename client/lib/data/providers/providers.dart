@@ -176,6 +176,8 @@ class ChatProvider with ChangeNotifier {
           )
           .message
           .content = "Tin nhắn đã được thu hồi";
+
+          
       _messages
           .firstWhere(
             (message) => message.message.id == messageWithAttachment.message.id,
@@ -188,6 +190,7 @@ class ChatProvider with ChangeNotifier {
 
     if (messageWithAttachment.message.type == "system") {
       _messages.add(messageWithAttachment);
+      updateChatListCallback?.call(messageWithAttachment);
       notifyListeners();
       return;
     }
@@ -197,6 +200,8 @@ class ChatProvider with ChangeNotifier {
     );
     if (!isDuplicate) {
       _messages.add(messageWithAttachment);
+      updateChatListCallback?.call(messageWithAttachment);
+
       notifyListeners();
     } else {
       print(
@@ -365,9 +370,9 @@ class ChatProvider with ChangeNotifier {
     );
   }
 
-  void disconnect() {
-    print('Disconnecting WebSocket');
-    //webSocketService.disconnect();
+  void dispose() {
+    // _disposed = true;
+    // webSocketService.disconnect(); // nếu có method này, để đóng WebSocket
     // super.dispose();
   }
 }

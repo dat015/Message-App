@@ -479,7 +479,7 @@ class _ConversationSettingsScreenState
                           if (widget.conversation.isGroup)
                             _buildSettingTile(
                               title: 'Tên nhóm',
-                              subtitle: 'Thay đổi tên nhóm',
+                              subtitle: '',
                               icon: Icons.group,
                               trailing: Row(
                                 mainAxisSize: MainAxisSize.min,
@@ -504,37 +504,31 @@ class _ConversationSettingsScreenState
                           if (widget.conversation.isGroup)
                             _buildSettingTile(
                               title: 'Ảnh nhóm',
-                              subtitle: 'Chọn hoặc thay đổi ảnh nhóm',
-                              icon: Icons.image,
-                              trailing: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      _isUploading
-                                          ? const CircularProgressIndicator()
-                                          : ElevatedButton(
-                                            onPressed: _pickImage,
-                                            child: const Text('Chọn ảnh'),
-                                          ),
-                                    ],
-                                  ),
-                                  // if (_pickedImage != null)
-                                  //   Padding(
-                                  //     padding: const EdgeInsets.only(top: 8),
-                                  //     child: Image.file(
-                                  //       File(_pickedImage!.path),
-                                  //       height: 50,
-                                  //       width: 50,
-                                  //       fit: BoxFit.cover,
-                                  //       errorBuilder:
-                                  //           (context, error, stackTrace) =>
-                                  //               const Icon(Icons.error),
-                                  //     ),
-                                  //   ),
-                                ],
-                              ),
+                              subtitle: 'Thay đổi ảnh',
+                              icon:
+                                  Icons
+                                      .camera_alt_outlined, // Sleeker, outlined icon
+                              trailing:
+                                  _isUploading
+                                      ? const CircularProgressIndicator(
+                                        strokeWidth: 1.5,
+                                      ) // Thinner progress
+                                      : IconButton(
+                                        onPressed: _pickImage,
+                                        icon: const Icon(
+                                          Icons.upload_rounded,
+                                          size: 18,
+                                        ), // Smaller, rounded icon
+                                        style: IconButton.styleFrom(
+                                          padding: const EdgeInsets.all(
+                                            4,
+                                          ), // Minimal padding
+                                          minimumSize: const Size(
+                                            28,
+                                            28,
+                                          ), // Tiny button
+                                        ),
+                                      ),
                             ),
                           if (!widget.conversation.isGroup)
                             _buildSettingTile(

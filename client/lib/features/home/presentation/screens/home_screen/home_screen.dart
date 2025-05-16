@@ -71,6 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
         updateChatList(message);
       },
     );
+    
 
     // Kết nối WebSocket sau khi đã có danh sách conversation
     _fetchConversations().then((_) {
@@ -116,7 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       final conversations = await conversationRepo.getConversations(userId);
       final conversationFilter =
-          conversations.where((c) => c.lastMessageTime != null).toList();
+          conversations.where((c) => (c.lastMessageTime != null || c.lastMessage != null)).toList();
 
       print("Thanh cong");
       for (var conversation in conversations) {
@@ -178,9 +179,8 @@ class _HomeScreenState extends State<HomeScreen> {
       return content.replaceFirst("Đã xóa bạn", "");
     } else if (content.startsWith("Đã thêm bạn ")) {
       return content.replaceFirst("Đã thêm bạn ", "");
-    } else if (content.startsWith("Đã thêm bạn")) {
-      return content.replaceFirst("Đã thêm bạn", "");
-    }
+    } 
+    
     return content;
   }
 
@@ -319,6 +319,25 @@ class _HomeScreenState extends State<HomeScreen> {
       print("Cập nhật conversation: $conversationId");
     });
   }
+  void _createNewGroup() {
+    Navigator.pushNamed(
+      context,
+      AppRoutes.createGroup,
+      arguments: {
+        'userId': userId,
+        'friends': _friends,
+        'conversationRepo': conversationRepo,
+        'webSocketService': _webSocketService,
+        'selectedFriends' : _friends,
+      },
+    ).then((result) {
+      if (result is Conversation) {
+        setState(() {
+          //  _conversations.insert(0, result);
+        });
+      }
+    });
+  }
 
   void _onItemTapped(int index) {
     if (mounted) {
@@ -328,27 +347,29 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Widget _buildSearchBar() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.grey[200],
-          borderRadius: BorderRadius.circular(30.0),
-        ),
-        child: TextFormField(
-          decoration: InputDecoration(
-            hintText: 'Hỏi GroqCloud AI hoặc tìm kiếm',
-            hintStyle: TextStyle(color: Colors.grey[600], fontSize: 16),
-            prefixIcon: const Icon(Icons.circle, color: Colors.blueAccent),
-            border: InputBorder.none,
-            contentPadding: const EdgeInsets.symmetric(vertical: 14.0),
-          ),
-          onFieldSubmitted: (value) {},
-        ),
-      ),
-    );
-  }
+  // Widget _buildSearchBar() {
+  //   return Padding(
+  //     padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+  //     child: Container(
+  //       decoration: BoxDecoration(
+  //         color: Colors.grey[200],
+  //         borderRadius: BorderRadius.circular(30.0),
+  //       ),
+  //       child: TextFormField(
+  //         decoration: InputDecoration(
+  //           hintText: 'ìm kiếm',
+  //           hintStyle: TextStyle(color: Colors.grey[600], fontSize: 16),
+  //           prefixIcon: const Icon(Icons.circle, color: Colors.blueAccent),
+  //           border: InputBorder.none,
+  //           contentPadding: const EdgeInsets.symmetric(vertical: 14.0),
+  //         ),
+  //         onFieldSubmitted: (value) {},
+  //       ),
+  //     ),
+  //   );
+  // }
+
+
 
   Widget _buildFriendsList() {
     if (_friends.isEmpty) {
@@ -732,14 +753,13 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+ Widget build(BuildContext context) {
     return BlocProvider(
-      create:
-          (context) => FriendsBloc(
-            friendsRepo: friendsRepo,
-            apiClient: _apiService,
-            currentUserId: userId,
-          )..add(LoadFriendsDataEvent()),
+      create: (context) => FriendsBloc(
+        friendsRepo: friendsRepo,
+        apiClient: _apiService,
+        currentUserId: userId,
+      )..add(LoadFriendsDataEvent()),
       child: MainLayout(
         selectedIndex: _selectedIndex,
         onItemTapped: _onItemTapped,
@@ -748,16 +768,35 @@ class _HomeScreenState extends State<HomeScreen> {
         userAvatar: userAvatar,
         email: email,
         friendsRepo: friendsRepo,
-        body:
-            _selectedIndex == 0
-                ? Column(
-                  children: [
-                    _buildSearchBar(),
-                    _buildFriendsList(),
-                    Expanded(child: _buildChatList()),
-                  ],
-                )
-                : _getBodyContent(),
+        body: _selectedIndex == 0
+            ? Stack(
+                children: [
+                  Column(
+                    children: [
+                      // _buildSearchBar(),
+                      _buildFriendsList(),
+                      Expanded(child: _buildChatList()),
+                    ],
+                  ),
+                  Positioned(
+                    bottom: 16.0,
+                    left: 16.0,
+                    child: FloatingActionButton(
+                      onPressed: _friends.isEmpty ? null : _createNewGroup, // Vô hiệu hóa nếu không có bạn bè
+                      tooltip: 'Tạo nhóm mới',
+                      backgroundColor: _friends.isEmpty ? Colors.grey : Colors.blue,
+                      mini: true,
+                      elevation: 4.0,
+                      child: const Icon(
+                        Icons.group_add,
+                        size: 22,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            : _getBodyContent(),
       ),
     );
   }
