@@ -2,6 +2,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:first_app/data/models/story.dart';
+import 'package:first_app/data/models/user_profile.dart';
 import 'package:first_app/data/repositories/Story_repo/story_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
@@ -80,9 +81,10 @@ class _StoryScreenState extends State<StoryScreen>
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeOutCubic,
       );
-    } else {
-      Navigator.pop(context);
-    }
+    } 
+    // else {
+    //   Navigator.pop(context);
+    // }
   }
 
   void _previousStory() {
@@ -804,12 +806,8 @@ class _StoryScreenState extends State<StoryScreen>
                   )
                 else
                   Expanded(
-                    child: FutureBuilder<List<Map<String, dynamic>>>(
-                      future: Future.wait(
-                        story.viewers
-                            .map((viewerId) => _storyRepo.getUserInfo(viewerId))
-                            .toList(),
-                      ),
+                    child: FutureBuilder<List<UserProfile>>(
+                      future: _storyRepo.getUserInfo(story.viewers),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
@@ -853,11 +851,11 @@ class _StoryScreenState extends State<StoryScreen>
                                   CircleAvatar(
                                     radius: 20,
                                     backgroundImage:
-                                        userInfo['avatar'].isNotEmpty
-                                            ? NetworkImage(userInfo['avatar'])
+                                        userInfo.avatarUrl == null
+                                            ? NetworkImage(userInfo.avatarUrl!)
                                             : null,
                                     child:
-                                        userInfo['avatar'].isEmpty
+                                        userInfo.avatarUrl == null
                                             ? const Icon(
                                               Icons.person,
                                               size: 24,
@@ -872,7 +870,7 @@ class _StoryScreenState extends State<StoryScreen>
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          userInfo['name'],
+                                          userInfo.username,
                                           style: const TextStyle(
                                             color: Colors.white,
                                             fontWeight: FontWeight.w500,

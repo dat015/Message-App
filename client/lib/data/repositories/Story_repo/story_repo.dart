@@ -1,7 +1,9 @@
 import 'dart:io' as io if (dart.library.html) 'dart:html';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:first_app/data/models/user.dart';
+import 'package:first_app/data/models/user_profile.dart';
 import 'package:first_app/data/repositories/Friends_repo/friends_repo.dart';
+import 'package:first_app/data/repositories/User_Profile_repo/us_profile_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supa;
 import 'package:first_app/data/models/story.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -13,6 +15,7 @@ class StoryRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final supa.SupabaseClient _supabase = supa.Supabase.instance.client;
   final FriendsRepo _friendRepo = FriendsRepo();
+  final UsProfileRepository _userRepo = UsProfileRepository();
   Future<String> createStory({
     required String authorId,
     required String authorName,
@@ -220,29 +223,34 @@ class StoryRepository {
         });
   }
 
-  Future<Map<String, dynamic>> getUserInfo(String userId) async {
+  Future<List<UserProfile>> getUsersFromLikerIds(List<String> likerIds) async {
+  List<UserProfile> users = [];
+  for (var idStr in likerIds) {
     try {
-      final query =
-          await _firestore
-              .collection('stories')
-              .where('authorId', isEqualTo: userId)
-              .limit(1)
-              .get();
-
-      if (query.docs.isNotEmpty) {
-        final data = query.docs.first.data();
-        return {
-          'name': data['authorName'] ?? 'Người dùng',
-          'avatar': data['authorAvatar'] ?? '',
-        };
-      } else {
-        return {'name': 'Người dùng', 'avatar': ''};
-      }
+      int userId = int.parse(idStr);
+      UserProfile user = await _userRepo.fetchUserProfile(userId);
+      users.add(user);
     } catch (e) {
-      print('Error fetching user info from stories: $e');
-      return {'name': 'Người dùng', 'avatar': ''};
+      print('Lỗi khi lấy userId $idStr: $e');
+      // Có thể bỏ qua user lỗi
     }
   }
+  return users;
+}
+
+
+  Future<List<UserProfile>> getUserInfo(List<String> likerIds) async {
+  if (likerIds.isEmpty) return [];
+
+  try {
+    // Gọi API lấy user từng người theo danh sách likerIds
+    List<UserProfile> users = await getUsersFromLikerIds(likerIds);
+    return users;
+  } catch (e) {
+    print('Lỗi khi lấy danh sách người thích: $e');
+    return [];
+  }
+}
 
   Future<void> markStoryAsViewed(String storyId, String userId) async {
     try {
