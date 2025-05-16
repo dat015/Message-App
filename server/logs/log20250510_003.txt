@@ -1,0 +1,11 @@
+2025-05-10 10:47:16.692 +07:00 [INF] Executed DbCommand (37ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [u].[id], [u].[username], [u].[avatar_url]
+FROM [Users] AS [u]
+2025-05-10 10:47:16.938 +07:00 [INF] User profile is available. Using 'C:\Users\Thao\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-05-10 10:47:17.040 +07:00 [WRN] The WebRootPath was not found: C:\Users\Thao\source\Flutter\Message_app\server\wwwroot. Static files may be unavailable.
+2025-05-10 10:47:17.077 +07:00 [WRN] Overriding address(es) 'http://localhost:5053'. Binding to endpoints defined via IConfiguration and/or UseKestrel() instead.
+2025-05-10 10:47:17.091 +07:00 [INF] Now listening on: http://[::]:5053
+2025-05-10 10:47:17.092 +07:00 [INF] Now listening on: http://0.0.0.0:5053
+2025-05-10 10:47:17.092 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-05-10 10:47:17.092 +07:00 [INF] Hosting environment: Development
+2025-05-10 10:47:17.092 +07:00 [INF] Content root path: C:\Users\Thao\source\Flutter\Message_app\server

@@ -105,11 +105,11 @@ class ConversationRepo {
     }
   }
 
-  void updateGroupImage(int conversationId, String imageUrl) async {
+  void updateGroupImage(int conversationId, String image) async {
     try {
       var response = await api_client.put(
-        '/api/Conversation/update_group_image/$conversationId',
-        data: jsonEncode(imageUrl), // gửi đúng JSON string
+        '/api/Conversation/update_conversation_image/$conversationId',
+        data: jsonEncode(image), // gửi đúng JSON string
         headers: {'Content-Type': 'application/json'},
       );
 

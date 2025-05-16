@@ -18,8 +18,7 @@ class _MessageInputState extends State<MessageInput> {
   final TextEditingController _controller = TextEditingController();
   bool _isTextFieldFocused = false;
   bool _isComposing = false;
-  bool _showEmojiPicker =
-      false; // Thêm biến để điều khiển hiển thị emoji picker
+  bool _showEmojiPicker = false;
   XFile? _selectedFile;
 
   final ImagePicker _picker = ImagePicker();
@@ -42,6 +41,11 @@ class _MessageInputState extends State<MessageInput> {
       }
     } catch (e) {
       print("Error picking file: $e");
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Lỗi khi chọn ảnh: $e')),
+        );
+      }
     }
   }
 
@@ -56,17 +60,6 @@ class _MessageInputState extends State<MessageInput> {
     });
   }
 
-  // void _handleSubmittedPrivate(String text) {
-  //   if (text.trim().isEmpty && _selectedFile == null) return;
-  //   final provider = Provider.of<ChatProvider>(context, listen: false);
-  //   provider.sendPrivateMessage(text.trim(), _selectedFile);
-  //   _controller.clear();
-  //   setState(() {
-  //     _isComposing = false;
-  //     _selectedFile = null;
-  //   });
-  // }
-
   void _handleTextChange(String text) {
     setState(() {
       _isComposing = text.trim().isNotEmpty || _selectedFile != null;
@@ -76,14 +69,14 @@ class _MessageInputState extends State<MessageInput> {
   void _toggleEmojiPicker() {
     setState(() {
       _showEmojiPicker = !_showEmojiPicker;
-      _isTextFieldFocused = false; // Ẩn bàn phím khi mở emoji picker
-      FocusScope.of(context).unfocus(); // Ẩn bàn phím
+      _isTextFieldFocused = false;
+      FocusScope.of(context).unfocus();
     });
   }
 
   void _onEmojiSelected(Emoji emoji) {
     _controller.text += emoji.emoji;
-    _handleTextChange(_controller.text); // Cập nhật trạng thái khi thêm emoji
+    _handleTextChange(_controller.text);
   }
 
   @override
@@ -126,12 +119,14 @@ class _MessageInputState extends State<MessageInput> {
                         ),
                         IconButton(
                           icon: Icon(Icons.close, color: Colors.grey[600]),
-                          onPressed: () {
-                            setState(() {
-                              _selectedFile = null;
-                              _isComposing = false;
-                            });
-                          },
+                          onPressed: provider.isUploading
+                              ? null
+                              : () {
+                                  setState(() {
+                                    _selectedFile = null;
+                                    _isComposing = false;
+                                  });
+                                },
                         ),
                       ],
                     ),
@@ -149,10 +144,9 @@ class _MessageInputState extends State<MessageInput> {
                             color: Colors.grey[100],
                             borderRadius: BorderRadius.circular(24),
                             border: Border.all(
-                              color:
-                                  _isTextFieldFocused
-                                      ? Colors.blue
-                                      : Colors.transparent,
+                              color: _isTextFieldFocused
+                                  ? Colors.blue
+                                  : Colors.transparent,
                               width: 1,
                             ),
                           ),
@@ -170,27 +164,35 @@ class _MessageInputState extends State<MessageInput> {
                                     ),
                                   ),
                                   onChanged: _handleTextChange,
-                                  onTap:
-                                      () => setState(() {
-                                        _isTextFieldFocused = true;
-                                        _showEmojiPicker =
-                                            false; // Ẩn emoji picker khi nhập
-                                      }),
-                                  onEditingComplete:
-                                      () => setState(() {
-                                        _isTextFieldFocused = false;
-                                      }),
+                                  onTap: () => setState(() {
+                                    _isTextFieldFocused = true;
+                                    _showEmojiPicker = false;
+                                  }),
+                                  onEditingComplete: () => setState(() {
+                                    _isTextFieldFocused = false;
+                                  }),
                                 ),
                               ),
                               if (_isComposing)
-                                IconButton(
-                                  icon: const Icon(
-                                    Icons.send,
-                                    color: Colors.blue,
-                                  ),
-                                  onPressed:
-                                      () => _handleSubmitted(_controller.text),
-                                )
+                                provider.isUploading
+                                    ? const Padding(
+                                        padding: EdgeInsets.all(8.0),
+                                        child: SizedBox(
+                                          width: 24,
+                                          height: 24,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                          ),
+                                        ),
+                                      )
+                                    : IconButton(
+                                        icon: const Icon(
+                                          Icons.send,
+                                          color: Colors.blue,
+                                        ),
+                                        onPressed: () =>
+                                            _handleSubmitted(_controller.text),
+                                      )
                               else
                                 Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -200,98 +202,18 @@ class _MessageInputState extends State<MessageInput> {
                                         Icons.emoji_emotions_outlined,
                                         color: Colors.grey[600],
                                       ),
-                                      onPressed:
-                                          _toggleEmojiPicker, // Hiển thị emoji picker
+                                      onPressed: provider.isUploading
+                                          ? null
+                                          : _toggleEmojiPicker,
                                     ),
                                     IconButton(
                                       icon: Icon(
                                         Icons.image,
                                         color: Colors.grey[600],
                                       ),
-                                      onPressed: _pickFile,
+                                      onPressed:
+                                          provider.isUploading ? null : _pickFile,
                                     ),
-                                    // IconButton(
-                                    //   icon: Icon(
-                                    //     Icons.person,
-                                    //     color: Colors.grey[600],
-                                    //   ),
-                                    //   onPressed: () {
-                                    //     showModalBottomSheet(
-                                    //       context: context,
-                                    //       builder:
-                                    //           (context) => Container(
-                                    //             padding: const EdgeInsets.all(
-                                    //               16,
-                                    //             ),
-                                    //             child: Column(
-                                    //               mainAxisSize:
-                                    //                   MainAxisSize.min,
-                                    //               crossAxisAlignment:
-                                    //                   CrossAxisAlignment.start,
-                                    //               children: [
-                                    //                 Text(
-                                    //                   'Gửi tin nhắn riêng',
-                                    //                   style: TextStyle(
-                                    //                     fontSize: 18,
-                                    //                     fontWeight:
-                                    //                         FontWeight.bold,
-                                    //                     color: Colors.grey[800],
-                                    //                   ),
-                                    //                 ),
-                                    //                 const SizedBox(height: 16),
-                                    //                 ...provider.participants
-                                    //                     .where(
-                                    //                       (p) =>
-                                    //                           p.userId !=
-                                    //                           provider.userId,
-                                    //                     )
-                                    //                     .map(
-                                    //                       (p) => ListTile(
-                                    //                         leading: CircleAvatar(
-                                    //                           backgroundImage:
-                                    //                               NetworkImage(
-                                    //                                 'https://ui-avatars.com/api/?name=User+${p.userId}&background=random',
-                                    //                               ),
-                                    //                         ),
-                                    //                         title: Text(
-                                    //                           'User ${p.userId}',
-                                    //                         ),
-                                    //                         onTap: () {
-                                    //                           Navigator.pop(
-                                    //                             context,
-                                    //                           );
-                                    //                           if (_controller
-                                    //                                   .text
-                                    //                                   .trim()
-                                    //                                   .isNotEmpty ||
-                                    //                               _selectedFile !=
-                                    //                                   null) {
-                                    //                             provider.sendPrivateMessage(
-                                    //                               _controller
-                                    //                                   .text
-                                    //                                   .trim(),
-                                    //                               p.userId,
-                                    //                               _selectedFile,
-                                    //                             );
-                                    //                             _controller
-                                    //                                 .clear();
-                                    //                             setState(() {
-                                    //                               _selectedFile =
-                                    //                                   null;
-                                    //                               _isComposing =
-                                    //                                   false;
-                                    //                             });
-                                    //                           }
-                                    //                         },
-                                    //                       ),
-                                    //                     )
-                                    //                     .toList(),
-                                    //               ],
-                                    //             ),
-                                    //           ),
-                                    //     );
-                                    //   },
-                                    // ),
                                   ],
                                 ),
                             ],
@@ -305,7 +227,6 @@ class _MessageInputState extends State<MessageInput> {
             ),
           ),
         ),
-        // Hiển thị Emoji Picker khi _showEmojiPicker = true
         if (_showEmojiPicker)
           SizedBox(
             height: 250,
