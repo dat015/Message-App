@@ -265,10 +265,11 @@ class CustomSearchDelegate extends SearchDelegate<String> {
 
   @override
   Widget buildResults(BuildContext context) {
-    if (query.isNotEmpty) {
+    if (query.isEmpty) {
       friendsBloc.add(ResetSearchEvent());
-      return const Center(child: Text('Nhập email để tìm kiếm'));
+      return const Center(child: Text('Nhập email để tìm kiếm!'));
     }
+    friendsBloc.add(SearchUsersEvent(query));
     return BlocListener<FriendsBloc, FriendsState>(
       bloc: friendsBloc,
       listener: (context, state) {
@@ -389,7 +390,7 @@ class CustomSearchDelegate extends SearchDelegate<String> {
           } else if (state is FriendsError) {
             return Center(child: Text(state.message));
           }
-          return const Center(child: Text('Nhập email để tìm kiếm'));
+          return const Center(child: Text('Nhập email để tìm kiếm...'));
         },
       ),
     );
