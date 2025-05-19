@@ -210,10 +210,105 @@ namespace server.Services.ConversationService
             }
         }
 
-        public Task<Conversation> CreateGroupConversation(int userId, List<int> userIds, string name)
+        public async Task<ConversationDto> CreateGroup(GroupDto groupDto)
         {
-            throw new NotImplementedException();
+            var conversation = new Conversation
+            {
+                is_group = true,
+                created_at = DateTime.Now,
+                name = groupDto.groupName,
+                lastMessage = "Đã tạo nhóm",
+                lastMessageTime =  TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time")),
+            };
+            var participants = new List<Participants>();
+            try
+            {
+                _context.Conversations.Add(conversation);
+                await _context.SaveChangesAsync();
+                Console.WriteLine($"Conversation added successfully with ID: {conversation.id}");
+                foreach (var userId in groupDto.userIds)
+                {
+                    var user_existing = await _userSV.GetUserByIdAsync(userId);
+                    participants.Add(new Participants
+                    {
+                        user_id = userId,
+                        conversation_id = conversation.id,
+                        is_deleted = false,
+                        joined_at = DateTime.Now,
+                        name = user_existing.username,
+                        img_url = user_existing.avatar_url
+                    });
+                }
+
+                //add them userId
+                var user = new Participants
+                {
+                    user_id = groupDto.userId,
+                    conversation_id = conversation.id,
+                    is_deleted = false,
+                    joined_at = DateTime.Now,
+                    name = _userSV.GetUserByIdAsync(groupDto.userId).Result.username,
+                    img_url = _userSV.GetUserByIdAsync(groupDto.userId).Result.avatar_url
+                };
+                participants.Add(user);
+
+
+                _context.Participants.AddRange(participants);
+                await _context.SaveChangesAsync();
+
+                foreach (var participant in groupDto.userIds)
+                {
+                    await _webSocket.ConnectUserToConversationChanelAsync(participant, conversation.id);
+                }
+                await _webSocket.ConnectUserToConversationChanelAsync(groupDto.userId, conversation.id);
+
+
+                var message = new MessageDTOForAttachment
+                {
+                    content = $"Đã tạo nhóm {groupDto.groupName}",
+                    type = "system",
+                    conversation_id = conversation.id,
+                    sender_id = groupDto.userId,
+                    created_at =  TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time")),
+
+                };
+                var messageWithAttachment = new MessageWithAttachment
+                {
+                    Message = message,
+                    Attachment = null // Không có attachment trong trường hợp này
+                };
+                await _chatStorage.SaveMessageAsync(message, null);
+                await _webSocket.PublishMessage(messageWithAttachment);
+
+                return new ConversationDto
+                {
+                    Id = conversation.id,
+                    Name = conversation.name,
+                    is_group = conversation.is_group,
+                    CreatedAt = conversation.created_at,
+                    LastMessage = conversation.lastMessage,
+                    LastMessageTime = conversation.lastMessageTime,
+                    img_url = conversation.img_url,
+                    Participants = participants.Select(p => new ParticipantDto
+                    {
+                        Id = p.id,
+                        user_id = p.user_id,
+                        ConversationId = p.conversation_id,
+                        Name = p.name,
+                        IsDeleted = p.is_deleted,
+                        img_url = p.img_url
+                    }).ToList()
+                };
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw;
+            }
         }
+
+
         public async Task<ConversationDto?> GetConversationDto(int userId, int conversationId)
         {
             try
@@ -309,7 +404,6 @@ namespace server.Services.ConversationService
                         LastMessageTime = c.lastMessageTime,
                         img_url = c.img_url,
                         Participants = c.Participants
-                            .Where(p => !p.is_deleted)
                             .Select(p => new ParticipantDto
                             {
                                 Id = p.id,
@@ -390,7 +484,7 @@ namespace server.Services.ConversationService
             try
             {
                 var existing_conversation = await _context.Conversations.FindAsync(conversation_id);
-                if(existing_conversation == null)
+                if (existing_conversation == null)
                 {
                     throw new Exception("Conversation not found");
                 }
@@ -413,7 +507,7 @@ namespace server.Services.ConversationService
                 };
                 await _chatStorage.SaveMessageAsync(message, null);
                 await _webSocket.PublishMessage(messageWithAttachment);
-  
+
                 return existing_conversation;
             }
             catch (Exception e)

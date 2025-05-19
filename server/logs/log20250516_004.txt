@@ -1,0 +1,792 @@
+2025-05-16 22:27:16.541 +07:00 [INF] Executed DbCommand (22ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [u].[id], [u].[username], [u].[avatar_url]
+FROM [Users] AS [u]
+2025-05-16 22:27:16.700 +07:00 [INF] User profile is available. Using 'C:\Users\Thao\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-05-16 22:27:16.734 +07:00 [WRN] The WebRootPath was not found: C:\Users\Thao\source\Flutter\Message_app\server\wwwroot. Static files may be unavailable.
+2025-05-16 22:27:16.752 +07:00 [WRN] Overriding address(es) 'http://localhost:5053'. Binding to endpoints defined via IConfiguration and/or UseKestrel() instead.
+2025-05-16 22:27:16.764 +07:00 [INF] Now listening on: http://[::]:5053
+2025-05-16 22:27:16.765 +07:00 [INF] Now listening on: http://0.0.0.0:5053
+2025-05-16 22:27:16.765 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-05-16 22:27:16.765 +07:00 [INF] Hosting environment: Development
+2025-05-16 22:27:16.765 +07:00 [INF] Content root path: C:\Users\Thao\source\Flutter\Message_app\server
+2025-05-16 22:28:38.820 +07:00 [INF] Request starting HTTP/1.1 POST http://192.168.1.3:5053/api/Auth/login - application/json 57
+2025-05-16 22:28:38.918 +07:00 [WRN] Failed to determine the https port for redirect.
+2025-05-16 22:28:38.956 +07:00 [INF] Executing endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-05-16 22:28:38.995 +07:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(server.DTO.AuthDTO.LoginDTO) on controller Message_app.Controllers.AuthController (Message_app).
+2025-05-16 22:28:39.279 +07:00 [INF] Executed DbCommand (76ms) [Parameters=[@__email_0='?' (Size = 450)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[email] = @__email_0
+2025-05-16 22:28:39.397 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.DTO.AuthDTO.LoginRespose'.
+2025-05-16 22:28:39.440 +07:00 [INF] Executed action Message_app.Controllers.AuthController.Login (Message_app) in 441.3044ms
+2025-05-16 22:28:39.441 +07:00 [INF] Executed endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-05-16 22:28:39.446 +07:00 [INF] Request finished HTTP/1.1 POST http://192.168.1.3:5053/api/Auth/login - 200 null application/json; charset=utf-8 629.1203ms
+2025-05-16 22:28:40.604 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.3:5053/api/friends/GetAllFriends/2 - null null
+2025-05-16 22:28:40.613 +07:00 [INF] Executing endpoint 'server.Controllers.FriendsController.GetAllFriends (Message_app)'
+2025-05-16 22:28:40.618 +07:00 [INF] Route matched with {action = "GetAllFriends", controller = "Friends"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAllFriends(Int32) on controller server.Controllers.FriendsController (Message_app).
+2025-05-16 22:28:40.747 +07:00 [INF] Executed DbCommand (21ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN [u].[username]
+    ELSE [u0].[username]
+END AS [username], CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN [u].[avatar_url]
+    ELSE [u0].[avatar_url]
+END AS [avatar], CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN [u].[id]
+    ELSE [u0].[id]
+END AS [friendId], @__userId_0 AS [userId]
+FROM [Friends] AS [f]
+INNER JOIN [Users] AS [u] ON [f].[UserId2] = [u].[id]
+INNER JOIN [Users] AS [u0] ON [f].[UserId1] = [u0].[id]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-05-16 22:28:40.750 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType8`2[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[server.DTO.FriendDTO, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-05-16 22:28:40.760 +07:00 [INF] Executed action server.Controllers.FriendsController.GetAllFriends (Message_app) in 141.7877ms
+2025-05-16 22:28:40.761 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.GetAllFriends (Message_app)'
+2025-05-16 22:28:40.762 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.3:5053/api/friends/GetAllFriends/2 - 200 null application/json; charset=utf-8 157.9161ms
+2025-05-16 22:28:40.811 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.3:5053/api/Conversation/get_conversations/2 - null null
+2025-05-16 22:28:40.814 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.3:5053/api/Conversation/get_conversations/2 - null null
+2025-05-16 22:28:40.816 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-05-16 22:28:40.816 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-05-16 22:28:40.821 +07:00 [INF] Route matched with {action = "GetConversations", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetConversations(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-05-16 22:28:40.821 +07:00 [INF] Route matched with {action = "GetConversations", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetConversations(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-05-16 22:28:40.901 +07:00 [INF] Executed DbCommand (26ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [c].[id], [c].[name], [c].[is_group], [c].[created_at], [c].[lastMessage], [c].[lastMessageTime], [c].[img_url], [p0].[id], [p0].[user_id], [p0].[conversation_id], [p0].[name], [p0].[is_deleted], [p0].[img_url]
+FROM [Conversations] AS [c]
+LEFT JOIN [Participants] AS [p0] ON [c].[id] = [p0].[conversation_id]
+WHERE EXISTS (
+    SELECT 1
+    FROM [Participants] AS [p]
+    WHERE [c].[id] = [p].[conversation_id] AND [p].[user_id] = @__userId_0)
+ORDER BY [c].[id]
+2025-05-16 22:28:40.901 +07:00 [INF] Executed DbCommand (3ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [c].[id], [c].[name], [c].[is_group], [c].[created_at], [c].[lastMessage], [c].[lastMessageTime], [c].[img_url], [p0].[id], [p0].[user_id], [p0].[conversation_id], [p0].[name], [p0].[is_deleted], [p0].[img_url]
+FROM [Conversations] AS [c]
+LEFT JOIN [Participants] AS [p0] ON [c].[id] = [p0].[conversation_id]
+WHERE EXISTS (
+    SELECT 1
+    FROM [Participants] AS [p]
+    WHERE [c].[id] = [p].[conversation_id] AND [p].[user_id] = @__userId_0)
+ORDER BY [c].[id]
+2025-05-16 22:28:40.910 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.DTO.ConversationDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-05-16 22:28:40.910 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.DTO.ConversationDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-05-16 22:28:40.915 +07:00 [INF] Executed action server.Controllers.ConversationController.GetConversations (Message_app) in 94.0895ms
+2025-05-16 22:28:40.915 +07:00 [INF] Executed action server.Controllers.ConversationController.GetConversations (Message_app) in 94.5215ms
+2025-05-16 22:28:40.916 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-05-16 22:28:40.916 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-05-16 22:28:40.916 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.3:5053/api/Conversation/get_conversations/2 - 200 null application/json; charset=utf-8 104.9034ms
+2025-05-16 22:28:40.916 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.3:5053/api/Conversation/get_conversations/2 - 200 null application/json; charset=utf-8 101.8747ms
+2025-05-16 22:28:41.231 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.3:5053/ws/chat?userId=2 - null null
+2025-05-16 22:28:41.232 +07:00 [INF] Executing endpoint '/ws/chat'
+2025-05-16 22:28:41.711 +07:00 [INF] Executed DbCommand (5ms) [Parameters=[@__client_UserId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[conversation_id]
+FROM [Participants] AS [p]
+WHERE [p].[user_id] = @__client_UserId_0 AND [p].[is_deleted] = CAST(0 AS bit)
+2025-05-16 22:28:41.750 +07:00 [INF] Executed DbCommand (17ms) [Parameters=[@__p_1='?' (DbType = Int32), @__conversationId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(@__p_1) [m].[id], [m].[conversation_id], [m].[sender_id], [m].[content], [m].[created_at], [m].[isFile], [m].[type], [m].[isRecalled]
+FROM [Messages] AS [m]
+WHERE [m].[conversation_id] = @__conversationId_0
+ORDER BY [m].[created_at] DESC
+2025-05-16 22:28:41.754 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_1='?' (DbType = Int32), @__conversationId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(@__p_1) [m].[id], [m].[conversation_id], [m].[sender_id], [m].[content], [m].[created_at], [m].[isFile], [m].[type], [m].[isRecalled]
+FROM [Messages] AS [m]
+WHERE [m].[conversation_id] = @__conversationId_0
+ORDER BY [m].[created_at] DESC
+2025-05-16 22:28:41.756 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_1='?' (DbType = Int32), @__conversationId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(@__p_1) [m].[id], [m].[conversation_id], [m].[sender_id], [m].[content], [m].[created_at], [m].[isFile], [m].[type], [m].[isRecalled]
+FROM [Messages] AS [m]
+WHERE [m].[conversation_id] = @__conversationId_0
+ORDER BY [m].[created_at] DESC
+2025-05-16 22:28:41.762 +07:00 [INF] Executed DbCommand (2ms) [Parameters=[@__p_1='?' (DbType = Int32), @__conversationId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(@__p_1) [m].[id], [m].[conversation_id], [m].[sender_id], [m].[content], [m].[created_at], [m].[isFile], [m].[type], [m].[isRecalled]
+FROM [Messages] AS [m]
+WHERE [m].[conversation_id] = @__conversationId_0
+ORDER BY [m].[created_at] DESC
+2025-05-16 22:28:41.767 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_1='?' (DbType = Int32), @__conversationId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(@__p_1) [m].[id], [m].[conversation_id], [m].[sender_id], [m].[content], [m].[created_at], [m].[isFile], [m].[type], [m].[isRecalled]
+FROM [Messages] AS [m]
+WHERE [m].[conversation_id] = @__conversationId_0
+ORDER BY [m].[created_at] DESC
+2025-05-16 22:28:41.775 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_1='?' (DbType = Int32), @__conversationId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(@__p_1) [m].[id], [m].[conversation_id], [m].[sender_id], [m].[content], [m].[created_at], [m].[isFile], [m].[type], [m].[isRecalled]
+FROM [Messages] AS [m]
+WHERE [m].[conversation_id] = @__conversationId_0
+ORDER BY [m].[created_at] DESC
+2025-05-16 22:28:53.690 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Auth/login - null null
+2025-05-16 22:28:53.691 +07:00 [INF] CORS policy execution successful.
+2025-05-16 22:28:53.693 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Auth/login - 204 null null 3.3012ms
+2025-05-16 22:28:53.695 +07:00 [INF] Request starting HTTP/1.1 POST http://localhost:5053/api/Auth/login - application/json 60
+2025-05-16 22:28:53.695 +07:00 [INF] CORS policy execution successful.
+2025-05-16 22:28:53.697 +07:00 [INF] CORS policy execution successful.
+2025-05-16 22:28:53.698 +07:00 [INF] Executing endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-05-16 22:28:53.698 +07:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(server.DTO.AuthDTO.LoginDTO) on controller Message_app.Controllers.AuthController (Message_app).
+2025-05-16 22:28:53.716 +07:00 [INF] Executed DbCommand (14ms) [Parameters=[@__email_0='?' (Size = 450)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[email] = @__email_0
+2025-05-16 22:28:53.718 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.DTO.AuthDTO.LoginRespose'.
+2025-05-16 22:28:53.719 +07:00 [INF] Executed action Message_app.Controllers.AuthController.Login (Message_app) in 20.5068ms
+2025-05-16 22:28:53.719 +07:00 [INF] Executed endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-05-16 22:28:53.719 +07:00 [INF] Request finished HTTP/1.1 POST http://localhost:5053/api/Auth/login - 200 null application/json; charset=utf-8 23.9863ms
+2025-05-16 22:28:53.858 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/friends/GetAllFriends/3 - null null
+2025-05-16 22:28:53.859 +07:00 [INF] CORS policy execution successful.
+2025-05-16 22:28:53.861 +07:00 [INF] CORS policy execution successful.
+2025-05-16 22:28:53.861 +07:00 [INF] Executing endpoint 'server.Controllers.FriendsController.GetAllFriends (Message_app)'
+2025-05-16 22:28:53.861 +07:00 [INF] Route matched with {action = "GetAllFriends", controller = "Friends"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAllFriends(Int32) on controller server.Controllers.FriendsController (Message_app).
+2025-05-16 22:28:53.866 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN [u].[username]
+    ELSE [u0].[username]
+END AS [username], CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN [u].[avatar_url]
+    ELSE [u0].[avatar_url]
+END AS [avatar], CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN [u].[id]
+    ELSE [u0].[id]
+END AS [friendId], @__userId_0 AS [userId]
+FROM [Friends] AS [f]
+INNER JOIN [Users] AS [u] ON [f].[UserId2] = [u].[id]
+INNER JOIN [Users] AS [u0] ON [f].[UserId1] = [u0].[id]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-05-16 22:28:53.867 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType8`2[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[server.DTO.FriendDTO, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-05-16 22:28:53.867 +07:00 [INF] Executed action server.Controllers.FriendsController.GetAllFriends (Message_app) in 5.9854ms
+2025-05-16 22:28:53.868 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.GetAllFriends (Message_app)'
+2025-05-16 22:28:53.868 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/friends/GetAllFriends/3 - 200 null application/json; charset=utf-8 9.3116ms
+2025-05-16 22:28:54.094 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_conversations/3 - null null
+2025-05-16 22:28:54.094 +07:00 [INF] CORS policy execution successful.
+2025-05-16 22:28:54.095 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_conversations/3 - 204 null null 0.9345ms
+2025-05-16 22:28:54.096 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_conversations/3 - null null
+2025-05-16 22:28:54.096 +07:00 [INF] CORS policy execution successful.
+2025-05-16 22:28:54.097 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_conversations/3 - 204 null null 0.3388ms
+2025-05-16 22:28:54.097 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Conversation/get_conversations/3 - null null
+2025-05-16 22:28:54.097 +07:00 [INF] CORS policy execution successful.
+2025-05-16 22:28:54.097 +07:00 [INF] CORS policy execution successful.
+2025-05-16 22:28:54.098 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-05-16 22:28:54.098 +07:00 [INF] Route matched with {action = "GetConversations", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetConversations(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-05-16 22:28:54.104 +07:00 [INF] Executed DbCommand (2ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [c].[id], [c].[name], [c].[is_group], [c].[created_at], [c].[lastMessage], [c].[lastMessageTime], [c].[img_url], [p0].[id], [p0].[user_id], [p0].[conversation_id], [p0].[name], [p0].[is_deleted], [p0].[img_url]
+FROM [Conversations] AS [c]
+LEFT JOIN [Participants] AS [p0] ON [c].[id] = [p0].[conversation_id]
+WHERE EXISTS (
+    SELECT 1
+    FROM [Participants] AS [p]
+    WHERE [c].[id] = [p].[conversation_id] AND [p].[user_id] = @__userId_0)
+ORDER BY [c].[id]
+2025-05-16 22:28:54.106 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.DTO.ConversationDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-05-16 22:28:54.107 +07:00 [INF] Executed action server.Controllers.ConversationController.GetConversations (Message_app) in 8.868ms
+2025-05-16 22:28:54.107 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-05-16 22:28:54.108 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Conversation/get_conversations/3 - 200 null application/json; charset=utf-8 10.8973ms
+2025-05-16 22:28:54.109 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Conversation/get_conversations/3 - null null
+2025-05-16 22:28:54.110 +07:00 [INF] CORS policy execution successful.
+2025-05-16 22:28:54.110 +07:00 [INF] CORS policy execution successful.
+2025-05-16 22:28:54.110 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-05-16 22:28:54.110 +07:00 [INF] Route matched with {action = "GetConversations", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetConversations(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-05-16 22:28:54.114 +07:00 [INF] Executed DbCommand (2ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [c].[id], [c].[name], [c].[is_group], [c].[created_at], [c].[lastMessage], [c].[lastMessageTime], [c].[img_url], [p0].[id], [p0].[user_id], [p0].[conversation_id], [p0].[name], [p0].[is_deleted], [p0].[img_url]
+FROM [Conversations] AS [c]
+LEFT JOIN [Participants] AS [p0] ON [c].[id] = [p0].[conversation_id]
+WHERE EXISTS (
+    SELECT 1
+    FROM [Participants] AS [p]
+    WHERE [c].[id] = [p].[conversation_id] AND [p].[user_id] = @__userId_0)
+ORDER BY [c].[id]
+2025-05-16 22:28:54.116 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.DTO.ConversationDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-05-16 22:28:54.116 +07:00 [INF] Executed action server.Controllers.ConversationController.GetConversations (Message_app) in 5.8847ms
+2025-05-16 22:28:54.116 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-05-16 22:28:54.117 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Conversation/get_conversations/3 - 200 null application/json; charset=utf-8 7.2384ms
+2025-05-16 22:28:54.358 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/ws/chat?userId=3 - null null
+2025-05-16 22:28:54.358 +07:00 [INF] CORS policy execution successful.
+2025-05-16 22:28:54.359 +07:00 [INF] CORS policy execution successful.
+2025-05-16 22:28:54.359 +07:00 [INF] Executing endpoint '/ws/chat'
+2025-05-16 22:28:54.466 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__client_UserId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[conversation_id]
+FROM [Participants] AS [p]
+WHERE [p].[user_id] = @__client_UserId_0 AND [p].[is_deleted] = CAST(0 AS bit)
+2025-05-16 22:28:54.475 +07:00 [INF] Executed DbCommand (2ms) [Parameters=[@__p_1='?' (DbType = Int32), @__conversationId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(@__p_1) [m].[id], [m].[conversation_id], [m].[sender_id], [m].[content], [m].[created_at], [m].[isFile], [m].[type], [m].[isRecalled]
+FROM [Messages] AS [m]
+WHERE [m].[conversation_id] = @__conversationId_0
+ORDER BY [m].[created_at] DESC
+2025-05-16 22:28:54.481 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_1='?' (DbType = Int32), @__conversationId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(@__p_1) [m].[id], [m].[conversation_id], [m].[sender_id], [m].[content], [m].[created_at], [m].[isFile], [m].[type], [m].[isRecalled]
+FROM [Messages] AS [m]
+WHERE [m].[conversation_id] = @__conversationId_0
+ORDER BY [m].[created_at] DESC
+2025-05-16 22:28:54.484 +07:00 [INF] Executed DbCommand (2ms) [Parameters=[@__p_1='?' (DbType = Int32), @__conversationId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(@__p_1) [m].[id], [m].[conversation_id], [m].[sender_id], [m].[content], [m].[created_at], [m].[isFile], [m].[type], [m].[isRecalled]
+FROM [Messages] AS [m]
+WHERE [m].[conversation_id] = @__conversationId_0
+ORDER BY [m].[created_at] DESC
+2025-05-16 22:28:54.487 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_1='?' (DbType = Int32), @__conversationId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(@__p_1) [m].[id], [m].[conversation_id], [m].[sender_id], [m].[content], [m].[created_at], [m].[isFile], [m].[type], [m].[isRecalled]
+FROM [Messages] AS [m]
+WHERE [m].[conversation_id] = @__conversationId_0
+ORDER BY [m].[created_at] DESC
+2025-05-16 22:28:54.491 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_1='?' (DbType = Int32), @__conversationId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(@__p_1) [m].[id], [m].[conversation_id], [m].[sender_id], [m].[content], [m].[created_at], [m].[isFile], [m].[type], [m].[isRecalled]
+FROM [Messages] AS [m]
+WHERE [m].[conversation_id] = @__conversationId_0
+ORDER BY [m].[created_at] DESC
+2025-05-16 22:28:54.494 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_1='?' (DbType = Int32), @__conversationId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(@__p_1) [m].[id], [m].[conversation_id], [m].[sender_id], [m].[content], [m].[created_at], [m].[isFile], [m].[type], [m].[isRecalled]
+FROM [Messages] AS [m]
+WHERE [m].[conversation_id] = @__conversationId_0
+ORDER BY [m].[created_at] DESC
+2025-05-16 22:28:54.499 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_1='?' (DbType = Int32), @__conversationId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(@__p_1) [m].[id], [m].[conversation_id], [m].[sender_id], [m].[content], [m].[created_at], [m].[isFile], [m].[type], [m].[isRecalled]
+FROM [Messages] AS [m]
+WHERE [m].[conversation_id] = @__conversationId_0
+ORDER BY [m].[created_at] DESC
+2025-05-16 22:29:05.413 +07:00 [INF] Request starting HTTP/1.1 POST http://192.168.1.3:5053/api/Conversation/create_group - application/json 52
+2025-05-16 22:29:05.413 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.CreateGroup (Message_app)'
+2025-05-16 22:29:05.416 +07:00 [INF] Route matched with {action = "CreateGroup", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] CreateGroup(server.DTO.GroupDto) on controller server.Controllers.ConversationController (Message_app).
+2025-05-16 22:29:05.520 +07:00 [INF] Executed DbCommand (21ms) [Parameters=[@p0='?' (DbType = DateTime2), @p1='?' (Size = 4000), @p2='?' (DbType = Boolean), @p3='?' (Size = 4000), @p4='?' (Size = 4000), @p5='?' (DbType = DateTime2), @p6='?' (Size = 100)], CommandType='"Text"', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [Conversations] ([created_at], [img_url], [is_group], [lastMessage], [lastMessageSender], [lastMessageTime], [name])
+OUTPUT INSERTED.[id]
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6);
+2025-05-16 22:29:05.546 +07:00 [INF] Executed DbCommand (4ms) [Parameters=[@__id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[id] = @__id_0
+2025-05-16 22:29:05.549 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[id] = @__id_0
+2025-05-16 22:29:05.550 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[@__id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[id] = @__id_0
+2025-05-16 22:29:05.550 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[@__id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[id] = @__id_0
+2025-05-16 22:29:05.551 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[@__id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[id] = @__id_0
+2025-05-16 22:29:05.643 +07:00 [INF] Executed DbCommand (41ms) [Parameters=[@p0='?' (Size = 4000), @p1='?' (DbType = Int32), @p2='?' (Size = 4000), @p3='?' (DbType = Boolean), @p4='?' (DbType = DateTime2), @p5='?' (Size = 4000), @p6='?' (Size = 4000), @p7='?' (DbType = Int32), @p8='?' (Size = 4000), @p9='?' (DbType = Int32), @p10='?' (Size = 4000), @p11='?' (DbType = Boolean), @p12='?' (DbType = DateTime2), @p13='?' (Size = 4000), @p14='?' (Size = 4000), @p15='?' (DbType = Int32), @p16='?' (Size = 4000), @p17='?' (DbType = Int32), @p18='?' (Size = 4000), @p19='?' (DbType = Boolean), @p20='?' (DbType = DateTime2), @p21='?' (Size = 4000), @p22='?' (Size = 4000), @p23='?' (DbType = Int32), @p24='?' (Size = 4000), @p25='?' (DbType = Int32), @p26='?' (Size = 4000), @p27='?' (DbType = Boolean), @p28='?' (DbType = DateTime2), @p29='?' (Size = 4000), @p30='?' (Size = 4000), @p31='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+MERGE [Participants] USING (
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, 0),
+(@p8, @p9, @p10, @p11, @p12, @p13, @p14, @p15, 1),
+(@p16, @p17, @p18, @p19, @p20, @p21, @p22, @p23, 2),
+(@p24, @p25, @p26, @p27, @p28, @p29, @p30, @p31, 3)) AS i ([adder], [conversation_id], [img_url], [is_deleted], [joined_at], [name], [role], [user_id], _Position) ON 1=0
+WHEN NOT MATCHED THEN
+INSERT ([adder], [conversation_id], [img_url], [is_deleted], [joined_at], [name], [role], [user_id])
+VALUES (i.[adder], i.[conversation_id], i.[img_url], i.[is_deleted], i.[joined_at], i.[name], i.[role], i.[user_id])
+OUTPUT INSERTED.[id], i._Position;
+2025-05-16 22:29:05.652 +07:00 [INF] Message 0 already exists in Redis
+2025-05-16 22:29:05.662 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.DTO.ConversationDto'.
+2025-05-16 22:29:05.662 +07:00 [INF] Executed action server.Controllers.ConversationController.CreateGroup (Message_app) in 246.4286ms
+2025-05-16 22:29:05.662 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.CreateGroup (Message_app)'
+2025-05-16 22:29:05.662 +07:00 [INF] Request finished HTTP/1.1 POST http://192.168.1.3:5053/api/Conversation/create_group - 200 null application/json; charset=utf-8 249.3451ms
+2025-05-16 22:29:05.836 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_conversationDto/3/36 - null null
+2025-05-16 22:29:05.836 +07:00 [INF] CORS policy execution successful.
+2025-05-16 22:29:05.836 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_conversationDto/3/36 - 204 null null 0.6138ms
+2025-05-16 22:29:05.838 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Conversation/get_conversationDto/3/36 - null null
+2025-05-16 22:29:05.838 +07:00 [INF] CORS policy execution successful.
+2025-05-16 22:29:05.838 +07:00 [INF] CORS policy execution successful.
+2025-05-16 22:29:05.838 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetConversation (Message_app)'
+2025-05-16 22:29:05.841 +07:00 [INF] Route matched with {action = "GetConversation", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetConversation(Int32, Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-05-16 22:29:05.883 +07:00 [INF] Executed DbCommand (12ms) [Parameters=[@__conversationId_0='?' (DbType = Int32), @__userId_1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [t].[id], [t].[name], [t].[is_group], [t].[created_at], [t].[lastMessage], [t].[lastMessageTime], [t].[img_url], [t0].[Id], [t0].[user_id], [t0].[ConversationId], [t0].[Name], [t0].[IsDeleted], [t0].[img_url]
+FROM (
+    SELECT TOP(1) [c].[id], [c].[name], [c].[is_group], [c].[created_at], [c].[lastMessage], [c].[lastMessageTime], [c].[img_url]
+    FROM [Conversations] AS [c]
+    WHERE [c].[id] = @__conversationId_0 AND EXISTS (
+        SELECT 1
+        FROM [Participants] AS [p]
+        WHERE [c].[id] = [p].[conversation_id] AND [p].[user_id] = @__userId_1)
+) AS [t]
+LEFT JOIN (
+    SELECT [p0].[id] AS [Id], [p0].[user_id], [p0].[conversation_id] AS [ConversationId], [p0].[name] AS [Name], [p0].[is_deleted] AS [IsDeleted], [p0].[img_url]
+    FROM [Participants] AS [p0]
+    WHERE [p0].[is_deleted] = CAST(0 AS bit)
+) AS [t0] ON [t].[id] = [t0].[ConversationId]
+ORDER BY [t].[id]
+2025-05-16 22:29:05.888 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.DTO.ConversationDto'.
+2025-05-16 22:29:05.888 +07:00 [INF] Executed action server.Controllers.ConversationController.GetConversation (Message_app) in 47.0329ms
+2025-05-16 22:29:05.888 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetConversation (Message_app)'
+2025-05-16 22:29:05.888 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Conversation/get_conversationDto/3/36 - 200 null application/json; charset=utf-8 50.4929ms
+2025-05-16 22:29:05.970 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.3:5053/api/Conversation/get_conversationDto/2/36 - null null
+2025-05-16 22:29:05.971 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetConversation (Message_app)'
+2025-05-16 22:29:05.971 +07:00 [INF] Route matched with {action = "GetConversation", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetConversation(Int32, Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-05-16 22:29:05.980 +07:00 [INF] Executed DbCommand (7ms) [Parameters=[@__conversationId_0='?' (DbType = Int32), @__userId_1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [t].[id], [t].[name], [t].[is_group], [t].[created_at], [t].[lastMessage], [t].[lastMessageTime], [t].[img_url], [t0].[Id], [t0].[user_id], [t0].[ConversationId], [t0].[Name], [t0].[IsDeleted], [t0].[img_url]
+FROM (
+    SELECT TOP(1) [c].[id], [c].[name], [c].[is_group], [c].[created_at], [c].[lastMessage], [c].[lastMessageTime], [c].[img_url]
+    FROM [Conversations] AS [c]
+    WHERE [c].[id] = @__conversationId_0 AND EXISTS (
+        SELECT 1
+        FROM [Participants] AS [p]
+        WHERE [c].[id] = [p].[conversation_id] AND [p].[user_id] = @__userId_1)
+) AS [t]
+LEFT JOIN (
+    SELECT [p0].[id] AS [Id], [p0].[user_id], [p0].[conversation_id] AS [ConversationId], [p0].[name] AS [Name], [p0].[is_deleted] AS [IsDeleted], [p0].[img_url]
+    FROM [Participants] AS [p0]
+    WHERE [p0].[is_deleted] = CAST(0 AS bit)
+) AS [t0] ON [t].[id] = [t0].[ConversationId]
+ORDER BY [t].[id]
+2025-05-16 22:29:05.982 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.DTO.ConversationDto'.
+2025-05-16 22:29:05.982 +07:00 [INF] Executed action server.Controllers.ConversationController.GetConversation (Message_app) in 11.4129ms
+2025-05-16 22:29:05.982 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetConversation (Message_app)'
+2025-05-16 22:29:05.983 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.3:5053/api/Conversation/get_conversationDto/2/36 - 200 null application/json; charset=utf-8 12.3969ms
+2025-05-16 22:29:12.093 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.3:5053/api/Message/getMessages/36/2 - null null
+2025-05-16 22:29:12.094 +07:00 [INF] Executing endpoint 'server.Controllers.MessageController.GetMessages (Message_app)'
+2025-05-16 22:29:12.099 +07:00 [INF] Route matched with {action = "GetMessages", controller = "Message"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetMessages(Int32, Int32) on controller server.Controllers.MessageController (Message_app).
+2025-05-16 22:29:12.129 +07:00 [INF] Retrieved 0 messages from Redis for conversation 36
+2025-05-16 22:29:12.145 +07:00 [INF] Executed DbCommand (7ms) [Parameters=[@__user_id_0='?' (DbType = Int32), @__conversationId_1='?' (DbType = Int64)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [m].[cleared_at]
+FROM [messageDeletions] AS [m]
+WHERE [m].[user_id] = @__user_id_0 AND CAST([m].[conversation_id] AS bigint) = @__conversationId_1
+2025-05-16 22:29:12.172 +07:00 [INF] Executed DbCommand (8ms) [Parameters=[@__p_1='?' (DbType = Int32), @__conversationId_0='?' (DbType = Int64)], CommandType='"Text"', CommandTimeout='30']
+SELECT [t].[id], [t].[content], [t].[conversation_id], [t].[created_at], [t].[isFile], [t].[isRecalled], [t].[is_read], [t].[sender_id], [t].[type], [a].[id], [a].[FileSize], [a].[file_type], [a].[file_url], [a].[is_temporary], [a].[message_id], [a].[uploaded_at]
+FROM (
+    SELECT TOP(@__p_1) [m].[id], [m].[content], [m].[conversation_id], [m].[created_at], [m].[isFile], [m].[isRecalled], [m].[is_read], [m].[sender_id], [m].[type]
+    FROM [Messages] AS [m]
+    WHERE CAST([m].[conversation_id] AS bigint) = @__conversationId_0
+    ORDER BY [m].[created_at] DESC
+) AS [t]
+LEFT JOIN [Attachments] AS [a] ON [t].[id] = [a].[message_id]
+ORDER BY [t].[created_at] DESC, [t].[id]
+2025-05-16 22:29:12.173 +07:00 [INF] Executing NotFoundObjectResult, writing value of type 'System.String'.
+2025-05-16 22:29:12.174 +07:00 [INF] Executed action server.Controllers.MessageController.GetMessages (Message_app) in 75.1969ms
+2025-05-16 22:29:12.175 +07:00 [INF] Executed endpoint 'server.Controllers.MessageController.GetMessages (Message_app)'
+2025-05-16 22:29:12.175 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.3:5053/api/Message/getMessages/36/2 - 404 null text/plain; charset=utf-8 82.1571ms
+2025-05-16 22:29:12.224 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.3:5053/api/Conversation/get_first_conversation/36 - null null
+2025-05-16 22:29:12.225 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetFirstConversation (Message_app)'
+2025-05-16 22:29:12.230 +07:00 [INF] Route matched with {action = "GetFirstConversation", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetFirstConversation(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-05-16 22:29:12.246 +07:00 [INF] Executed DbCommand (5ms) [Parameters=[@__conversation_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [t].[id], [t].[created_at], [t].[img_url], [t].[is_group], [t].[lastMessage], [t].[lastMessageSender], [t].[lastMessageTime], [t].[name], [p].[id], [p].[adder], [p].[conversation_id], [p].[img_url], [p].[is_deleted], [p].[joined_at], [p].[name], [p].[role], [p].[user_id]
+FROM (
+    SELECT TOP(1) [c].[id], [c].[created_at], [c].[img_url], [c].[is_group], [c].[lastMessage], [c].[lastMessageSender], [c].[lastMessageTime], [c].[name]
+    FROM [Conversations] AS [c]
+    WHERE [c].[id] = @__conversation_id_0
+) AS [t]
+LEFT JOIN [Participants] AS [p] ON [t].[id] = [p].[conversation_id]
+ORDER BY [t].[id]
+2025-05-16 22:29:12.250 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.Models.Conversation'.
+2025-05-16 22:29:12.253 +07:00 [INF] Executed action server.Controllers.ConversationController.GetFirstConversation (Message_app) in 22.269ms
+2025-05-16 22:29:12.253 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetFirstConversation (Message_app)'
+2025-05-16 22:29:12.253 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.3:5053/api/Conversation/get_first_conversation/36 - 200 null application/json; charset=utf-8 28.5517ms
+2025-05-16 22:29:12.287 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.3:5053/api/Participant/get_participants/36 - null null
+2025-05-16 22:29:12.287 +07:00 [INF] Executing endpoint 'server.Controllers.ParticipantController.GetParticipants (Message_app)'
+2025-05-16 22:29:12.289 +07:00 [INF] Route matched with {action = "GetParticipants", controller = "Participant"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetParticipants(Int32) on controller server.Controllers.ParticipantController (Message_app).
+2025-05-16 22:29:12.300 +07:00 [INF] Executed DbCommand (3ms) [Parameters=[@__conversation_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[id], [p].[adder], [p].[conversation_id], [p].[img_url], [p].[is_deleted], [p].[joined_at], [p].[name], [p].[role], [p].[user_id]
+FROM [Participants] AS [p]
+WHERE [p].[conversation_id] = @__conversation_id_0
+2025-05-16 22:29:12.301 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType20`1[[System.Collections.Generic.List`1[[server.Models.Participants, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-05-16 22:29:12.303 +07:00 [INF] Executed action server.Controllers.ParticipantController.GetParticipants (Message_app) in 13.3408ms
+2025-05-16 22:29:12.303 +07:00 [INF] Executed endpoint 'server.Controllers.ParticipantController.GetParticipants (Message_app)'
+2025-05-16 22:29:12.303 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.3:5053/api/Participant/get_participants/36 - 200 null application/json; charset=utf-8 16.4651ms
+2025-05-16 22:29:14.384 +07:00 [INF] Handling message from user 2: jsj
+2025-05-16 22:29:14.400 +07:00 [INF] Executed DbCommand (3ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [c].[id], [c].[created_at], [c].[img_url], [c].[is_group], [c].[lastMessage], [c].[lastMessageSender], [c].[lastMessageTime], [c].[name]
+FROM [Conversations] AS [c]
+WHERE [c].[id] = @__p_0
+2025-05-16 22:29:14.426 +07:00 [WRN] Savepoints are disabled because Multiple Active Result Sets (MARS) is enabled. If 'SaveChanges' fails, then the transaction cannot be automatically rolled back to a known clean state. Instead, the transaction should be rolled back by the application before retrying 'SaveChanges'. See https://go.microsoft.com/fwlink/?linkid=2149338 for more information and examples. To identify the code which triggers this warning, call 'ConfigureWarnings(w => w.Throw(SqlServerEventId.SavepointsDisabledBecauseOfMARS))'.
+2025-05-16 22:29:14.433 +07:00 [INF] Executed DbCommand (6ms) [Parameters=[@p0='?' (Size = 500), @p1='?' (DbType = Int32), @p2='?' (DbType = DateTime2), @p3='?' (DbType = Boolean), @p4='?' (DbType = Boolean), @p5='?' (DbType = Boolean), @p6='?' (DbType = Int32), @p7='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [Messages] ([content], [conversation_id], [created_at], [isFile], [isRecalled], [is_read], [sender_id], [type])
+OUTPUT INSERTED.[id]
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7);
+2025-05-16 22:29:14.435 +07:00 [INF] Message saved to DB with ID: 294
+2025-05-16 22:29:14.437 +07:00 [WRN] Savepoints are disabled because Multiple Active Result Sets (MARS) is enabled. If 'SaveChanges' fails, then the transaction cannot be automatically rolled back to a known clean state. Instead, the transaction should be rolled back by the application before retrying 'SaveChanges'. See https://go.microsoft.com/fwlink/?linkid=2149338 for more information and examples. To identify the code which triggers this warning, call 'ConfigureWarnings(w => w.Throw(SqlServerEventId.SavepointsDisabledBecauseOfMARS))'.
+2025-05-16 22:29:14.445 +07:00 [INF] Executed DbCommand (8ms) [Parameters=[@p7='?' (DbType = Int32), @p0='?' (DbType = DateTime2), @p1='?' (Size = 4000), @p2='?' (DbType = Boolean), @p3='?' (Size = 4000), @p4='?' (Size = 4000), @p5='?' (DbType = DateTime2), @p6='?' (Size = 100)], CommandType='"Text"', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+UPDATE [Conversations] SET [created_at] = @p0, [img_url] = @p1, [is_group] = @p2, [lastMessage] = @p3, [lastMessageSender] = @p4, [lastMessageTime] = @p5, [name] = @p6
+OUTPUT 1
+WHERE [id] = @p7;
+2025-05-16 22:29:14.450 +07:00 [INF] Transaction committed for message: 294
+2025-05-16 22:29:14.455 +07:00 [INF] Executed DbCommand (3ms) [Parameters=[@__conversation_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[user_id]
+FROM [Participants] AS [p]
+WHERE [p].[conversation_id] = @__conversation_id_0 AND [p].[is_deleted] = CAST(0 AS bit)
+2025-05-16 22:29:14.459 +07:00 [INF] Saved message 294 to Redis
+2025-05-16 22:29:14.461 +07:00 [INF] Added message 294 to conversation 36
+2025-05-16 22:29:14.463 +07:00 [INF] Published message to channel conversation:36
+2025-05-16 22:29:15.491 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.3:5053/api/Participant/get_participants/36 - null null
+2025-05-16 22:29:15.492 +07:00 [INF] Executing endpoint 'server.Controllers.ParticipantController.GetParticipants (Message_app)'
+2025-05-16 22:29:15.492 +07:00 [INF] Route matched with {action = "GetParticipants", controller = "Participant"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetParticipants(Int32) on controller server.Controllers.ParticipantController (Message_app).
+2025-05-16 22:29:15.497 +07:00 [INF] Executed DbCommand (2ms) [Parameters=[@__conversation_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[id], [p].[adder], [p].[conversation_id], [p].[img_url], [p].[is_deleted], [p].[joined_at], [p].[name], [p].[role], [p].[user_id]
+FROM [Participants] AS [p]
+WHERE [p].[conversation_id] = @__conversation_id_0
+2025-05-16 22:29:15.500 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType20`1[[System.Collections.Generic.List`1[[server.Models.Participants, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-05-16 22:29:15.501 +07:00 [INF] Executed action server.Controllers.ParticipantController.GetParticipants (Message_app) in 8.8445ms
+2025-05-16 22:29:15.502 +07:00 [INF] Executed endpoint 'server.Controllers.ParticipantController.GetParticipants (Message_app)'
+2025-05-16 22:29:15.502 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.3:5053/api/Participant/get_participants/36 - 200 null application/json; charset=utf-8 11.2767ms
+2025-05-16 22:29:18.738 +07:00 [INF] Request starting HTTP/1.1 PUT http://192.168.1.3:5053/api/Conversation/update_conversation_name/36 - application/json 8
+2025-05-16 22:29:18.738 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.UpdateConversationName (Message_app)'
+2025-05-16 22:29:18.741 +07:00 [INF] Route matched with {action = "UpdateConversationName", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] UpdateConversationName(Int32, System.String) on controller server.Controllers.ConversationController (Message_app).
+2025-05-16 22:29:18.747 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__conversation_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [t].[id], [t].[created_at], [t].[img_url], [t].[is_group], [t].[lastMessage], [t].[lastMessageSender], [t].[lastMessageTime], [t].[name], [p].[id], [p].[adder], [p].[conversation_id], [p].[img_url], [p].[is_deleted], [p].[joined_at], [p].[name], [p].[role], [p].[user_id]
+FROM (
+    SELECT TOP(1) [c].[id], [c].[created_at], [c].[img_url], [c].[is_group], [c].[lastMessage], [c].[lastMessageSender], [c].[lastMessageTime], [c].[name]
+    FROM [Conversations] AS [c]
+    WHERE [c].[id] = @__conversation_id_0
+) AS [t]
+LEFT JOIN [Participants] AS [p] ON [t].[id] = [p].[conversation_id]
+ORDER BY [t].[id]
+2025-05-16 22:29:18.750 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@p7='?' (DbType = Int32), @p0='?' (DbType = DateTime2), @p1='?' (Size = 4000), @p2='?' (DbType = Boolean), @p3='?' (Size = 4000), @p4='?' (Size = 4000), @p5='?' (DbType = DateTime2), @p6='?' (Size = 100)], CommandType='"Text"', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+UPDATE [Conversations] SET [created_at] = @p0, [img_url] = @p1, [is_group] = @p2, [lastMessage] = @p3, [lastMessageSender] = @p4, [lastMessageTime] = @p5, [name] = @p6
+OUTPUT 1
+WHERE [id] = @p7;
+2025-05-16 22:29:18.754 +07:00 [INF] Message 0 already exists in Redis
+2025-05-16 22:29:18.754 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.Models.Conversation'.
+2025-05-16 22:29:18.755 +07:00 [INF] Executed action server.Controllers.ConversationController.UpdateConversationName (Message_app) in 13.5912ms
+2025-05-16 22:29:18.755 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.UpdateConversationName (Message_app)'
+2025-05-16 22:29:18.755 +07:00 [INF] Request finished HTTP/1.1 PUT http://192.168.1.3:5053/api/Conversation/update_conversation_name/36 - 200 null application/json; charset=utf-8 16.997ms
+2025-05-16 22:29:26.558 +07:00 [INF] Request starting HTTP/1.1 POST http://192.168.1.3:5053/api/Message/uploadFile - multipart/form-data; boundary=--dio-boundary-0611586699 20085
+2025-05-16 22:29:26.560 +07:00 [INF] Executing endpoint 'server.Controllers.MessageController.UploadFile (Message_app)'
+2025-05-16 22:29:26.565 +07:00 [INF] Route matched with {action = "UploadFile", controller = "Message"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] UploadFile(Microsoft.AspNetCore.Http.IFormFile) on controller server.Controllers.MessageController (Message_app).
+2025-05-16 22:29:30.462 +07:00 [INF] Executed DbCommand (8ms) [Parameters=[@p0='?' (DbType = Single), @p1='?' (Size = 50), @p2='?' (Size = 255), @p3='?' (DbType = Boolean), @p4='?' (DbType = Int32), @p5='?' (DbType = DateTime2)], CommandType='"Text"', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [Attachments] ([FileSize], [file_type], [file_url], [is_temporary], [message_id], [uploaded_at])
+OUTPUT INSERTED.[id]
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5);
+2025-05-16 22:29:30.464 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType17`2[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-05-16 22:29:30.465 +07:00 [INF] Executed action server.Controllers.MessageController.UploadFile (Message_app) in 3900.5698ms
+2025-05-16 22:29:30.465 +07:00 [INF] Executed endpoint 'server.Controllers.MessageController.UploadFile (Message_app)'
+2025-05-16 22:29:30.466 +07:00 [INF] Request finished HTTP/1.1 POST http://192.168.1.3:5053/api/Message/uploadFile - 200 null application/json; charset=utf-8 3907.772ms
+2025-05-16 22:29:30.788 +07:00 [INF] Request starting HTTP/1.1 PUT http://192.168.1.3:5053/api/Conversation/update_conversation_image/36 - application/json 133
+2025-05-16 22:29:30.788 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.UpdateConversationImage (Message_app)'
+2025-05-16 22:29:30.791 +07:00 [INF] Route matched with {action = "UpdateConversationImage", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] UpdateConversationImage(Int32, System.String) on controller server.Controllers.ConversationController (Message_app).
+2025-05-16 22:29:30.797 +07:00 [INF] Executed DbCommand (3ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [c].[id], [c].[created_at], [c].[img_url], [c].[is_group], [c].[lastMessage], [c].[lastMessageSender], [c].[lastMessageTime], [c].[name]
+FROM [Conversations] AS [c]
+WHERE [c].[id] = @__p_0
+2025-05-16 22:29:30.802 +07:00 [INF] Executed DbCommand (4ms) [Parameters=[@p7='?' (DbType = Int32), @p0='?' (DbType = DateTime2), @p1='?' (Size = 4000), @p2='?' (DbType = Boolean), @p3='?' (Size = 4000), @p4='?' (Size = 4000), @p5='?' (DbType = DateTime2), @p6='?' (Size = 100)], CommandType='"Text"', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+UPDATE [Conversations] SET [created_at] = @p0, [img_url] = @p1, [is_group] = @p2, [lastMessage] = @p3, [lastMessageSender] = @p4, [lastMessageTime] = @p5, [name] = @p6
+OUTPUT 1
+WHERE [id] = @p7;
+2025-05-16 22:29:30.803 +07:00 [INF] Message 0 already exists in Redis
+2025-05-16 22:29:30.804 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.Models.Conversation'.
+2025-05-16 22:29:30.804 +07:00 [INF] Executed action server.Controllers.ConversationController.UpdateConversationImage (Message_app) in 13.5479ms
+2025-05-16 22:29:30.804 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.UpdateConversationImage (Message_app)'
+2025-05-16 22:29:30.804 +07:00 [INF] Request finished HTTP/1.1 PUT http://192.168.1.3:5053/api/Conversation/update_conversation_image/36 - 200 null application/json; charset=utf-8 16.3502ms
+2025-05-16 22:29:39.521 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.3:5053/api/Message/getMessages/19/2 - null null
+2025-05-16 22:29:39.521 +07:00 [INF] Executing endpoint 'server.Controllers.MessageController.GetMessages (Message_app)'
+2025-05-16 22:29:39.521 +07:00 [INF] Route matched with {action = "GetMessages", controller = "Message"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetMessages(Int32, Int32) on controller server.Controllers.MessageController (Message_app).
+2025-05-16 22:29:39.565 +07:00 [INF] Retrieved 16 messages from Redis for conversation 19
+2025-05-16 22:29:39.566 +07:00 [INF] Retrieved 16 messages from Redis for conversation 19 and user 2
+2025-05-16 22:29:39.566 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.DTO.MessageWithAttachment, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-05-16 22:29:39.571 +07:00 [INF] Executed action server.Controllers.MessageController.GetMessages (Message_app) in 49.2392ms
+2025-05-16 22:29:39.571 +07:00 [INF] Executed endpoint 'server.Controllers.MessageController.GetMessages (Message_app)'
+2025-05-16 22:29:39.571 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.3:5053/api/Message/getMessages/19/2 - 200 null application/json; charset=utf-8 49.8222ms
+2025-05-16 22:29:39.596 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.3:5053/api/Conversation/get_first_conversation/19 - null null
+2025-05-16 22:29:39.597 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetFirstConversation (Message_app)'
+2025-05-16 22:29:39.597 +07:00 [INF] Route matched with {action = "GetFirstConversation", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetFirstConversation(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-05-16 22:29:39.603 +07:00 [INF] Executed DbCommand (3ms) [Parameters=[@__conversation_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [t].[id], [t].[created_at], [t].[img_url], [t].[is_group], [t].[lastMessage], [t].[lastMessageSender], [t].[lastMessageTime], [t].[name], [p].[id], [p].[adder], [p].[conversation_id], [p].[img_url], [p].[is_deleted], [p].[joined_at], [p].[name], [p].[role], [p].[user_id]
+FROM (
+    SELECT TOP(1) [c].[id], [c].[created_at], [c].[img_url], [c].[is_group], [c].[lastMessage], [c].[lastMessageSender], [c].[lastMessageTime], [c].[name]
+    FROM [Conversations] AS [c]
+    WHERE [c].[id] = @__conversation_id_0
+) AS [t]
+LEFT JOIN [Participants] AS [p] ON [t].[id] = [p].[conversation_id]
+ORDER BY [t].[id]
+2025-05-16 22:29:39.603 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.Models.Conversation'.
+2025-05-16 22:29:39.604 +07:00 [INF] Executed action server.Controllers.ConversationController.GetFirstConversation (Message_app) in 6.3067ms
+2025-05-16 22:29:39.604 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetFirstConversation (Message_app)'
+2025-05-16 22:29:39.604 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.3:5053/api/Conversation/get_first_conversation/19 - 200 null application/json; charset=utf-8 7.6498ms
+2025-05-16 22:29:39.624 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.3:5053/api/Participant/get_participants/19 - null null
+2025-05-16 22:29:39.624 +07:00 [INF] Executing endpoint 'server.Controllers.ParticipantController.GetParticipants (Message_app)'
+2025-05-16 22:29:39.624 +07:00 [INF] Route matched with {action = "GetParticipants", controller = "Participant"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetParticipants(Int32) on controller server.Controllers.ParticipantController (Message_app).
+2025-05-16 22:29:39.631 +07:00 [INF] Executed DbCommand (4ms) [Parameters=[@__conversation_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[id], [p].[adder], [p].[conversation_id], [p].[img_url], [p].[is_deleted], [p].[joined_at], [p].[name], [p].[role], [p].[user_id]
+FROM [Participants] AS [p]
+WHERE [p].[conversation_id] = @__conversation_id_0
+2025-05-16 22:29:39.632 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType20`1[[System.Collections.Generic.List`1[[server.Models.Participants, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-05-16 22:29:39.632 +07:00 [INF] Executed action server.Controllers.ParticipantController.GetParticipants (Message_app) in 8.2462ms
+2025-05-16 22:29:39.633 +07:00 [INF] Executed endpoint 'server.Controllers.ParticipantController.GetParticipants (Message_app)'
+2025-05-16 22:29:39.633 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.3:5053/api/Participant/get_participants/19 - 200 null application/json; charset=utf-8 9.5715ms
+2025-05-16 22:29:42.804 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Message/getMessages/19/3 - null null
+2025-05-16 22:29:42.804 +07:00 [INF] CORS policy execution successful.
+2025-05-16 22:29:42.804 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Message/getMessages/19/3 - 204 null null 0.3771ms
+2025-05-16 22:29:42.805 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Message/getMessages/19/3 - null null
+2025-05-16 22:29:42.806 +07:00 [INF] CORS policy execution successful.
+2025-05-16 22:29:42.806 +07:00 [INF] CORS policy execution successful.
+2025-05-16 22:29:42.806 +07:00 [INF] Executing endpoint 'server.Controllers.MessageController.GetMessages (Message_app)'
+2025-05-16 22:29:42.806 +07:00 [INF] Route matched with {action = "GetMessages", controller = "Message"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetMessages(Int32, Int32) on controller server.Controllers.MessageController (Message_app).
+2025-05-16 22:29:42.822 +07:00 [INF] Retrieved 65 messages from Redis for conversation 19
+2025-05-16 22:29:42.822 +07:00 [INF] Retrieved 50 messages from Redis for conversation 19 and user 3
+2025-05-16 22:29:42.823 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.DTO.MessageWithAttachment, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-05-16 22:29:42.823 +07:00 [INF] Executed action server.Controllers.MessageController.GetMessages (Message_app) in 17.1538ms
+2025-05-16 22:29:42.824 +07:00 [INF] Executed endpoint 'server.Controllers.MessageController.GetMessages (Message_app)'
+2025-05-16 22:29:42.824 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Message/getMessages/19/3 - 200 null application/json; charset=utf-8 18.3758ms
+2025-05-16 22:29:42.838 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_first_conversation/19 - null null
+2025-05-16 22:29:42.838 +07:00 [INF] CORS policy execution successful.
+2025-05-16 22:29:42.839 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_first_conversation/19 - 204 null null 0.4371ms
+2025-05-16 22:29:42.869 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Conversation/get_first_conversation/19 - null null
+2025-05-16 22:29:42.870 +07:00 [INF] CORS policy execution successful.
+2025-05-16 22:29:42.870 +07:00 [INF] CORS policy execution successful.
+2025-05-16 22:29:42.870 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetFirstConversation (Message_app)'
+2025-05-16 22:29:42.870 +07:00 [INF] Route matched with {action = "GetFirstConversation", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetFirstConversation(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-05-16 22:29:42.874 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__conversation_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [t].[id], [t].[created_at], [t].[img_url], [t].[is_group], [t].[lastMessage], [t].[lastMessageSender], [t].[lastMessageTime], [t].[name], [p].[id], [p].[adder], [p].[conversation_id], [p].[img_url], [p].[is_deleted], [p].[joined_at], [p].[name], [p].[role], [p].[user_id]
+FROM (
+    SELECT TOP(1) [c].[id], [c].[created_at], [c].[img_url], [c].[is_group], [c].[lastMessage], [c].[lastMessageSender], [c].[lastMessageTime], [c].[name]
+    FROM [Conversations] AS [c]
+    WHERE [c].[id] = @__conversation_id_0
+) AS [t]
+LEFT JOIN [Participants] AS [p] ON [t].[id] = [p].[conversation_id]
+ORDER BY [t].[id]
+2025-05-16 22:29:42.875 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.Models.Conversation'.
+2025-05-16 22:29:42.875 +07:00 [INF] Executed action server.Controllers.ConversationController.GetFirstConversation (Message_app) in 4.7544ms
+2025-05-16 22:29:42.876 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetFirstConversation (Message_app)'
+2025-05-16 22:29:42.876 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Conversation/get_first_conversation/19 - 200 null application/json; charset=utf-8 6.5983ms
+2025-05-16 22:29:42.885 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Participant/get_participants/19 - null null
+2025-05-16 22:29:42.885 +07:00 [INF] CORS policy execution successful.
+2025-05-16 22:29:42.886 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Participant/get_participants/19 - 204 null null 0.3524ms
+2025-05-16 22:29:42.887 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Participant/get_participants/19 - null null
+2025-05-16 22:29:42.887 +07:00 [INF] CORS policy execution successful.
+2025-05-16 22:29:42.887 +07:00 [INF] CORS policy execution successful.
+2025-05-16 22:29:42.887 +07:00 [INF] Executing endpoint 'server.Controllers.ParticipantController.GetParticipants (Message_app)'
+2025-05-16 22:29:42.888 +07:00 [INF] Route matched with {action = "GetParticipants", controller = "Participant"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetParticipants(Int32) on controller server.Controllers.ParticipantController (Message_app).
+2025-05-16 22:29:42.890 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__conversation_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[id], [p].[adder], [p].[conversation_id], [p].[img_url], [p].[is_deleted], [p].[joined_at], [p].[name], [p].[role], [p].[user_id]
+FROM [Participants] AS [p]
+WHERE [p].[conversation_id] = @__conversation_id_0
+2025-05-16 22:29:42.890 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType20`1[[System.Collections.Generic.List`1[[server.Models.Participants, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-05-16 22:29:42.890 +07:00 [INF] Executed action server.Controllers.ParticipantController.GetParticipants (Message_app) in 2.5462ms
+2025-05-16 22:29:42.890 +07:00 [INF] Executed endpoint 'server.Controllers.ParticipantController.GetParticipants (Message_app)'
+2025-05-16 22:29:42.890 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Participant/get_participants/19 - 200 null application/json; charset=utf-8 3.7097ms
+2025-05-16 22:29:49.457 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/ws/chat?userId=3 - null null
+2025-05-16 22:29:49.457 +07:00 [INF] CORS policy execution successful.
+2025-05-16 22:29:49.458 +07:00 [INF] CORS policy execution successful.
+2025-05-16 22:29:49.458 +07:00 [INF] Executing endpoint '/ws/chat'
+2025-05-16 22:29:49.486 +07:00 [INF] Executed DbCommand (4ms) [Parameters=[@__client_UserId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[conversation_id]
+FROM [Participants] AS [p]
+WHERE [p].[user_id] = @__client_UserId_0 AND [p].[is_deleted] = CAST(0 AS bit)
+2025-05-16 22:29:49.492 +07:00 [INF] Executed DbCommand (3ms) [Parameters=[@__p_1='?' (DbType = Int32), @__conversationId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(@__p_1) [m].[id], [m].[conversation_id], [m].[sender_id], [m].[content], [m].[created_at], [m].[isFile], [m].[type], [m].[isRecalled]
+FROM [Messages] AS [m]
+WHERE [m].[conversation_id] = @__conversationId_0
+ORDER BY [m].[created_at] DESC
+2025-05-16 22:29:49.495 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_1='?' (DbType = Int32), @__conversationId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(@__p_1) [m].[id], [m].[conversation_id], [m].[sender_id], [m].[content], [m].[created_at], [m].[isFile], [m].[type], [m].[isRecalled]
+FROM [Messages] AS [m]
+WHERE [m].[conversation_id] = @__conversationId_0
+ORDER BY [m].[created_at] DESC
+2025-05-16 22:29:49.497 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_1='?' (DbType = Int32), @__conversationId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(@__p_1) [m].[id], [m].[conversation_id], [m].[sender_id], [m].[content], [m].[created_at], [m].[isFile], [m].[type], [m].[isRecalled]
+FROM [Messages] AS [m]
+WHERE [m].[conversation_id] = @__conversationId_0
+ORDER BY [m].[created_at] DESC
+2025-05-16 22:29:49.501 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_1='?' (DbType = Int32), @__conversationId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(@__p_1) [m].[id], [m].[conversation_id], [m].[sender_id], [m].[content], [m].[created_at], [m].[isFile], [m].[type], [m].[isRecalled]
+FROM [Messages] AS [m]
+WHERE [m].[conversation_id] = @__conversationId_0
+ORDER BY [m].[created_at] DESC
+2025-05-16 22:29:49.503 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_1='?' (DbType = Int32), @__conversationId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(@__p_1) [m].[id], [m].[conversation_id], [m].[sender_id], [m].[content], [m].[created_at], [m].[isFile], [m].[type], [m].[isRecalled]
+FROM [Messages] AS [m]
+WHERE [m].[conversation_id] = @__conversationId_0
+ORDER BY [m].[created_at] DESC
+2025-05-16 22:29:49.505 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_1='?' (DbType = Int32), @__conversationId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(@__p_1) [m].[id], [m].[conversation_id], [m].[sender_id], [m].[content], [m].[created_at], [m].[isFile], [m].[type], [m].[isRecalled]
+FROM [Messages] AS [m]
+WHERE [m].[conversation_id] = @__conversationId_0
+ORDER BY [m].[created_at] DESC
+2025-05-16 22:29:49.508 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_1='?' (DbType = Int32), @__conversationId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(@__p_1) [m].[id], [m].[conversation_id], [m].[sender_id], [m].[content], [m].[created_at], [m].[isFile], [m].[type], [m].[isRecalled]
+FROM [Messages] AS [m]
+WHERE [m].[conversation_id] = @__conversationId_0
+ORDER BY [m].[created_at] DESC
+2025-05-16 22:29:55.339 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.3:5053/ws/chat?userId=2 - null null
+2025-05-16 22:29:55.340 +07:00 [INF] Executing endpoint '/ws/chat'
+2025-05-16 22:29:55.385 +07:00 [INF] Executed DbCommand (2ms) [Parameters=[@__client_UserId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[conversation_id]
+FROM [Participants] AS [p]
+WHERE [p].[user_id] = @__client_UserId_0 AND [p].[is_deleted] = CAST(0 AS bit)
+2025-05-16 22:29:55.390 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_1='?' (DbType = Int32), @__conversationId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(@__p_1) [m].[id], [m].[conversation_id], [m].[sender_id], [m].[content], [m].[created_at], [m].[isFile], [m].[type], [m].[isRecalled]
+FROM [Messages] AS [m]
+WHERE [m].[conversation_id] = @__conversationId_0
+ORDER BY [m].[created_at] DESC
+2025-05-16 22:29:55.393 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_1='?' (DbType = Int32), @__conversationId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(@__p_1) [m].[id], [m].[conversation_id], [m].[sender_id], [m].[content], [m].[created_at], [m].[isFile], [m].[type], [m].[isRecalled]
+FROM [Messages] AS [m]
+WHERE [m].[conversation_id] = @__conversationId_0
+ORDER BY [m].[created_at] DESC
+2025-05-16 22:29:55.398 +07:00 [INF] Executed DbCommand (2ms) [Parameters=[@__p_1='?' (DbType = Int32), @__conversationId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(@__p_1) [m].[id], [m].[conversation_id], [m].[sender_id], [m].[content], [m].[created_at], [m].[isFile], [m].[type], [m].[isRecalled]
+FROM [Messages] AS [m]
+WHERE [m].[conversation_id] = @__conversationId_0
+ORDER BY [m].[created_at] DESC
+2025-05-16 22:29:55.400 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_1='?' (DbType = Int32), @__conversationId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(@__p_1) [m].[id], [m].[conversation_id], [m].[sender_id], [m].[content], [m].[created_at], [m].[isFile], [m].[type], [m].[isRecalled]
+FROM [Messages] AS [m]
+WHERE [m].[conversation_id] = @__conversationId_0
+ORDER BY [m].[created_at] DESC
+2025-05-16 22:29:55.403 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_1='?' (DbType = Int32), @__conversationId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(@__p_1) [m].[id], [m].[conversation_id], [m].[sender_id], [m].[content], [m].[created_at], [m].[isFile], [m].[type], [m].[isRecalled]
+FROM [Messages] AS [m]
+WHERE [m].[conversation_id] = @__conversationId_0
+ORDER BY [m].[created_at] DESC
+2025-05-16 22:29:55.406 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_1='?' (DbType = Int32), @__conversationId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(@__p_1) [m].[id], [m].[conversation_id], [m].[sender_id], [m].[content], [m].[created_at], [m].[isFile], [m].[type], [m].[isRecalled]
+FROM [Messages] AS [m]
+WHERE [m].[conversation_id] = @__conversationId_0
+ORDER BY [m].[created_at] DESC
+2025-05-16 22:30:10.779 +07:00 [INF] Executed endpoint '/ws/chat'
+2025-05-16 22:30:10.779 +07:00 [INF] Executed endpoint '/ws/chat'
+2025-05-16 22:30:10.780 +07:00 [ERR] An unhandled exception has occurred while executing the request.
+StackExchange.Redis.RedisServerException: WRONGTYPE Operation against a key holding the wrong kind of value
+   at server.Services.WebSocketService.webSocket.CleanupClient(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 552
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 162
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 92
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-05-16 22:30:10.780 +07:00 [ERR] An unhandled exception has occurred while executing the request.
+StackExchange.Redis.RedisServerException: WRONGTYPE Operation against a key holding the wrong kind of value
+   at server.Services.WebSocketService.webSocket.CleanupClient(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 552
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 162
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 92
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-05-16 22:30:10.819 +07:00 [WRN] The response has already started, the error page middleware will not be executed.
+2025-05-16 22:30:10.819 +07:00 [WRN] The response has already started, the error page middleware will not be executed.
+2025-05-16 22:30:10.824 +07:00 [ERR] Connection id "0HNCKHPAEO4M3", Request id "0HNCKHPAEO4M3:00000001": An unhandled exception was thrown by the application.
+StackExchange.Redis.RedisServerException: WRONGTYPE Operation against a key holding the wrong kind of value
+   at server.Services.WebSocketService.webSocket.CleanupClient(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 552
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 162
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 92
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Watch.BrowserRefresh.BrowserRefreshMiddleware.InvokeAsync(HttpContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+2025-05-16 22:30:10.824 +07:00 [ERR] Connection id "0HNCKHPAEO4LN", Request id "0HNCKHPAEO4LN:00000001": An unhandled exception was thrown by the application.
+StackExchange.Redis.RedisServerException: WRONGTYPE Operation against a key holding the wrong kind of value
+   at server.Services.WebSocketService.webSocket.CleanupClient(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 552
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 162
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 92
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Watch.BrowserRefresh.BrowserRefreshMiddleware.InvokeAsync(HttpContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+2025-05-16 22:30:10.828 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/ws/chat?userId=3 - 101 null null 76470.1583ms
+2025-05-16 22:30:10.827 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/ws/chat?userId=3 - 101 null null 21370.673ms
+2025-05-16 22:30:14.004 +07:00 [INF] Executed endpoint '/ws/chat'
+2025-05-16 22:30:14.004 +07:00 [INF] Executed endpoint '/ws/chat'
+2025-05-16 22:30:14.004 +07:00 [ERR] An unhandled exception has occurred while executing the request.
+System.Net.WebSockets.WebSocketException (0x80004005): The remote party closed the WebSocket connection without completing the close handshake.
+   at System.Net.WebSockets.ManagedWebSocket.ThrowEOFUnexpected()
+   at System.Net.WebSockets.ManagedWebSocket.EnsureBufferContainsAsync(Int32 minimumRequiredBytes, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.WebSockets.ManagedWebSocket.ReceiveAsyncPrivate[TResult](Memory`1 payloadBuffer, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.Threading.Tasks.ValueTask`1.ValueTaskSourceAsTask.<>c.<.cctor>b__4_0(Object state)
+--- End of stack trace from previous location ---
+   at server.Services.WebSocketService.webSocket.Receiver(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 177
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 160
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 92
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-05-16 22:30:14.004 +07:00 [ERR] An unhandled exception has occurred while executing the request.
+System.Net.WebSockets.WebSocketException (0x80004005): The remote party closed the WebSocket connection without completing the close handshake.
+   at System.Net.WebSockets.ManagedWebSocket.ThrowEOFUnexpected()
+   at System.Net.WebSockets.ManagedWebSocket.EnsureBufferContainsAsync(Int32 minimumRequiredBytes, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.WebSockets.ManagedWebSocket.ReceiveAsyncPrivate[TResult](Memory`1 payloadBuffer, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.Threading.Tasks.ValueTask`1.ValueTaskSourceAsTask.<>c.<.cctor>b__4_0(Object state)
+--- End of stack trace from previous location ---
+   at server.Services.WebSocketService.webSocket.Receiver(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 177
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 160
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 92
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-05-16 22:30:14.008 +07:00 [WRN] The response has already started, the error page middleware will not be executed.
+2025-05-16 22:30:14.009 +07:00 [WRN] The response has already started, the error page middleware will not be executed.
+2025-05-16 22:30:14.010 +07:00 [ERR] Connection id "0HNCKHPAEO4LK", Request id "0HNCKHPAEO4LK:00000001": An unhandled exception was thrown by the application.
+System.Net.WebSockets.WebSocketException (0x80004005): The remote party closed the WebSocket connection without completing the close handshake.
+   at System.Net.WebSockets.ManagedWebSocket.ThrowEOFUnexpected()
+   at System.Net.WebSockets.ManagedWebSocket.EnsureBufferContainsAsync(Int32 minimumRequiredBytes, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.WebSockets.ManagedWebSocket.ReceiveAsyncPrivate[TResult](Memory`1 payloadBuffer, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.Threading.Tasks.ValueTask`1.ValueTaskSourceAsTask.<>c.<.cctor>b__4_0(Object state)
+--- End of stack trace from previous location ---
+   at server.Services.WebSocketService.webSocket.Receiver(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 177
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 160
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 92
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Watch.BrowserRefresh.BrowserRefreshMiddleware.InvokeAsync(HttpContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+2025-05-16 22:30:14.010 +07:00 [ERR] Connection id "0HNCKHPAEO4M4", Request id "0HNCKHPAEO4M4:00000001": An unhandled exception was thrown by the application.
+System.Net.WebSockets.WebSocketException (0x80004005): The remote party closed the WebSocket connection without completing the close handshake.
+   at System.Net.WebSockets.ManagedWebSocket.ThrowEOFUnexpected()
+   at System.Net.WebSockets.ManagedWebSocket.EnsureBufferContainsAsync(Int32 minimumRequiredBytes, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.WebSockets.ManagedWebSocket.ReceiveAsyncPrivate[TResult](Memory`1 payloadBuffer, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.Threading.Tasks.ValueTask`1.ValueTaskSourceAsTask.<>c.<.cctor>b__4_0(Object state)
+--- End of stack trace from previous location ---
+   at server.Services.WebSocketService.webSocket.Receiver(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 177
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 160
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 92
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Watch.BrowserRefresh.BrowserRefreshMiddleware.InvokeAsync(HttpContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+2025-05-16 22:30:14.012 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.3:5053/ws/chat?userId=2 - 101 null null 92780.3587ms
+2025-05-16 22:30:14.013 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.3:5053/ws/chat?userId=2 - 101 null null 18674.3179ms
+2025-05-16 22:30:25.399 +07:00 [INF] Application is shutting down...
