@@ -57,14 +57,14 @@ public class AIPostSV : IAIPostSV
         }
 
         var prompt = $"""
-Bạn là một trợ lý AI, nhiệm vụ là tạo ra 3 gợi ý bình luận ngắn gọn, phù hợp và tự nhiên bằng tiếng Việt dựa trên nội dung bài viết và mô tả ảnh (nếu có).
-Nội dung bài viết: "{postContent}"
-Mô tả ảnh (nếu có): "{imageDescription ?? "Không có ảnh"}"
-Hãy trả về các gợi ý bình luận dạng danh sách, mỗi gợi ý tối đa 50 ký tự, ví dụ:
-Tuyệt vời!
-Nhìn thích quá!
-Chỗ này đẹp nè!
-""";
+        Bạn là một trợ lý AI, nhiệm vụ là tạo ra 3 gợi ý bình luận ngắn gọn, phù hợp và tự nhiên bằng tiếng Việt dựa trên nội dung bài viết và mô tả ảnh (nếu có).
+        Nội dung bài viết: "{postContent}"
+        Mô tả ảnh (nếu có): "{imageDescription ?? "Không có ảnh"}"
+        Hãy trả về các gợi ý bình luận dạng danh sách, mỗi gợi ý tối đa 50 ký tự, chỉ cần mỗi bình luận xuống dòng không cần kí tự hay số để phân biệt câu,ví dụ:
+        Tuyệt vời!
+        Nhìn thích quá!
+        Chỗ này đẹp nè!
+        """;
 
         var generatedText = await GenerateFromPromptAsync(prompt);
 
