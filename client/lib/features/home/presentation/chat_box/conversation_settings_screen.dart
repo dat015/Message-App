@@ -20,7 +20,6 @@ class ConversationSettingsScreen extends StatefulWidget {
   final Conversation conversation;
   final int currentUserId;
   final List<MessageWithAttachment> messages;
-  final WebSocketService webSocketService;
   final Function(int) onConversationRemoved; // Callback để xóa conversation
   final Function(MessageWithAttachment)? updateChatListCallback;
 
@@ -29,7 +28,6 @@ class ConversationSettingsScreen extends StatefulWidget {
     required this.conversation,
     required this.currentUserId,
     required this.messages,
-    required this.webSocketService,
     required this.onConversationRemoved,
     required this.updateChatListCallback,
   });
@@ -54,6 +52,8 @@ class _ConversationSettingsScreenState
   XFile? _pickedImage;
   String? _groupImageUrl; // Biến để lưu URL ảnh tạm thời
   bool _isUploading = false; // Biến để theo dõi trạng thái tải
+    final WebSocketService webSocketService = WebSocketService();
+
 
   bool _isLoading = true;
 
@@ -67,7 +67,6 @@ class _ConversationSettingsScreenState
     _chatScreen = ChatScreen(
       conversationId: widget.conversation.id!,
       userId: widget.currentUserId,
-      websocketService: widget.webSocketService,
       onConversationRemoved: widget.onConversationRemoved,
       updateChatListCallback: widget.updateChatListCallback,
     );

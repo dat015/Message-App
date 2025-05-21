@@ -20,8 +20,8 @@ class ChatProvider with ChangeNotifier {
   final MessageRepo _messageRepo = MessageRepo();
   final ConversationRepo _conversationRepo = ConversationRepo();
   final ParticipantsRepo _participantsRepo = ParticipantsRepo();
-  WebSocketService webSocketService;
   final Function(MessageWithAttachment)? updateChatListCallback;
+  WebSocketService webSocketService = WebSocketService();
 
   List<MessageWithAttachment> _messages = [];
   Conversation? _conversation;
@@ -38,7 +38,6 @@ class ChatProvider with ChangeNotifier {
   ChatProvider({
     required this.userId,
     required this.conversationId,
-    required this.webSocketService,
     this.updateChatListCallback,
   }) {
     _initializeWebSocket();
@@ -51,9 +50,10 @@ class ChatProvider with ChangeNotifier {
   }
 
   void _initializeWebSocket() {
-    // Gán callback cho onMessageReceived
-    //webSocketService.connect(userId, conversationId);
-    webSocketService.onMessageReceived = _onMessageReceived;
+    if (!webSocketService.isConnected) {
+      webSocketService.connect(userId);
+    }
+    webSocketService.messages.listen(_onMessageReceived);
     print(
       'Initializing WebSocket for user $userId, conversation $conversationId',
     );
@@ -177,7 +177,6 @@ class ChatProvider with ChangeNotifier {
           .message
           .content = "Tin nhắn đã được thu hồi";
 
-          
       _messages
           .firstWhere(
             (message) => message.message.id == messageWithAttachment.message.id,

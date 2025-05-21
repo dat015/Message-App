@@ -70,16 +70,11 @@ class HomeProvider with ChangeNotifier {
   }
 
   void _initializeWebSocket(int userId) {
-    _webSocketService = WebSocketService(
-      url: Config.baseUrlWS,
-      onMessageReceived: (MessageWithAttachment message) {
-        updateChatList(message);
-      },
-    );
+    _webSocketService = WebSocketService();
 
     for (var conversation in _conversations) {
       if (conversation.id != null) {
-        _webSocketService?.connect(userId, conversation.id!);
+        _webSocketService?.connect(userId);
       }
     }
   }

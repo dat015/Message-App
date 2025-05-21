@@ -449,93 +449,6 @@ namespace Message_app.Migrations
                     b.ToTable("Role_of_User");
                 });
 
-            modelBuilder.Entity("server.Models.Story", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
-
-                    b.Property<string>("content")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("created_at")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("expires_at")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("user_id")
-                        .HasColumnType("int");
-
-                    b.HasKey("id");
-
-                    b.HasIndex("user_id");
-
-                    b.ToTable("Stories");
-                });
-
-            modelBuilder.Entity("server.Models.StoryReaction", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
-
-                    b.Property<DateTime>("created_at")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("is_deleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("reaction_type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("story_id")
-                        .HasColumnType("int");
-
-                    b.Property<int>("user_id")
-                        .HasColumnType("int");
-
-                    b.HasKey("id");
-
-                    b.HasIndex("story_id");
-
-                    b.HasIndex("user_id");
-
-                    b.ToTable("StoryReactions");
-                });
-
-            modelBuilder.Entity("server.Models.StoryViewers", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
-
-                    b.Property<int>("story_id")
-                        .HasColumnType("int");
-
-                    b.Property<int>("user_id")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("viewed_at")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("id");
-
-                    b.HasIndex("story_id");
-
-                    b.HasIndex("user_id");
-
-                    b.ToTable("StoryViewers");
-                });
-
             modelBuilder.Entity("server.Models.User", b =>
                 {
                     b.Property<int>("id")
@@ -543,9 +456,6 @@ namespace Message_app.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
-
-                    b.Property<bool>("IsFirstLogin")
-                        .HasColumnType("bit");
 
                     b.Property<string>("avatar_url")
                         .IsRequired()
@@ -766,55 +676,6 @@ namespace Message_app.Migrations
                     b.Navigation("user");
                 });
 
-            modelBuilder.Entity("server.Models.Story", b =>
-                {
-                    b.HasOne("server.Models.User", "user")
-                        .WithMany("stories")
-                        .HasForeignKey("user_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("user");
-                });
-
-            modelBuilder.Entity("server.Models.StoryReaction", b =>
-                {
-                    b.HasOne("server.Models.Story", "story")
-                        .WithMany("story_reactions")
-                        .HasForeignKey("story_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("server.Models.User", "user")
-                        .WithMany("storyReactions")
-                        .HasForeignKey("user_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("story");
-
-                    b.Navigation("user");
-                });
-
-            modelBuilder.Entity("server.Models.StoryViewers", b =>
-                {
-                    b.HasOne("server.Models.Story", "story")
-                        .WithMany()
-                        .HasForeignKey("story_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("server.Models.User", "user")
-                        .WithMany("storyViewers")
-                        .HasForeignKey("user_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("story");
-
-                    b.Navigation("user");
-                });
-
             modelBuilder.Entity("server.Models.Conversation", b =>
                 {
                     b.Navigation("GroupSettings");
@@ -832,11 +693,6 @@ namespace Message_app.Migrations
             modelBuilder.Entity("server.Models.Role", b =>
                 {
                     b.Navigation("role_Of_Users");
-                });
-
-            modelBuilder.Entity("server.Models.Story", b =>
-                {
-                    b.Navigation("story_reactions");
                 });
 
             modelBuilder.Entity("server.Models.User", b =>
@@ -860,12 +716,6 @@ namespace Message_app.Migrations
                     b.Navigation("participants");
 
                     b.Navigation("role_of_users");
-
-                    b.Navigation("stories");
-
-                    b.Navigation("storyReactions");
-
-                    b.Navigation("storyViewers");
                 });
 #pragma warning restore 612, 618
         }

@@ -31,6 +31,9 @@ namespace server.Services.WebSocketService
         public WebSocket WebSocket { get; set; }
         public int UserId { get; set; }
         public HashSet<int> ConversationIds { get; set; } = new HashSet<int>();// Danh sách ID các cuộc hội thoại client tham gia
+        // Track active Redis subscriptions
+        public ConcurrentDictionary<int, ChannelMessageQueue> ActiveSubscriptions { get; }
+            = new ConcurrentDictionary<int, ChannelMessageQueue>();
     }
 
 
@@ -46,6 +49,7 @@ namespace server.Services.WebSocketService
         private readonly IChatStorage _chatStorage;
         private readonly IConversationStorage _conversationStorage;
         private readonly CallHandler _callHandler;
+
         public webSocket(IConnectionMultiplexer redis, IServiceProvider serviceProvider,
                          IChatStorage chatStorage,
                             IConversationStorage conversation,
@@ -80,65 +84,104 @@ namespace server.Services.WebSocketService
             var client = GetClient(userId);
             if (client == null)
             {
-                Console.WriteLine($"Client {userId} not found");
+                _logger.LogWarning($"Client {userId} not found");
                 return;
             }
+
+            string channel = $"conversation:{conversationId}";
+
+            // Check if already subscribed
+            if (client.ActiveSubscriptions.ContainsKey(conversationId))
+            {
+                _logger.LogInformation($"User {userId} already subscribed to channel {channel}");
+                return;
+            }
+
             try
             {
-                // Subscribe client vào kênh Redis để nhận tin nhắn real-time
-                await subscriber.SubscribeAsync($"conversation:{conversationId}", async (channel, value) =>
+                // Subscribe and store the ChannelMessageQueue
+                var queue = await subscriber.SubscribeAsync(channel);
+                client.ActiveSubscriptions[conversationId] = queue;
+
+                queue.OnMessage(async channelMessage =>
                 {
                     if (client.WebSocket.State == WebSocketState.Open)
                     {
-                        var msg = JsonSerializer.Deserialize<Message>(value);
-                        if (msg.sender_id != client.UserId) // Ngăn chặn vòng lặp vô hạn, Không gửi lại tin nhắn của chính client
+                        var msg = JsonSerializer.Deserialize<Message>(channelMessage.Message);
+                        if (msg.sender_id != client.UserId)
                         {
-                            var bytes = Encoding.UTF8.GetBytes(value);
-                            await client.WebSocket.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, CancellationToken.None);
+                            var bytes = Encoding.UTF8.GetBytes(channelMessage.Message);
+                            await client.WebSocket.SendAsync(
+                                new ArraySegment<byte>(bytes),
+                                WebSocketMessageType.Text,
+                                true,
+                                CancellationToken.None);
                         }
                     }
                 });
-                Console.WriteLine($"User {client.UserId} subscribed to channel conversation:{conversationId}");
+
+                client.ConversationIds.Add(conversationId);
+                _logger.LogInformation($"User {userId} subscribed to channel {channel}");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error subscribing to channel: {ex.Message}");
+                _logger.LogError(ex, $"Error subscribing user {userId} to channel {channel}");
                 throw;
             }
         }
-        public async Task DisConnectUserToConversationChanelAsync(int userId, int conversationId)
+        public async Task UnsubscribeUserFromConversationChannelAsync(int userId, int conversationId)
         {
             var subscriber = _redis.GetSubscriber();
-            var client = GetClient(userId);
-            if (client == null)
+            var clients = _clients.Keys.Where(c => c.UserId == userId && c.WebSocket.State == WebSocketState.Open).ToList();
+
+            if (!clients.Any())
             {
-                Console.WriteLine($"Client {userId} not found");
+                _logger.LogWarning($"No active clients found for user {userId}");
                 return;
             }
-            try
+
+            string channelName = $"conversation:{conversationId}";
+            var redisChannel = new RedisChannel(channelName, RedisChannel.PatternMode.Literal);
+
+            foreach (var client in clients)
             {
-                // UnSubscribe client 
-                await subscriber.UnsubscribeAsync($"conversation:{conversationId}", async (channel, value) =>
+                try
                 {
-                    if (client.WebSocket.State == WebSocketState.Open)
+                    // Remove from conversation tracking
+                    client.ConversationIds.Remove(conversationId);
+
+                    // Unsubscribe from Redis if we have an active subscription
+                    if (client.ActiveSubscriptions.TryRemove(conversationId, out var queue))
                     {
-                        var msg = JsonSerializer.Deserialize<Message>(value);
-                        if (msg.sender_id != client.UserId) // Ngăn chặn vòng lặp vô hạn, Không gửi lại tin nhắn của chính client
-                        {
-                            var bytes = Encoding.UTF8.GetBytes(value);
-                            await client.WebSocket.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, CancellationToken.None);
-                        }
+                        // Proper way to unsubscribe using the ChannelMessageQueue
+                        await queue.UnsubscribeAsync();
+
+                        // Alternative if you prefer to use the channel directly:
+                        // await subscriber.UnsubscribeAsync(redisChannel);
+
+                        _logger.LogInformation($"Unsubscribed user {userId} from channel {channelName}");
                     }
-                });
-                Console.WriteLine($"User {client.UserId} subscribed to channel conversation:{conversationId}");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error subscribing to channel: {ex.Message}");
-                throw;
+                    else
+                    {
+                        _logger.LogWarning($"No active subscription found for user {userId} on channel {channelName}");
+                    }
+
+                    // Close WebSocket if no subscriptions remain
+                    if (!client.ConversationIds.Any() && client.WebSocket.State == WebSocketState.Open)
+                    {
+                        await client.WebSocket.CloseAsync(
+                            WebSocketCloseStatus.NormalClosure,
+                            "No active subscriptions",
+                            CancellationToken.None);
+                        _logger.LogInformation($"Closed WebSocket for user {userId}");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, $"Error unsubscribing user {userId} from channel {channelName}");
+                }
             }
         }
-
         // Xử lý yêu cầu WebSocket từ client
         public async Task HandleWebSocket(HttpContext context)
         {
@@ -150,7 +193,7 @@ namespace server.Services.WebSocketService
 
             var webSocket = await context.WebSockets.AcceptWebSocketAsync();
             var client = new Client { WebSocket = webSocket };
-            
+
             _clients.TryAdd(client, true);
 
             Console.WriteLine($"New client connected. Total clients: {_clients.Count}, Remote: {context.Connection.RemoteIpAddress}");
@@ -239,7 +282,7 @@ namespace server.Services.WebSocketService
             return message != null &&
                    !string.IsNullOrEmpty(message.type) &&
                    message.sender_id > 0 &&
-                   message.conversation_id > 0;
+                   message.conversation_id >= 0;
         }
         private Client GetClientByUserId(int userId)
         {
@@ -251,79 +294,31 @@ namespace server.Services.WebSocketService
         {
             client.UserId = message.sender_id;
 
-            // Ngăn chặn kết nối trùng lặp
+            // Handle duplicate connections
             var existingClient = GetClientByUserId(client.UserId);
             if (existingClient != null && existingClient != client)
             {
-                Console.WriteLine($"User {client.UserId} is already connected. Closing previous connection.");
-                await existingClient.WebSocket.CloseAsync(WebSocketCloseStatus.PolicyViolation, "Another connection opened", CancellationToken.None);
+                await existingClient.WebSocket.CloseAsync(
+                    WebSocketCloseStatus.PolicyViolation,
+                    "Another connection opened",
+                    CancellationToken.None);
                 _clients.TryRemove(existingClient, out _);
             }
 
             using var scope = _serviceProvider.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            // Lấy conversation_ids từ database
+
             var conversationIds = await dbContext.Participants
                 .Where(p => p.user_id == client.UserId && !p.is_deleted)
                 .Select(p => p.conversation_id)
                 .ToListAsync();
 
             client.ConversationIds = new HashSet<int>(conversationIds);
-            Console.WriteLine($"Client mapped with user_id: {client.UserId}, Conversations: {string.Join(",", client.ConversationIds)}");
 
-            var subscriber = _redis.GetSubscriber();
-            var db = _redis.GetDatabase();
+            // Subscribe to all conversations
             foreach (var conversationId in client.ConversationIds)
             {
-                // Đồng bộ dữ liệu từ DB lên Redis nếu Redis không có
-                var recentKey = $"conversation:{conversationId}:messages";
-                if (!await db.KeyExistsAsync(recentKey))
-                {
-                    var messages = await dbContext.Messages
-                        .Where(m => m.conversation_id == conversationId)
-                        .OrderByDescending(m => m.created_at)
-                        .Take(50)
-                        .Select(m => new MessageDTOForAttachment
-                        {
-                            id = m.id,
-                            conversation_id = m.conversation_id,
-                            sender_id = m.sender_id,
-                            content = m.content,
-                            created_at = m.created_at,
-                            isFile = m.isFile,
-                            type = m.type,
-                            isRecalled = m.isRecalled
-                        })
-                        .ToListAsync();
-
-                    foreach (var msg in messages)
-                    {
-                        await _chatStorage.SaveMessageAsync(msg, null);
-                    }
-                }
-
-                try
-                {
-                    // Subscribe client vào kênh Redis để nhận tin nhắn real-time
-                    await subscriber.SubscribeAsync($"conversation:{conversationId}", async (channel, value) =>
-                    {
-                        if (client.WebSocket.State == WebSocketState.Open)
-                        {
-                            var msg = JsonSerializer.Deserialize<Message>(value);
-                            if (msg.sender_id != client.UserId) // Ngăn chặn vòng lặp vô hạn, Không gửi lại tin nhắn của chính client
-                            {
-                                var bytes = Encoding.UTF8.GetBytes(value);
-                                await client.WebSocket.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, CancellationToken.None);
-                            }
-                        }
-                    });
-                    Console.WriteLine($"User {client.UserId} subscribed to channel conversation:{conversationId}");
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error subscribing to channel: {ex.Message}");
-                    throw;
-                }
+                await ConnectUserToConversationChanelAsync(client.UserId, conversationId);
             }
         }
         private async Task AddMemberToConversation(int conversationId, int userId)

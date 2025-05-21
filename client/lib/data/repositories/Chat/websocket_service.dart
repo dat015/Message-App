@@ -5,35 +5,55 @@ import 'package:first_app/data/models/messages.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class WebSocketService {
-  WebSocketChannel? _channel;
-  final String _url;
-  Function(MessageWithAttachment) onMessageReceived;
-  Function(int)? onReceiveCall; // Loại bỏ final
-  Function(int)? onCallAccepted; // Loại bỏ final
-  Function(int, String)? onReceiveOffer; // Loại bỏ final
-  Function(int, String)? onReceiveAnswer; // Loại bỏ final
-  Function(int, String)? onReceiveIceCandidate; // Loại bỏ final
-  Function(int)? onCallEnded; // Loại bỏ final
+  static final WebSocketService _instance = WebSocketService._internal();
+
+  factory WebSocketService() {
+    return _instance;
+  }
+
+  WebSocketService._internal();
+
+  late String _url;
+  late Function(MessageWithAttachment) onMessageReceived;
+  Function(int)? onReceiveCall;
+  Function(int)? onCallAccepted;
+  Function(int, String)? onReceiveOffer;
+  Function(int, String)? onReceiveAnswer;
+  Function(int, String)? onReceiveIceCandidate;
+  Function(int)? onCallEnded;
+
   bool _isConnected = false;
   bool get isConnected => _isConnected;
-  // Thêm StreamController để phát sự kiện cuộc gọi
-  final StreamController<Map<String, dynamic>> _callEvents =
-      StreamController.broadcast();
 
-  // Getter cho callEvents
+  WebSocketChannel? _channel;
+  final _callEvents = StreamController<Map<String, dynamic>>.broadcast();
   Stream<Map<String, dynamic>> get callEvents => _callEvents.stream;
-  WebSocketService({
-    required String url,
-    required this.onMessageReceived,
-    this.onReceiveCall,
-    this.onCallAccepted,
-    this.onReceiveOffer,
-    this.onReceiveAnswer,
-    this.onReceiveIceCandidate,
-    this.onCallEnded,
-  }) : _url = url;
+  final _messageController =
+      StreamController<MessageWithAttachment>.broadcast();
 
-  void connect(int userId, int conversationId) {
+  Stream<MessageWithAttachment> get messages => _messageController.stream;
+
+  void init({
+    required String url,
+    required Function(MessageWithAttachment) onMessageReceived,
+    Function(int)? onReceiveCall,
+    Function(int)? onCallAccepted,
+    Function(int, String)? onReceiveOffer,
+    Function(int, String)? onReceiveAnswer,
+    Function(int, String)? onReceiveIceCandidate,
+    Function(int)? onCallEnded,
+  }) {
+    _url = url;
+    this.onMessageReceived = onMessageReceived;
+    this.onReceiveCall = onReceiveCall;
+    this.onCallAccepted = onCallAccepted;
+    this.onReceiveOffer = onReceiveOffer;
+    this.onReceiveAnswer = onReceiveAnswer;
+    this.onReceiveIceCandidate = onReceiveIceCandidate;
+    this.onCallEnded = onCallEnded;
+  }
+
+  void connect(int userId) {
     if (_isConnected) {
       print("WebSocket already connected to $_url");
       return;
@@ -45,7 +65,6 @@ class WebSocketService {
       _isConnected = true;
       print("WebSocket connection established");
 
-      _sendBootupMessage(userId, conversationId);
 
       _channel!.stream.listen(
         (data) {
@@ -107,17 +126,19 @@ class WebSocketService {
                 lowercaseMessage,
               );
               print("Received chat message: $data");
-              onMessageReceived(messageWithAttachment);
+              _messageController.add(messageWithAttachment);
             }
           } catch (e, stackTrace) {
-            print("Error processing message: $e | Data received: $data\n$stackTrace");
+            print(
+              "Error processing message: $e | Data received: $data\n$stackTrace",
+            );
           }
         },
         onError: (error) {
           print("WebSocket error: $error");
           _isConnected = false;
           _channel = null;
-          _reconnect(userId, conversationId);
+          _reconnect(userId);
         },
         onDone: () {
           print(
@@ -125,15 +146,19 @@ class WebSocketService {
           );
           _isConnected = false;
           _channel = null;
-          _reconnect(userId, conversationId);
+          _reconnect(userId);
         },
       );
     } catch (e) {
       print("Error connecting to WebSocket: $e");
       _isConnected = false;
       _channel = null;
-      _reconnect(userId, conversationId);
+      _reconnect(userId);
     }
+  }
+
+  void setOnMessageReceived(Function(MessageWithAttachment) callback) {
+    onMessageReceived = callback;
   }
 
   bool _isValidReceiveCallMessage(Map<String, dynamic> message) {
@@ -178,16 +203,16 @@ class WebSocketService {
     });
   }
 
-  void _reconnect(int userId, int conversationId) {
+  void _reconnect(int userId) {
     Future.delayed(const Duration(seconds: 5), () {
       if (!_isConnected) {
         print("Attempting to reconnect to $_url...");
-        connect(userId, conversationId);
+        connect(userId);
       }
     });
   }
 
-  void _sendBootupMessage(int userId, int conversationId) {
+  void sendBootupMessage(int userId) {
     if (!_isConnected || _channel == null) {
       print("Cannot send bootup message: Not connected");
       return;
@@ -197,7 +222,7 @@ class WebSocketService {
       final bootupMessage = {
         "type": "bootup",
         "sender_id": userId,
-        "conversation_id": conversationId,
+        "conversation_id": 0,
       };
       final jsonMessage = jsonEncode(bootupMessage);
       _channel!.sink.add(jsonMessage);
@@ -433,7 +458,7 @@ class WebSocketService {
     if (_isConnected && _channel != null) {
       try {
         _channel!.sink.close();
-        
+
         print("WebSocket connection closed");
       } catch (e) {
         print("Error closing WebSocket: $e");
