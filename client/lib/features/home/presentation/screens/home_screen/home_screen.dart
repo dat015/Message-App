@@ -40,9 +40,10 @@ class _HomeScreenState extends State<HomeScreen> {
   ConversationRepo conversationRepo = ConversationRepo();
   ParticipantsRepo participantsRepo = ParticipantsRepo();
   FriendsRepo friendRepo = FriendsRepo();
-  WebSocketService? _webSocketService;
+  WebSocketService? _webSocketService = WebSocketService();
   Map<int, String> userNames = {}; // Lưu trữ userId -> username
   late Conversation _new_conversation;
+  late FriendsBloc friendsBloc;
   late Future<List<Conversation>> _conversationsFuture;
   late String userAvatar;
   late String userName;
@@ -63,23 +64,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _initializeWebSocket() {
-    _webSocketService = WebSocketService(
-      url: Config.baseUrlWS,
-      onMessageReceived: (MessageWithAttachment message) {
-        print("ok");
-        updateChatList(message);
-      },
-    );
-    
+    _webSocketService?.messages.listen(_onMessageReceived);
+  }
 
-    // Kết nối WebSocket sau khi đã có danh sách conversation
-    _fetchConversations().then((_) {
-      for (var conversation in _conversations) {
-        if (conversation.id != null) {
-          _webSocketService?.connect(userId, conversation.id!);
-        }
-      }
-    });
+  void _onMessageReceived(MessageWithAttachment message) {
+    print("Message received: ${message.message.content}");
+    updateChatList(message);
   }
 
   Future<String> _getUserName(int userId) async {
@@ -116,7 +106,11 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       final conversations = await conversationRepo.getConversations(userId);
       final conversationFilter =
-          conversations.where((c) => (c.lastMessageTime != null || c.lastMessage != null)).toList();
+          conversations
+              .where(
+                (c) => (c.lastMessageTime != null || c.lastMessage != null),
+              )
+              .toList();
 
       print("Thanh cong");
       for (var conversation in conversations) {
@@ -178,8 +172,8 @@ class _HomeScreenState extends State<HomeScreen> {
       return content.replaceFirst("Đã xóa bạn", "");
     } else if (content.startsWith("Đã thêm bạn ")) {
       return content.replaceFirst("Đã thêm bạn ", "");
-    } 
-    
+    }
+
     return content;
   }
 
@@ -302,8 +296,7 @@ class _HomeScreenState extends State<HomeScreen> {
             conversation.img_url = newImageUrl;
           }
         }
-      }
-      else if(newMessage.message.content!.startsWith("Đã rời khỏi nhóm ")){
+      } else if (newMessage.message.content!.startsWith("Đã rời khỏi nhóm ")) {
         removeConversation(conversationId);
         return;
       } else {
@@ -318,6 +311,7 @@ class _HomeScreenState extends State<HomeScreen> {
       print("Cập nhật conversation: $conversationId");
     });
   }
+
   void _createNewGroup() {
     Navigator.pushNamed(
       context,
@@ -327,7 +321,7 @@ class _HomeScreenState extends State<HomeScreen> {
         'friends': _friends,
         'conversationRepo': conversationRepo,
         'webSocketService': _webSocketService,
-        'selectedFriends' : _friends,
+        'selectedFriends': _friends,
       },
     ).then((result) {
       if (result is Conversation) {
@@ -367,8 +361,6 @@ class _HomeScreenState extends State<HomeScreen> {
   //     ),
   //   );
   // }
-
-
 
   Widget _buildFriendsList() {
     if (_friends.isEmpty) {
@@ -440,7 +432,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       'conversationId': conversation.id,
                       'user_id': userId,
                       'participantId': friend.friendId,
-                      'websocketService': _webSocketService,
                       'updateChatListCallback': updateChatList,
                       'onConversationRemoved': removeConversation,
                     },
@@ -697,7 +688,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 'conversationId': finalConversationId,
                 'user_id': finalUserId,
                 'participantId': participantId,
-                'websocketService': _webSocketService,
                 'updateChatListCallback': updateChatList,
               },
             );
@@ -747,18 +737,19 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void dispose() {
-    _webSocketService?.disconnect();
+    friendsBloc.close();
     super.dispose();
   }
 
   @override
- Widget build(BuildContext context) {
+  Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => FriendsBloc(
-        friendsRepo: friendsRepo,
-        apiClient: _apiService,
-        currentUserId: userId,
-      )..add(LoadFriendsDataEvent()),
+      create:
+          (context) => FriendsBloc(
+            friendsRepo: friendsRepo,
+            apiClient: _apiService,
+            currentUserId: userId,
+          )..add(LoadFriendsDataEvent()),
       child: MainLayout(
         selectedIndex: _selectedIndex,
         onItemTapped: _onItemTapped,
@@ -767,35 +758,40 @@ class _HomeScreenState extends State<HomeScreen> {
         userAvatar: userAvatar,
         email: email,
         friendsRepo: friendsRepo,
-        body: _selectedIndex == 0
-            ? Stack(
-                children: [
-                  Column(
-                    children: [
-                      // _buildSearchBar(),
-                      _buildFriendsList(),
-                      Expanded(child: _buildChatList()),
-                    ],
-                  ),
-                  Positioned(
-                    bottom: 16.0,
-                    left: 16.0,
-                    child: FloatingActionButton(
-                      onPressed: _friends.isEmpty ? null : _createNewGroup, // Vô hiệu hóa nếu không có bạn bè
-                      tooltip: 'Tạo nhóm mới',
-                      backgroundColor: _friends.isEmpty ? Colors.grey : Colors.blue,
-                      mini: true,
-                      elevation: 4.0,
-                      child: const Icon(
-                        Icons.group_add,
-                        size: 22,
-                        color: Colors.white,
+        body:
+            _selectedIndex == 0
+                ? Stack(
+                  children: [
+                    Column(
+                      children: [
+                        // _buildSearchBar(),
+                        _buildFriendsList(),
+                        Expanded(child: _buildChatList()),
+                      ],
+                    ),
+                    Positioned(
+                      bottom: 16.0,
+                      left: 16.0,
+                      child: FloatingActionButton(
+                        onPressed:
+                            _friends.isEmpty
+                                ? null
+                                : _createNewGroup, // Vô hiệu hóa nếu không có bạn bè
+                        tooltip: 'Tạo nhóm mới',
+                        backgroundColor:
+                            _friends.isEmpty ? Colors.grey : Colors.blue,
+                        mini: true,
+                        elevation: 4.0,
+                        child: const Icon(
+                          Icons.group_add,
+                          size: 22,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              )
-            : _getBodyContent(),
+                  ],
+                )
+                : _getBodyContent(),
       ),
     );
   }

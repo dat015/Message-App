@@ -49,20 +49,9 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => HomeProvider()),
         
-        Provider<WebSocketService>(
-          create:
-              (_) => WebSocketService(
-                url: Config.baseUrlWS,
-                onMessageReceived: (message) {
-                  print('Received chat message: ${message.message.content}');
-                },
-              ),
-        ),
+       
         ChangeNotifierProvider<CallProvider>(
-          create:
-              (context) => CallProvider(
-                webSocketService: context.read<WebSocketService>(),
-              ),
+          create: (_) => CallProvider(),
         ),
       ],
       child: const MyApp(),

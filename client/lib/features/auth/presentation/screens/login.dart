@@ -1,4 +1,7 @@
+import 'package:first_app/PlatformClient/config.dart';
 import 'package:first_app/data/dto/login_response.dart';
+import 'package:first_app/data/dto/message_response.dart';
+import 'package:first_app/data/repositories/Chat/websocket_service.dart';
 import 'package:first_app/data/storage/storage_service.dart';
 import 'package:first_app/features/auth/presentation/screens/forget_password.dart';
 import 'package:first_app/features/auth/presentation/screens/register.dart';
@@ -71,6 +74,19 @@ class _SignInScreenState extends State<SignInScreen> {
         );
 
         await StorageService.saveUserData("user_data", userData);
+        final webSocketService = WebSocketService();
+        webSocketService.init(
+          url: Config.baseUrlWS,
+          onMessageReceived: (msg) {
+          },
+        );
+        webSocketService.connect(response.user!.id);
+        webSocketService.sendBootupMessage(
+          response.user!.id
+        );
+
+        print("connected ${webSocketService.isConnected}");
+
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (_) => HomeScreen(user: user_response)),

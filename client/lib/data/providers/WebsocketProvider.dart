@@ -10,28 +10,7 @@ class WebSocketProvider extends ChangeNotifier {
 
   WebSocketProvider(String url)
       : _webSocketService = WebSocketService(
-          url: url,
-          onMessageReceived: (MessageWithAttachment message) {
-            // Xử lý tin nhắn
-          },
-          onReceiveCall: (conversationId) {
-            // Xử lý khi nhận cuộc gọi
-          },
-          onCallAccepted: (conversationId) {
-            // Xử lý khi cuộc gọi được chấp nhận
-          },
-          onReceiveOffer: (conversationId, sdp) {
-            // Xử lý khi nhận offer
-          },
-          onReceiveAnswer: (conversationId, sdp) {
-            // Xử lý khi nhận answer
-          },
-          onReceiveIceCandidate: (conversationId, candidate) {
-            // Xử lý ICE candidate
-          },
-          onCallEnded: (conversationId) {
-            // Xử lý khi cuộc gọi kết thúc
-          },
+         
         );
 
   final List<MessageWithAttachment> _messages = [];
@@ -39,7 +18,7 @@ class WebSocketProvider extends ChangeNotifier {
 
   void connect(int userId, int conversationId) {
     if (!_isConnected) {
-      _webSocketService.connect(userId, conversationId);
+      _webSocketService.connect(userId);
       _isConnected = true;
       notifyListeners();
     }

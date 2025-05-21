@@ -38,8 +38,8 @@ class AppRoutes {
 
         if (args == null ||
             args['conversationId'] == null ||
-            args['user_id'] == null ||
-            args['websocketService'] == null) {
+            args['user_id'] == null 
+           ) {
           debugPrint("Error: Missing required arguments for ChatScreen");
           return MaterialPageRoute(
             builder: (_) => const Scaffold(
@@ -53,8 +53,7 @@ class AppRoutes {
         }
 
         if (args['conversationId'] is! int ||
-            args['user_id'] is! int ||
-            args['websocketService'] is! WebSocketService) {
+            args['user_id'] is! int ) {
           debugPrint("Error: Invalid argument types for ChatScreen");
           return MaterialPageRoute(
             builder: (_) => const Scaffold(
@@ -78,8 +77,7 @@ class AppRoutes {
             conversationId: args['conversationId'] as int,
             userId: args['user_id'] as int,
             participantId: participantId,
-            websocketService: args['websocketService'] as WebSocketService,
-            updateChatListCallback: updateChatListCallback,
+              updateChatListCallback: updateChatListCallback,
             onConversationRemoved: onConversationRemoved,
           ),
         );
@@ -90,8 +88,8 @@ class AppRoutes {
         if (args == null ||
             args['userId'] == null ||
             args['friends'] == null ||
-            args['conversationRepo'] == null ||
-            args['webSocketService'] == null) {
+            args['conversationRepo'] == null 
+            ) {
           debugPrint("Error: Missing required arguments for CreateGroupScreen");
           return MaterialPageRoute(
             builder: (_) => const Scaffold(
@@ -104,8 +102,8 @@ class AppRoutes {
 
         if (args['userId'] is! int ||
             args['friends'] is! List<FriendDTO> ||
-            args['conversationRepo'] is! ConversationRepo ||
-            args['webSocketService'] is! WebSocketService) {
+            args['conversationRepo'] is! ConversationRepo
+            ) {
           debugPrint("Error: Invalid argument types for CreateGroupScreen");
           return MaterialPageRoute(
             builder: (_) => const Scaffold(
@@ -123,7 +121,6 @@ class AppRoutes {
             userId: args['userId'] as int,
             friends: args['friends'] as List<FriendDTO>,
             conversationRepo: args['conversationRepo'] as ConversationRepo,
-            webSocketService: args['webSocketService'] as WebSocketService,
             selectedFriends: selectedFriends,
           ),
         );
