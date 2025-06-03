@@ -1,4 +1,5 @@
 import 'package:first_app/data/dto/friend_dto.dart';
+import 'package:first_app/data/dto/group_setting_dto.dart';
 import 'package:first_app/data/repositories/Friends_repo/friends_repo.dart';
 import 'package:first_app/data/repositories/User_Repo/user_repo.dart';
 import 'package:flutter/material.dart';
@@ -11,12 +12,14 @@ class MembersScreen extends StatefulWidget {
   final Conversation conversation;
   final List<Participants> participants;
   final int currentUserId;
+  final GroupSettingDTO groupSetting;
 
   const MembersScreen({
     super.key,
     required this.conversation,
     required this.participants,
     required this.currentUserId,
+    required this.groupSetting,
   });
 
   @override
@@ -31,13 +34,33 @@ class _MembersScreenState extends State<MembersScreen> {
   final FriendsRepo _friendsRepo = FriendsRepo();
   List<FriendDTO> _friends = [];
   bool _isLoading = false;
+  bool _isCurrentUserAdmin = false;
 
   @override
   void initState() {
     super.initState();
     _filteredParticipants = widget.participants;
     _fetchFriends();
+    _checkUserRole();
     print("user id: ${widget.currentUserId}");
+  }
+
+  void _checkUserRole() {
+    final currentUserParticipant = widget.participants.firstWhere(
+      (p) => p.user_id == widget.currentUserId,
+      orElse:
+          () => Participants(
+            id: -1,
+            conversationId: -1,
+            user_id: widget.currentUserId,
+            name: 'Unknown',
+            joinedAt: DateTime.now(),
+            isDeleted: false,
+          ),
+    );
+    setState(() {
+      _isCurrentUserAdmin = currentUserParticipant.role == 'admin';
+    });
   }
 
   Future<void> _fetchFriends() async {
@@ -59,11 +82,12 @@ class _MembersScreenState extends State<MembersScreen> {
 
   void _filterParticipants(String query) {
     setState(() {
-      _filteredParticipants = widget.participants.where((participant) {
-        final username = participant.name?.toLowerCase();
-        final searchLower = query.toLowerCase();
-        return username?.contains(searchLower) ?? false;
-      }).toList();
+      _filteredParticipants =
+          widget.participants.where((participant) {
+            final username = participant.name?.toLowerCase();
+            final searchLower = query.toLowerCase();
+            return username?.contains(searchLower) ?? false;
+          }).toList();
     });
   }
 
@@ -71,8 +95,9 @@ class _MembersScreenState extends State<MembersScreen> {
     setState(() => _isLoading = true);
     try {
       await _participantsRepo.addMember(widget.conversation.id!, userId);
-      final updatedParticipants =
-          await _participantsRepo.getParticipants(widget.conversation.id!);
+      final updatedParticipants = await _participantsRepo.getParticipants(
+        widget.conversation.id!,
+      );
       setState(() {
         _filteredParticipants = updatedParticipants;
         _isLoading = false;
@@ -82,37 +107,40 @@ class _MembersScreenState extends State<MembersScreen> {
       );
     } catch (e) {
       setState(() => _isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Lỗi khi thêm thành viên: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Lỗi khi thêm thành viên: $e')));
     }
   }
 
-  Future<void> _removeMember(int userId) async {
+  Future<void> _removeMember(int participantId) async {
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Xóa thành viên'),
-        content: const Text('Bạn có chắc chắn muốn xóa thành viên này?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Hủy'),
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Xóa thành viên'),
+            content: const Text('Bạn có chắc chắn muốn xóa thành viên này?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Hủy'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text('Xóa'),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Xóa'),
-          ),
-        ],
-      ),
     );
 
     if (confirmed == true) {
       setState(() => _isLoading = true);
       try {
-        await _participantsRepo.leaveGroup(widget.conversation.id!, userId);
-        final updatedParticipants =
-            await _participantsRepo.getParticipants(widget.conversation.id!);
+        await _participantsRepo.removeMember(participantId);
+        
+        final updatedParticipants = await _participantsRepo.getParticipants(
+          widget.conversation.id!,
+        );
         setState(() {
           _filteredParticipants = updatedParticipants;
           _isLoading = false;
@@ -122,60 +150,66 @@ class _MembersScreenState extends State<MembersScreen> {
         );
       } catch (e) {
         setState(() => _isLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Lỗi khi xóa thành viên: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Lỗi khi xóa thành viên: $e')));
       }
     }
   }
 
   void _showAddMemberDialog() {
-    final nonMemberFriends = _friends.where((friend) {
-      return !widget.participants
-          .any((participant) => participant.user_id == friend.friendId);
-    }).toList();
+    final nonMemberFriends =
+        _friends.where((friend) {
+          return !widget.participants.any(
+            (participant) => participant.user_id == friend.friendId,
+          );
+        }).toList();
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Thêm thành viên'),
-        content: SizedBox(
-          width: double.maxFinite,
-          height: 300,
-          child: nonMemberFriends.isEmpty
-              ? const Center(child: Text('Không có bạn bè để thêm'))
-              : ListView.builder(
-                  itemCount: nonMemberFriends.length,
-                  itemBuilder: (context, index) {
-                    final friend = nonMemberFriends[index];
-                    return ListTile(
-                      leading: CircleAvatar(
-                        radius: 20,
-                        backgroundImage: friend.avatar != null
-                            ? NetworkImage(friend.avatar!)
-                            : null,
-                        child: friend.avatar == null
-                            ? const Icon(Icons.person, size: 20)
-                            : null,
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Thêm thành viên'),
+            content: SizedBox(
+              width: double.maxFinite,
+              height: 300,
+              child:
+                  nonMemberFriends.isEmpty
+                      ? const Center(child: Text('Không có bạn bè để thêm'))
+                      : ListView.builder(
+                        itemCount: nonMemberFriends.length,
+                        itemBuilder: (context, index) {
+                          final friend = nonMemberFriends[index];
+                          return ListTile(
+                            leading: CircleAvatar(
+                              radius: 20,
+                              backgroundImage:
+                                  friend.avatar != null
+                                      ? NetworkImage(friend.avatar!)
+                                      : null,
+                              child:
+                                  friend.avatar == null
+                                      ? const Icon(Icons.person, size: 20)
+                                      : null,
+                            ),
+                            title: Text(friend.username ?? 'Không có tên'),
+                            onTap: () {
+                              if (friend.friendId != null) {
+                                _addMember(friend.friendId!);
+                                Navigator.pop(context);
+                              }
+                            },
+                          );
+                        },
                       ),
-                      title: Text(friend.username ?? 'Không có tên'),
-                      onTap: () {
-                        if (friend.friendId != null) {
-                          _addMember(friend.friendId!);
-                          Navigator.pop(context);
-                        }
-                      },
-                    );
-                  },
-                ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Hủy'),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Hủy'),
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 
@@ -187,10 +221,11 @@ class _MembersScreenState extends State<MembersScreen> {
         backgroundColor: Theme.of(context).primaryColor,
         elevation: 0,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.person_add),
-            onPressed: _showAddMemberDialog,
-          ),
+          if (_isCurrentUserAdmin || widget.groupSetting.allowMemberInvite)
+            IconButton(
+              icon: const Icon(Icons.person_add),
+              onPressed: _showAddMemberDialog,
+            ),
         ],
       ),
       body: Column(
@@ -240,53 +275,69 @@ class _MembersScreenState extends State<MembersScreen> {
             ),
           ),
           Expanded(
-            child: _isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : ListView.builder(
-                    itemCount: _filteredParticipants.length,
-                    itemBuilder: (context, index) {
-                      final participant = _filteredParticipants[index];
-                      return Card(
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                        child: ListTile(
-                          leading: CircleAvatar(
-                            radius: 25,
-                            backgroundImage: participant.user?.avatarUrl != null
-                                ? NetworkImage(participant.user!.avatarUrl!)
-                                : null,
-                            child: participant.user?.avatarUrl == null
-                                ? const Icon(Icons.person, size: 25)
-                                : null,
+            child:
+                _isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : ListView.builder(
+                      itemCount: _filteredParticipants.length,
+                      itemBuilder: (context, index) {
+                        final participant = _filteredParticipants[index];
+                        final bool canRemoveMember =
+                            _isCurrentUserAdmin ||
+                            (widget.groupSetting.allowMemberRemove &&
+                                participant.user_id != widget.currentUserId);
+
+                        return Card(
+                          margin: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
                           ),
-                          title: Text(
-                            participant.name ?? '',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              radius: 25,
+                              backgroundImage:
+                                  participant.user?.avatarUrl != null
+                                      ? NetworkImage(
+                                        participant.user!.avatarUrl!,
+                                      )
+                                      : null,
+                              child:
+                                  participant.user?.avatarUrl == null
+                                      ? const Icon(Icons.person, size: 25)
+                                      : null,
                             ),
+                            title: Text(
+                              participant.name ?? '',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            subtitle: Text(
+                              participant.user_id == widget.currentUserId
+                                  ? 'Bạn'
+                                  : participant.role == 'admin'
+                                  ? 'Quản trị viên'
+                                  : 'Thành viên',
+                              style: TextStyle(color: Colors.grey[600]),
+                            ),
+                            trailing:
+                                participant.user_id != widget.currentUserId &&
+                                        canRemoveMember
+                                    ? IconButton(
+                                      icon: const Icon(
+                                        Icons.remove_circle_outline,
+                                        color: Colors.red,
+                                      ),
+                                      onPressed:
+                                          () => _removeMember(
+                                            participant.id,
+                                          ),
+                                    )
+                                    : null,
                           ),
-                          subtitle: Text(
-                            participant.user_id == widget.currentUserId
-                                ? 'Bạn'
-                                : 'Thành viên',
-                            style: TextStyle(color: Colors.grey[600]),
-                          ),
-                          trailing: participant.user_id != widget.currentUserId
-                              ? IconButton(
-                                  icon: const Icon(
-                                    Icons.remove_circle_outline,
-                                    color: Colors.red,
-                                  ),
-                                  onPressed: () =>
-                                      _removeMember(participant.user_id),
-                                )
-                              : null,
-                        ),
-                      );
-                    },
-                  ),
+                        );
+                      },
+                    ),
           ),
         ],
       ),

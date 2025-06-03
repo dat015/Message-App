@@ -1,0 +1,65 @@
+2025-05-26 17:30:40.263 +07:00 [INF] Executed DbCommand (43ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [u].[id], [u].[username], [u].[avatar_url]
+FROM [Users] AS [u]
+2025-05-26 17:30:40.563 +07:00 [INF] User profile is available. Using 'C:\Users\Thao\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-05-26 17:30:40.644 +07:00 [WRN] Overriding address(es) 'http://localhost:5053'. Binding to endpoints defined via IConfiguration and/or UseKestrel() instead.
+2025-05-26 17:30:40.652 +07:00 [INF] Now listening on: http://[::]:5053
+2025-05-26 17:30:40.653 +07:00 [INF] Now listening on: http://0.0.0.0:5053
+2025-05-26 17:30:40.653 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-05-26 17:30:40.653 +07:00 [INF] Hosting environment: Development
+2025-05-26 17:30:40.653 +07:00 [INF] Content root path: C:\Users\Thao\source\Flutter\Message_app\server
+2025-05-26 17:31:03.266 +07:00 [INF] Application is shutting down...
+2025-05-26 17:31:10.090 +07:00 [INF] Executed DbCommand (32ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [u].[id], [u].[username], [u].[avatar_url]
+FROM [Users] AS [u]
+2025-05-26 17:31:10.196 +07:00 [INF] User profile is available. Using 'C:\Users\Thao\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-05-26 17:31:10.236 +07:00 [WRN] Overriding address(es) 'http://localhost:5053'. Binding to endpoints defined via IConfiguration and/or UseKestrel() instead.
+2025-05-26 17:31:10.243 +07:00 [INF] Now listening on: http://[::]:5053
+2025-05-26 17:31:10.243 +07:00 [INF] Now listening on: http://0.0.0.0:5053
+2025-05-26 17:31:10.243 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-05-26 17:31:10.243 +07:00 [INF] Hosting environment: Development
+2025-05-26 17:31:10.243 +07:00 [INF] Content root path: C:\Users\Thao\source\Flutter\Message_app\server
+2025-05-26 17:31:56.046 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger - null null
+2025-05-26 17:31:56.098 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger - 301 0 null 55.3386ms
+2025-05-26 17:31:56.102 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-05-26 17:31:56.207 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 104.9812ms
+2025-05-26 17:31:56.209 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/swagger-ui-standalone-preset.js - null null
+2025-05-26 17:31:56.209 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/swagger-ui.css - null null
+2025-05-26 17:31:56.210 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/swagger-ui-bundle.js - null null
+2025-05-26 17:31:56.211 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.css - null null
+2025-05-26 17:31:56.212 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-05-26 17:31:56.213 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 1.4593ms
+2025-05-26 17:31:56.217 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/.well-known/appspecific/com.chrome.devtools.json - null null
+2025-05-26 17:31:56.232 +07:00 [INF] Sending file. Request path: '/index.css'. Physical path: 'N/A'
+2025-05-26 17:31:56.234 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.css - 200 202 text/css 23.3907ms
+2025-05-26 17:31:56.234 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-05-26 17:31:56.236 +07:00 [INF] Sending file. Request path: '/swagger-ui.css'. Physical path: 'N/A'
+2025-05-26 17:31:56.238 +07:00 [INF] Sending file. Request path: '/swagger-ui-standalone-preset.js'. Physical path: 'N/A'
+2025-05-26 17:31:56.240 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 5.5262ms
+2025-05-26 17:31:56.242 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/swagger-ui.css - 200 152035 text/css 32.297ms
+2025-05-26 17:31:56.242 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/swagger-ui-standalone-preset.js - 200 230007 text/javascript 32.2969ms
+2025-05-26 17:31:56.272 +07:00 [INF] Sending file. Request path: '/swagger-ui-bundle.js'. Physical path: 'N/A'
+2025-05-26 17:31:56.273 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/swagger-ui-bundle.js - 200 1457477 text/javascript 62.5701ms
+2025-05-26 17:31:56.287 +07:00 [WRN] Failed to determine the https port for redirect.
+2025-05-26 17:31:56.327 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/.well-known/appspecific/com.chrome.devtools.json - 404 0 null 109.2911ms
+2025-05-26 17:31:56.329 +07:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5053/.well-known/appspecific/com.chrome.devtools.json, Response status code: 404
+2025-05-26 17:31:57.247 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-05-26 17:31:57.380 +07:00 [ERR] An unhandled exception has occurred while executing the request.
+Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorException: Failed to generate Operation for action - server.Controllers.MessageController.UploadFile (Message_app). See inner exception
+ ---> Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorException: Error reading parameter(s) for action server.Controllers.MessageController.UploadFile (Message_app) as [FromForm] attribute used with IFormFile. Please refer to https://github.com/domaindrivendev/Swashbuckle.AspNetCore#handle-forms-and-file-uploads for more information
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateParametersAsync(ApiDescription apiDescription, SchemaRepository schemaRespository, Func`3 parameterGenerator)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateParametersAsync(ApiDescription apiDescription, SchemaRepository schemaRespository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationAsync(ApiDescription apiDescription, SchemaRepository schemaRepository, Func`3 parametersGenerator, Func`3 bodyGenerator, Func`3 applyFilters)
+   --- End of inner exception stack trace ---
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationAsync(ApiDescription apiDescription, SchemaRepository schemaRepository, Func`3 parametersGenerator, Func`3 bodyGenerator, Func`3 applyFilters)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationAsync(ApiDescription apiDescription, SchemaRepository schemaRepository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationsAsync(IEnumerable`1 apiDescriptions, SchemaRepository schemaRepository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GeneratePathsAsync(IEnumerable`1 apiDescriptions, SchemaRepository schemaRepository, Func`3 operationsGenerator)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GeneratePathsAsync(IEnumerable`1 apiDescriptions, SchemaRepository schemaRepository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GetSwaggerAsync(String documentName, String host, String basePath)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-05-26 17:31:57.400 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 500 null text/plain; charset=utf-8 153.7058ms
+2025-05-26 17:31:57.444 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/favicon-32x32.png - null null
+2025-05-26 17:31:57.445 +07:00 [INF] Sending file. Request path: '/favicon-32x32.png'. Physical path: 'N/A'
+2025-05-26 17:31:57.446 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/favicon-32x32.png - 200 628 image/png 1.0184ms

@@ -4,6 +4,9 @@ import 'package:first_app/data/models/conversation.dart';
 import 'package:first_app/data/repositories/Conversations_repo/conversations_repository.dart';
 import 'package:first_app/data/repositories/Chat/websocket_service.dart';
 import 'package:first_app/data/repositories/Friends_repo/friends_repo.dart';
+import 'package:first_app/data/repositories/GroupSettting/group_settting_repo.dart';
+import 'package:first_app/data/dto/group_setting_dto.dart';
+import 'package:first_app/features/home/presentation/screens/home_screen/GroupPermissionSetupScreen.dart';
 import 'package:flutter/material.dart';
 
 class CreateGroupScreen extends StatefulWidget {
@@ -31,7 +34,9 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
   List<FriendDTO> _filteredFriends = [];
   WebSocketService webSocketService = WebSocketService();
   FriendsRepo friendRepo = FriendsRepo();
+  GroupSettingRepo _groupSettingRepo = GroupSettingRepo();
   List<FriendDTO> _allFriends = [];
+  GroupSettingDTO? _groupSettings;
 
   @override
   void initState() {
@@ -95,6 +100,40 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     }
   }
 
+  Future<void> _showPermissionSetup() async {
+    final settings = await Navigator.push<GroupSettingDTO>(
+      context,
+      MaterialPageRoute(
+        builder:
+            (context) => GroupPermissionSetupScreen(
+              userId: widget.userId,
+              onPermissionsSet: (settings) {
+                Navigator.pop(
+                  context,
+                  settings,
+                ); // Đảm bảo quay lại với settings
+              },
+            ),
+      ),
+    );
+
+    if (settings != null) {
+      setState(() {
+        _groupSettings = settings;
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Đã lưu cài đặt quyền'),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    }
+  }
+
   void _createGroup() async {
     if (_groupNameController.text.isEmpty || _selectedFriendIds.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -110,23 +149,103 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     }
 
     try {
-      print('Creating group with friendIds: $_selectedFriendIds');
+      // Show loading indicator
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return const Center(child: CircularProgressIndicator());
+        },
+      );
+
       final conversation = await widget.conversationRepo.createGroup(
         widget.userId,
         _groupNameController.text,
         _selectedFriendIds,
       );
+
       if (conversation != null) {
-        Navigator.pop(context);
+        try {
+          // Create group settings if not set
+          if (_groupSettings == null) {
+            _groupSettings = GroupSettingDTO(
+              conversationId: conversation.id!,
+              allowMemberInvite: false,
+              allowMemberEdit: false,
+              allowMemberRemove: false,
+              createdBy: widget.userId,
+            );
+          } else {
+            _groupSettings = GroupSettingDTO(
+              conversationId: conversation.id!,
+              allowMemberInvite: _groupSettings!.allowMemberInvite,
+              allowMemberEdit: _groupSettings!.allowMemberEdit,
+              allowMemberRemove: _groupSettings!.allowMemberRemove,
+              createdBy: widget.userId,
+            );
+          }
+
+          // Create group settings
+          var result = await _groupSettingRepo.createGroupSetting(
+            conversation.id!,
+            widget.userId,
+            _groupSettings!.allowMemberInvite,
+            _groupSettings!.allowMemberEdit,
+            _groupSettings!.allowMemberRemove,
+          );
+
+          // Close loading indicator
+          Navigator.pop(context);
+
+          // Show success message
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Tạo nhóm thành công'),
+              backgroundColor: Colors.green,
+              duration: Duration(seconds: 2),
+            ),
+          );
+
+          // Return to previous screen
+          Navigator.pop(context);
+        } catch (e) {
+          // Close loading indicator
+          Navigator.pop(context);
+
+          // Show error message for group settings
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Lỗi khi cài đặt quyền nhóm: ${e.toString()}'),
+              backgroundColor: Colors.orange,
+              duration: const Duration(seconds: 3),
+            ),
+          );
+
+          // Still return to previous screen since group was created
+          Navigator.pop(context);
+        }
       } else {
+        // Close loading indicator
+        Navigator.pop(context);
+
         throw Exception('Không thể tạo nhóm');
       }
     } catch (e) {
+      // Close loading indicator if it's showing
+      if (Navigator.canPop(context)) {
+        Navigator.pop(context);
+      }
+
+      // Show error message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Lỗi khi tạo nhóm: $e'),
+          content: Text(
+            e.toString().contains('500')
+                ? 'Lỗi server: Vui lòng thử lại sau'
+                : 'Lỗi khi tạo nhóm: ${e.toString()}',
+          ),
           backgroundColor: Colors.redAccent,
-          duration: const Duration(seconds: 2),
+          duration: const Duration(seconds: 3),
         ),
       );
     }
@@ -183,6 +302,38 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
               textInputAction: TextInputAction.next,
             ),
             const SizedBox(height: 16.0),
+
+            // Permission Setup Button
+            Card(
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: ListTile(
+                leading: Icon(
+                  Icons.security,
+                  color: _groupSettings != null ? Colors.green : Colors.blue,
+                ),
+                title: Text(
+                  _groupSettings != null
+                      ? 'Đã cài đặt quyền'
+                      : 'Cài đặt quyền nhóm',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: _groupSettings != null ? Colors.green : Colors.blue,
+                  ),
+                ),
+                subtitle: Text(
+                  _groupSettings != null
+                      ? 'Nhấn để thay đổi cài đặt quyền'
+                      : 'Nhấn để cài đặt quyền cho nhóm',
+                ),
+                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                onTap: _showPermissionSetup,
+              ),
+            ),
+            const SizedBox(height: 16.0),
+
             // Tiêu đề danh sách
             Text(
               'Chọn thành viên (${_selectedFriendIds.length} đã chọn)',

@@ -1,11 +1,13 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using server.Filters;
 using server.Services;
 using System.Threading.Tasks;
 
 namespace server.Controllers
 {
     [Route("api/[controller]")]
+    [AuthorizationJWT]
     [ApiController]
     public class FriendsController : ControllerBase
     {

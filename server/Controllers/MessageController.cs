@@ -7,6 +7,7 @@ using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Mvc;
 using server.DTO;
+using server.Filters;
 using server.Models;
 using server.Services.MessageService;
 using server.Services.ParticipantService;
@@ -17,6 +18,7 @@ using server.Services.WebSocketService;
 namespace server.Controllers
 {
     [ApiController]
+    [AuthorizationJWT]
     [Route("api/[controller]")]
     public class MessageController : ControllerBase
     {

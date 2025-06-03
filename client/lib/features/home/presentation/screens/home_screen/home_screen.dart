@@ -172,6 +172,10 @@ class _HomeScreenState extends State<HomeScreen> {
       return content.replaceFirst("Đã xóa bạn", "");
     } else if (content.startsWith("Đã thêm bạn ")) {
       return content.replaceFirst("Đã thêm bạn ", "");
+    } else if (content.startsWith("Đã xóa thành viên ")) {
+      return content.replaceFirst("Đã xóa thành viên ", "");
+    } else if (content.startsWith("Đã xóa thành viên ")) {
+      return content.replaceFirst("Đã xóa thành viên ", "");
     }
 
     return content;
@@ -242,6 +246,10 @@ class _HomeScreenState extends State<HomeScreen> {
       (chat) => chat.id == conversationId,
     );
 
+    print("sender id: ${newMessage.message.senderId}");
+    print("user id: $userId");
+    print("is equal: ${newMessage.message.senderId == userId}");
+
     setState(() {
       Conversation? conversation;
 
@@ -295,6 +303,12 @@ class _HomeScreenState extends State<HomeScreen> {
           if (urlRegExp.hasMatch(newImageUrl)) {
             conversation.img_url = newImageUrl;
           }
+        } else if (newMessage.message.content!.startsWith(
+              "Đã xóa thành viên ",
+            ) &&
+            newMessage.message.senderId == userId) {
+          removeConversation(conversationId);
+          return;
         }
       } else if (newMessage.message.content!.startsWith("Đã rời khỏi nhóm ")) {
         removeConversation(conversationId);

@@ -75,9 +75,14 @@ class ChatBubble extends StatelessWidget {
               CircleAvatar(
                 radius: 16,
                 backgroundColor: Colors.grey[300],
-                backgroundImage: NetworkImage(
-                  'https://ui-avatars.com/api/?name=User+${sender.user_id}&background=random',
-                ),
+                backgroundImage:
+                    sender.img_url != null
+                        ? NetworkImage(sender.img_url!)
+                        : null,
+                child:
+                    sender.img_url == null
+                        ? const Icon(Icons.person, size: 20, color: Colors.grey)
+                        : null,
               ),
               const SizedBox(width: 8),
             ],
@@ -133,7 +138,7 @@ class ChatBubble extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(bottom: 4),
                         child: Text(
-                          'User ${sender.user_id}',
+                          sender.name!,
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
@@ -180,9 +185,14 @@ class ChatBubble extends StatelessWidget {
               CircleAvatar(
                 radius: 16,
                 backgroundColor: Colors.grey[300],
-                backgroundImage: NetworkImage(
-                  'https://ui-avatars.com/api/?name=User+$currentUserId&background=random',
-                ),
+                backgroundImage:
+                    sender.img_url != null
+                        ? NetworkImage(sender.img_url!)
+                        : null,
+                child:
+                    sender.img_url == null
+                        ? const Icon(Icons.person, size: 20, color: Colors.grey)
+                        : null,
               ),
             ],
           ],

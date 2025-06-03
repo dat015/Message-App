@@ -20,7 +20,7 @@ class ChatScreen extends StatefulWidget {
   final int userId;
   final int? participantId; // nullable
   final Function(MessageWithAttachment)? updateChatListCallback;
-    final Function(int) onConversationRemoved; // Callback để xóa conversation
+  final Function(int) onConversationRemoved; // Callback để xóa conversation
 
 
   const ChatScreen({
