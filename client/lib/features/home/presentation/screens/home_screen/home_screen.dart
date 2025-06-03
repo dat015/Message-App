@@ -15,6 +15,7 @@ import 'package:first_app/features/home/presentation/diary/diary.dart';
 import 'package:first_app/features/home/presentation/friends/bloc/friends_bloc.dart';
 import 'package:first_app/features/home/presentation/friends/bloc/friends_event.dart';
 import 'package:first_app/features/home/presentation/friends/friends.dart';
+import 'package:first_app/features/home/presentation/notification/noti_screen.dart';
 import 'package:first_app/features/home/presentation/users_profile/us_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -723,7 +724,11 @@ class _HomeScreenState extends State<HomeScreen> {
           userAvatar: userAvatar,
         );
       case 3: // Thông báo
-        return const Center(child: Text('Tính năng đang được phát triển'));
+        return NotificationScreen(
+          currentUserId: userId.toString(),
+          currentUserAvatar: userAvatar,
+          currentUserName: userName,
+          );
       case 4: // Trang cá nhân
         return ProfilePage(
           userId: userId,

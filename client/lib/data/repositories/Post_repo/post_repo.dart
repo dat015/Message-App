@@ -2,6 +2,7 @@ import 'dart:io' as io if (dart.library.html) 'dart:html';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:first_app/data/models/user_profile.dart';
 import 'package:first_app/data/repositories/Friends_repo/friends_repo.dart';
+import 'package:first_app/data/repositories/Notification_Repo/noti_repo.dart';
 import 'package:first_app/data/repositories/User_Profile_repo/us_profile_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supa;
 import 'package:first_app/data/models/post.dart';
@@ -14,6 +15,7 @@ class PostRepo {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final supa.SupabaseClient _supabase = supa.Supabase.instance.client;
   final FriendsRepo _friendRepo = FriendsRepo();
+  final NotiRepo _notiRepo = NotiRepo();
   final UsProfileRepository _userRepo = UsProfileRepository();
   Future<void> createPost({
     required String currentUserId,
@@ -96,7 +98,7 @@ class PostRepo {
   }
 
   Future<void> toggleLike(String postId, String userId) async {
-    try {
+  try {
       final postRef = _firestore.collection('posts').doc(postId);
       final postDoc = await postRef.get();
 
@@ -107,17 +109,37 @@ class PostRepo {
       final post = Post.fromMap(postId, postDoc.data()!);
       final List<String> updatedLikes = List.from(post.likes);
 
-      if (updatedLikes.contains(userId)) {
+      bool wasLiked = updatedLikes.contains(userId);
+      if (wasLiked) {
         updatedLikes.remove(userId);
       } else {
         updatedLikes.add(userId);
       }
 
+      // Cập nhật danh sách likes trong Firestore
       await postRef.update({'likes': updatedLikes});
+
+      // Nếu người dùng vừa thích bài viết và không phải là tác giả, gửi thông báo
+      if (!wasLiked && userId != post.authorId) {
+        try {
+            final userProfile = await _userRepo.fetchUserProfile(int.parse(userId));
+            await _notiRepo.createLikeNotification(
+              postId: postId,
+              postAuthorId: post.authorId!,
+              likerId: userId,
+              likerName: userProfile.username ?? 'Người dùng',
+            );
+            print('Notification created for like on post: $postId');
+        } catch (e) {
+            print('Error creating like notification: $e');
+            // Không ném lỗi để tránh làm gián đoạn việc thích bài viết
+        }
+      }
     } catch (e) {
+      print('Error in toggleLike: $e');
       throw Exception('Lỗi khi thích/bỏ thích bài viết: $e');
     }
-  }
+}
 
   Future<void> updatePost(String postId, String content) async {
     final postRef = _firestore.collection('posts').doc(postId);

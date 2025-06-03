@@ -20,7 +20,7 @@ public class NotificationController : ControllerBase
 
         try
         {
-            await _fcmService.SendNotificationAsync(request.UserId, request.Title, request.Body);
+            await _fcmService.SendNotificationAsync(request.UserId, request.Title, request.Body, request.PostId);
             return Ok("Gửi thông báo thành công.");
         }
         catch (Exception ex)
