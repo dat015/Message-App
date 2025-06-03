@@ -76,9 +76,26 @@ namespace server.Services.UserService
 
         }
 
-        public Task<User> GetUserByIdAsync(int id)
+        public async Task<User> GetUserByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            if (id <= 0)
+            {
+                throw new ArgumentException("Invalid user ID.", nameof(id));
+            }
+            try
+            {
+                var user = _context.Users.FirstOrDefault(u => u.id == id);
+                if (user == null)
+                {
+                    throw new Exception("User not found");
+                }
+                return user;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw ex;
+            }
         }
 
         public Task<List<User>> GetUserByUsernameAsync(string username)
@@ -290,6 +307,26 @@ namespace server.Services.UserService
             catch (Exception ex)
             {
                 throw new Exception("Error retrieving members: " + ex.Message);
+            }
+        }
+
+        public string GetUserNameById(int userId)
+        {
+            try
+            {
+                var user = _context.Users.FirstOrDefault(u => u.id == userId);
+                if (user != null)
+                {
+                    return user.username;
+                }
+                else
+                {
+                    throw new Exception("User not found");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error retrieving username: " + ex.Message);
             }
         }
     }

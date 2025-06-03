@@ -20,8 +20,8 @@ class ChatProvider with ChangeNotifier {
   final MessageRepo _messageRepo = MessageRepo();
   final ConversationRepo _conversationRepo = ConversationRepo();
   final ParticipantsRepo _participantsRepo = ParticipantsRepo();
-  WebSocketService webSocketService;
-   final Function(MessageWithAttachment)? updateChatListCallback;
+  final Function(MessageWithAttachment)? updateChatListCallback;
+  WebSocketService webSocketService = WebSocketService();
 
   List<MessageWithAttachment> _messages = [];
   Conversation? _conversation;
@@ -32,12 +32,13 @@ class ChatProvider with ChangeNotifier {
   List<MessageWithAttachment> get messages => _messages;
   Conversation? get conversation => _conversation;
   List<Participants> get participants => _participants;
+  bool _disposed = false;
+  bool _isUploading = false;
 
   ChatProvider({
     required this.userId,
     required this.conversationId,
-    required this.webSocketService,
-     this.updateChatListCallback,
+    this.updateChatListCallback,
   }) {
     _initializeWebSocket();
     _loadData();
@@ -49,9 +50,10 @@ class ChatProvider with ChangeNotifier {
   }
 
   void _initializeWebSocket() {
-    // Gán callback cho onMessageReceived
-    //webSocketService.connect(userId, conversationId);
-    webSocketService.onMessageReceived = _onMessageReceived;
+    if (!webSocketService.isConnected) {
+      webSocketService.connect(userId);
+    }
+    webSocketService.messages.listen(_onMessageReceived);
     print(
       'Initializing WebSocket for user $userId, conversation $conversationId',
     );
@@ -73,6 +75,7 @@ class ChatProvider with ChangeNotifier {
   //     }
   //   }
   // }
+  bool get isUploading => _isUploading;
 
   Future<void> _loadData() async {
     print('Loading data for conversation $conversationId and user $userId');
@@ -173,6 +176,7 @@ class ChatProvider with ChangeNotifier {
           )
           .message
           .content = "Tin nhắn đã được thu hồi";
+
       _messages
           .firstWhere(
             (message) => message.message.id == messageWithAttachment.message.id,
@@ -185,6 +189,7 @@ class ChatProvider with ChangeNotifier {
 
     if (messageWithAttachment.message.type == "system") {
       _messages.add(messageWithAttachment);
+      updateChatListCallback?.call(messageWithAttachment);
       notifyListeners();
       return;
     }
@@ -194,6 +199,8 @@ class ChatProvider with ChangeNotifier {
     );
     if (!isDuplicate) {
       _messages.add(messageWithAttachment);
+      updateChatListCallback?.call(messageWithAttachment);
+
       notifyListeners();
     } else {
       print(
@@ -220,40 +227,49 @@ class ChatProvider with ChangeNotifier {
     int? fileID;
     String? fileUrl;
     if (file != null) {
-      final uploadResult = await _messageRepo.uploadFile(file);
-      fileID = uploadResult['fileId'];
-      fileUrl = uploadResult['fileUrl'];
-      if (fileID != null && fileUrl != null) {
-        isFile = true;
+      _isUploading = true; // Bắt đầu loading
+      notifyListeners();
+      try {
+        final uploadResult = await _messageRepo.uploadFile(file);
+        fileID = uploadResult['fileId'];
+        fileUrl = uploadResult['fileUrl'];
+        if (fileID != null && fileUrl != null) {
+          isFile = true;
 
-        var newMessage = MessageDTOForAttachment(
-          id: DateTime.now().millisecondsSinceEpoch, // ID tạm thời
-          senderId: userId,
-          content: content,
-          createdAt: DateTime.now(),
-          conversationId: conversationId,
-          isRead: true,
-          isFile: isFile ?? false,
-          isRecalled: false,
-        );
-        var attachment = AttachmentDTOForAttachment(
-          id: fileID,
-          fileUrl: fileUrl,
-          fileSize: 1,
-          fileType: file.mimeType ?? '',
-          uploadedAt: DateTime.now(),
-        );
-        var messageWithAttachment = MessageWithAttachment(
-          message: newMessage,
-          attachment: attachment,
-        );
+          var newMessage = MessageDTOForAttachment(
+            id: DateTime.now().millisecondsSinceEpoch, // ID tạm thời
+            senderId: userId,
+            content: content,
+            createdAt: DateTime.now(),
+            conversationId: conversationId,
+            isRead: true,
+            isFile: isFile ?? false,
+            isRecalled: false,
+          );
+          var attachment = AttachmentDTOForAttachment(
+            id: fileID,
+            fileUrl: fileUrl,
+            fileSize: 1,
+            fileType: file.mimeType ?? '',
+            uploadedAt: DateTime.now(),
+          );
+          var messageWithAttachment = MessageWithAttachment(
+            message: newMessage,
+            attachment: attachment,
+          );
 
-        // _messages.add(messageWithAttachment);
-        // notifyListeners(); // 🚀 Cập nhật UI ngay
-        webSocketService.sendMessage(userId, conversationId, content, fileID);
-        updateChatListCallback?.call(messageWithAttachment);
-        return;
+          // _messages.add(messageWithAttachment);
+          // notifyListeners(); // 🚀 Cập nhật UI ngay
+          webSocketService.sendMessage(userId, conversationId, content, fileID);
+          updateChatListCallback?.call(messageWithAttachment);
+        }
+      } catch (e) {
+        print('Lỗi khi tải ảnh lên: $e');
+      } finally {
+        _isUploading = false; // Kết thúc loading
+        notifyListeners();
       }
+      return;
     }
 
     print('Sending group message: $content');
@@ -353,9 +369,9 @@ class ChatProvider with ChangeNotifier {
     );
   }
 
-  void disconnect() {
-    print('Disconnecting WebSocket');
-    //webSocketService.disconnect();
+  void dispose() {
+    // _disposed = true;
+    // webSocketService.disconnect(); // nếu có method này, để đóng WebSocket
     // super.dispose();
   }
 }

@@ -73,8 +73,10 @@ namespace server.Services.ParticipantService
                 try
                 {
                     // await _conversationStorage.DeleteConversationByUserAsync(conversation_id, user_id);
-                    await _webSocket.DisConnectUserToConversationChanelAsync(user_id, conversation_id);
+                    await _webSocket.UnsubscribeUserFromConversationChannelAsync(user_id, conversation_id);
+                    await _chatStorage.SaveMessageAsync(message, null);
                     await _chatStorage.PublishMessageAsync(messageWithAttachment);
+                    
                 }
                 catch (Exception ex)
                 {
@@ -160,7 +162,8 @@ namespace server.Services.ParticipantService
                     Attachment = null
                 };
                 await _webSocket.ConnectUserToConversationChanelAsync(user_id, conversation_id);
-                await _chatStorage.PublishMessageAsync(messageWithAttachment);
+                await _chatStorage.SaveMessageAsync(message, null);
+                await _webSocket.PublishMessage(messageWithAttachment);
 
                 
 

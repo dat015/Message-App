@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using server.Data;
+using server.DTO;
 using server.Services.ConversationService;
 
 namespace server.Controllers
@@ -17,6 +18,48 @@ namespace server.Controllers
         public ConversationController(IConversation conversationService)
         {
             _conversationService = conversationService;
+        }
+
+        [HttpPost("create_group")]
+        public async Task<IActionResult> CreateGroup([FromBody] GroupDto groupDto)
+        {
+            if (groupDto == null || groupDto.userIds == null || groupDto.userIds.Count == 0)
+            {
+                return BadRequest("Invalid group data");
+            }
+            try
+            {
+                var result = await _conversationService.CreateGroup(groupDto);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw ex;
+            }
+        }
+
+        [HttpPut("update_conversation_image/{conversation_id}")]
+        public async Task<IActionResult> UpdateConversationImage(int conversation_id, [FromBody] string image)
+        {
+            if (conversation_id == 0 || string.IsNullOrEmpty(image))
+            {
+                return BadRequest("Invalid conversation id or image");
+            }
+            try
+            {
+                var result = await _conversationService.UpdateConversationImage(conversation_id, image);
+                if (result == null)
+                {
+                    return BadRequest("Not found conversation");
+                }
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw ex;
+            }
         }
 
         [HttpGet("open_conversation/{user1}/{user2}")]
