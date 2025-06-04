@@ -5,11 +5,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using server.Data;
 using server.DTO;
+using server.Filters;
 using server.Services.ParticipantService;
 
 namespace server.Controllers
 {
     [ApiController]
+    [AuthorizationJWT]
     [Route("api/[controller]")]
     public class ParticipantController : ControllerBase
     {
@@ -17,6 +19,35 @@ namespace server.Controllers
         public ParticipantController(IParticipant participantSV)
         {
             this.participantSV = participantSV;
+        }
+
+        [HttpDelete("remove_member/{participantId}")]
+        public async Task<IActionResult> RemoveMember(int participantId)
+        {
+            if (participantId == 0)
+            {
+                return BadRequest("Invalid participant id");
+            }
+            try
+            {
+                var result = await participantSV.RemoveParticipantAsync(participantId);
+                if (!result)
+                {
+                    return BadRequest(new
+                    {
+                        message = "Not found participant"
+                    });
+                }
+                return Ok(new
+                {
+                    message = "Remove participant successfully",
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
         }
 
         [HttpDelete("leave_group/{conversation_id}/{user_id}")]

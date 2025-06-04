@@ -6,11 +6,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using server.Data;
 using server.DTO;
+using server.Filters;
 using server.Services.ConversationService;
 
 namespace server.Controllers
 {
     [ApiController]
+    [AuthorizationJWT]
     [Route("api/[controller]")]
     public class ConversationController : ControllerBase
     {

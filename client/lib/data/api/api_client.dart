@@ -1,29 +1,43 @@
+import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:first_app/data/storage/storage_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../PlatformClient/config.dart';
 
 class ApiClient {
   late Dio _dio;
+
   ApiClient({
     String? baseUrl,
     Duration connectTimeout = const Duration(seconds: 30),
     Duration receiveTimeout = const Duration(seconds: 30),
-    Map<String, String>? headers,
   }) {
     _dio = Dio(
-      BaseOptions(baseUrl: Config.baseUrl, receiveTimeout: receiveTimeout),
+      BaseOptions(
+        baseUrl: Config.baseUrl,
+        connectTimeout: connectTimeout,
+        receiveTimeout: receiveTimeout,
+      ),
     );
 
-    // Thêm interceptor để xử lý CORS
+    // Thêm interceptor để thêm token và xử lý logs
     _dio.interceptors.add(
       InterceptorsWrapper(
-        onRequest: (options, handler) {
-          // Thêm headers CORS vào mỗi request
+        onRequest: (options, handler) async {
+          // Thêm headers CORS
           options.headers['Access-Control-Allow-Origin'] = '*';
           options.headers['Access-Control-Allow-Methods'] =
               'GET, POST, PUT, DELETE, OPTIONS';
           options.headers['Access-Control-Allow-Headers'] =
               'Origin, Content-Type, Accept, Authorization';
           options.headers['Access-Control-Allow-Credentials'] = 'true';
+
+          // 👉 Thêm Authorization nếu có token
+          final token = await _getToken();
+          print("token: $token");
+          if (token != null) {
+            options.headers['Authorization'] = 'Bearer $token';
+          }
 
           print('Request: ${options.method} ${options.uri}');
           print('Request headers: ${options.headers}');
@@ -45,6 +59,12 @@ class ApiClient {
     );
   }
 
+  // 🚀 Hàm lấy token từ SharedPreferences
+   Future<String?> _getToken() async {
+    return await StorageService.getToken();  // Sử dụng StorageService
+  }
+
+  // Request methods
   Future<dynamic> get(
     String path, {
     Map<String, dynamic>? queryParameters,
