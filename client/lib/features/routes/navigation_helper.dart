@@ -5,6 +5,7 @@ import 'package:first_app/features/auth/presentation/screens/login.dart';
 import 'package:first_app/features/home/presentation/diary/comment_screen.dart';
 import 'package:first_app/features/home/presentation/diary/create_post.dart';
 import 'package:first_app/features/home/presentation/diary/edit_post_screen.dart';
+import 'package:first_app/features/home/presentation/post/post_details_screen.dart';
 import 'package:first_app/features/home/presentation/story/create_story_screen.dart';
 import 'package:first_app/features/home/presentation/story/story_screen.dart';
 import 'package:first_app/features/home/presentation/friends/qr_scanner.dart';
@@ -57,15 +58,8 @@ class NavigationHelper {
     }
   }
 
-  Future<void> goToLogin(
-    BuildContext context, {
-    bool replace = false,
-  }) async {
-    await pushScreen(
-      context,
-      SignInScreen(),
-      replace: replace,
-    );
+  Future<void> goToLogin(BuildContext context, {bool replace = false}) async {
+    await pushScreen(context, SignInScreen(), replace: replace);
   }
 
   // Điều hướng đến CreatePostScreen
@@ -165,20 +159,18 @@ class NavigationHelper {
   }
 
   Future<void> goToEditProfile(
-  BuildContext context,
-  UserProfile user,
-  Function(UserProfile) onProfileUpdated, // Thêm callback để cập nhật thông tin
-  {bool replace = false}
-) async {
-  await pushScreen(
-    context,
-    EditProfilePage(
-      user: user,
-      onProfileUpdated: onProfileUpdated,
-    ),
-    replace: replace,
-  );
-}
+    BuildContext context,
+    UserProfile user,
+    Function(UserProfile)
+    onProfileUpdated, { // Thêm callback để cập nhật thông tin
+    bool replace = false,
+  }) async {
+    await pushScreen(
+      context,
+      EditProfilePage(user: user, onProfileUpdated: onProfileUpdated),
+      replace: replace,
+    );
+  }
 
   Future<void> goToProfile(
     BuildContext context,
@@ -212,11 +204,7 @@ class NavigationHelper {
     FriendsBloc friendsBloc, {
     bool replace = false,
   }) async {
-    await pushScreen(
-      context,
-      SettingScreen(email : email),
-      replace: replace,
-    );
+    await pushScreen(context, SettingScreen(email: email), replace: replace);
   }
 
   // Hàm hiển thị SnackBar khi có lỗi
@@ -227,6 +215,26 @@ class NavigationHelper {
         backgroundColor: Colors.red,
         duration: const Duration(seconds: 3),
       ),
+    );
+  }
+
+  Future<void> goToPostDetail(
+    BuildContext context,
+    String postId,
+    String currentUserId,
+    String currentUserName,
+    String currentUserAvatar, {
+    bool replace = false,
+  }) async {
+    await pushScreen(
+      context,
+      PostDetailScreen(
+        postId: postId,
+        currentUserId: currentUserId,
+        currentUserName: currentUserName,
+        currentUserAvatar: currentUserAvatar,
+      ),
+      replace: replace,
     );
   }
 }
