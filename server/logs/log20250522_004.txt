@@ -1,0 +1,235 @@
+2025-05-22 22:05:20.960 +07:00 [INF] Executed DbCommand (17ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [u].[id], [u].[username], [u].[avatar_url]
+FROM [Users] AS [u]
+2025-05-22 22:05:21.077 +07:00 [INF] User profile is available. Using 'C:\Users\Thao\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-05-22 22:05:21.121 +07:00 [WRN] Overriding address(es) 'http://localhost:5053'. Binding to endpoints defined via IConfiguration and/or UseKestrel() instead.
+2025-05-22 22:05:21.128 +07:00 [INF] Now listening on: http://[::]:5053
+2025-05-22 22:05:21.129 +07:00 [INF] Now listening on: http://0.0.0.0:5053
+2025-05-22 22:05:21.129 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-05-22 22:05:21.129 +07:00 [INF] Hosting environment: Development
+2025-05-22 22:05:21.129 +07:00 [INF] Content root path: C:\Users\Thao\source\Flutter\Message_app\server
+2025-05-22 22:06:59.597 +07:00 [INF] Request starting HTTP/1.1 POST http://192.168.1.5:5053/api/Auth/login - application/json 57
+2025-05-22 22:06:59.709 +07:00 [WRN] Failed to determine the https port for redirect.
+2025-05-22 22:06:59.743 +07:00 [INF] Executing endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-05-22 22:06:59.777 +07:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(server.DTO.AuthDTO.LoginDTO) on controller Message_app.Controllers.AuthController (Message_app).
+2025-05-22 22:07:00.038 +07:00 [INF] Executed DbCommand (46ms) [Parameters=[@__email_0='?' (Size = 450)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[fcmToken], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[email] = @__email_0
+2025-05-22 22:07:00.143 +07:00 [INF] Executing BadRequestObjectResult, writing value of type 'System.String'.
+2025-05-22 22:07:00.156 +07:00 [INF] Executed action Message_app.Controllers.AuthController.Login (Message_app) in 376.4877ms
+2025-05-22 22:07:00.157 +07:00 [INF] Executed endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-05-22 22:07:00.162 +07:00 [INF] Request finished HTTP/1.1 POST http://192.168.1.5:5053/api/Auth/login - 400 null application/json; charset=utf-8 569.7102ms
+2025-05-22 22:07:03.946 +07:00 [INF] Request starting HTTP/1.1 POST http://192.168.1.5:5053/api/Auth/login - application/json 58
+2025-05-22 22:07:03.956 +07:00 [INF] Executing endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-05-22 22:07:03.957 +07:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(server.DTO.AuthDTO.LoginDTO) on controller Message_app.Controllers.AuthController (Message_app).
+2025-05-22 22:07:04.035 +07:00 [INF] Executed DbCommand (5ms) [Parameters=[@__email_0='?' (Size = 450)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[fcmToken], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[email] = @__email_0
+2025-05-22 22:07:04.052 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.DTO.AuthDTO.LoginRespose'.
+2025-05-22 22:07:04.090 +07:00 [INF] Executed action Message_app.Controllers.AuthController.Login (Message_app) in 132.7886ms
+2025-05-22 22:07:04.090 +07:00 [INF] Executed endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-05-22 22:07:04.090 +07:00 [INF] Request finished HTTP/1.1 POST http://192.168.1.5:5053/api/Auth/login - 200 null application/json; charset=utf-8 144.6601ms
+2025-05-22 22:07:04.794 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.5:5053/ws/chat?userId=2 - null null
+2025-05-22 22:07:04.806 +07:00 [INF] Executing endpoint '/ws/chat'
+2025-05-22 22:07:04.903 +07:00 [INF] Request starting HTTP/1.1 POST http://192.168.1.5:5053/api/Notification/token - application/json 168
+2025-05-22 22:07:04.904 +07:00 [INF] Executing endpoint 'FcmBackend.Controllers.NotificationController.UpdateFcmToken (Message_app)'
+2025-05-22 22:07:04.932 +07:00 [INF] Route matched with {action = "UpdateFcmToken", controller = "Notification"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] UpdateFcmToken(FcmBackend.Controllers.UpdateFcmTokenRequest) on controller FcmBackend.Controllers.NotificationController (Message_app).
+2025-05-22 22:07:04.957 +07:00 [INF] Executed DbCommand (14ms) [Parameters=[@__client_UserId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[conversation_id]
+FROM [Participants] AS [p]
+WHERE [p].[user_id] = @__client_UserId_0 AND [p].[is_deleted] = CAST(0 AS bit)
+2025-05-22 22:07:04.978 +07:00 [INF] Executed DbCommand (4ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[fcmToken], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[id] = @__p_0
+2025-05-22 22:07:04.978 +07:00 [INF] User 2 subscribed to channel conversation:3
+2025-05-22 22:07:04.980 +07:00 [INF] User 2 subscribed to channel conversation:4
+2025-05-22 22:07:04.985 +07:00 [INF] User 2 subscribed to channel conversation:19
+2025-05-22 22:07:04.986 +07:00 [INF] User 2 subscribed to channel conversation:1
+2025-05-22 22:07:04.986 +07:00 [INF] User 2 subscribed to channel conversation:25
+2025-05-22 22:07:04.988 +07:00 [INF] User 2 subscribed to channel conversation:26
+2025-05-22 22:07:04.988 +07:00 [INF] User 2 subscribed to channel conversation:27
+2025-05-22 22:07:04.989 +07:00 [INF] User 2 subscribed to channel conversation:28
+2025-05-22 22:07:04.989 +07:00 [INF] User 2 subscribed to channel conversation:29
+2025-05-22 22:07:04.990 +07:00 [INF] User 2 subscribed to channel conversation:32
+2025-05-22 22:07:04.991 +07:00 [INF] User 2 subscribed to channel conversation:33
+2025-05-22 22:07:04.991 +07:00 [INF] User 2 subscribed to channel conversation:34
+2025-05-22 22:07:04.992 +07:00 [INF] User 2 subscribed to channel conversation:35
+2025-05-22 22:07:04.992 +07:00 [INF] User 2 subscribed to channel conversation:36
+2025-05-22 22:07:04.992 +07:00 [INF] User 2 subscribed to channel conversation:37
+2025-05-22 22:07:04.993 +07:00 [INF] User 2 subscribed to channel conversation:38
+2025-05-22 22:07:04.993 +07:00 [INF] User 2 subscribed to channel conversation:39
+2025-05-22 22:07:04.994 +07:00 [INF] User 2 subscribed to channel conversation:41
+2025-05-22 22:07:04.994 +07:00 [INF] User 2 subscribed to channel conversation:40
+2025-05-22 22:07:04.995 +07:00 [INF] User 2 subscribed to channel conversation:42
+2025-05-22 22:07:04.995 +07:00 [INF] User 2 subscribed to channel conversation:44
+2025-05-22 22:07:04.996 +07:00 [INF] User 2 subscribed to channel conversation:43
+2025-05-22 22:07:04.996 +07:00 [INF] User 2 subscribed to channel conversation:45
+2025-05-22 22:07:05.011 +07:00 [INF] FCM token updated for userId: 2
+2025-05-22 22:07:05.012 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.String'.
+2025-05-22 22:07:05.012 +07:00 [INF] Executed action FcmBackend.Controllers.NotificationController.UpdateFcmToken (Message_app) in 79.4548ms
+2025-05-22 22:07:05.012 +07:00 [INF] Executed endpoint 'FcmBackend.Controllers.NotificationController.UpdateFcmToken (Message_app)'
+2025-05-22 22:07:05.012 +07:00 [INF] Request finished HTTP/1.1 POST http://192.168.1.5:5053/api/Notification/token - 200 null text/plain; charset=utf-8 109.7975ms
+2025-05-22 22:07:05.574 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.5:5053/api/friends/GetAllFriends/2 - null null
+2025-05-22 22:07:05.575 +07:00 [INF] Executing endpoint 'server.Controllers.FriendsController.GetAllFriends (Message_app)'
+2025-05-22 22:07:05.578 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.5:5053/api/Conversation/get_conversations/2 - null null
+2025-05-22 22:07:05.578 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-05-22 22:07:05.579 +07:00 [INF] Route matched with {action = "GetAllFriends", controller = "Friends"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAllFriends(Int32) on controller server.Controllers.FriendsController (Message_app).
+2025-05-22 22:07:05.581 +07:00 [INF] Route matched with {action = "GetConversations", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetConversations(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-05-22 22:07:05.635 +07:00 [INF] Executed DbCommand (10ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN [u].[username]
+    ELSE [u0].[username]
+END AS [username], CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN [u].[avatar_url]
+    ELSE [u0].[avatar_url]
+END AS [avatar], CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN [u].[id]
+    ELSE [u0].[id]
+END AS [friendId], @__userId_0 AS [userId]
+FROM [Friends] AS [f]
+INNER JOIN [Users] AS [u] ON [f].[UserId2] = [u].[id]
+INNER JOIN [Users] AS [u0] ON [f].[UserId1] = [u0].[id]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-05-22 22:07:05.639 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType8`2[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[server.DTO.FriendDTO, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-05-22 22:07:05.649 +07:00 [INF] Executed action server.Controllers.FriendsController.GetAllFriends (Message_app) in 69.8857ms
+2025-05-22 22:07:05.649 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.GetAllFriends (Message_app)'
+2025-05-22 22:07:05.650 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.5:5053/api/friends/GetAllFriends/2 - 200 null application/json; charset=utf-8 75.1415ms
+2025-05-22 22:07:05.655 +07:00 [INF] Executed DbCommand (15ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [c].[id], [c].[name], [c].[is_group], [c].[created_at], [c].[lastMessage], [c].[lastMessageTime], [c].[img_url], [p0].[id], [p0].[user_id], [p0].[conversation_id], [p0].[name], [p0].[is_deleted], [p0].[img_url]
+FROM [Conversations] AS [c]
+LEFT JOIN [Participants] AS [p0] ON [c].[id] = [p0].[conversation_id]
+WHERE EXISTS (
+    SELECT 1
+    FROM [Participants] AS [p]
+    WHERE [c].[id] = [p].[conversation_id] AND [p].[user_id] = @__userId_0)
+ORDER BY [c].[id]
+2025-05-22 22:07:05.667 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.DTO.ConversationDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-05-22 22:07:05.672 +07:00 [INF] Executed action server.Controllers.ConversationController.GetConversations (Message_app) in 90.7694ms
+2025-05-22 22:07:05.672 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-05-22 22:07:05.672 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.5:5053/api/Conversation/get_conversations/2 - 200 null application/json; charset=utf-8 94.4804ms
+2025-05-22 22:07:20.672 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Auth/login - null null
+2025-05-22 22:07:20.674 +07:00 [INF] CORS policy execution successful.
+2025-05-22 22:07:20.675 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Auth/login - 204 null null 3.17ms
+2025-05-22 22:07:20.678 +07:00 [INF] Request starting HTTP/1.1 POST http://localhost:5053/api/Auth/login - application/json 60
+2025-05-22 22:07:20.678 +07:00 [INF] CORS policy execution successful.
+2025-05-22 22:07:20.680 +07:00 [INF] CORS policy execution successful.
+2025-05-22 22:07:20.680 +07:00 [INF] Executing endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-05-22 22:07:20.681 +07:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(server.DTO.AuthDTO.LoginDTO) on controller Message_app.Controllers.AuthController (Message_app).
+2025-05-22 22:07:20.715 +07:00 [INF] Executed DbCommand (22ms) [Parameters=[@__email_0='?' (Size = 450)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[fcmToken], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[email] = @__email_0
+2025-05-22 22:07:20.717 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.DTO.AuthDTO.LoginRespose'.
+2025-05-22 22:07:20.718 +07:00 [INF] Executed action Message_app.Controllers.AuthController.Login (Message_app) in 36.9052ms
+2025-05-22 22:07:20.718 +07:00 [INF] Executed endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-05-22 22:07:20.718 +07:00 [INF] Request finished HTTP/1.1 POST http://localhost:5053/api/Auth/login - 200 null application/json; charset=utf-8 40.4428ms
+2025-05-22 22:07:20.761 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/ws/chat?userId=3 - null null
+2025-05-22 22:07:20.762 +07:00 [INF] CORS policy execution successful.
+2025-05-22 22:07:20.763 +07:00 [INF] CORS policy execution successful.
+2025-05-22 22:07:20.763 +07:00 [INF] Executing endpoint '/ws/chat'
+2025-05-22 22:07:20.786 +07:00 [INF] Executed DbCommand (6ms) [Parameters=[@__client_UserId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[conversation_id]
+FROM [Participants] AS [p]
+WHERE [p].[user_id] = @__client_UserId_0 AND [p].[is_deleted] = CAST(0 AS bit)
+2025-05-22 22:07:20.788 +07:00 [INF] User 3 subscribed to channel conversation:1
+2025-05-22 22:07:20.789 +07:00 [INF] User 3 subscribed to channel conversation:2
+2025-05-22 22:07:20.789 +07:00 [INF] User 3 subscribed to channel conversation:9
+2025-05-22 22:07:20.789 +07:00 [INF] User 3 subscribed to channel conversation:19
+2025-05-22 22:07:20.789 +07:00 [INF] User 3 subscribed to channel conversation:25
+2025-05-22 22:07:20.790 +07:00 [INF] User 3 subscribed to channel conversation:26
+2025-05-22 22:07:20.790 +07:00 [INF] User 3 subscribed to channel conversation:27
+2025-05-22 22:07:20.790 +07:00 [INF] User 3 subscribed to channel conversation:28
+2025-05-22 22:07:20.790 +07:00 [INF] User 3 subscribed to channel conversation:29
+2025-05-22 22:07:20.790 +07:00 [INF] User 3 subscribed to channel conversation:32
+2025-05-22 22:07:20.790 +07:00 [INF] User 3 subscribed to channel conversation:34
+2025-05-22 22:07:20.790 +07:00 [INF] User 3 subscribed to channel conversation:35
+2025-05-22 22:07:20.790 +07:00 [INF] User 3 subscribed to channel conversation:36
+2025-05-22 22:07:20.790 +07:00 [INF] User 3 subscribed to channel conversation:37
+2025-05-22 22:07:20.790 +07:00 [INF] User 3 subscribed to channel conversation:38
+2025-05-22 22:07:20.790 +07:00 [INF] User 3 subscribed to channel conversation:39
+2025-05-22 22:07:20.790 +07:00 [INF] User 3 subscribed to channel conversation:40
+2025-05-22 22:07:20.790 +07:00 [INF] User 3 subscribed to channel conversation:42
+2025-05-22 22:07:20.790 +07:00 [INF] User 3 subscribed to channel conversation:43
+2025-05-22 22:07:20.790 +07:00 [INF] User 3 subscribed to channel conversation:44
+2025-05-22 22:07:20.791 +07:00 [INF] User 3 subscribed to channel conversation:45
+2025-05-22 22:07:24.995 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/friends/GetAllFriends/3 - null null
+2025-05-22 22:07:24.996 +07:00 [INF] CORS policy execution successful.
+2025-05-22 22:07:24.998 +07:00 [INF] CORS policy execution successful.
+2025-05-22 22:07:24.998 +07:00 [INF] Executing endpoint 'server.Controllers.FriendsController.GetAllFriends (Message_app)'
+2025-05-22 22:07:24.998 +07:00 [INF] Route matched with {action = "GetAllFriends", controller = "Friends"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAllFriends(Int32) on controller server.Controllers.FriendsController (Message_app).
+2025-05-22 22:07:25.010 +07:00 [INF] Executed DbCommand (9ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN [u].[username]
+    ELSE [u0].[username]
+END AS [username], CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN [u].[avatar_url]
+    ELSE [u0].[avatar_url]
+END AS [avatar], CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN [u].[id]
+    ELSE [u0].[id]
+END AS [friendId], @__userId_0 AS [userId]
+FROM [Friends] AS [f]
+INNER JOIN [Users] AS [u] ON [f].[UserId2] = [u].[id]
+INNER JOIN [Users] AS [u0] ON [f].[UserId1] = [u0].[id]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-05-22 22:07:25.011 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType8`2[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[server.DTO.FriendDTO, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-05-22 22:07:25.011 +07:00 [INF] Executed action server.Controllers.FriendsController.GetAllFriends (Message_app) in 13.4641ms
+2025-05-22 22:07:25.012 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.GetAllFriends (Message_app)'
+2025-05-22 22:07:25.012 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/friends/GetAllFriends/3 - 200 null application/json; charset=utf-8 16.367ms
+2025-05-22 22:07:25.224 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_conversations/3 - null null
+2025-05-22 22:07:25.224 +07:00 [INF] CORS policy execution successful.
+2025-05-22 22:07:25.225 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_conversations/3 - 204 null null 0.9283ms
+2025-05-22 22:07:25.227 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Conversation/get_conversations/3 - null null
+2025-05-22 22:07:25.227 +07:00 [INF] CORS policy execution successful.
+2025-05-22 22:07:25.229 +07:00 [INF] CORS policy execution successful.
+2025-05-22 22:07:25.229 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-05-22 22:07:25.229 +07:00 [INF] Route matched with {action = "GetConversations", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetConversations(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-05-22 22:07:25.246 +07:00 [INF] Executed DbCommand (13ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [c].[id], [c].[name], [c].[is_group], [c].[created_at], [c].[lastMessage], [c].[lastMessageTime], [c].[img_url], [p0].[id], [p0].[user_id], [p0].[conversation_id], [p0].[name], [p0].[is_deleted], [p0].[img_url]
+FROM [Conversations] AS [c]
+LEFT JOIN [Participants] AS [p0] ON [c].[id] = [p0].[conversation_id]
+WHERE EXISTS (
+    SELECT 1
+    FROM [Participants] AS [p]
+    WHERE [c].[id] = [p].[conversation_id] AND [p].[user_id] = @__userId_0)
+ORDER BY [c].[id]
+2025-05-22 22:07:25.257 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.DTO.ConversationDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-05-22 22:07:25.273 +07:00 [INF] Executed action server.Controllers.ConversationController.GetConversations (Message_app) in 43.5623ms
+2025-05-22 22:07:25.273 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-05-22 22:07:25.274 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Conversation/get_conversations/3 - 200 null application/json; charset=utf-8 47.0195ms
+2025-05-22 22:07:57.728 +07:00 [INF] Executed endpoint '/ws/chat'
+2025-05-22 22:07:57.731 +07:00 [ERR] An unhandled exception has occurred while executing the request.
+StackExchange.Redis.RedisServerException: WRONGTYPE Operation against a key holding the wrong kind of value
+   at server.Services.WebSocketService.webSocket.CleanupClient(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 547
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 205
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 107
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-05-22 22:07:57.761 +07:00 [WRN] The response has already started, the error page middleware will not be executed.
+2025-05-22 22:07:57.763 +07:00 [ERR] Connection id "0HNCP896FSI1K", Request id "0HNCP896FSI1K:00000001": An unhandled exception was thrown by the application.
+StackExchange.Redis.RedisServerException: WRONGTYPE Operation against a key holding the wrong kind of value
+   at server.Services.WebSocketService.webSocket.CleanupClient(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 547
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 205
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 107
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Watch.BrowserRefresh.BrowserRefreshMiddleware.InvokeAsync(HttpContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+2025-05-22 22:07:57.765 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/ws/chat?userId=3 - 101 null null 37003.9812ms
+2025-05-22 22:08:05.668 +07:00 [INF] Application is shutting down...
+2025-05-22 22:08:35.686 +07:00 [INF] Executed endpoint '/ws/chat'
+2025-05-22 22:08:35.687 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.5:5053/ws/chat?userId=2 - 101 null null 90892.2432ms

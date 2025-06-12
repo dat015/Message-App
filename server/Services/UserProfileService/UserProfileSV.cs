@@ -42,6 +42,17 @@ namespace server.Services
             {
                 throw new Exception("User not found");
             }
+            var participants = await _context.Participants
+               .Where(p => p.user_id == userId)
+               .ToListAsync();
+            foreach (var participant in participants)
+            {
+                if (participant.name != updatedUser.username)
+                    participant.name = updatedUser.username;
+                participant.img_url = updatedUser.avatar_url;
+            }
+            _context.Participants.UpdateRange(participants);
+            await _context.SaveChangesAsync();
 
             user.username = updatedUser.username;
             user.bio = updatedUser.bio;
@@ -53,6 +64,8 @@ namespace server.Services
 
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
+
+
             return user;
         }
 

@@ -1,3 +1,4 @@
+import 'package:first_app/data/dto/message_response.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -13,15 +14,20 @@ import 'package:first_app/features/home/presentation/users_profile/bloc/profile_
 import 'package:first_app/features/home/presentation/users_profile/bloc/profile_bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:path/path.dart';
+import 'package:first_app/data/repositories/Conversations_repo/conversations_repository.dart';
 
 class OtherProfilePage extends StatelessWidget {
   final int viewerId;
   final int targetUserId;
+  Function(MessageWithAttachment)? updateChatListCallback;
+  Function(int)? onConversationRemoved; // Callback để xóa conversation
 
   OtherProfilePage({
     Key? key,
     required this.viewerId,
     required this.targetUserId,
+    this.onConversationRemoved,
+    this.updateChatListCallback,
   }) : super(key: key);
 
   @override
@@ -189,7 +195,36 @@ class OtherProfilePage extends StatelessWidget {
                           SizedBox(width: 12),
                           Expanded(
                             child: ElevatedButton.icon(
-                              onPressed: () {},
+                              onPressed: () async {
+                                try {
+                                  final conversation = await ConversationRepo()
+                                      .openConversation(viewerId, targetUserId);
+
+                                  if (conversation != null) {
+                                    Navigator.pushNamed(
+                                      context,
+                                      '/chat',
+                                      arguments: {
+                                        'conversationId': conversation.id,
+                                        'user_id': viewerId,
+                                        'participantId': targetUserId,
+                                        'updateChatListCallback':
+                                            updateChatListCallback,
+                                        'onConversationRemoved':
+                                            onConversationRemoved,
+                                      },
+                                    );
+                                  }
+                                } catch (e) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Không thể mở trò chuyện: $e',
+                                      ),
+                                    ),
+                                  );
+                                }
+                              },
                               icon: Icon(Icons.message),
                               label: Text('Nhắn tin'),
                               style: ElevatedButton.styleFrom(
@@ -707,8 +742,7 @@ class OtherProfilePage extends StatelessWidget {
                     ),
                     actions: [
                       TextButton(
-                        onPressed:
-                            () => Navigator.of(context).pop(),
+                        onPressed: () => Navigator.of(context).pop(),
                         child: Text('Không'),
                       ),
                       TextButton(
@@ -716,9 +750,7 @@ class OtherProfilePage extends StatelessWidget {
                           context.read<OtherProfileBloc>().add(
                             CancelFriendRequestEvent(),
                           );
-                          Navigator.of(
-                            context,
-                          ).pop();
+                          Navigator.of(context).pop();
                         },
                         child: Text('Có'),
                       ),

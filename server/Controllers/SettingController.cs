@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using server.DTO;
+using server.Filters;
 using server.Services.OTPsService;
 using server.Services.SettingService;
 using server.Services.TempOTPStoreSV;
@@ -7,6 +8,7 @@ using server.Services.TempOTPStoreSV;
 namespace server.Controllers
 {
     [Route("api/[controller]")]
+    [AuthorizationJWT]
     [ApiController]
     public class SettingController : ControllerBase
     {
