@@ -350,11 +350,19 @@ namespace server.Services.WebSocketService
         }
         private async Task HandleMessage(Client client, MessageDTO message)
         {
+            
             _logger.LogInformation("Handling message from user {UserId}: {Content}", message.sender_id, message.content);
             message.created_at = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
 
             using var scope = _serviceProvider.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            var isMember = await dbContext.Participants
+                .AnyAsync(p => p.user_id == message.sender_id && p.conversation_id == message.conversation_id && !p.is_deleted);
+            if (!isMember)
+            {
+                _logger.LogWarning("User {UserId} is not a member of conversation {ConversationId}", message.sender_id, message.conversation_id);
+                return;
+            }
             var conversation = await dbContext.Conversations.FindAsync(message.conversation_id);
             if (conversation == null)
             {

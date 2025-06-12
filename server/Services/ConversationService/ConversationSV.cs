@@ -493,12 +493,12 @@ namespace server.Services.ConversationService
                 {
                     throw new Exception("Conversation not found");
                 }
-                var existing_groupSetting = await _groupSettingService.Value.GetGroupSettingByConversationIdAsync(conversation_id);
+                // var existing_groupSetting = await _groupSettingService.Value.GetGroupSettingByConversationIdAsync(conversation_id);
 
-                if (!existing_groupSetting.AllowMemberEdit)
-                {
-                    throw new Exception("Bạn không có quyền sửa ảnh nhóm này");
-                }
+                // if (!existing_groupSetting.AllowMemberEdit)
+                // {
+                //     throw new Exception("Bạn không có quyền sửa ảnh nhóm này");
+                // }
                 existing_conversation.img_url = image;
                 _context.Conversations.Update(existing_conversation);
                 await _context.SaveChangesAsync();
@@ -546,12 +546,12 @@ namespace server.Services.ConversationService
                 {
                     return null;
                 }
-                var existing_groupSetting = await _groupSettingService.Value.GetGroupSettingByConversationIdAsync(conversation_id);
+                // var existing_groupSetting = await _groupSettingService.Value.GetGroupSettingByConversationIdAsync(conversation_id);
 
-                if (!existing_groupSetting.AllowMemberEdit)
-                {
-                    throw new Exception("Bạn không có quyền sửa tên nhóm này");
-                }
+                // if (!existing_groupSetting.AllowMemberEdit)
+                // {
+                //     throw new Exception("Bạn không có quyền sửa tên nhóm này");
+                // }
 
                 // Cập nhật tên
                 conversation.name = name;

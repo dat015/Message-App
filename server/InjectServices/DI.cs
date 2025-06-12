@@ -50,6 +50,7 @@ namespace server.InjectService
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Message App API", Version = "v1" });
                 c.OperationFilter<AddFileParamTypesOperationFilter>();
+                c.OperationFilter<SwaggerFileOperationFilter>();
             });
             //config sqlserver
             services.AddDbContext<ApplicationDbContext>(options =>

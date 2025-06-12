@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace server.Controllers
 {
     [Route("api/[controller]")]
-    [AuthorizationJWT]
+[Authorize]
     [ApiController]
     public class FriendsController : ControllerBase
     {

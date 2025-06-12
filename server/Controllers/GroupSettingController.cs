@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using server.DTO;
 using server.Filters;
@@ -10,7 +11,7 @@ using server.Services.GroupSettingService;
 namespace server.Controllers
 {
     [ApiController]
-    [AuthorizationJWT]
+[Authorize]
     [Route("api/[controller]")]
     public class GroupSettingController : ControllerBase
     {
