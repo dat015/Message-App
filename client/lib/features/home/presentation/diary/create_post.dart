@@ -1,9 +1,14 @@
 import 'dart:io';
-
 import 'package:first_app/PlatformClient/config.dart';
+import 'package:first_app/data/repositories/Map_Repo/map_repo.dart';
+import 'package:first_app/features/home/presentation/diary/location_post/place_selection_screen.dart';
+import 'package:first_app/features/home/presentation/diary/location_post/post_location_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:latlong2/latlong.dart' as latlong;
+import 'package:latlong2/latlong.dart';
 import 'dart:io' if (dart.library.html) 'dart:html' as html;
 import 'package:first_app/data/repositories/Post_repo/post_repo.dart';
 import 'package:first_app/features/home/presentation/ai_caption/bloc_post/ai_caption_bloc.dart';
@@ -31,12 +36,15 @@ class CreatePostScreen extends StatefulWidget {
 class _CreatePostScreenState extends State<CreatePostScreen> {
   final TextEditingController _postController = TextEditingController();
   final PostRepo _postService = PostRepo();
+  final LocationRepo _locationService = LocationRepo();
   XFile? _selectedImage;
   String? _selectedMusicUrl;
   List<String> _taggedFriends = [];
   bool _isEditing = false;
   bool _isPosting = false;
   String _visibility = 'public';
+  latlong.LatLng? _selectedLocation;
+  String? _selectedAddress;
 
   @override
   void dispose() {
@@ -94,8 +102,92 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     });
   }
 
+  Future<void> _removeLocation() async {
+    setState(() {
+      _selectedLocation = null;
+      _selectedAddress = null;
+    });
+  }
+
+  Future<void> _pickCurrentLocation() async {
+  try {
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Quyền truy cập vị trí bị từ chối.')),
+        );
+        return;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Quyền truy cập vị trí bị từ chối vĩnh viễn. Vui lòng bật quyền trong cài đặt.')),
+      );
+      return;
+    }
+
+    Position? position = await _locationService.getCurrentLocation();
+    if (position != null) {
+      String? address = await _locationService.getAddressFromLatLng(position.latitude, position.longitude);
+      if (address != null) {
+        setState(() {
+          _selectedLocation = latlong.LatLng(position.latitude, position.longitude);
+          _selectedAddress = address;
+        });
+        _showLocationPicker(position);
+      }
+    }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Lỗi khi lấy vị trí: $e')),
+    );
+  }
+}
+
+void _showLocationPicker(Position position) {
+  showModalBottomSheet(
+    context: context,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    isScrollControlled: true,
+    builder: (context) => LocationPicker(
+      initialPosition: latlong.LatLng(position.latitude, position.longitude),
+      onLocationSelected: (latlong.LatLng latLng, String address) {
+        setState(() {
+          _selectedLocation = latLng;
+          _selectedAddress = address;
+        });
+      },
+    ),
+  );
+}
+
+  Future<void> _showPlacePicker() async {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder:
+            (context) => PlacePickerScreen(
+              locationService: _locationService,
+              onLocationSelected: (LatLng latLng, String address) {
+                setState(() {
+                  _selectedLocation = latLng;
+                  _selectedAddress = address;
+                });
+              },
+            ),
+      ),
+    );
+  }
+
   Future<void> _createPost() async {
-    if (_postController.text.isEmpty && _selectedImage == null && _selectedMusicUrl == null) {
+    if (_postController.text.isEmpty &&
+        _selectedImage == null &&
+        _selectedMusicUrl == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Vui lòng thêm nội dung, ảnh hoặc nhạc vào bài viết'),
@@ -119,6 +211,14 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         authorAvatar: widget.currentUserAvatar,
         authorName: widget.currentUserName,
         visibility: _visibility,
+        location:
+            _selectedLocation != null
+                ? {
+                  'latitude': _selectedLocation!.latitude,
+                  'longitude': _selectedLocation!.longitude,
+                  'address': _selectedAddress,
+                }
+                : null,
       );
 
       if (mounted) {
@@ -157,19 +257,21 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       isScrollControlled: true,
-      builder: (context) => BlocProvider(
-        create: (context) => AiCaptionBloc(
-          AiCaptionService(ApiClient(baseUrl: Config.baseUrl))
-        ),
-        child: AiCaptionBottomSheet(
-          onCaptionSelected: (caption) {
-            setState(() {
-              _postController.text = caption;
-              _isEditing = true;
-            });
-          },
-        ),
-      ),
+      builder:
+          (context) => BlocProvider(
+            create:
+                (context) => AiCaptionBloc(
+                  AiCaptionService(ApiClient(baseUrl: Config.baseUrl)),
+                ),
+            child: AiCaptionBottomSheet(
+              onCaptionSelected: (caption) {
+                setState(() {
+                  _postController.text = caption;
+                  _isEditing = true;
+                });
+              },
+            ),
+          ),
     );
   }
 
@@ -205,13 +307,22 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               vertical: screenHeight * 0.01,
             ),
             child: ElevatedButton(
-              onPressed: (_isEditing || _selectedImage != null || _selectedMusicUrl != null) && !_isPosting
-                  ? _createPost
-                  : null,
+              onPressed:
+                  (_isEditing ||
+                              _selectedImage != null ||
+                              _selectedMusicUrl != null ||
+                              _selectedLocation != null) &&
+                          !_isPosting
+                      ? _createPost
+                      : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: (_isEditing || _selectedImage != null || _selectedMusicUrl != null)
-                    ? primaryColor
-                    : Colors.grey[300],
+                backgroundColor:
+                    (_isEditing ||
+                            _selectedImage != null ||
+                            _selectedMusicUrl != null ||
+                            _selectedLocation != null)
+                        ? primaryColor
+                        : Colors.grey[300],
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
@@ -222,21 +333,22 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   vertical: screenHeight * 0.005,
                 ),
               ),
-              child: _isPosting
-                  ? SizedBox(
-                      width: screenWidth * 0.04,
-                      height: screenWidth * 0.04,
-                      child: const CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              child:
+                  _isPosting
+                      ? SizedBox(
+                        width: screenWidth * 0.04,
+                        height: screenWidth * 0.04,
+                        child: const CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.white,
+                          ),
+                        ),
+                      )
+                      : const Text(
+                        'Đăng',
+                        style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                    )
-                  : const Text(
-                      'Đăng',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
             ),
           ),
         ],
@@ -285,7 +397,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                               if (_taggedFriends.isNotEmpty) ...[
                                 Text(
                                   ' cùng với ',
-                                  style: TextStyle(fontSize: screenWidth * 0.035),
+                                  style: TextStyle(
+                                    fontSize: screenWidth * 0.035,
+                                  ),
                                 ),
                                 Text(
                                   '${_taggedFriends.length} người khác',
@@ -313,7 +427,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                               vertical: screenWidth * 0.01,
                             ),
                             decoration: BoxDecoration(
-                              color: isDarkMode ? Colors.grey[800] : Colors.grey[200],
+                              color:
+                                  isDarkMode
+                                      ? Colors.grey[800]
+                                      : Colors.grey[200],
                               borderRadius: BorderRadius.circular(15),
                             ),
                             child: DropdownButtonHideUnderline(
@@ -321,7 +438,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                 value: _visibility,
                                 isDense: true,
                                 icon: Icon(
-                                  _visibility == 'public' ? Icons.public : Icons.group,
+                                  _visibility == 'public'
+                                      ? Icons.public
+                                      : Icons.group,
                                   size: screenWidth * 0.04,
                                   color: primaryColor,
                                 ),
@@ -330,7 +449,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                     value: 'public',
                                     child: Row(
                                       children: [
-                                        Icon(Icons.public, size: screenWidth * 0.04),
+                                        Icon(
+                                          Icons.public,
+                                          size: screenWidth * 0.04,
+                                        ),
                                         SizedBox(width: screenWidth * 0.01),
                                         const Text('Công khai'),
                                       ],
@@ -340,7 +462,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                     value: 'friends',
                                     child: Row(
                                       children: [
-                                        Icon(Icons.group, size: screenWidth * 0.04),
+                                        Icon(
+                                          Icons.group,
+                                          size: screenWidth * 0.04,
+                                        ),
                                         SizedBox(width: screenWidth * 0.01),
                                         const Text('Bạn bè'),
                                       ],
@@ -357,6 +482,45 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                               ),
                             ),
                           ),
+                          if (_selectedAddress != null) ...[
+                            SizedBox(height: screenWidth * 0.02),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: screenWidth * 0.02,
+                                vertical: screenWidth * 0.01,
+                              ),
+                              decoration: BoxDecoration(
+                                color:
+                                    isDarkMode
+                                        ? Colors.grey[800]
+                                        : Colors.grey[200],
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.location_on,
+                                    color: primaryColor,
+                                    size: screenWidth * 0.04,
+                                  ),
+                                  SizedBox(width: screenWidth * 0.01),
+                                  Expanded(
+                                    child: Text(
+                                      _selectedAddress!,
+                                      style: TextStyle(
+                                        fontSize: screenWidth * 0.035,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.close, size: 16),
+                                    onPressed: _removeLocation,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                           SizedBox(height: screenWidth * 0.02),
                           TextField(
                             controller: _postController,
@@ -369,7 +533,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                 fontSize: screenWidth * 0.045,
                               ),
                               border: InputBorder.none,
-                              contentPadding: EdgeInsets.symmetric(vertical: screenWidth * 0.02),
+                              contentPadding: EdgeInsets.symmetric(
+                                vertical: screenWidth * 0.02,
+                              ),
                             ),
                             style: TextStyle(
                               fontSize: screenWidth * 0.045,
@@ -409,39 +575,44 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                           ],
                         ),
                         clipBehavior: Clip.antiAlias,
-                        child: kIsWeb
-                            ? FutureBuilder<Uint8List>(
-                                future: _selectedImage!.readAsBytes(),
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState == ConnectionState.waiting) {
-                                    return Center(
-                                      child: CircularProgressIndicator(
-                                        color: primaryColor,
-                                      ),
-                                    );
-                                  }
-                                  if (snapshot.hasError) {
-                                    return const Center(
-                                      child: Icon(Icons.error, color: Colors.red),
-                                    );
-                                  }
-                                  if (snapshot.hasData) {
-                                    return Image.memory(
-                                      snapshot.data!,
-                                      width: double.infinity,
-                                      height: double.infinity,
-                                      fit: BoxFit.cover,
-                                    );
-                                  }
-                                  return const SizedBox.shrink();
-                                },
-                              )
-                            : Image.file(
-                                File(_selectedImage!.path),
-                                width: double.infinity,
-                                height: double.infinity,
-                                fit: BoxFit.cover,
-                              ),
+                        child:
+                            kIsWeb
+                                ? FutureBuilder<Uint8List>(
+                                  future: _selectedImage!.readAsBytes(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return Center(
+                                        child: CircularProgressIndicator(
+                                          color: primaryColor,
+                                        ),
+                                      );
+                                    }
+                                    if (snapshot.hasError) {
+                                      return const Center(
+                                        child: Icon(
+                                          Icons.error,
+                                          color: Colors.red,
+                                        ),
+                                      );
+                                    }
+                                    if (snapshot.hasData) {
+                                      return Image.memory(
+                                        snapshot.data!,
+                                        width: double.infinity,
+                                        height: double.infinity,
+                                        fit: BoxFit.cover,
+                                      );
+                                    }
+                                    return const SizedBox.shrink();
+                                  },
+                                )
+                                : Image.file(
+                                  File(_selectedImage!.path),
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                  fit: BoxFit.cover,
+                                ),
                       ),
                       Positioned(
                         top: screenWidth * 0.03,
@@ -462,7 +633,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                           ),
                         ),
                       ),
-                      // Thêm nút chỉnh sửa ảnh
                       Positioned(
                         top: screenWidth * 0.03,
                         left: screenWidth * 0.03,
@@ -527,14 +697,18 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: screenWidth * 0.035,
-                                color: isDarkMode ? Colors.white : Colors.black87,
+                                color:
+                                    isDarkMode ? Colors.white : Colors.black87,
                               ),
                             ),
                             Text(
                               _selectedMusicUrl!.split('/').last,
                               style: TextStyle(
                                 fontSize: screenWidth * 0.03,
-                                color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
+                                color:
+                                    isDarkMode
+                                        ? Colors.grey[400]
+                                        : Colors.grey[600],
                               ),
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -591,14 +765,22 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                             onTap: _takePhoto,
                             screenWidth: screenWidth,
                           ),
-                          // SizedBox(width: screenWidth * 0.03),
-                          // _buildOptionButton(
-                          //   icon: Icons.tag,
-                          //   label: 'Gắn thẻ',
-                          //   color: Colors.orange,
-                          //   onTap: _tagFriends,
-                          //   screenWidth: screenWidth,
-                          // ),
+                          SizedBox(width: screenWidth * 0.03),
+                          _buildOptionButton(
+                            icon: Icons.location_on,
+                            label: 'Vị trí hiện tại',
+                            color: Colors.red,
+                            onTap: _pickCurrentLocation,
+                            screenWidth: screenWidth,
+                          ),
+                          SizedBox(width: screenWidth * 0.03),
+                          _buildOptionButton(
+                            icon: Icons.place,
+                            label: 'Chọn vị trí',
+                            color: Colors.purple,
+                            onTap: _showPlacePicker,
+                            screenWidth: screenWidth,
+                          ),
                           SizedBox(width: screenWidth * 0.03),
                           _buildOptionButton(
                             icon: Icons.auto_awesome,
@@ -628,7 +810,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     required double screenWidth,
   }) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    
+
     return GestureDetector(
       onTap: onTap,
       child: Container(

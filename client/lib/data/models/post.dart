@@ -10,6 +10,7 @@ class Post {
   final List<String> taggedFriends;
   final List<String> likes;
   final String visibility;
+  final Map<String, dynamic>? location;
 
   Post({
     this.id,
@@ -22,7 +23,8 @@ class Post {
     this.authorName,
     required this.taggedFriends,
     required this.likes,
-    this.visibility = 'public', // Mặc định là công khai
+    this.visibility = 'public',
+    this.location,
   });
 
   Map<String, dynamic> toMap() {
@@ -36,7 +38,8 @@ class Post {
       'authorName': authorName,
       'taggedFriends': taggedFriends,
       'likes': likes,
-      'visibility': visibility, // Thêm vào map
+      'visibility': visibility,
+      'location': location,
     };
   }
 
@@ -53,6 +56,7 @@ class Post {
       taggedFriends: List<String>.from(map['taggedFriends'] ?? []),
       likes: List<String>.from(map['likes'] ?? []),
       visibility: map['visibility'] ?? 'public',
+      location: map['location'],
     );
   }
 }

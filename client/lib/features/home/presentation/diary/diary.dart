@@ -713,6 +713,7 @@ class _DiaryState extends State<Diary> {
     final isOwnPost =
         post.authorId.toString() == widget.currentUserId.toString();
     final authorAvatars = post.authorAvatar;
+    final address = post.location?['address'] as String?;
 
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
@@ -751,6 +752,14 @@ class _DiaryState extends State<Diary> {
                           fontSize: 12,
                         ),
                       ),
+                      if (address != null)
+                        Text(
+                          'Đang ở: $address',
+                          style: TextStyle(
+                            color: Colors.grey.shade600,
+                            fontSize: 12,
+                          ),
+                        ),
                     ],
                   ),
                 ),
