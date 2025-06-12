@@ -7,7 +7,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:first_app/main.dart';
 
 class CallProvider extends ChangeNotifier {
-  final WebSocketService webSocketService;
+  final WebSocketService webSocketService = WebSocketService();
   WebRTCService? _webRTCService;
   bool isCalling = false;
   int? currentConversationId;
@@ -15,7 +15,7 @@ class CallProvider extends ChangeNotifier {
   String? callerName;
   StreamSubscription<Map<String, dynamic>>? _callEventSubscription;
 
-  CallProvider({required this.webSocketService}) {
+  CallProvider() {
     _callEventSubscription = webSocketService.callEvents.listen((event) {
       print('Received call event: $event');
       if (event['event'] == 'receiveCall') {
@@ -71,7 +71,7 @@ class CallProvider extends ChangeNotifier {
       }
 
       if(webSocketService.isConnected == false) {
-        webSocketService.connect(userId, conversationId);
+        webSocketService.connect(userId);
       }
       _webRTCService = WebRTCService(
         webSocketService,

@@ -19,9 +19,8 @@ class ChatScreen extends StatefulWidget {
   final int conversationId;
   final int userId;
   final int? participantId; // nullable
-  final WebSocketService websocketService;
   final Function(MessageWithAttachment)? updateChatListCallback;
-    final Function(int)? onConversationRemoved; // Callback để xóa conversation
+    final Function(int) onConversationRemoved; // Callback để xóa conversation
 
 
   const ChatScreen({
@@ -29,9 +28,8 @@ class ChatScreen extends StatefulWidget {
     required this.conversationId,
     required this.userId,
     this.participantId,
-    required this.websocketService,
     this.updateChatListCallback,
-    this.onConversationRemoved
+    required this.onConversationRemoved
   });
 
   @override
@@ -40,6 +38,7 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   Conversation? _updatedConversation;
+  final WebSocketService websocketService = WebSocketService();
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +47,6 @@ class _ChatScreenState extends State<ChatScreen> {
           (_) => ChatProvider(
             userId: widget.userId,
             conversationId: widget.conversationId,
-            webSocketService: widget.websocketService,
             updateChatListCallback: widget.updateChatListCallback
           ),
       child: Scaffold(
@@ -183,8 +181,8 @@ class _ChatScreenState extends State<ChatScreen> {
                               conversation: conversation,
                               currentUserId: id,
                               messages: provider.messages,
-                              webSocketService: widget.websocketService,
-                              onConversationRemoved: widget.onConversationRemoved
+                              onConversationRemoved: widget.onConversationRemoved,
+                              updateChatListCallback: widget.updateChatListCallback
                             ),
                       ),
                     );

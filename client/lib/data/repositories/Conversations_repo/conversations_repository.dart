@@ -10,6 +10,40 @@ import '../../api/api_client.dart';
 class ConversationRepo {
   var api_client = ApiClient();
 
+  Future<Conversation> createGroup(
+    int userId,
+    String groupName,
+    List<int> userIds,
+  ) async {
+    try {
+      // Chuyển đổi danh sách userIds thành JSON
+      var groupDto = jsonEncode({
+        'userId': userId,
+        'groupName': groupName,
+        'userIds': userIds,
+      });
+
+      // Gửi yêu cầu API
+      var response = await api_client.post(
+        '/api/Conversation/create_group',
+        data: groupDto,
+      );
+      // Kiểm tra nếu phản hồi có dữ liệu và là kiểu Map
+      if (response is Map<String, dynamic>) {
+        print('Create group response: $response');
+        return Conversation.fromJson(
+          response,
+        ); // Truyền response trực tiếp mà không cần lấy data
+      }
+      // Kiểm tra dữ liệu trả về là null hoặc không phải Map hợp lệ
+      throw Exception('Invalid response format: $response');
+    } catch (e) {
+      // Xử lý các lỗi trong quá trình gọi API
+      print('Error creating group: $e');
+      throw Exception('Failed to create group: $e');
+    }
+  }
+
   Future<ConversationDto> openConversation(int user1, int user2) async {
     try {
       final response = await api_client.get(
@@ -105,11 +139,11 @@ class ConversationRepo {
     }
   }
 
-  void updateGroupImage(int conversationId, String imageUrl) async {
+  void updateGroupImage(int conversationId, String image) async {
     try {
       var response = await api_client.put(
-        '/api/Conversation/update_group_image/$conversationId',
-        data: jsonEncode(imageUrl), // gửi đúng JSON string
+        '/api/Conversation/update_conversation_image/$conversationId',
+        data: jsonEncode(image), // gửi đúng JSON string
         headers: {'Content-Type': 'application/json'},
       );
 
