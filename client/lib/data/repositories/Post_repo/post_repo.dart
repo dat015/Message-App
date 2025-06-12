@@ -26,6 +26,7 @@ class PostRepo {
     String? musicUrl,
     List<String>? taggedFriends,
     String visibility = 'public',
+    Map<String, dynamic>? location,
   }) async {
     try {
       if (currentUserId.isEmpty) {
@@ -87,6 +88,7 @@ class PostRepo {
         taggedFriends: taggedFriends ?? [],
         likes: [],
         visibility: visibility,
+        location: location,
       );
 
       await _firestore.collection('posts').add(post.toMap());
