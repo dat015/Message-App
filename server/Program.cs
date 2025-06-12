@@ -73,10 +73,12 @@ using (var scope = app.Services.CreateScope())
     var friendService = scope.ServiceProvider.GetRequiredService<IFriendSV>();
     await friendService.SyncUsersToRedisAsync();
 }
-app.UseCors("AllowAll");
+app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseCors("AllowAll");
 
 if (app.Environment.IsDevelopment())
 {
@@ -85,7 +87,6 @@ if (app.Environment.IsDevelopment())
 }
 app.UseStaticFiles();
 app.MapControllers();
-app.UseRouting();
 // Chat websocket
 app.Map("/ws/chat", async context =>
 {

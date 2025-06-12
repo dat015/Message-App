@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 class Config {
   static const String geoapifyApiKey = '4a4da61421df43a993bf2d7dec4905ae';
   // Địa chỉ IP của máy tính trong mạng LAN
-  static const String localNetworkIP = '192.168.1.3'; // 👈 sửa IP ở đây nếu thay đổi
+  static const String localNetworkIP = '192.168.1.7'; // 👈 sửa IP ở đây nếu thay đổi
 
   static String get baseUrl {
     if (kIsWeb) {

@@ -1,0 +1,1020 @@
+2025-06-08 22:23:04.579 +07:00 [INF] Executed DbCommand (48ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [u].[id], [u].[username], [u].[avatar_url]
+FROM [Users] AS [u]
+2025-06-08 22:23:04.859 +07:00 [INF] User profile is available. Using 'C:\Users\Thao\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-06-08 22:23:04.934 +07:00 [WRN] Overriding address(es) 'http://localhost:5053'. Binding to endpoints defined via IConfiguration and/or UseKestrel() instead.
+2025-06-08 22:23:04.942 +07:00 [INF] Now listening on: http://[::]:5053
+2025-06-08 22:23:04.943 +07:00 [INF] Now listening on: http://0.0.0.0:5053
+2025-06-08 22:23:04.943 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-06-08 22:23:04.943 +07:00 [INF] Hosting environment: Development
+2025-06-08 22:23:04.943 +07:00 [INF] Content root path: C:\Users\Thao\source\Flutter\Message_app\server
+2025-06-08 22:23:27.554 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger - null null
+2025-06-08 22:23:27.642 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger - 301 0 null 89.1069ms
+2025-06-08 22:23:27.647 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-06-08 22:23:27.780 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 132.6011ms
+2025-06-08 22:23:27.784 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/swagger-ui.css - null null
+2025-06-08 22:23:27.786 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.css - null null
+2025-06-08 22:23:27.793 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/swagger-ui-bundle.js - null null
+2025-06-08 22:23:27.795 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-06-08 22:23:27.799 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 4.5973ms
+2025-06-08 22:23:27.803 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-06-08 22:23:27.804 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/swagger-ui-standalone-preset.js - null null
+2025-06-08 22:23:27.818 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 16.7013ms
+2025-06-08 22:23:27.832 +07:00 [INF] Sending file. Request path: '/index.css'. Physical path: 'N/A'
+2025-06-08 22:23:27.834 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.css - 200 202 text/css 46.7419ms
+2025-06-08 22:23:27.837 +07:00 [INF] Sending file. Request path: '/swagger-ui.css'. Physical path: 'N/A'
+2025-06-08 22:23:27.837 +07:00 [INF] Sending file. Request path: '/swagger-ui-standalone-preset.js'. Physical path: 'N/A'
+2025-06-08 22:23:27.841 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/swagger-ui.css - 200 152035 text/css 56.9984ms
+2025-06-08 22:23:27.840 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/swagger-ui-standalone-preset.js - 200 230007 text/javascript 36.1221ms
+2025-06-08 22:23:27.863 +07:00 [INF] Sending file. Request path: '/swagger-ui-bundle.js'. Physical path: 'N/A'
+2025-06-08 22:23:27.864 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/swagger-ui-bundle.js - 200 1457477 text/javascript 70.6595ms
+2025-06-08 22:23:28.690 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-06-08 22:23:28.834 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/favicon-32x32.png - null null
+2025-06-08 22:23:28.834 +07:00 [INF] Sending file. Request path: '/favicon-32x32.png'. Physical path: 'N/A'
+2025-06-08 22:23:28.835 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/favicon-32x32.png - 200 628 image/png 0.9031ms
+2025-06-08 22:23:28.822 +07:00 [ERR] An unhandled exception has occurred while executing the request.
+Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorException: Failed to generate Operation for action - server.Controllers.MessageController.UploadFile (Message_app). See inner exception
+ ---> Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorException: Error reading parameter(s) for action server.Controllers.MessageController.UploadFile (Message_app) as [FromForm] attribute used with IFormFile. Please refer to https://github.com/domaindrivendev/Swashbuckle.AspNetCore#handle-forms-and-file-uploads for more information
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateParametersAsync(ApiDescription apiDescription, SchemaRepository schemaRespository, Func`3 parameterGenerator)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateParametersAsync(ApiDescription apiDescription, SchemaRepository schemaRespository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationAsync(ApiDescription apiDescription, SchemaRepository schemaRepository, Func`3 parametersGenerator, Func`3 bodyGenerator, Func`3 applyFilters)
+   --- End of inner exception stack trace ---
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationAsync(ApiDescription apiDescription, SchemaRepository schemaRepository, Func`3 parametersGenerator, Func`3 bodyGenerator, Func`3 applyFilters)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationAsync(ApiDescription apiDescription, SchemaRepository schemaRepository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationsAsync(IEnumerable`1 apiDescriptions, SchemaRepository schemaRepository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GeneratePathsAsync(IEnumerable`1 apiDescriptions, SchemaRepository schemaRepository, Func`3 operationsGenerator)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GeneratePathsAsync(IEnumerable`1 apiDescriptions, SchemaRepository schemaRepository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GetSwaggerAsync(String documentName, String host, String basePath)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-06-08 22:23:28.846 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 500 null text/plain; charset=utf-8 155.5542ms
+2025-06-08 22:27:01.278 +07:00 [INF] Executed DbCommand (28ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [u].[id], [u].[username], [u].[avatar_url]
+FROM [Users] AS [u]
+2025-06-08 22:27:01.408 +07:00 [INF] User profile is available. Using 'C:\Users\Thao\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-06-08 22:27:01.452 +07:00 [WRN] Overriding address(es) 'http://localhost:5053'. Binding to endpoints defined via IConfiguration and/or UseKestrel() instead.
+2025-06-08 22:27:01.462 +07:00 [INF] Now listening on: http://[::]:5053
+2025-06-08 22:27:01.463 +07:00 [INF] Now listening on: http://0.0.0.0:5053
+2025-06-08 22:27:01.463 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-06-08 22:27:01.463 +07:00 [INF] Hosting environment: Development
+2025-06-08 22:27:01.463 +07:00 [INF] Content root path: C:\Users\Thao\source\Flutter\Message_app\server
+2025-06-08 22:27:01.491 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-06-08 22:27:01.559 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 69.1333ms
+2025-06-08 22:27:01.568 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-06-08 22:27:01.568 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-06-08 22:27:01.570 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 1.9212ms
+2025-06-08 22:27:01.570 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 1.8998ms
+2025-06-08 22:27:02.001 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-06-08 22:27:02.087 +07:00 [ERR] An unhandled exception has occurred while executing the request.
+Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorException: Failed to generate Operation for action - server.Controllers.MessageController.UploadFile (Message_app). See inner exception
+ ---> Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorException: Error reading parameter(s) for action server.Controllers.MessageController.UploadFile (Message_app) as [FromForm] attribute used with IFormFile. Please refer to https://github.com/domaindrivendev/Swashbuckle.AspNetCore#handle-forms-and-file-uploads for more information
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateParametersAsync(ApiDescription apiDescription, SchemaRepository schemaRespository, Func`3 parameterGenerator)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateParametersAsync(ApiDescription apiDescription, SchemaRepository schemaRespository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationAsync(ApiDescription apiDescription, SchemaRepository schemaRepository, Func`3 parametersGenerator, Func`3 bodyGenerator, Func`3 applyFilters)
+   --- End of inner exception stack trace ---
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationAsync(ApiDescription apiDescription, SchemaRepository schemaRepository, Func`3 parametersGenerator, Func`3 bodyGenerator, Func`3 applyFilters)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationAsync(ApiDescription apiDescription, SchemaRepository schemaRepository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationsAsync(IEnumerable`1 apiDescriptions, SchemaRepository schemaRepository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GeneratePathsAsync(IEnumerable`1 apiDescriptions, SchemaRepository schemaRepository, Func`3 operationsGenerator)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GeneratePathsAsync(IEnumerable`1 apiDescriptions, SchemaRepository schemaRepository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GetSwaggerAsync(String documentName, String host, String basePath)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-06-08 22:27:02.097 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 500 null text/plain; charset=utf-8 95.7784ms
+2025-06-08 22:29:23.652 +07:00 [INF] Executed DbCommand (32ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [u].[id], [u].[username], [u].[avatar_url]
+FROM [Users] AS [u]
+2025-06-08 22:29:23.763 +07:00 [INF] User profile is available. Using 'C:\Users\Thao\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-06-08 22:29:23.809 +07:00 [WRN] Overriding address(es) 'http://localhost:5053'. Binding to endpoints defined via IConfiguration and/or UseKestrel() instead.
+2025-06-08 22:29:23.817 +07:00 [INF] Now listening on: http://[::]:5053
+2025-06-08 22:29:23.818 +07:00 [INF] Now listening on: http://0.0.0.0:5053
+2025-06-08 22:29:23.818 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-06-08 22:29:23.818 +07:00 [INF] Hosting environment: Development
+2025-06-08 22:29:23.818 +07:00 [INF] Content root path: C:\Users\Thao\source\Flutter\Message_app\server
+2025-06-08 22:29:23.842 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-06-08 22:29:23.918 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 76.1564ms
+2025-06-08 22:29:23.924 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-06-08 22:29:23.924 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-06-08 22:29:23.925 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 1.4919ms
+2025-06-08 22:29:23.925 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 1.6096ms
+2025-06-08 22:29:24.758 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-06-08 22:29:24.817 +07:00 [ERR] An unhandled exception has occurred while executing the request.
+Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorException: Failed to generate Operation for action - server.Controllers.MessageController.UploadFile (Message_app). See inner exception
+ ---> Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorException: Error reading parameter(s) for action server.Controllers.MessageController.UploadFile (Message_app) as [FromForm] attribute used with IFormFile. Please refer to https://github.com/domaindrivendev/Swashbuckle.AspNetCore#handle-forms-and-file-uploads for more information
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateParametersAsync(ApiDescription apiDescription, SchemaRepository schemaRespository, Func`3 parameterGenerator)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateParametersAsync(ApiDescription apiDescription, SchemaRepository schemaRespository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationAsync(ApiDescription apiDescription, SchemaRepository schemaRepository, Func`3 parametersGenerator, Func`3 bodyGenerator, Func`3 applyFilters)
+   --- End of inner exception stack trace ---
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationAsync(ApiDescription apiDescription, SchemaRepository schemaRepository, Func`3 parametersGenerator, Func`3 bodyGenerator, Func`3 applyFilters)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationAsync(ApiDescription apiDescription, SchemaRepository schemaRepository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationsAsync(IEnumerable`1 apiDescriptions, SchemaRepository schemaRepository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GeneratePathsAsync(IEnumerable`1 apiDescriptions, SchemaRepository schemaRepository, Func`3 operationsGenerator)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GeneratePathsAsync(IEnumerable`1 apiDescriptions, SchemaRepository schemaRepository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GetSwaggerAsync(String documentName, String host, String basePath)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-06-08 22:29:24.824 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 500 null text/plain; charset=utf-8 66.6822ms
+2025-06-08 22:29:29.055 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-06-08 22:29:29.056 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 0.8865ms
+2025-06-08 22:29:29.062 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-06-08 22:29:29.062 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-06-08 22:29:29.063 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 0.8591ms
+2025-06-08 22:29:29.064 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 1.2871ms
+2025-06-08 22:29:29.250 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-06-08 22:29:29.258 +07:00 [ERR] An unhandled exception has occurred while executing the request.
+Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorException: Failed to generate Operation for action - server.Controllers.MessageController.UploadFile (Message_app). See inner exception
+ ---> Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorException: Error reading parameter(s) for action server.Controllers.MessageController.UploadFile (Message_app) as [FromForm] attribute used with IFormFile. Please refer to https://github.com/domaindrivendev/Swashbuckle.AspNetCore#handle-forms-and-file-uploads for more information
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateParametersAsync(ApiDescription apiDescription, SchemaRepository schemaRespository, Func`3 parameterGenerator)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateParametersAsync(ApiDescription apiDescription, SchemaRepository schemaRespository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationAsync(ApiDescription apiDescription, SchemaRepository schemaRepository, Func`3 parametersGenerator, Func`3 bodyGenerator, Func`3 applyFilters)
+   --- End of inner exception stack trace ---
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationAsync(ApiDescription apiDescription, SchemaRepository schemaRepository, Func`3 parametersGenerator, Func`3 bodyGenerator, Func`3 applyFilters)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationAsync(ApiDescription apiDescription, SchemaRepository schemaRepository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationsAsync(IEnumerable`1 apiDescriptions, SchemaRepository schemaRepository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GeneratePathsAsync(IEnumerable`1 apiDescriptions, SchemaRepository schemaRepository, Func`3 operationsGenerator)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GeneratePathsAsync(IEnumerable`1 apiDescriptions, SchemaRepository schemaRepository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GetSwaggerAsync(String documentName, String host, String basePath)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-06-08 22:29:29.270 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 500 null text/plain; charset=utf-8 19.4814ms
+2025-06-08 22:29:37.628 +07:00 [INF] Application is shutting down...
+2025-06-08 22:29:45.455 +07:00 [INF] Executed DbCommand (26ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [u].[id], [u].[username], [u].[avatar_url]
+FROM [Users] AS [u]
+2025-06-08 22:29:45.561 +07:00 [INF] User profile is available. Using 'C:\Users\Thao\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-06-08 22:29:45.599 +07:00 [WRN] Overriding address(es) 'http://localhost:5053'. Binding to endpoints defined via IConfiguration and/or UseKestrel() instead.
+2025-06-08 22:29:45.608 +07:00 [INF] Now listening on: http://[::]:5053
+2025-06-08 22:29:45.608 +07:00 [INF] Now listening on: http://0.0.0.0:5053
+2025-06-08 22:29:45.609 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-06-08 22:29:45.609 +07:00 [INF] Hosting environment: Development
+2025-06-08 22:29:45.609 +07:00 [INF] Content root path: C:\Users\Thao\source\Flutter\Message_app\server
+2025-06-08 22:30:13.872 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-06-08 22:30:13.943 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 71.9987ms
+2025-06-08 22:30:13.945 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-06-08 22:30:13.946 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-06-08 22:30:13.947 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 1.7305ms
+2025-06-08 22:30:13.948 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 2.5454ms
+2025-06-08 22:30:14.640 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-06-08 22:30:14.705 +07:00 [ERR] An unhandled exception has occurred while executing the request.
+Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorException: Failed to generate Operation for action - server.Controllers.MessageController.UploadFile (Message_app). See inner exception
+ ---> Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorException: Error reading parameter(s) for action server.Controllers.MessageController.UploadFile (Message_app) as [FromForm] attribute used with IFormFile. Please refer to https://github.com/domaindrivendev/Swashbuckle.AspNetCore#handle-forms-and-file-uploads for more information
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateParametersAsync(ApiDescription apiDescription, SchemaRepository schemaRespository, Func`3 parameterGenerator)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateParametersAsync(ApiDescription apiDescription, SchemaRepository schemaRespository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationAsync(ApiDescription apiDescription, SchemaRepository schemaRepository, Func`3 parametersGenerator, Func`3 bodyGenerator, Func`3 applyFilters)
+   --- End of inner exception stack trace ---
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationAsync(ApiDescription apiDescription, SchemaRepository schemaRepository, Func`3 parametersGenerator, Func`3 bodyGenerator, Func`3 applyFilters)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationAsync(ApiDescription apiDescription, SchemaRepository schemaRepository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationsAsync(IEnumerable`1 apiDescriptions, SchemaRepository schemaRepository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GeneratePathsAsync(IEnumerable`1 apiDescriptions, SchemaRepository schemaRepository, Func`3 operationsGenerator)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GeneratePathsAsync(IEnumerable`1 apiDescriptions, SchemaRepository schemaRepository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GetSwaggerAsync(String documentName, String host, String basePath)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-06-08 22:30:14.713 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 500 null text/plain; charset=utf-8 73.1939ms
+2025-06-08 22:31:38.805 +07:00 [INF] Executed DbCommand (26ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [u].[id], [u].[username], [u].[avatar_url]
+FROM [Users] AS [u]
+2025-06-08 22:31:38.917 +07:00 [INF] User profile is available. Using 'C:\Users\Thao\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-06-08 22:31:38.959 +07:00 [WRN] Overriding address(es) 'http://localhost:5053'. Binding to endpoints defined via IConfiguration and/or UseKestrel() instead.
+2025-06-08 22:31:38.967 +07:00 [INF] Now listening on: http://[::]:5053
+2025-06-08 22:31:38.967 +07:00 [INF] Now listening on: http://0.0.0.0:5053
+2025-06-08 22:31:38.967 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-06-08 22:31:38.967 +07:00 [INF] Hosting environment: Development
+2025-06-08 22:31:38.967 +07:00 [INF] Content root path: C:\Users\Thao\source\Flutter\Message_app\server
+2025-06-08 22:31:39.001 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-06-08 22:31:39.097 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 100.7101ms
+2025-06-08 22:31:39.105 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-06-08 22:31:39.105 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-06-08 22:31:39.107 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 1.8016ms
+2025-06-08 22:31:39.108 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 2.4339ms
+2025-06-08 22:31:39.489 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-06-08 22:31:39.560 +07:00 [ERR] An unhandled exception has occurred while executing the request.
+Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorException: Failed to generate Operation for action - server.Controllers.MessageController.UploadFile (Message_app). See inner exception
+ ---> Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorException: Error reading parameter(s) for action server.Controllers.MessageController.UploadFile (Message_app) as [FromForm] attribute used with IFormFile. Please refer to https://github.com/domaindrivendev/Swashbuckle.AspNetCore#handle-forms-and-file-uploads for more information
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateParametersAsync(ApiDescription apiDescription, SchemaRepository schemaRespository, Func`3 parameterGenerator)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateParametersAsync(ApiDescription apiDescription, SchemaRepository schemaRespository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationAsync(ApiDescription apiDescription, SchemaRepository schemaRepository, Func`3 parametersGenerator, Func`3 bodyGenerator, Func`3 applyFilters)
+   --- End of inner exception stack trace ---
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationAsync(ApiDescription apiDescription, SchemaRepository schemaRepository, Func`3 parametersGenerator, Func`3 bodyGenerator, Func`3 applyFilters)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationAsync(ApiDescription apiDescription, SchemaRepository schemaRepository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationsAsync(IEnumerable`1 apiDescriptions, SchemaRepository schemaRepository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GeneratePathsAsync(IEnumerable`1 apiDescriptions, SchemaRepository schemaRepository, Func`3 operationsGenerator)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GeneratePathsAsync(IEnumerable`1 apiDescriptions, SchemaRepository schemaRepository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GetSwaggerAsync(String documentName, String host, String basePath)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-06-08 22:31:39.571 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 500 null text/plain; charset=utf-8 81.878ms
+2025-06-08 22:31:41.918 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-06-08 22:31:41.919 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 0.8174ms
+2025-06-08 22:31:41.927 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-06-08 22:31:41.927 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-06-08 22:31:41.927 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 0.3396ms
+2025-06-08 22:31:41.928 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 0.4522ms
+2025-06-08 22:31:42.296 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-06-08 22:31:42.303 +07:00 [ERR] An unhandled exception has occurred while executing the request.
+Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorException: Failed to generate Operation for action - server.Controllers.MessageController.UploadFile (Message_app). See inner exception
+ ---> Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorException: Error reading parameter(s) for action server.Controllers.MessageController.UploadFile (Message_app) as [FromForm] attribute used with IFormFile. Please refer to https://github.com/domaindrivendev/Swashbuckle.AspNetCore#handle-forms-and-file-uploads for more information
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateParametersAsync(ApiDescription apiDescription, SchemaRepository schemaRespository, Func`3 parameterGenerator)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateParametersAsync(ApiDescription apiDescription, SchemaRepository schemaRespository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationAsync(ApiDescription apiDescription, SchemaRepository schemaRepository, Func`3 parametersGenerator, Func`3 bodyGenerator, Func`3 applyFilters)
+   --- End of inner exception stack trace ---
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationAsync(ApiDescription apiDescription, SchemaRepository schemaRepository, Func`3 parametersGenerator, Func`3 bodyGenerator, Func`3 applyFilters)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationAsync(ApiDescription apiDescription, SchemaRepository schemaRepository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationsAsync(IEnumerable`1 apiDescriptions, SchemaRepository schemaRepository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GeneratePathsAsync(IEnumerable`1 apiDescriptions, SchemaRepository schemaRepository, Func`3 operationsGenerator)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GeneratePathsAsync(IEnumerable`1 apiDescriptions, SchemaRepository schemaRepository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GetSwaggerAsync(String documentName, String host, String basePath)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-06-08 22:31:42.304 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 500 null text/plain; charset=utf-8 8.4612ms
+2025-06-08 22:31:43.811 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-06-08 22:31:43.812 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 0.673ms
+2025-06-08 22:31:43.821 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-06-08 22:31:43.821 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-06-08 22:31:43.821 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 0.2854ms
+2025-06-08 22:31:43.822 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 0.6478ms
+2025-06-08 22:31:44.033 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-06-08 22:31:44.047 +07:00 [ERR] An unhandled exception has occurred while executing the request.
+Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorException: Failed to generate Operation for action - server.Controllers.MessageController.UploadFile (Message_app). See inner exception
+ ---> Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorException: Error reading parameter(s) for action server.Controllers.MessageController.UploadFile (Message_app) as [FromForm] attribute used with IFormFile. Please refer to https://github.com/domaindrivendev/Swashbuckle.AspNetCore#handle-forms-and-file-uploads for more information
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateParametersAsync(ApiDescription apiDescription, SchemaRepository schemaRespository, Func`3 parameterGenerator)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateParametersAsync(ApiDescription apiDescription, SchemaRepository schemaRespository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationAsync(ApiDescription apiDescription, SchemaRepository schemaRepository, Func`3 parametersGenerator, Func`3 bodyGenerator, Func`3 applyFilters)
+   --- End of inner exception stack trace ---
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationAsync(ApiDescription apiDescription, SchemaRepository schemaRepository, Func`3 parametersGenerator, Func`3 bodyGenerator, Func`3 applyFilters)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationAsync(ApiDescription apiDescription, SchemaRepository schemaRepository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationsAsync(IEnumerable`1 apiDescriptions, SchemaRepository schemaRepository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GeneratePathsAsync(IEnumerable`1 apiDescriptions, SchemaRepository schemaRepository, Func`3 operationsGenerator)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GeneratePathsAsync(IEnumerable`1 apiDescriptions, SchemaRepository schemaRepository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GetSwaggerAsync(String documentName, String host, String basePath)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-06-08 22:31:44.048 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 500 null text/plain; charset=utf-8 14.8385ms
+2025-06-08 22:32:03.804 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-06-08 22:32:03.805 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 0.8193ms
+2025-06-08 22:32:03.832 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-06-08 22:32:03.832 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 0.2309ms
+2025-06-08 22:32:03.833 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-06-08 22:32:03.833 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 0.4484ms
+2025-06-08 22:32:04.228 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-06-08 22:32:04.231 +07:00 [ERR] An unhandled exception has occurred while executing the request.
+Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorException: Failed to generate Operation for action - server.Controllers.MessageController.UploadFile (Message_app). See inner exception
+ ---> Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorException: Error reading parameter(s) for action server.Controllers.MessageController.UploadFile (Message_app) as [FromForm] attribute used with IFormFile. Please refer to https://github.com/domaindrivendev/Swashbuckle.AspNetCore#handle-forms-and-file-uploads for more information
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateParametersAsync(ApiDescription apiDescription, SchemaRepository schemaRespository, Func`3 parameterGenerator)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateParametersAsync(ApiDescription apiDescription, SchemaRepository schemaRespository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationAsync(ApiDescription apiDescription, SchemaRepository schemaRepository, Func`3 parametersGenerator, Func`3 bodyGenerator, Func`3 applyFilters)
+   --- End of inner exception stack trace ---
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationAsync(ApiDescription apiDescription, SchemaRepository schemaRepository, Func`3 parametersGenerator, Func`3 bodyGenerator, Func`3 applyFilters)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationAsync(ApiDescription apiDescription, SchemaRepository schemaRepository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationsAsync(IEnumerable`1 apiDescriptions, SchemaRepository schemaRepository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GeneratePathsAsync(IEnumerable`1 apiDescriptions, SchemaRepository schemaRepository, Func`3 operationsGenerator)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GeneratePathsAsync(IEnumerable`1 apiDescriptions, SchemaRepository schemaRepository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GetSwaggerAsync(String documentName, String host, String basePath)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-06-08 22:32:04.233 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 500 null text/plain; charset=utf-8 4.8607ms
+2025-06-08 22:32:48.016 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-06-08 22:32:48.017 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 1.3314ms
+2025-06-08 22:32:48.048 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-06-08 22:32:48.048 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 0.3417ms
+2025-06-08 22:32:48.049 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-06-08 22:32:48.050 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 1.0063ms
+2025-06-08 22:32:48.492 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-06-08 22:32:48.498 +07:00 [ERR] An unhandled exception has occurred while executing the request.
+Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorException: Failed to generate Operation for action - server.Controllers.MessageController.UploadFile (Message_app). See inner exception
+ ---> Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorException: Error reading parameter(s) for action server.Controllers.MessageController.UploadFile (Message_app) as [FromForm] attribute used with IFormFile. Please refer to https://github.com/domaindrivendev/Swashbuckle.AspNetCore#handle-forms-and-file-uploads for more information
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateParametersAsync(ApiDescription apiDescription, SchemaRepository schemaRespository, Func`3 parameterGenerator)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateParametersAsync(ApiDescription apiDescription, SchemaRepository schemaRespository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationAsync(ApiDescription apiDescription, SchemaRepository schemaRepository, Func`3 parametersGenerator, Func`3 bodyGenerator, Func`3 applyFilters)
+   --- End of inner exception stack trace ---
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationAsync(ApiDescription apiDescription, SchemaRepository schemaRepository, Func`3 parametersGenerator, Func`3 bodyGenerator, Func`3 applyFilters)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationAsync(ApiDescription apiDescription, SchemaRepository schemaRepository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationsAsync(IEnumerable`1 apiDescriptions, SchemaRepository schemaRepository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GeneratePathsAsync(IEnumerable`1 apiDescriptions, SchemaRepository schemaRepository, Func`3 operationsGenerator)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GeneratePathsAsync(IEnumerable`1 apiDescriptions, SchemaRepository schemaRepository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GetSwaggerAsync(String documentName, String host, String basePath)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-06-08 22:32:48.500 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 500 null text/plain; charset=utf-8 8.2635ms
+2025-06-08 22:33:09.323 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-06-08 22:33:09.324 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 0.7026ms
+2025-06-08 22:33:09.331 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-06-08 22:33:09.331 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-06-08 22:33:09.331 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 0.3284ms
+2025-06-08 22:33:09.332 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 0.9358ms
+2025-06-08 22:33:09.510 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-06-08 22:33:09.514 +07:00 [ERR] An unhandled exception has occurred while executing the request.
+Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorException: Failed to generate Operation for action - server.Controllers.MessageController.UploadFile (Message_app). See inner exception
+ ---> Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorException: Error reading parameter(s) for action server.Controllers.MessageController.UploadFile (Message_app) as [FromForm] attribute used with IFormFile. Please refer to https://github.com/domaindrivendev/Swashbuckle.AspNetCore#handle-forms-and-file-uploads for more information
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateParametersAsync(ApiDescription apiDescription, SchemaRepository schemaRespository, Func`3 parameterGenerator)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateParametersAsync(ApiDescription apiDescription, SchemaRepository schemaRespository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationAsync(ApiDescription apiDescription, SchemaRepository schemaRepository, Func`3 parametersGenerator, Func`3 bodyGenerator, Func`3 applyFilters)
+   --- End of inner exception stack trace ---
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationAsync(ApiDescription apiDescription, SchemaRepository schemaRepository, Func`3 parametersGenerator, Func`3 bodyGenerator, Func`3 applyFilters)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationAsync(ApiDescription apiDescription, SchemaRepository schemaRepository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GenerateOperationsAsync(IEnumerable`1 apiDescriptions, SchemaRepository schemaRepository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GeneratePathsAsync(IEnumerable`1 apiDescriptions, SchemaRepository schemaRepository, Func`3 operationsGenerator)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GeneratePathsAsync(IEnumerable`1 apiDescriptions, SchemaRepository schemaRepository)
+   at Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GetSwaggerAsync(String documentName, String host, String basePath)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-06-08 22:33:09.515 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 500 null text/plain; charset=utf-8 4.7513ms
+2025-06-08 22:33:17.182 +07:00 [INF] Application is shutting down...
+2025-06-08 22:33:26.622 +07:00 [INF] Executed DbCommand (29ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [u].[id], [u].[username], [u].[avatar_url]
+FROM [Users] AS [u]
+2025-06-08 22:33:26.726 +07:00 [INF] User profile is available. Using 'C:\Users\Thao\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-06-08 22:33:26.763 +07:00 [WRN] Overriding address(es) 'http://localhost:5053'. Binding to endpoints defined via IConfiguration and/or UseKestrel() instead.
+2025-06-08 22:33:26.770 +07:00 [INF] Now listening on: http://[::]:5053
+2025-06-08 22:33:26.770 +07:00 [INF] Now listening on: http://0.0.0.0:5053
+2025-06-08 22:33:26.771 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-06-08 22:33:26.771 +07:00 [INF] Hosting environment: Development
+2025-06-08 22:33:26.771 +07:00 [INF] Content root path: C:\Users\Thao\source\Flutter\Message_app\server
+2025-06-08 22:33:38.147 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.html - null null
+2025-06-08 22:33:38.359 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/index.js - null null
+2025-06-08 22:33:38.359 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.html - 200 null text/html;charset=utf-8 215.743ms
+2025-06-08 22:33:38.363 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - null null
+2025-06-08 22:33:38.364 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/index.js - 200 null application/javascript;charset=utf-8 5.0057ms
+2025-06-08 22:33:38.368 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/_framework/aspnetcore-browser-refresh.js - 200 13732 application/javascript; charset=utf-8 3.7903ms
+2025-06-08 22:33:39.041 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-06-08 22:33:39.242 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 200.1028ms
+2025-06-08 22:38:57.898 +07:00 [INF] Request starting HTTP/1.1 POST http://192.168.1.4:5053/api/Auth/login - application/json 58
+2025-06-08 22:38:58.005 +07:00 [INF] Failed to validate the token.
+Microsoft.IdentityModel.Tokens.SecurityTokenExpiredException: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '6/4/2025 2:13:01 AM', Current time (UTC): '6/8/2025 3:38:57 PM'.
+   at Microsoft.IdentityModel.Tokens.Validators.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateTokenPayloadAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateJWSAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+2025-06-08 22:38:58.030 +07:00 [INF] Bearer was not authenticated. Failure message: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '6/4/2025 2:13:01 AM', Current time (UTC): '6/8/2025 3:38:57 PM'.
+2025-06-08 22:38:58.075 +07:00 [WRN] Failed to determine the https port for redirect.
+2025-06-08 22:38:58.078 +07:00 [INF] Executing endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-06-08 22:38:58.105 +07:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(server.DTO.AuthDTO.LoginDTO) on controller Message_app.Controllers.AuthController (Message_app).
+2025-06-08 22:38:58.353 +07:00 [INF] Executed DbCommand (78ms) [Parameters=[@__email_0='?' (Size = 450)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[email] = @__email_0
+2025-06-08 22:38:58.420 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.DTO.AuthDTO.LoginRespose'.
+2025-06-08 22:38:58.452 +07:00 [INF] Executed action Message_app.Controllers.AuthController.Login (Message_app) in 344.2254ms
+2025-06-08 22:38:58.453 +07:00 [INF] Executed endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-06-08 22:38:58.458 +07:00 [INF] Request finished HTTP/1.1 POST http://192.168.1.4:5053/api/Auth/login - 200 null application/json; charset=utf-8 564.9954ms
+2025-06-08 22:38:59.317 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/ws/chat?userId=2 - null null
+2025-06-08 22:38:59.320 +07:00 [INF] Executing endpoint '/ws/chat'
+2025-06-08 22:38:59.831 +07:00 [INF] Executed DbCommand (29ms) [Parameters=[@__client_UserId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[conversation_id]
+FROM [Participants] AS [p]
+WHERE [p].[user_id] = @__client_UserId_0 AND [p].[is_deleted] = CAST(0 AS bit)
+2025-06-08 22:38:59.855 +07:00 [INF] User 2 subscribed to channel conversation:3
+2025-06-08 22:38:59.856 +07:00 [INF] User 2 subscribed to channel conversation:4
+2025-06-08 22:38:59.857 +07:00 [INF] User 2 subscribed to channel conversation:19
+2025-06-08 22:38:59.858 +07:00 [INF] User 2 subscribed to channel conversation:1
+2025-06-08 22:38:59.859 +07:00 [INF] User 2 subscribed to channel conversation:25
+2025-06-08 22:38:59.860 +07:00 [INF] User 2 subscribed to channel conversation:26
+2025-06-08 22:38:59.861 +07:00 [INF] User 2 subscribed to channel conversation:27
+2025-06-08 22:38:59.861 +07:00 [INF] User 2 subscribed to channel conversation:28
+2025-06-08 22:38:59.862 +07:00 [INF] User 2 subscribed to channel conversation:29
+2025-06-08 22:38:59.863 +07:00 [INF] User 2 subscribed to channel conversation:32
+2025-06-08 22:38:59.863 +07:00 [INF] User 2 subscribed to channel conversation:33
+2025-06-08 22:38:59.865 +07:00 [INF] User 2 subscribed to channel conversation:34
+2025-06-08 22:38:59.867 +07:00 [INF] User 2 subscribed to channel conversation:35
+2025-06-08 22:38:59.867 +07:00 [INF] User 2 subscribed to channel conversation:36
+2025-06-08 22:38:59.868 +07:00 [INF] User 2 subscribed to channel conversation:37
+2025-06-08 22:38:59.869 +07:00 [INF] User 2 subscribed to channel conversation:38
+2025-06-08 22:38:59.870 +07:00 [INF] User 2 subscribed to channel conversation:39
+2025-06-08 22:38:59.871 +07:00 [INF] User 2 subscribed to channel conversation:41
+2025-06-08 22:38:59.871 +07:00 [INF] User 2 subscribed to channel conversation:40
+2025-06-08 22:38:59.872 +07:00 [INF] User 2 subscribed to channel conversation:42
+2025-06-08 22:38:59.872 +07:00 [INF] User 2 subscribed to channel conversation:44
+2025-06-08 22:38:59.872 +07:00 [INF] User 2 subscribed to channel conversation:43
+2025-06-08 22:38:59.873 +07:00 [INF] User 2 subscribed to channel conversation:45
+2025-06-08 22:38:59.874 +07:00 [INF] User 2 subscribed to channel conversation:46
+2025-06-08 22:38:59.874 +07:00 [INF] User 2 subscribed to channel conversation:47
+2025-06-08 22:38:59.876 +07:00 [INF] User 2 subscribed to channel conversation:48
+2025-06-08 22:38:59.876 +07:00 [INF] User 2 subscribed to channel conversation:49
+2025-06-08 22:38:59.877 +07:00 [INF] User 2 subscribed to channel conversation:50
+2025-06-08 22:38:59.877 +07:00 [INF] User 2 subscribed to channel conversation:51
+2025-06-08 22:38:59.878 +07:00 [INF] User 2 subscribed to channel conversation:52
+2025-06-08 22:38:59.878 +07:00 [INF] User 2 subscribed to channel conversation:53
+2025-06-08 22:38:59.878 +07:00 [INF] User 2 subscribed to channel conversation:54
+2025-06-08 22:38:59.879 +07:00 [INF] User 2 subscribed to channel conversation:55
+2025-06-08 22:38:59.879 +07:00 [INF] User 2 subscribed to channel conversation:56
+2025-06-08 22:38:59.879 +07:00 [INF] User 2 subscribed to channel conversation:57
+2025-06-08 22:38:59.880 +07:00 [INF] User 2 subscribed to channel conversation:58
+2025-06-08 22:38:59.881 +07:00 [INF] User 2 subscribed to channel conversation:59
+2025-06-08 22:38:59.882 +07:00 [INF] User 2 subscribed to channel conversation:60
+2025-06-08 22:38:59.883 +07:00 [INF] User 2 subscribed to channel conversation:61
+2025-06-08 22:38:59.883 +07:00 [INF] User 2 subscribed to channel conversation:62
+2025-06-08 22:38:59.884 +07:00 [INF] User 2 subscribed to channel conversation:63
+2025-06-08 22:38:59.885 +07:00 [INF] User 2 subscribed to channel conversation:64
+2025-06-08 22:38:59.886 +07:00 [INF] User 2 subscribed to channel conversation:65
+2025-06-08 22:38:59.886 +07:00 [INF] User 2 subscribed to channel conversation:66
+2025-06-08 22:38:59.887 +07:00 [INF] User 2 subscribed to channel conversation:67
+2025-06-08 22:38:59.888 +07:00 [INF] User 2 subscribed to channel conversation:68
+2025-06-08 22:38:59.888 +07:00 [INF] User 2 subscribed to channel conversation:69
+2025-06-08 22:38:59.888 +07:00 [INF] User 2 subscribed to channel conversation:70
+2025-06-08 22:39:00.141 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/api/Conversation/get_conversations/2 - null null
+2025-06-08 22:39:00.147 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/api/friends/GetAllFriends/2 - null null
+2025-06-08 22:39:00.149 +07:00 [INF] Executing endpoint 'server.Controllers.FriendsController.GetAllFriends (Message_app)'
+2025-06-08 22:39:00.149 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-06-08 22:39:00.155 +07:00 [INF] Route matched with {action = "GetAllFriends", controller = "Friends"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAllFriends(Int32) on controller server.Controllers.FriendsController (Message_app).
+2025-06-08 22:39:00.155 +07:00 [INF] Route matched with {action = "GetConversations", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetConversations(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-06-08 22:39:00.229 +07:00 [INF] Executed DbCommand (15ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN [u].[username]
+    ELSE [u0].[username]
+END AS [username], CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN [u].[avatar_url]
+    ELSE [u0].[avatar_url]
+END AS [avatar], CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN [u].[id]
+    ELSE [u0].[id]
+END AS [friendId], @__userId_0 AS [userId]
+FROM [Friends] AS [f]
+INNER JOIN [Users] AS [u] ON [f].[UserId2] = [u].[id]
+INNER JOIN [Users] AS [u0] ON [f].[UserId1] = [u0].[id]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-06-08 22:39:00.235 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType8`2[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[server.DTO.FriendDTO, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-06-08 22:39:00.243 +07:00 [INF] Executed action server.Controllers.FriendsController.GetAllFriends (Message_app) in 87.5642ms
+2025-06-08 22:39:00.243 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.GetAllFriends (Message_app)'
+2025-06-08 22:39:00.243 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/api/friends/GetAllFriends/2 - 200 null application/json; charset=utf-8 95.9864ms
+2025-06-08 22:39:00.276 +07:00 [INF] Executed DbCommand (37ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [c].[id], [c].[name], [c].[is_group], [c].[created_at], [c].[lastMessage], [c].[lastMessageTime], [c].[img_url], [p0].[id], [p0].[user_id], [p0].[conversation_id], [p0].[name], [p0].[is_deleted], [p0].[img_url]
+FROM [Conversations] AS [c]
+LEFT JOIN [Participants] AS [p0] ON [c].[id] = [p0].[conversation_id]
+WHERE EXISTS (
+    SELECT 1
+    FROM [Participants] AS [p]
+    WHERE [c].[id] = [p].[conversation_id] AND [p].[user_id] = @__userId_0)
+ORDER BY [c].[id]
+2025-06-08 22:39:00.375 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.DTO.ConversationDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-06-08 22:39:00.716 +07:00 [INF] Executed action server.Controllers.ConversationController.GetConversations (Message_app) in 561.1109ms
+2025-06-08 22:39:00.717 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-06-08 22:39:00.718 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/api/Conversation/get_conversations/2 - 200 null application/json; charset=utf-8 576.4559ms
+2025-06-08 22:39:03.222 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/api/Message/getMessages/19/2 - null null
+2025-06-08 22:39:03.222 +07:00 [INF] Executing endpoint 'server.Controllers.MessageController.GetMessages (Message_app)'
+2025-06-08 22:39:03.227 +07:00 [INF] Route matched with {action = "GetMessages", controller = "Message"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetMessages(Int32, Int32) on controller server.Controllers.MessageController (Message_app).
+2025-06-08 22:39:03.255 +07:00 [INF] Executed DbCommand (11ms) [Parameters=[@__conversationId_0='?' (DbType = Int64), @__user_id_1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [p].[id], [p].[adder], [p].[conversation_id], [p].[img_url], [p].[is_deleted], [p].[joined_at], [p].[name], [p].[role], [p].[user_id]
+FROM [Participants] AS [p]
+WHERE CAST([p].[conversation_id] AS bigint) = @__conversationId_0 AND [p].[user_id] = @__user_id_1
+2025-06-08 22:39:03.290 +07:00 [WRN] Message 444 not found in Redis
+2025-06-08 22:39:03.291 +07:00 [WRN] Message 443 not found in Redis
+2025-06-08 22:39:03.291 +07:00 [WRN] Message 442 not found in Redis
+2025-06-08 22:39:03.291 +07:00 [WRN] Message 441 not found in Redis
+2025-06-08 22:39:03.291 +07:00 [WRN] Message 440 not found in Redis
+2025-06-08 22:39:03.292 +07:00 [WRN] Message 439 not found in Redis
+2025-06-08 22:39:03.292 +07:00 [WRN] Message 438 not found in Redis
+2025-06-08 22:39:03.292 +07:00 [WRN] Message 437 not found in Redis
+2025-06-08 22:39:03.292 +07:00 [WRN] Message 436 not found in Redis
+2025-06-08 22:39:03.292 +07:00 [WRN] Message 435 not found in Redis
+2025-06-08 22:39:03.293 +07:00 [WRN] Message 402 not found in Redis
+2025-06-08 22:39:03.293 +07:00 [WRN] Message 401 not found in Redis
+2025-06-08 22:39:03.293 +07:00 [WRN] Message 400 not found in Redis
+2025-06-08 22:39:03.293 +07:00 [WRN] Message 399 not found in Redis
+2025-06-08 22:39:03.293 +07:00 [WRN] Message 398 not found in Redis
+2025-06-08 22:39:03.294 +07:00 [WRN] Message 397 not found in Redis
+2025-06-08 22:39:03.294 +07:00 [WRN] Message 396 not found in Redis
+2025-06-08 22:39:03.294 +07:00 [WRN] Message 395 not found in Redis
+2025-06-08 22:39:03.294 +07:00 [WRN] Message 394 not found in Redis
+2025-06-08 22:39:03.294 +07:00 [WRN] Message 393 not found in Redis
+2025-06-08 22:39:03.295 +07:00 [WRN] Message 392 not found in Redis
+2025-06-08 22:39:03.295 +07:00 [WRN] Message 391 not found in Redis
+2025-06-08 22:39:03.295 +07:00 [WRN] Message 390 not found in Redis
+2025-06-08 22:39:03.295 +07:00 [WRN] Message 389 not found in Redis
+2025-06-08 22:39:03.296 +07:00 [WRN] Message 388 not found in Redis
+2025-06-08 22:39:03.296 +07:00 [WRN] Message 387 not found in Redis
+2025-06-08 22:39:03.297 +07:00 [WRN] Message 386 not found in Redis
+2025-06-08 22:39:03.297 +07:00 [WRN] Message 385 not found in Redis
+2025-06-08 22:39:03.298 +07:00 [WRN] Message 384 not found in Redis
+2025-06-08 22:39:03.299 +07:00 [WRN] Message 383 not found in Redis
+2025-06-08 22:39:03.299 +07:00 [WRN] Message 382 not found in Redis
+2025-06-08 22:39:03.300 +07:00 [WRN] Message 295 not found in Redis
+2025-06-08 22:39:03.300 +07:00 [WRN] Message 277 not found in Redis
+2025-06-08 22:39:03.301 +07:00 [WRN] Message 271 not found in Redis
+2025-06-08 22:39:03.302 +07:00 [WRN] Message 266 not found in Redis
+2025-06-08 22:39:03.303 +07:00 [WRN] Message 263 not found in Redis
+2025-06-08 22:39:03.303 +07:00 [WRN] Message 262 not found in Redis
+2025-06-08 22:39:03.304 +07:00 [WRN] Message 261 not found in Redis
+2025-06-08 22:39:03.304 +07:00 [WRN] Message 260 not found in Redis
+2025-06-08 22:39:03.304 +07:00 [WRN] Message 257 not found in Redis
+2025-06-08 22:39:03.304 +07:00 [WRN] Message 253 not found in Redis
+2025-06-08 22:39:03.305 +07:00 [WRN] Message 252 not found in Redis
+2025-06-08 22:39:03.305 +07:00 [WRN] Message 251 not found in Redis
+2025-06-08 22:39:03.305 +07:00 [WRN] Message 250 not found in Redis
+2025-06-08 22:39:03.305 +07:00 [WRN] Message 249 not found in Redis
+2025-06-08 22:39:03.306 +07:00 [WRN] Message 248 not found in Redis
+2025-06-08 22:39:03.306 +07:00 [WRN] Message 247 not found in Redis
+2025-06-08 22:39:03.306 +07:00 [WRN] Message 246 not found in Redis
+2025-06-08 22:39:03.306 +07:00 [WRN] Message 245 not found in Redis
+2025-06-08 22:39:03.307 +07:00 [WRN] Message 244 not found in Redis
+2025-06-08 22:39:03.307 +07:00 [WRN] Message 243 not found in Redis
+2025-06-08 22:39:03.307 +07:00 [WRN] Message 242 not found in Redis
+2025-06-08 22:39:03.307 +07:00 [WRN] Message 241 not found in Redis
+2025-06-08 22:39:03.307 +07:00 [WRN] Message 240 not found in Redis
+2025-06-08 22:39:03.308 +07:00 [WRN] Message 239 not found in Redis
+2025-06-08 22:39:03.308 +07:00 [WRN] Message 238 not found in Redis
+2025-06-08 22:39:03.308 +07:00 [WRN] Message 237 not found in Redis
+2025-06-08 22:39:03.308 +07:00 [WRN] Message 231 not found in Redis
+2025-06-08 22:39:03.308 +07:00 [WRN] Message 230 not found in Redis
+2025-06-08 22:39:03.309 +07:00 [WRN] Message 229 not found in Redis
+2025-06-08 22:39:03.309 +07:00 [WRN] Message 228 not found in Redis
+2025-06-08 22:39:03.309 +07:00 [WRN] Message 227 not found in Redis
+2025-06-08 22:39:03.309 +07:00 [WRN] Message 226 not found in Redis
+2025-06-08 22:39:03.309 +07:00 [WRN] Message 225 not found in Redis
+2025-06-08 22:39:03.310 +07:00 [WRN] Message 224 not found in Redis
+2025-06-08 22:39:03.310 +07:00 [WRN] Message 223 not found in Redis
+2025-06-08 22:39:03.310 +07:00 [WRN] Message 222 not found in Redis
+2025-06-08 22:39:03.310 +07:00 [WRN] Message 221 not found in Redis
+2025-06-08 22:39:03.311 +07:00 [WRN] Message 220 not found in Redis
+2025-06-08 22:39:03.311 +07:00 [WRN] Message 219 not found in Redis
+2025-06-08 22:39:03.311 +07:00 [WRN] Message 218 not found in Redis
+2025-06-08 22:39:03.311 +07:00 [WRN] Message 217 not found in Redis
+2025-06-08 22:39:03.312 +07:00 [WRN] Message 216 not found in Redis
+2025-06-08 22:39:03.312 +07:00 [WRN] Message 215 not found in Redis
+2025-06-08 22:39:03.312 +07:00 [WRN] Message 214 not found in Redis
+2025-06-08 22:39:03.312 +07:00 [WRN] Message 213 not found in Redis
+2025-06-08 22:39:03.313 +07:00 [WRN] Message 212 not found in Redis
+2025-06-08 22:39:03.313 +07:00 [WRN] Message 211 not found in Redis
+2025-06-08 22:39:03.313 +07:00 [WRN] Message 210 not found in Redis
+2025-06-08 22:39:03.314 +07:00 [WRN] Message 209 not found in Redis
+2025-06-08 22:39:03.314 +07:00 [WRN] Message 208 not found in Redis
+2025-06-08 22:39:03.315 +07:00 [WRN] Message 207 not found in Redis
+2025-06-08 22:39:03.315 +07:00 [WRN] Message 206 not found in Redis
+2025-06-08 22:39:03.315 +07:00 [WRN] Message 205 not found in Redis
+2025-06-08 22:39:03.315 +07:00 [WRN] Message 204 not found in Redis
+2025-06-08 22:39:03.316 +07:00 [WRN] Message 203 not found in Redis
+2025-06-08 22:39:03.316 +07:00 [WRN] Message 202 not found in Redis
+2025-06-08 22:39:03.316 +07:00 [WRN] Message 201 not found in Redis
+2025-06-08 22:39:03.316 +07:00 [WRN] Message 196 not found in Redis
+2025-06-08 22:39:03.316 +07:00 [WRN] Message 194 not found in Redis
+2025-06-08 22:39:03.317 +07:00 [WRN] Message 193 not found in Redis
+2025-06-08 22:39:03.317 +07:00 [WRN] Message 192 not found in Redis
+2025-06-08 22:39:03.317 +07:00 [WRN] Message 190 not found in Redis
+2025-06-08 22:39:03.317 +07:00 [WRN] Message 189 not found in Redis
+2025-06-08 22:39:03.318 +07:00 [WRN] Message 183 not found in Redis
+2025-06-08 22:39:03.318 +07:00 [WRN] Message 182 not found in Redis
+2025-06-08 22:39:03.318 +07:00 [WRN] Message 181 not found in Redis
+2025-06-08 22:39:03.318 +07:00 [INF] Retrieved 3 messages from Redis for conversation 19
+2025-06-08 22:39:03.320 +07:00 [INF] Retrieved 3 messages from Redis for conversation 19 and user 2
+2025-06-08 22:39:03.320 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.DTO.MessageWithAttachment, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-06-08 22:39:03.322 +07:00 [INF] Executed action server.Controllers.MessageController.GetMessages (Message_app) in 94.5468ms
+2025-06-08 22:39:03.322 +07:00 [INF] Executed endpoint 'server.Controllers.MessageController.GetMessages (Message_app)'
+2025-06-08 22:39:03.322 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/api/Message/getMessages/19/2 - 200 null application/json; charset=utf-8 100.8046ms
+2025-06-08 22:39:03.370 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/api/Conversation/get_first_conversation/19 - null null
+2025-06-08 22:39:03.375 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetFirstConversation (Message_app)'
+2025-06-08 22:39:03.385 +07:00 [INF] Route matched with {action = "GetFirstConversation", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetFirstConversation(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-06-08 22:39:03.420 +07:00 [INF] Executed DbCommand (9ms) [Parameters=[@__conversation_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [t].[id], [t].[created_at], [t].[img_url], [t].[is_group], [t].[lastMessage], [t].[lastMessageSender], [t].[lastMessageTime], [t].[name], [p].[id], [p].[adder], [p].[conversation_id], [p].[img_url], [p].[is_deleted], [p].[joined_at], [p].[name], [p].[role], [p].[user_id]
+FROM (
+    SELECT TOP(1) [c].[id], [c].[created_at], [c].[img_url], [c].[is_group], [c].[lastMessage], [c].[lastMessageSender], [c].[lastMessageTime], [c].[name]
+    FROM [Conversations] AS [c]
+    WHERE [c].[id] = @__conversation_id_0
+) AS [t]
+LEFT JOIN [Participants] AS [p] ON [t].[id] = [p].[conversation_id]
+ORDER BY [t].[id]
+2025-06-08 22:39:03.442 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.Models.Conversation'.
+2025-06-08 22:39:03.444 +07:00 [INF] Executed action server.Controllers.ConversationController.GetFirstConversation (Message_app) in 58.7826ms
+2025-06-08 22:39:03.444 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetFirstConversation (Message_app)'
+2025-06-08 22:39:03.444 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/api/Conversation/get_first_conversation/19 - 200 null application/json; charset=utf-8 73.9029ms
+2025-06-08 22:39:03.472 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/api/Participant/get_participants/19 - null null
+2025-06-08 22:39:03.473 +07:00 [INF] Executing endpoint 'server.Controllers.ParticipantController.GetParticipants (Message_app)'
+2025-06-08 22:39:03.478 +07:00 [INF] Route matched with {action = "GetParticipants", controller = "Participant"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetParticipants(Int32) on controller server.Controllers.ParticipantController (Message_app).
+2025-06-08 22:39:03.493 +07:00 [INF] Executed DbCommand (5ms) [Parameters=[@__conversation_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[id], [p].[adder], [p].[conversation_id], [p].[img_url], [p].[is_deleted], [p].[joined_at], [p].[name], [p].[role], [p].[user_id]
+FROM [Participants] AS [p]
+WHERE [p].[conversation_id] = @__conversation_id_0
+2025-06-08 22:39:03.494 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType21`1[[System.Collections.Generic.List`1[[server.Models.Participants, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-06-08 22:39:03.495 +07:00 [INF] Executed action server.Controllers.ParticipantController.GetParticipants (Message_app) in 17.3706ms
+2025-06-08 22:39:03.496 +07:00 [INF] Executed endpoint 'server.Controllers.ParticipantController.GetParticipants (Message_app)'
+2025-06-08 22:39:03.496 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/api/Participant/get_participants/19 - 200 null application/json; charset=utf-8 23.915ms
+2025-06-08 22:39:08.541 +07:00 [INF] Handling message from user 2: ok
+2025-06-08 22:39:08.564 +07:00 [INF] Executed DbCommand (4ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [c].[id], [c].[created_at], [c].[img_url], [c].[is_group], [c].[lastMessage], [c].[lastMessageSender], [c].[lastMessageTime], [c].[name]
+FROM [Conversations] AS [c]
+WHERE [c].[id] = @__p_0
+2025-06-08 22:39:08.654 +07:00 [WRN] Savepoints are disabled because Multiple Active Result Sets (MARS) is enabled. If 'SaveChanges' fails, then the transaction cannot be automatically rolled back to a known clean state. Instead, the transaction should be rolled back by the application before retrying 'SaveChanges'. See https://go.microsoft.com/fwlink/?linkid=2149338 for more information and examples. To identify the code which triggers this warning, call 'ConfigureWarnings(w => w.Throw(SqlServerEventId.SavepointsDisabledBecauseOfMARS))'.
+2025-06-08 22:39:08.690 +07:00 [INF] Executed DbCommand (34ms) [Parameters=[@p0='?' (Size = 500), @p1='?' (DbType = Int32), @p2='?' (DbType = DateTime2), @p3='?' (DbType = Boolean), @p4='?' (DbType = Boolean), @p5='?' (DbType = Boolean), @p6='?' (DbType = Int32), @p7='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [Messages] ([content], [conversation_id], [created_at], [isFile], [isRecalled], [is_read], [sender_id], [type])
+OUTPUT INSERTED.[id]
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7);
+2025-06-08 22:39:08.703 +07:00 [INF] Message saved to DB with ID: 471
+2025-06-08 22:39:08.706 +07:00 [WRN] Savepoints are disabled because Multiple Active Result Sets (MARS) is enabled. If 'SaveChanges' fails, then the transaction cannot be automatically rolled back to a known clean state. Instead, the transaction should be rolled back by the application before retrying 'SaveChanges'. See https://go.microsoft.com/fwlink/?linkid=2149338 for more information and examples. To identify the code which triggers this warning, call 'ConfigureWarnings(w => w.Throw(SqlServerEventId.SavepointsDisabledBecauseOfMARS))'.
+2025-06-08 22:39:08.714 +07:00 [INF] Executed DbCommand (9ms) [Parameters=[@p7='?' (DbType = Int32), @p0='?' (DbType = DateTime2), @p1='?' (Size = 4000), @p2='?' (DbType = Boolean), @p3='?' (Size = 4000), @p4='?' (Size = 4000), @p5='?' (DbType = DateTime2), @p6='?' (Size = 100)], CommandType='"Text"', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+UPDATE [Conversations] SET [created_at] = @p0, [img_url] = @p1, [is_group] = @p2, [lastMessage] = @p3, [lastMessageSender] = @p4, [lastMessageTime] = @p5, [name] = @p6
+OUTPUT 1
+WHERE [id] = @p7;
+2025-06-08 22:39:08.729 +07:00 [INF] Transaction committed for message: 471
+2025-06-08 22:39:08.736 +07:00 [INF] Executed DbCommand (4ms) [Parameters=[@__conversation_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[user_id]
+FROM [Participants] AS [p]
+WHERE [p].[conversation_id] = @__conversation_id_0 AND [p].[is_deleted] = CAST(0 AS bit)
+2025-06-08 22:39:08.742 +07:00 [INF] Saved message 471 to Redis
+2025-06-08 22:39:08.743 +07:00 [INF] Added message 471 to conversation 19
+2025-06-08 22:39:08.747 +07:00 [INF] Published message to channel conversation:19
+2025-06-08 22:39:14.224 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/api/Message/getMessages/19/2 - null null
+2025-06-08 22:39:14.225 +07:00 [INF] Executing endpoint 'server.Controllers.MessageController.GetMessages (Message_app)'
+2025-06-08 22:39:14.225 +07:00 [INF] Route matched with {action = "GetMessages", controller = "Message"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetMessages(Int32, Int32) on controller server.Controllers.MessageController (Message_app).
+2025-06-08 22:39:14.244 +07:00 [INF] Executed DbCommand (15ms) [Parameters=[@__conversationId_0='?' (DbType = Int64), @__user_id_1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [p].[id], [p].[adder], [p].[conversation_id], [p].[img_url], [p].[is_deleted], [p].[joined_at], [p].[name], [p].[role], [p].[user_id]
+FROM [Participants] AS [p]
+WHERE CAST([p].[conversation_id] AS bigint) = @__conversationId_0 AND [p].[user_id] = @__user_id_1
+2025-06-08 22:39:14.247 +07:00 [WRN] Message 444 not found in Redis
+2025-06-08 22:39:14.248 +07:00 [WRN] Message 443 not found in Redis
+2025-06-08 22:39:14.249 +07:00 [WRN] Message 442 not found in Redis
+2025-06-08 22:39:14.249 +07:00 [WRN] Message 441 not found in Redis
+2025-06-08 22:39:14.250 +07:00 [WRN] Message 440 not found in Redis
+2025-06-08 22:39:14.250 +07:00 [WRN] Message 439 not found in Redis
+2025-06-08 22:39:14.251 +07:00 [WRN] Message 438 not found in Redis
+2025-06-08 22:39:14.251 +07:00 [WRN] Message 437 not found in Redis
+2025-06-08 22:39:14.251 +07:00 [WRN] Message 436 not found in Redis
+2025-06-08 22:39:14.251 +07:00 [WRN] Message 435 not found in Redis
+2025-06-08 22:39:14.252 +07:00 [WRN] Message 402 not found in Redis
+2025-06-08 22:39:14.252 +07:00 [WRN] Message 401 not found in Redis
+2025-06-08 22:39:14.252 +07:00 [WRN] Message 400 not found in Redis
+2025-06-08 22:39:14.252 +07:00 [WRN] Message 399 not found in Redis
+2025-06-08 22:39:14.253 +07:00 [WRN] Message 398 not found in Redis
+2025-06-08 22:39:14.253 +07:00 [WRN] Message 397 not found in Redis
+2025-06-08 22:39:14.253 +07:00 [WRN] Message 396 not found in Redis
+2025-06-08 22:39:14.253 +07:00 [WRN] Message 395 not found in Redis
+2025-06-08 22:39:14.253 +07:00 [WRN] Message 394 not found in Redis
+2025-06-08 22:39:14.253 +07:00 [WRN] Message 393 not found in Redis
+2025-06-08 22:39:14.254 +07:00 [WRN] Message 392 not found in Redis
+2025-06-08 22:39:14.254 +07:00 [WRN] Message 391 not found in Redis
+2025-06-08 22:39:14.254 +07:00 [WRN] Message 390 not found in Redis
+2025-06-08 22:39:14.254 +07:00 [WRN] Message 389 not found in Redis
+2025-06-08 22:39:14.254 +07:00 [WRN] Message 388 not found in Redis
+2025-06-08 22:39:14.254 +07:00 [WRN] Message 387 not found in Redis
+2025-06-08 22:39:14.255 +07:00 [WRN] Message 386 not found in Redis
+2025-06-08 22:39:14.255 +07:00 [WRN] Message 385 not found in Redis
+2025-06-08 22:39:14.255 +07:00 [WRN] Message 384 not found in Redis
+2025-06-08 22:39:14.255 +07:00 [WRN] Message 383 not found in Redis
+2025-06-08 22:39:14.256 +07:00 [WRN] Message 382 not found in Redis
+2025-06-08 22:39:14.256 +07:00 [WRN] Message 295 not found in Redis
+2025-06-08 22:39:14.256 +07:00 [WRN] Message 277 not found in Redis
+2025-06-08 22:39:14.257 +07:00 [WRN] Message 271 not found in Redis
+2025-06-08 22:39:14.257 +07:00 [WRN] Message 266 not found in Redis
+2025-06-08 22:39:14.257 +07:00 [WRN] Message 263 not found in Redis
+2025-06-08 22:39:14.257 +07:00 [WRN] Message 262 not found in Redis
+2025-06-08 22:39:14.257 +07:00 [WRN] Message 261 not found in Redis
+2025-06-08 22:39:14.258 +07:00 [WRN] Message 260 not found in Redis
+2025-06-08 22:39:14.258 +07:00 [WRN] Message 257 not found in Redis
+2025-06-08 22:39:14.258 +07:00 [WRN] Message 253 not found in Redis
+2025-06-08 22:39:14.258 +07:00 [WRN] Message 252 not found in Redis
+2025-06-08 22:39:14.258 +07:00 [WRN] Message 251 not found in Redis
+2025-06-08 22:39:14.258 +07:00 [WRN] Message 250 not found in Redis
+2025-06-08 22:39:14.259 +07:00 [WRN] Message 249 not found in Redis
+2025-06-08 22:39:14.259 +07:00 [WRN] Message 248 not found in Redis
+2025-06-08 22:39:14.259 +07:00 [WRN] Message 247 not found in Redis
+2025-06-08 22:39:14.259 +07:00 [WRN] Message 246 not found in Redis
+2025-06-08 22:39:14.259 +07:00 [WRN] Message 245 not found in Redis
+2025-06-08 22:39:14.259 +07:00 [WRN] Message 244 not found in Redis
+2025-06-08 22:39:14.260 +07:00 [WRN] Message 243 not found in Redis
+2025-06-08 22:39:14.260 +07:00 [WRN] Message 242 not found in Redis
+2025-06-08 22:39:14.260 +07:00 [WRN] Message 241 not found in Redis
+2025-06-08 22:39:14.260 +07:00 [WRN] Message 240 not found in Redis
+2025-06-08 22:39:14.260 +07:00 [WRN] Message 239 not found in Redis
+2025-06-08 22:39:14.261 +07:00 [WRN] Message 238 not found in Redis
+2025-06-08 22:39:14.261 +07:00 [WRN] Message 237 not found in Redis
+2025-06-08 22:39:14.261 +07:00 [WRN] Message 231 not found in Redis
+2025-06-08 22:39:14.261 +07:00 [WRN] Message 230 not found in Redis
+2025-06-08 22:39:14.262 +07:00 [WRN] Message 229 not found in Redis
+2025-06-08 22:39:14.262 +07:00 [WRN] Message 228 not found in Redis
+2025-06-08 22:39:14.262 +07:00 [WRN] Message 227 not found in Redis
+2025-06-08 22:39:14.262 +07:00 [WRN] Message 226 not found in Redis
+2025-06-08 22:39:14.262 +07:00 [WRN] Message 225 not found in Redis
+2025-06-08 22:39:14.262 +07:00 [WRN] Message 224 not found in Redis
+2025-06-08 22:39:14.263 +07:00 [WRN] Message 223 not found in Redis
+2025-06-08 22:39:14.263 +07:00 [WRN] Message 222 not found in Redis
+2025-06-08 22:39:14.263 +07:00 [WRN] Message 221 not found in Redis
+2025-06-08 22:39:14.263 +07:00 [WRN] Message 220 not found in Redis
+2025-06-08 22:39:14.263 +07:00 [WRN] Message 219 not found in Redis
+2025-06-08 22:39:14.264 +07:00 [WRN] Message 218 not found in Redis
+2025-06-08 22:39:14.264 +07:00 [WRN] Message 217 not found in Redis
+2025-06-08 22:39:14.264 +07:00 [WRN] Message 216 not found in Redis
+2025-06-08 22:39:14.265 +07:00 [WRN] Message 215 not found in Redis
+2025-06-08 22:39:14.265 +07:00 [WRN] Message 214 not found in Redis
+2025-06-08 22:39:14.265 +07:00 [WRN] Message 213 not found in Redis
+2025-06-08 22:39:14.266 +07:00 [WRN] Message 212 not found in Redis
+2025-06-08 22:39:14.266 +07:00 [WRN] Message 211 not found in Redis
+2025-06-08 22:39:14.266 +07:00 [WRN] Message 210 not found in Redis
+2025-06-08 22:39:14.266 +07:00 [WRN] Message 209 not found in Redis
+2025-06-08 22:39:14.267 +07:00 [WRN] Message 208 not found in Redis
+2025-06-08 22:39:14.267 +07:00 [WRN] Message 207 not found in Redis
+2025-06-08 22:39:14.267 +07:00 [WRN] Message 206 not found in Redis
+2025-06-08 22:39:14.267 +07:00 [WRN] Message 205 not found in Redis
+2025-06-08 22:39:14.268 +07:00 [WRN] Message 204 not found in Redis
+2025-06-08 22:39:14.268 +07:00 [WRN] Message 203 not found in Redis
+2025-06-08 22:39:14.268 +07:00 [WRN] Message 202 not found in Redis
+2025-06-08 22:39:14.268 +07:00 [WRN] Message 201 not found in Redis
+2025-06-08 22:39:14.269 +07:00 [WRN] Message 196 not found in Redis
+2025-06-08 22:39:14.269 +07:00 [WRN] Message 194 not found in Redis
+2025-06-08 22:39:14.269 +07:00 [WRN] Message 193 not found in Redis
+2025-06-08 22:39:14.269 +07:00 [WRN] Message 192 not found in Redis
+2025-06-08 22:39:14.269 +07:00 [WRN] Message 190 not found in Redis
+2025-06-08 22:39:14.270 +07:00 [WRN] Message 189 not found in Redis
+2025-06-08 22:39:14.270 +07:00 [WRN] Message 183 not found in Redis
+2025-06-08 22:39:14.270 +07:00 [WRN] Message 182 not found in Redis
+2025-06-08 22:39:14.270 +07:00 [WRN] Message 181 not found in Redis
+2025-06-08 22:39:14.270 +07:00 [INF] Retrieved 4 messages from Redis for conversation 19
+2025-06-08 22:39:14.271 +07:00 [INF] Retrieved 4 messages from Redis for conversation 19 and user 2
+2025-06-08 22:39:14.271 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.DTO.MessageWithAttachment, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-06-08 22:39:14.271 +07:00 [INF] Executed action server.Controllers.MessageController.GetMessages (Message_app) in 45.8793ms
+2025-06-08 22:39:14.271 +07:00 [INF] Executed endpoint 'server.Controllers.MessageController.GetMessages (Message_app)'
+2025-06-08 22:39:14.271 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/api/Message/getMessages/19/2 - 200 null application/json; charset=utf-8 47.5219ms
+2025-06-08 22:39:14.309 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/api/Conversation/get_first_conversation/19 - null null
+2025-06-08 22:39:14.309 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetFirstConversation (Message_app)'
+2025-06-08 22:39:14.310 +07:00 [INF] Route matched with {action = "GetFirstConversation", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetFirstConversation(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-06-08 22:39:14.332 +07:00 [INF] Executed DbCommand (20ms) [Parameters=[@__conversation_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [t].[id], [t].[created_at], [t].[img_url], [t].[is_group], [t].[lastMessage], [t].[lastMessageSender], [t].[lastMessageTime], [t].[name], [p].[id], [p].[adder], [p].[conversation_id], [p].[img_url], [p].[is_deleted], [p].[joined_at], [p].[name], [p].[role], [p].[user_id]
+FROM (
+    SELECT TOP(1) [c].[id], [c].[created_at], [c].[img_url], [c].[is_group], [c].[lastMessage], [c].[lastMessageSender], [c].[lastMessageTime], [c].[name]
+    FROM [Conversations] AS [c]
+    WHERE [c].[id] = @__conversation_id_0
+) AS [t]
+LEFT JOIN [Participants] AS [p] ON [t].[id] = [p].[conversation_id]
+ORDER BY [t].[id]
+2025-06-08 22:39:14.336 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.Models.Conversation'.
+2025-06-08 22:39:14.337 +07:00 [INF] Executed action server.Controllers.ConversationController.GetFirstConversation (Message_app) in 27.5927ms
+2025-06-08 22:39:14.337 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetFirstConversation (Message_app)'
+2025-06-08 22:39:14.338 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/api/Conversation/get_first_conversation/19 - 200 null application/json; charset=utf-8 28.5083ms
+2025-06-08 22:39:14.366 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/api/Participant/get_participants/19 - null null
+2025-06-08 22:39:14.367 +07:00 [INF] Executing endpoint 'server.Controllers.ParticipantController.GetParticipants (Message_app)'
+2025-06-08 22:39:14.368 +07:00 [INF] Route matched with {action = "GetParticipants", controller = "Participant"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetParticipants(Int32) on controller server.Controllers.ParticipantController (Message_app).
+2025-06-08 22:39:14.376 +07:00 [INF] Executed DbCommand (3ms) [Parameters=[@__conversation_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[id], [p].[adder], [p].[conversation_id], [p].[img_url], [p].[is_deleted], [p].[joined_at], [p].[name], [p].[role], [p].[user_id]
+FROM [Participants] AS [p]
+WHERE [p].[conversation_id] = @__conversation_id_0
+2025-06-08 22:39:14.377 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType21`1[[System.Collections.Generic.List`1[[server.Models.Participants, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-06-08 22:39:14.377 +07:00 [INF] Executed action server.Controllers.ParticipantController.GetParticipants (Message_app) in 9.0121ms
+2025-06-08 22:39:14.377 +07:00 [INF] Executed endpoint 'server.Controllers.ParticipantController.GetParticipants (Message_app)'
+2025-06-08 22:39:14.377 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/api/Participant/get_participants/19 - 200 null application/json; charset=utf-8 11.1822ms
+2025-06-08 22:39:21.047 +07:00 [INF] Request starting HTTP/1.1 POST http://192.168.1.4:5053/api/Message/uploadFile - multipart/form-data; boundary=--dio-boundary-0113086574 1239565
+2025-06-08 22:39:21.049 +07:00 [INF] Executing endpoint 'server.Controllers.MessageController.UploadFile (Message_app)'
+2025-06-08 22:39:21.055 +07:00 [INF] Route matched with {action = "UploadFile", controller = "Message"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] UploadFile(server.DTO.UploadFileRequest) on controller server.Controllers.MessageController (Message_app).
+2025-06-08 22:39:31.349 +07:00 [INF] Executed DbCommand (23ms) [Parameters=[@p0='?' (DbType = Single), @p1='?' (Size = 50), @p2='?' (Size = 255), @p3='?' (DbType = Boolean), @p4='?' (DbType = Int32), @p5='?' (DbType = DateTime2)], CommandType='"Text"', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [Attachments] ([FileSize], [file_type], [file_url], [is_temporary], [message_id], [uploaded_at])
+OUTPUT INSERTED.[id]
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5);
+2025-06-08 22:39:31.352 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType18`2[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-06-08 22:39:31.353 +07:00 [INF] Executed action server.Controllers.MessageController.UploadFile (Message_app) in 10298.6524ms
+2025-06-08 22:39:31.353 +07:00 [INF] Executed endpoint 'server.Controllers.MessageController.UploadFile (Message_app)'
+2025-06-08 22:39:31.354 +07:00 [INF] Request finished HTTP/1.1 POST http://192.168.1.4:5053/api/Message/uploadFile - 200 null application/json; charset=utf-8 10307.4869ms
+2025-06-08 22:39:31.447 +07:00 [INF] Handling message from user 2: FILE
+2025-06-08 22:39:31.461 +07:00 [INF] Executed DbCommand (9ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [c].[id], [c].[created_at], [c].[img_url], [c].[is_group], [c].[lastMessage], [c].[lastMessageSender], [c].[lastMessageTime], [c].[name]
+FROM [Conversations] AS [c]
+WHERE [c].[id] = @__p_0
+2025-06-08 22:39:31.466 +07:00 [WRN] Savepoints are disabled because Multiple Active Result Sets (MARS) is enabled. If 'SaveChanges' fails, then the transaction cannot be automatically rolled back to a known clean state. Instead, the transaction should be rolled back by the application before retrying 'SaveChanges'. See https://go.microsoft.com/fwlink/?linkid=2149338 for more information and examples. To identify the code which triggers this warning, call 'ConfigureWarnings(w => w.Throw(SqlServerEventId.SavepointsDisabledBecauseOfMARS))'.
+2025-06-08 22:39:31.476 +07:00 [INF] Executed DbCommand (9ms) [Parameters=[@p0='?' (Size = 500), @p1='?' (DbType = Int32), @p2='?' (DbType = DateTime2), @p3='?' (DbType = Boolean), @p4='?' (DbType = Boolean), @p5='?' (DbType = Boolean), @p6='?' (DbType = Int32), @p7='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [Messages] ([content], [conversation_id], [created_at], [isFile], [isRecalled], [is_read], [sender_id], [type])
+OUTPUT INSERTED.[id]
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7);
+2025-06-08 22:39:31.476 +07:00 [INF] Message saved to DB with ID: 472
+2025-06-08 22:39:31.483 +07:00 [INF] Executed DbCommand (3ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [a].[id], [a].[FileSize], [a].[file_type], [a].[file_url], [a].[is_temporary], [a].[message_id], [a].[uploaded_at]
+FROM [Attachments] AS [a]
+WHERE [a].[id] = @__p_0
+2025-06-08 22:39:31.489 +07:00 [WRN] Savepoints are disabled because Multiple Active Result Sets (MARS) is enabled. If 'SaveChanges' fails, then the transaction cannot be automatically rolled back to a known clean state. Instead, the transaction should be rolled back by the application before retrying 'SaveChanges'. See https://go.microsoft.com/fwlink/?linkid=2149338 for more information and examples. To identify the code which triggers this warning, call 'ConfigureWarnings(w => w.Throw(SqlServerEventId.SavepointsDisabledBecauseOfMARS))'.
+2025-06-08 22:39:31.501 +07:00 [INF] Executed DbCommand (13ms) [Parameters=[@p6='?' (DbType = Int32), @p0='?' (DbType = Single), @p1='?' (Size = 50), @p2='?' (Size = 255), @p3='?' (DbType = Boolean), @p4='?' (DbType = Int32), @p5='?' (DbType = DateTime2), @p14='?' (DbType = Int32), @p7='?' (DbType = DateTime2), @p8='?' (Size = 4000), @p9='?' (DbType = Boolean), @p10='?' (Size = 4000), @p11='?' (Size = 4000), @p12='?' (DbType = DateTime2), @p13='?' (Size = 100)], CommandType='"Text"', CommandTimeout='30']
+SET NOCOUNT ON;
+UPDATE [Attachments] SET [FileSize] = @p0, [file_type] = @p1, [file_url] = @p2, [is_temporary] = @p3, [message_id] = @p4, [uploaded_at] = @p5
+OUTPUT 1
+WHERE [id] = @p6;
+UPDATE [Conversations] SET [created_at] = @p7, [img_url] = @p8, [is_group] = @p9, [lastMessage] = @p10, [lastMessageSender] = @p11, [lastMessageTime] = @p12, [name] = @p13
+OUTPUT 1
+WHERE [id] = @p14;
+2025-06-08 22:39:31.502 +07:00 [INF] Transaction committed for message: 472
+2025-06-08 22:39:31.507 +07:00 [INF] Executed DbCommand (5ms) [Parameters=[@__conversation_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[user_id]
+FROM [Participants] AS [p]
+WHERE [p].[conversation_id] = @__conversation_id_0 AND [p].[is_deleted] = CAST(0 AS bit)
+2025-06-08 22:39:31.510 +07:00 [INF] Saved message 472 to Redis
+2025-06-08 22:39:31.510 +07:00 [INF] Added message 472 to conversation 19
+2025-06-08 22:39:31.512 +07:00 [INF] Published message to channel conversation:19
+2025-06-08 22:39:37.115 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/api/Message/getMessages/19/2 - null null
+2025-06-08 22:39:37.115 +07:00 [INF] Executing endpoint 'server.Controllers.MessageController.GetMessages (Message_app)'
+2025-06-08 22:39:37.116 +07:00 [INF] Route matched with {action = "GetMessages", controller = "Message"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetMessages(Int32, Int32) on controller server.Controllers.MessageController (Message_app).
+2025-06-08 22:39:37.122 +07:00 [INF] Executed DbCommand (5ms) [Parameters=[@__conversationId_0='?' (DbType = Int64), @__user_id_1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [p].[id], [p].[adder], [p].[conversation_id], [p].[img_url], [p].[is_deleted], [p].[joined_at], [p].[name], [p].[role], [p].[user_id]
+FROM [Participants] AS [p]
+WHERE CAST([p].[conversation_id] AS bigint) = @__conversationId_0 AND [p].[user_id] = @__user_id_1
+2025-06-08 22:39:37.125 +07:00 [WRN] Message 444 not found in Redis
+2025-06-08 22:39:37.125 +07:00 [WRN] Message 443 not found in Redis
+2025-06-08 22:39:37.125 +07:00 [WRN] Message 442 not found in Redis
+2025-06-08 22:39:37.125 +07:00 [WRN] Message 441 not found in Redis
+2025-06-08 22:39:37.125 +07:00 [WRN] Message 440 not found in Redis
+2025-06-08 22:39:37.126 +07:00 [WRN] Message 439 not found in Redis
+2025-06-08 22:39:37.126 +07:00 [WRN] Message 438 not found in Redis
+2025-06-08 22:39:37.126 +07:00 [WRN] Message 437 not found in Redis
+2025-06-08 22:39:37.126 +07:00 [WRN] Message 436 not found in Redis
+2025-06-08 22:39:37.126 +07:00 [WRN] Message 435 not found in Redis
+2025-06-08 22:39:37.126 +07:00 [WRN] Message 402 not found in Redis
+2025-06-08 22:39:37.126 +07:00 [WRN] Message 401 not found in Redis
+2025-06-08 22:39:37.127 +07:00 [WRN] Message 400 not found in Redis
+2025-06-08 22:39:37.127 +07:00 [WRN] Message 399 not found in Redis
+2025-06-08 22:39:37.127 +07:00 [WRN] Message 398 not found in Redis
+2025-06-08 22:39:37.127 +07:00 [WRN] Message 397 not found in Redis
+2025-06-08 22:39:37.127 +07:00 [WRN] Message 396 not found in Redis
+2025-06-08 22:39:37.127 +07:00 [WRN] Message 395 not found in Redis
+2025-06-08 22:39:37.127 +07:00 [WRN] Message 394 not found in Redis
+2025-06-08 22:39:37.127 +07:00 [WRN] Message 393 not found in Redis
+2025-06-08 22:39:37.128 +07:00 [WRN] Message 392 not found in Redis
+2025-06-08 22:39:37.128 +07:00 [WRN] Message 391 not found in Redis
+2025-06-08 22:39:37.128 +07:00 [WRN] Message 390 not found in Redis
+2025-06-08 22:39:37.129 +07:00 [WRN] Message 389 not found in Redis
+2025-06-08 22:39:37.129 +07:00 [WRN] Message 388 not found in Redis
+2025-06-08 22:39:37.129 +07:00 [WRN] Message 387 not found in Redis
+2025-06-08 22:39:37.129 +07:00 [WRN] Message 386 not found in Redis
+2025-06-08 22:39:37.129 +07:00 [WRN] Message 385 not found in Redis
+2025-06-08 22:39:37.129 +07:00 [WRN] Message 384 not found in Redis
+2025-06-08 22:39:37.130 +07:00 [WRN] Message 383 not found in Redis
+2025-06-08 22:39:37.130 +07:00 [WRN] Message 382 not found in Redis
+2025-06-08 22:39:37.130 +07:00 [WRN] Message 295 not found in Redis
+2025-06-08 22:39:37.130 +07:00 [WRN] Message 277 not found in Redis
+2025-06-08 22:39:37.130 +07:00 [WRN] Message 271 not found in Redis
+2025-06-08 22:39:37.131 +07:00 [WRN] Message 266 not found in Redis
+2025-06-08 22:39:37.131 +07:00 [WRN] Message 263 not found in Redis
+2025-06-08 22:39:37.131 +07:00 [WRN] Message 262 not found in Redis
+2025-06-08 22:39:37.132 +07:00 [WRN] Message 261 not found in Redis
+2025-06-08 22:39:37.132 +07:00 [WRN] Message 260 not found in Redis
+2025-06-08 22:39:37.133 +07:00 [WRN] Message 257 not found in Redis
+2025-06-08 22:39:37.133 +07:00 [WRN] Message 253 not found in Redis
+2025-06-08 22:39:37.133 +07:00 [WRN] Message 252 not found in Redis
+2025-06-08 22:39:37.134 +07:00 [WRN] Message 251 not found in Redis
+2025-06-08 22:39:37.134 +07:00 [WRN] Message 250 not found in Redis
+2025-06-08 22:39:37.134 +07:00 [WRN] Message 249 not found in Redis
+2025-06-08 22:39:37.134 +07:00 [WRN] Message 248 not found in Redis
+2025-06-08 22:39:37.134 +07:00 [WRN] Message 247 not found in Redis
+2025-06-08 22:39:37.135 +07:00 [WRN] Message 246 not found in Redis
+2025-06-08 22:39:37.135 +07:00 [WRN] Message 245 not found in Redis
+2025-06-08 22:39:37.135 +07:00 [WRN] Message 244 not found in Redis
+2025-06-08 22:39:37.136 +07:00 [WRN] Message 243 not found in Redis
+2025-06-08 22:39:37.136 +07:00 [WRN] Message 242 not found in Redis
+2025-06-08 22:39:37.136 +07:00 [WRN] Message 241 not found in Redis
+2025-06-08 22:39:37.136 +07:00 [WRN] Message 240 not found in Redis
+2025-06-08 22:39:37.137 +07:00 [WRN] Message 239 not found in Redis
+2025-06-08 22:39:37.137 +07:00 [WRN] Message 238 not found in Redis
+2025-06-08 22:39:37.137 +07:00 [WRN] Message 237 not found in Redis
+2025-06-08 22:39:37.137 +07:00 [WRN] Message 231 not found in Redis
+2025-06-08 22:39:37.137 +07:00 [WRN] Message 230 not found in Redis
+2025-06-08 22:39:37.138 +07:00 [WRN] Message 229 not found in Redis
+2025-06-08 22:39:37.138 +07:00 [WRN] Message 228 not found in Redis
+2025-06-08 22:39:37.138 +07:00 [WRN] Message 227 not found in Redis
+2025-06-08 22:39:37.138 +07:00 [WRN] Message 226 not found in Redis
+2025-06-08 22:39:37.138 +07:00 [WRN] Message 225 not found in Redis
+2025-06-08 22:39:37.139 +07:00 [WRN] Message 224 not found in Redis
+2025-06-08 22:39:37.139 +07:00 [WRN] Message 223 not found in Redis
+2025-06-08 22:39:37.139 +07:00 [WRN] Message 222 not found in Redis
+2025-06-08 22:39:37.139 +07:00 [WRN] Message 221 not found in Redis
+2025-06-08 22:39:37.139 +07:00 [WRN] Message 220 not found in Redis
+2025-06-08 22:39:37.139 +07:00 [WRN] Message 219 not found in Redis
+2025-06-08 22:39:37.139 +07:00 [WRN] Message 218 not found in Redis
+2025-06-08 22:39:37.140 +07:00 [WRN] Message 217 not found in Redis
+2025-06-08 22:39:37.140 +07:00 [WRN] Message 216 not found in Redis
+2025-06-08 22:39:37.140 +07:00 [WRN] Message 215 not found in Redis
+2025-06-08 22:39:37.140 +07:00 [WRN] Message 214 not found in Redis
+2025-06-08 22:39:37.140 +07:00 [WRN] Message 213 not found in Redis
+2025-06-08 22:39:37.140 +07:00 [WRN] Message 212 not found in Redis
+2025-06-08 22:39:37.140 +07:00 [WRN] Message 211 not found in Redis
+2025-06-08 22:39:37.140 +07:00 [WRN] Message 210 not found in Redis
+2025-06-08 22:39:37.141 +07:00 [WRN] Message 209 not found in Redis
+2025-06-08 22:39:37.141 +07:00 [WRN] Message 208 not found in Redis
+2025-06-08 22:39:37.141 +07:00 [WRN] Message 207 not found in Redis
+2025-06-08 22:39:37.141 +07:00 [WRN] Message 206 not found in Redis
+2025-06-08 22:39:37.141 +07:00 [WRN] Message 205 not found in Redis
+2025-06-08 22:39:37.142 +07:00 [WRN] Message 204 not found in Redis
+2025-06-08 22:39:37.142 +07:00 [WRN] Message 203 not found in Redis
+2025-06-08 22:39:37.142 +07:00 [WRN] Message 202 not found in Redis
+2025-06-08 22:39:37.142 +07:00 [WRN] Message 201 not found in Redis
+2025-06-08 22:39:37.142 +07:00 [WRN] Message 196 not found in Redis
+2025-06-08 22:39:37.142 +07:00 [WRN] Message 194 not found in Redis
+2025-06-08 22:39:37.143 +07:00 [WRN] Message 193 not found in Redis
+2025-06-08 22:39:37.143 +07:00 [WRN] Message 192 not found in Redis
+2025-06-08 22:39:37.143 +07:00 [WRN] Message 190 not found in Redis
+2025-06-08 22:39:37.144 +07:00 [WRN] Message 189 not found in Redis
+2025-06-08 22:39:37.144 +07:00 [WRN] Message 183 not found in Redis
+2025-06-08 22:39:37.144 +07:00 [WRN] Message 182 not found in Redis
+2025-06-08 22:39:37.144 +07:00 [WRN] Message 181 not found in Redis
+2025-06-08 22:39:37.144 +07:00 [INF] Retrieved 5 messages from Redis for conversation 19
+2025-06-08 22:39:37.144 +07:00 [INF] Retrieved 5 messages from Redis for conversation 19 and user 2
+2025-06-08 22:39:37.144 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.DTO.MessageWithAttachment, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-06-08 22:39:37.146 +07:00 [INF] Executed action server.Controllers.MessageController.GetMessages (Message_app) in 30.6602ms
+2025-06-08 22:39:37.146 +07:00 [INF] Executed endpoint 'server.Controllers.MessageController.GetMessages (Message_app)'
+2025-06-08 22:39:37.149 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/api/Message/getMessages/19/2 - 200 null application/json; charset=utf-8 34.3221ms
+2025-06-08 22:39:37.189 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/api/Conversation/get_first_conversation/19 - null null
+2025-06-08 22:39:37.189 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetFirstConversation (Message_app)'
+2025-06-08 22:39:37.189 +07:00 [INF] Route matched with {action = "GetFirstConversation", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetFirstConversation(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-06-08 22:39:37.196 +07:00 [INF] Executed DbCommand (6ms) [Parameters=[@__conversation_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [t].[id], [t].[created_at], [t].[img_url], [t].[is_group], [t].[lastMessage], [t].[lastMessageSender], [t].[lastMessageTime], [t].[name], [p].[id], [p].[adder], [p].[conversation_id], [p].[img_url], [p].[is_deleted], [p].[joined_at], [p].[name], [p].[role], [p].[user_id]
+FROM (
+    SELECT TOP(1) [c].[id], [c].[created_at], [c].[img_url], [c].[is_group], [c].[lastMessage], [c].[lastMessageSender], [c].[lastMessageTime], [c].[name]
+    FROM [Conversations] AS [c]
+    WHERE [c].[id] = @__conversation_id_0
+) AS [t]
+LEFT JOIN [Participants] AS [p] ON [t].[id] = [p].[conversation_id]
+ORDER BY [t].[id]
+2025-06-08 22:39:37.197 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.Models.Conversation'.
+2025-06-08 22:39:37.198 +07:00 [INF] Executed action server.Controllers.ConversationController.GetFirstConversation (Message_app) in 8.7961ms
+2025-06-08 22:39:37.198 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetFirstConversation (Message_app)'
+2025-06-08 22:39:37.199 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/api/Conversation/get_first_conversation/19 - 200 null application/json; charset=utf-8 9.986ms
+2025-06-08 22:39:37.220 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.4:5053/api/Participant/get_participants/19 - null null
+2025-06-08 22:39:37.221 +07:00 [INF] Executing endpoint 'server.Controllers.ParticipantController.GetParticipants (Message_app)'
+2025-06-08 22:39:37.221 +07:00 [INF] Route matched with {action = "GetParticipants", controller = "Participant"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetParticipants(Int32) on controller server.Controllers.ParticipantController (Message_app).
+2025-06-08 22:39:37.226 +07:00 [INF] Executed DbCommand (3ms) [Parameters=[@__conversation_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[id], [p].[adder], [p].[conversation_id], [p].[img_url], [p].[is_deleted], [p].[joined_at], [p].[name], [p].[role], [p].[user_id]
+FROM [Participants] AS [p]
+WHERE [p].[conversation_id] = @__conversation_id_0
+2025-06-08 22:39:37.226 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType21`1[[System.Collections.Generic.List`1[[server.Models.Participants, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-06-08 22:39:37.226 +07:00 [INF] Executed action server.Controllers.ParticipantController.GetParticipants (Message_app) in 5.2977ms
+2025-06-08 22:39:37.226 +07:00 [INF] Executed endpoint 'server.Controllers.ParticipantController.GetParticipants (Message_app)'
+2025-06-08 22:39:37.226 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/api/Participant/get_participants/19 - 200 null application/json; charset=utf-8 6.1508ms
+2025-06-08 22:43:53.496 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-06-08 22:43:53.565 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 69.4717ms
+2025-06-08 22:43:54.268 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/favicon.ico - null null
+2025-06-08 22:43:54.280 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/favicon.ico - 404 0 null 11.4521ms
+2025-06-08 22:43:54.281 +07:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5053/favicon.ico, Response status code: 404
+2025-06-08 22:45:27.770 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-06-08 22:45:27.794 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 24.1477ms
+2025-06-08 22:45:50.579 +07:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:5053/swagger/v1/swagger.json - null null
+2025-06-08 22:45:50.601 +07:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:5053/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 22.1867ms
+2025-06-08 22:45:51.426 +07:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:5053/favicon.ico - null null
+2025-06-08 22:45:51.427 +07:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:5053/favicon.ico - 404 0 null 0.7534ms
+2025-06-08 22:45:51.427 +07:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://127.0.0.1:5053/favicon.ico, Response status code: 404
+2025-06-08 22:48:58.176 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - null null
+2025-06-08 22:48:58.192 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 15.7022ms
+2025-06-08 22:50:24.588 +07:00 [INF] Request starting HTTP/1.1 GET http://127.0.0.1:5053/swagger/v1/swagger.json
+ - null null
+2025-06-08 22:50:24.604 +07:00 [INF] Request finished HTTP/1.1 GET http://127.0.0.1:5053/swagger/v1/swagger.json
+ - 200 null application/json;charset=utf-8 16.5603ms
+2025-06-08 23:09:19.704 +07:00 [INF] Executed endpoint '/ws/chat'
+2025-06-08 23:09:19.719 +07:00 [ERR] An unhandled exception has occurred while executing the request.
+System.Net.WebSockets.WebSocketException (0x80004005): The remote party closed the WebSocket connection without completing the close handshake.
+   at System.Net.WebSockets.ManagedWebSocket.ThrowEOFUnexpected()
+   at System.Net.WebSockets.ManagedWebSocket.EnsureBufferContainsAsync(Int32 minimumRequiredBytes, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.WebSockets.ManagedWebSocket.ReceiveAsyncPrivate[TResult](Memory`1 payloadBuffer, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.Threading.Tasks.ValueTask`1.ValueTaskSourceAsTask.<>c.<.cctor>b__4_0(Object state)
+--- End of stack trace from previous location ---
+   at server.Services.WebSocketService.webSocket.Receiver(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 220
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 203
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 95
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-06-08 23:09:19.819 +07:00 [WRN] The response has already started, the error page middleware will not be executed.
+2025-06-08 23:09:19.828 +07:00 [ERR] Connection id "0HND6K7BDBOAH", Request id "0HND6K7BDBOAH:00000001": An unhandled exception was thrown by the application.
+System.Net.WebSockets.WebSocketException (0x80004005): The remote party closed the WebSocket connection without completing the close handshake.
+   at System.Net.WebSockets.ManagedWebSocket.ThrowEOFUnexpected()
+   at System.Net.WebSockets.ManagedWebSocket.EnsureBufferContainsAsync(Int32 minimumRequiredBytes, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.WebSockets.ManagedWebSocket.ReceiveAsyncPrivate[TResult](Memory`1 payloadBuffer, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.Threading.Tasks.ValueTask`1.ValueTaskSourceAsTask.<>c.<.cctor>b__4_0(Object state)
+--- End of stack trace from previous location ---
+   at server.Services.WebSocketService.webSocket.Receiver(Client client) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 220
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in C:\Users\Thao\source\Flutter\Message_app\server\Services\WebSocketService\websocket.cs:line 203
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in C:\Users\Thao\source\Flutter\Message_app\server\Program.cs:line 95
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Watch.BrowserRefresh.BrowserRefreshMiddleware.InvokeAsync(HttpContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+2025-06-08 23:09:19.843 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.4:5053/ws/chat?userId=2 - 101 null null 1820525.0622ms

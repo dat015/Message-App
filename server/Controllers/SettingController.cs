@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using server.DTO;
 using server.Filters;
@@ -8,7 +9,7 @@ using server.Services.TempOTPStoreSV;
 namespace server.Controllers
 {
     [Route("api/[controller]")]
-    [AuthorizationJWT]
+[Authorize]
     [ApiController]
     public class SettingController : ControllerBase
     {
