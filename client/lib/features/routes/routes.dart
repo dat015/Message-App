@@ -78,7 +78,6 @@ class AppRoutes {
         final onConversationRemoved = args['onConversationRemoved'] is Function
             ? args['onConversationRemoved'] as Function(int)
             : (int _) {};
-        
         // Trả về màn hình ChatScreen
         return MaterialPageRoute(
           builder: (_) => ChatScreen(
