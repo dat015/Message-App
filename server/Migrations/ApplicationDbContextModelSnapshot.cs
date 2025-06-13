@@ -173,6 +173,9 @@ namespace Message_app.Migrations
                     b.Property<bool>("AllowMemberInvite")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("AllowMemberRemove")
+                        .HasColumnType("bit");
+
                     b.Property<int>("ConversationId")
                         .HasColumnType("int");
 
@@ -181,17 +184,6 @@ namespace Message_app.Migrations
 
                     b.Property<int>("CreatedBy")
                         .HasColumnType("int");
-
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("Privacy")
-                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 

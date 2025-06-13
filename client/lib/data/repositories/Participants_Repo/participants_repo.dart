@@ -101,6 +101,16 @@ class ParticipantsRepo {
       throw Exception('Failed to leave group');
     }
   }
+  Future<String> removeMember(int participantId) async {
+    try {
+      var response = await api_client.delete(
+        '/api/Participant/remove_member/$participantId',
+      );
+      return response['message'];
+    } catch (e) {
+      throw Exception('Failed to remove member');
+    }
+  }
 
   Future<Participants> addMember(int conversationId, int userId) async {
     try {

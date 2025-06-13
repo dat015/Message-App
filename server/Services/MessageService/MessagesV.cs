@@ -135,8 +135,16 @@ namespace server.Services.MessageService
         {
             try
             {
+                var participant = await _context.Participants
+                    .Where(p => p.conversation_id == conversationId && p.user_id == user_id)
+                    .FirstOrDefaultAsync();
+                if (participant == null)
+                {
+                    _logger.LogWarning("Participant not found for conversation {ConversationId} and user {UserId}", conversationId, user_id);
+                    throw new Exception("Ban không phải là thành viên của cuộc trò chuyện này");
+                }
                 // Lấy tin nhắn từ Redis qua ChatStorage
-                var messages = await _chatStorage.GetMessagesAsync(conversationId, user_id, fromDate);
+                    var messages = await _chatStorage.GetMessagesAsync(conversationId, user_id, fromDate);
                 if (messages.Any())
                 {
                     _logger.LogInformation("Retrieved {MessageCount} messages from Redis for conversation {ConversationId} and user {UserId}", messages.Count, conversationId, user_id);

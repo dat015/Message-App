@@ -5,8 +5,10 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using server.DTO;
+using server.Filters;
 using server.Models;
 using server.Services.MessageService;
 using server.Services.ParticipantService;
@@ -17,6 +19,7 @@ using server.Services.WebSocketService;
 namespace server.Controllers
 {
     [ApiController]
+[Authorize]
     [Route("api/[controller]")]
     public class MessageController : ControllerBase
     {
@@ -117,17 +120,17 @@ namespace server.Controllers
 
         [HttpPost("uploadFile")]
         [Consumes("multipart/form-data")]
-        public async Task<IActionResult> UploadFile([FromForm] IFormFile file)
+        public async Task<IActionResult> UploadFile([FromForm] UploadFileRequest file)
         {
             try
             {
-                if (file == null || file.Length == 0)
+                if (file.File == null || file.File.Length == 0)
                 {
                     return BadRequest(new { Error = "No file uploaded." });
                 }
 
-                using var stream = file.OpenReadStream();
-                var uploadResult = await _uploadFileSV.UploadFileAsync(stream, file.ContentType);
+                using var stream = file.File.OpenReadStream();
+                var uploadResult = await _uploadFileSV.UploadFileAsync(stream, file.File.ContentType);
 
                 // Thêm log để kiểm tra uploadResult
                 Console.WriteLine($"Upload result: ID = {uploadResult.id}, URL = {uploadResult.file_url}");

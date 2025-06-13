@@ -123,6 +123,7 @@ namespace server.Services.ParticipantService
 
                 var existParticipant = await _context.Participants
                     .AnyAsync(p => p.conversation_id == conversation_id && p.user_id == user_id);
+                
 
                 if (existParticipant)
                 {
@@ -335,6 +336,50 @@ namespace server.Services.ParticipantService
             {
                 Console.WriteLine($"Lỗi trong UpdateNickName: {e.Message}");
                 throw;
+            }
+        }
+
+        public async Task<bool> RemoveParticipantAsync(int participantId)
+        {
+            if (participantId <= 0)
+            {
+                throw new ArgumentException("Participant ID không hợp lệ.");
+            }
+
+            try
+            {
+                var existingParticipant = _context.Participants
+                    .FirstOrDefault(p => p.id == participantId);
+                var participant = _context.Participants.Find(participantId);
+                if (participant == null)
+                {
+                    throw new KeyNotFoundException("Người dùng không tồn tại.");
+                }
+
+                _context.Participants.Remove(participant);
+                await _context.SaveChangesAsync();
+                var message = new MessageDTOForAttachment
+                {
+                    content = $"Đã xóa thành viên {participant.name} khỏi cuộc trò chuyện",
+                    sender_id = participant.user_id,
+                    conversation_id = participant.conversation_id,
+                    type = "system",
+                };
+
+                var messageWithAttachment = new MessageWithAttachment
+                {
+                    Message = message,
+                    Attachment = null
+                };
+                await _chatStorage.PublishMessageAsync(messageWithAttachment);
+                await _webSocket.UnsubscribeUserFromConversationChannelAsync(participant.user_id, participant.conversation_id);
+                await _chatStorage.SaveMessageAsync(message, null);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi khi xóa thành viên: {ex.Message}");
+                throw new InvalidOperationException("Không thể xóa thành viên.", ex);
             }
         }
     }

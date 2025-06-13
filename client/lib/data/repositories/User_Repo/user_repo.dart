@@ -47,4 +47,18 @@ class UserRepo {
 
     return null;
   }
+
+  Future<String?> getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userDataJson = prefs.getString(
+      'user_data',
+    ); 
+
+    if (userDataJson != null) {
+      final Map<String, dynamic> userDataMap = jsonDecode(userDataJson);
+      return userDataMap['token'] as String?;
+    }
+
+    return null;
+  }
 }

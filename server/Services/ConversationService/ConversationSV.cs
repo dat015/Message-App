@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using server.Data;
 using server.DTO;
 using server.Models;
+using server.Services.GroupSettingService;
 using server.Services.ParticipantService;
 using server.Services.RedisService;
 using server.Services.RedisService.ChatStorage;
@@ -23,8 +25,9 @@ namespace server.Services.ConversationService
         private readonly IRedisService _redisService;
         private readonly webSocket _webSocket; // Singleton
         private readonly IChatStorage _chatStorage;
+        private readonly Lazy<IGroupSetting> _groupSettingService;
 
-        public ConversationSV(ApplicationDbContext context, IChatStorage chatStorage, IUserSV userSV, IParticipant participant, IRedisService redisService, webSocket webSocket)
+        public ConversationSV(ApplicationDbContext context, IChatStorage chatStorage, IUserSV userSV, IParticipant participant, IRedisService redisService, webSocket webSocket, Lazy<IGroupSetting> groupSettingService)
         {
             _webSocket = webSocket; // Inject the singleton instance
             _context = context;
@@ -32,6 +35,7 @@ namespace server.Services.ConversationService
             _participant = participant;
             _redisService = redisService;
             _chatStorage = chatStorage;
+            _groupSettingService = groupSettingService ?? throw new ArgumentNullException(nameof(groupSettingService), "Group setting service cannot be null");
         }
 
         public async Task<Participants> AddMemberToGroup(int conversation_id, int userId)
@@ -218,7 +222,7 @@ namespace server.Services.ConversationService
                 created_at = DateTime.Now,
                 name = groupDto.groupName,
                 lastMessage = "Đã tạo nhóm",
-                lastMessageTime =  TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time")),
+                lastMessageTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time")),
             };
             var participants = new List<Participants>();
             try
@@ -236,7 +240,8 @@ namespace server.Services.ConversationService
                         is_deleted = false,
                         joined_at = DateTime.Now,
                         name = user_existing.username,
-                        img_url = user_existing.avatar_url
+                        img_url = user_existing.avatar_url,
+                        role = "member"
                     });
                 }
 
@@ -248,10 +253,10 @@ namespace server.Services.ConversationService
                     is_deleted = false,
                     joined_at = DateTime.Now,
                     name = _userSV.GetUserByIdAsync(groupDto.userId).Result.username,
-                    img_url = _userSV.GetUserByIdAsync(groupDto.userId).Result.avatar_url
+                    img_url = _userSV.GetUserByIdAsync(groupDto.userId).Result.avatar_url,
+                    role = "admin"
                 };
                 participants.Add(user);
-
 
                 _context.Participants.AddRange(participants);
                 await _context.SaveChangesAsync();
@@ -269,7 +274,7 @@ namespace server.Services.ConversationService
                     type = "system",
                     conversation_id = conversation.id,
                     sender_id = groupDto.userId,
-                    created_at =  TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time")),
+                    created_at = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time")),
 
                 };
                 var messageWithAttachment = new MessageWithAttachment
@@ -488,6 +493,12 @@ namespace server.Services.ConversationService
                 {
                     throw new Exception("Conversation not found");
                 }
+                // var existing_groupSetting = await _groupSettingService.Value.GetGroupSettingByConversationIdAsync(conversation_id);
+
+                // if (!existing_groupSetting.AllowMemberEdit)
+                // {
+                //     throw new Exception("Bạn không có quyền sửa ảnh nhóm này");
+                // }
                 existing_conversation.img_url = image;
                 _context.Conversations.Update(existing_conversation);
                 await _context.SaveChangesAsync();
@@ -525,6 +536,7 @@ namespace server.Services.ConversationService
             }
             try
             {
+
                 // Tìm conversation trong database
                 var conversation = await _context.Conversations
                     .Include(c => c.Participants) // Bao gồm participants để giữ dữ liệu đầy đủ
@@ -534,6 +546,12 @@ namespace server.Services.ConversationService
                 {
                     return null;
                 }
+                // var existing_groupSetting = await _groupSettingService.Value.GetGroupSettingByConversationIdAsync(conversation_id);
+
+                // if (!existing_groupSetting.AllowMemberEdit)
+                // {
+                //     throw new Exception("Bạn không có quyền sửa tên nhóm này");
+                // }
 
                 // Cập nhật tên
                 conversation.name = name;

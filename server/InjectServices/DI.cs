@@ -23,6 +23,8 @@ using server.Services.RedisService.ConversationStorage;
 using server.Services.ImageDescriptionService;
 using server.Services.TempOTPStoreSV;
 using server.Services.SettingService;
+using server.Services.GroupSettingService;
+using server.InjectServices;
 
 namespace server.InjectService
 {
@@ -48,7 +50,8 @@ namespace server.InjectService
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Message App API", Version = "v1" });
                 c.OperationFilter<AddFileParamTypesOperationFilter>();
-            }); 
+                c.OperationFilter<SwaggerFileOperationFilter>();
+            });
             //config sqlserver
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
@@ -96,6 +99,7 @@ namespace server.InjectService
 
             services.AddSignalR();
             //scoped: tạo ra 1 instance cho mỗi request
+            services.AddScoped(typeof(Lazy<>), typeof(LazyResolver<>));
             services.AddScoped<IUploadFileService, UploadFileService>();
             services.AddScoped<IAuthSV, AuthSV>();
             services.AddScoped<IUserSV, UserSV>();
@@ -111,6 +115,7 @@ namespace server.InjectService
             services.AddScoped<ISettingSV, SettingSV>();
             services.AddScoped<IImageDescriptionSV, ImageDescriptionService>();
             services.AddScoped<AuthorizationJWT>();
+            services.AddScoped<IGroupSetting, GroupSettingSV>();
         }
 
     }

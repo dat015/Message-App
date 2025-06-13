@@ -33,7 +33,7 @@ builder.Services.AddAuthentication(option =>
     {
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
-        ValidateIssuer = true,
+        ValidateIssuer = false,
         ValidIssuer = jwtSetting["Issuer"],
         ValidateAudience = true,
         ValidAudience = jwtSetting["Audience"],
@@ -73,6 +73,12 @@ using (var scope = app.Services.CreateScope())
     var friendService = scope.ServiceProvider.GetRequiredService<IFriendSV>();
     await friendService.SyncUsersToRedisAsync();
 }
+app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.UseCors("AllowAll");
 
 if (app.Environment.IsDevelopment())
 {
@@ -80,9 +86,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Message App API V1"));
 }
 app.UseStaticFiles();
-app.UseCors("AllowAll");
 app.MapControllers();
-app.UseRouting();
 // Chat websocket
 app.Map("/ws/chat", async context =>
 {
@@ -120,12 +124,7 @@ app.Map("/ws/friend", async context =>
 });
 
 
-app.UseRouting();
-app.MapControllers();
 
-app.UseCors("AllowAll");
 app.UseHttpsRedirection();
-app.UseAuthentication();
-app.UseAuthorization();
 
 app.Run();
