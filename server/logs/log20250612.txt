@@ -5509,3 +5509,232 @@ WHERE [f].[UserId1] = @__friend_id_0 OR [f].[UserId2] = @__friend_id_0
 2025-06-12 16:02:55.239 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.GetFriendsAsync (Message_app)'
 2025-06-12 16:02:55.242 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.19:5053/api/friends/list/1 - 200 null application/json; charset=utf-8 136.9417ms
 2025-06-12 16:03:12.876 +07:00 [INF] Application is shutting down...
+2025-06-12 19:32:40.598 +07:00 [INF] Executed DbCommand (98ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [u].[id], [u].[username], [u].[avatar_url]
+FROM [Users] AS [u]
+2025-06-12 19:32:47.428 +07:00 [INF] User profile is available. Using 'C:\Users\luong\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-06-12 19:32:47.601 +07:00 [WRN] Overriding address(es) 'http://localhost:5053'. Binding to endpoints defined via IConfiguration and/or UseKestrel() instead.
+2025-06-12 19:32:47.626 +07:00 [INF] Now listening on: http://[::]:5053
+2025-06-12 19:32:47.628 +07:00 [INF] Now listening on: http://0.0.0.0:5053
+2025-06-12 19:32:47.630 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-06-12 19:32:47.632 +07:00 [INF] Hosting environment: Development
+2025-06-12 19:32:47.633 +07:00 [INF] Content root path: D:\StudioProject\Message-App\server
+2025-06-12 19:37:24.124 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Auth/login - null null
+2025-06-12 19:37:24.466 +07:00 [INF] CORS policy execution successful.
+2025-06-12 19:37:24.512 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Auth/login - 204 null null 404.2147ms
+2025-06-12 19:37:24.532 +07:00 [INF] Request starting HTTP/1.1 POST http://localhost:5053/api/Auth/login - application/json 43
+2025-06-12 19:37:24.546 +07:00 [INF] CORS policy execution successful.
+2025-06-12 19:37:24.682 +07:00 [INF] CORS policy execution successful.
+2025-06-12 19:37:24.699 +07:00 [WRN] Failed to determine the https port for redirect.
+2025-06-12 19:37:26.753 +07:00 [INF] Executing endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-06-12 19:37:26.857 +07:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(server.DTO.AuthDTO.LoginDTO) on controller Message_app.Controllers.AuthController (Message_app).
+2025-06-12 19:37:27.832 +07:00 [INF] Executed DbCommand (186ms) [Parameters=[@__email_0='?' (Size = 450)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username]
+FROM [Users] AS [u]
+WHERE [u].[email] = @__email_0
+2025-06-12 19:37:28.055 +07:00 [INF] Executing OkObjectResult, writing value of type 'server.DTO.AuthDTO.LoginRespose'.
+2025-06-12 19:37:28.155 +07:00 [INF] Executed action Message_app.Controllers.AuthController.Login (Message_app) in 1290.5194ms
+2025-06-12 19:37:28.157 +07:00 [INF] Executed endpoint 'Message_app.Controllers.AuthController.Login (Message_app)'
+2025-06-12 19:37:28.196 +07:00 [INF] Request finished HTTP/1.1 POST http://localhost:5053/api/Auth/login - 200 null application/json; charset=utf-8 3664.4557ms
+2025-06-12 19:37:28.265 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/ws/chat?userId=1 - null null
+2025-06-12 19:37:28.423 +07:00 [INF] CORS policy execution successful.
+2025-06-12 19:37:28.467 +07:00 [INF] CORS policy execution successful.
+2025-06-12 19:37:28.561 +07:00 [INF] Executing endpoint '/ws/chat'
+2025-06-12 19:37:28.812 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/friends/GetAllFriends/1 - null null
+2025-06-12 19:37:28.817 +07:00 [INF] CORS policy execution successful.
+2025-06-12 19:37:28.822 +07:00 [INF] CORS policy execution successful.
+2025-06-12 19:37:28.844 +07:00 [INF] Executing endpoint 'server.Controllers.FriendsController.GetAllFriends (Message_app)'
+2025-06-12 19:37:28.852 +07:00 [INF] Route matched with {action = "GetAllFriends", controller = "Friends"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAllFriends(Int32) on controller server.Controllers.FriendsController (Message_app).
+2025-06-12 19:37:28.948 +07:00 [INF] Request starting HTTP/1.1 GET http://192.168.1.19:5053/uploads/44b20545-7cd0-49ad-9ade-7b2dd2e64371.jpg - null null
+2025-06-12 19:37:29.106 +07:00 [INF] Sending file. Request path: '/uploads/44b20545-7cd0-49ad-9ade-7b2dd2e64371.jpg'. Physical path: 'D:\StudioProject\Message-App\server\wwwroot\uploads\44b20545-7cd0-49ad-9ade-7b2dd2e64371.jpg'
+2025-06-12 19:37:29.109 +07:00 [INF] Request finished HTTP/1.1 GET http://192.168.1.19:5053/uploads/44b20545-7cd0-49ad-9ade-7b2dd2e64371.jpg - 200 6152450 image/jpeg 161.3184ms
+2025-06-12 19:37:29.455 +07:00 [INF] Executed DbCommand (66ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN [u].[username]
+    ELSE [u0].[username]
+END AS [username], CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN [u].[avatar_url]
+    ELSE [u0].[avatar_url]
+END AS [avatar], CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN [u].[id]
+    ELSE [u0].[id]
+END AS [friendId], @__userId_0 AS [userId]
+FROM [Friends] AS [f]
+INNER JOIN [Users] AS [u] ON [f].[UserId2] = [u].[id]
+INNER JOIN [Users] AS [u0] ON [f].[UserId1] = [u0].[id]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-06-12 19:37:29.462 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType8`2[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[server.DTO.FriendDTO, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-06-12 19:37:29.526 +07:00 [INF] Executed action server.Controllers.FriendsController.GetAllFriends (Message_app) in 668.7454ms
+2025-06-12 19:37:29.529 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.GetAllFriends (Message_app)'
+2025-06-12 19:37:29.532 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/friends/GetAllFriends/1 - 200 null application/json; charset=utf-8 719.1988ms
+2025-06-12 19:37:29.840 +07:00 [INF] Executed DbCommand (43ms) [Parameters=[@__client_UserId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[conversation_id]
+FROM [Participants] AS [p]
+WHERE [p].[user_id] = @__client_UserId_0 AND [p].[is_deleted] = CAST(0 AS bit)
+2025-06-12 19:37:30.087 +07:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_conversations/1 - null null
+2025-06-12 19:37:30.095 +07:00 [INF] CORS policy execution successful.
+2025-06-12 19:37:30.153 +07:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5053/api/Conversation/get_conversations/1 - 204 null null 65.4452ms
+2025-06-12 19:37:30.162 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/Conversation/get_conversations/1 - null null
+2025-06-12 19:37:30.265 +07:00 [INF] CORS policy execution successful.
+2025-06-12 19:37:30.282 +07:00 [INF] CORS policy execution successful.
+2025-06-12 19:37:30.290 +07:00 [INF] Executing endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-06-12 19:37:30.321 +07:00 [INF] Route matched with {action = "GetConversations", controller = "Conversation"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetConversations(Int32) on controller server.Controllers.ConversationController (Message_app).
+2025-06-12 19:37:30.551 +07:00 [INF] Executed DbCommand (38ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [c].[id], [c].[name], [c].[is_group], [c].[created_at], [c].[lastMessage], [c].[lastMessageTime], [c].[img_url], [p0].[id], [p0].[user_id], [p0].[conversation_id], [p0].[name], [p0].[is_deleted], [p0].[img_url]
+FROM [Conversations] AS [c]
+LEFT JOIN [Participants] AS [p0] ON [c].[id] = [p0].[conversation_id]
+WHERE EXISTS (
+    SELECT 1
+    FROM [Participants] AS [p]
+    WHERE [c].[id] = [p].[conversation_id] AND [p].[user_id] = @__userId_0)
+ORDER BY [c].[id]
+2025-06-12 19:37:30.577 +07:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[server.DTO.ConversationDto, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-06-12 19:37:30.606 +07:00 [INF] Executed action server.Controllers.ConversationController.GetConversations (Message_app) in 278.6488ms
+2025-06-12 19:37:30.631 +07:00 [INF] Executed endpoint 'server.Controllers.ConversationController.GetConversations (Message_app)'
+2025-06-12 19:37:30.637 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/Conversation/get_conversations/1 - 200 null application/json; charset=utf-8 475.0377ms
+2025-06-12 19:37:35.702 +07:00 [ERR] Error subscribing user 1 to channel conversation:1
+StackExchange.Redis.RedisConnectionException: The message timed out in the backlog attempting to send because no connection became available (5000ms) - Last Connection Exception: It was not possible to connect to the redis server(s). ConnectTimeout, command=SUBSCRIBE, timeout: 5000, inst: 0, qu: 0, qs: 0, aw: False, bw: CheckingForTimeout, rs: NotStarted, ws: Idle, in: 0, last-in: 0, cur-in: 0, sync-ops: 0, async-ops: 2, serverEndpoint: localhost:6379, conn-sec: n/a, aoc: 0, mc: 1/1/0, mgr: 10 of 10 available, clientName: QUYDEV(SE.Redis-v2.8.31.52602), IOCP: (Busy=0,Free=1000,Min=1,Max=1000), WORKER: (Busy=1,Free=32766,Min=8,Max=32767), POOL: (Threads=7,QueuedItems=0,CompletedItems=1506,Timers=8), v: 2.8.31.52602 (Please take a look at this article for some common client-side issues that can cause timeouts: https://stackexchange.github.io/StackExchange.Redis/Timeouts)
+ ---> StackExchange.Redis.RedisConnectionException: It was not possible to connect to the redis server(s). ConnectTimeout
+   --- End of inner exception stack trace ---
+   at StackExchange.Redis.RedisSubscriber.SubscribeAsync(RedisChannel channel, CommandFlags flags) in /_/src/StackExchange.Redis/RedisSubscriber.cs:line 421
+   at server.Services.WebSocketService.webSocket.ConnectUserToConversationChanelAsync(Int32 userId, Int32 conversationId) in D:\StudioProject\Message-App\server\Services\WebSocketService\websocket.cs:line 103
+2025-06-12 19:37:36.183 +07:00 [INF] Executed endpoint '/ws/chat'
+2025-06-12 19:37:36.187 +07:00 [ERR] An unhandled exception has occurred while executing the request.
+StackExchange.Redis.RedisConnectionException: The message timed out in the backlog attempting to send because no connection became available (5000ms) - Last Connection Exception: It was not possible to connect to the redis server(s). ConnectTimeout, command=SUBSCRIBE, timeout: 5000, inst: 0, qu: 0, qs: 0, aw: False, bw: CheckingForTimeout, rs: NotStarted, ws: Idle, in: 0, last-in: 0, cur-in: 0, sync-ops: 0, async-ops: 2, serverEndpoint: localhost:6379, conn-sec: n/a, aoc: 0, mc: 1/1/0, mgr: 10 of 10 available, clientName: QUYDEV(SE.Redis-v2.8.31.52602), IOCP: (Busy=0,Free=1000,Min=1,Max=1000), WORKER: (Busy=1,Free=32766,Min=8,Max=32767), POOL: (Threads=7,QueuedItems=0,CompletedItems=1506,Timers=8), v: 2.8.31.52602 (Please take a look at this article for some common client-side issues that can cause timeouts: https://stackexchange.github.io/StackExchange.Redis/Timeouts)
+ ---> StackExchange.Redis.RedisConnectionException: It was not possible to connect to the redis server(s). ConnectTimeout
+   --- End of inner exception stack trace ---
+   at StackExchange.Redis.RedisSubscriber.SubscribeAsync(RedisChannel channel, CommandFlags flags) in /_/src/StackExchange.Redis/RedisSubscriber.cs:line 421
+   at server.Services.WebSocketService.webSocket.ConnectUserToConversationChanelAsync(Int32 userId, Int32 conversationId) in D:\StudioProject\Message-App\server\Services\WebSocketService\websocket.cs:line 103
+   at server.Services.WebSocketService.webSocket.HandleBootup(Client client, MessageDTO message) in D:\StudioProject\Message-App\server\Services\WebSocketService\websocket.cs:line 321
+   at server.Services.WebSocketService.webSocket.Receiver(Client client) in D:\StudioProject\Message-App\server\Services\WebSocketService\websocket.cs:line 240
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in D:\StudioProject\Message-App\server\Services\WebSocketService\websocket.cs:line 203
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in D:\StudioProject\Message-App\server\Program.cs:line 92
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2025-06-12 19:37:36.357 +07:00 [WRN] The response has already started, the error page middleware will not be executed.
+2025-06-12 19:37:36.379 +07:00 [ERR] Connection id "0HND9LNGS0B9T", Request id "0HND9LNGS0B9T:00000001": An unhandled exception was thrown by the application.
+StackExchange.Redis.RedisConnectionException: The message timed out in the backlog attempting to send because no connection became available (5000ms) - Last Connection Exception: It was not possible to connect to the redis server(s). ConnectTimeout, command=SUBSCRIBE, timeout: 5000, inst: 0, qu: 0, qs: 0, aw: False, bw: CheckingForTimeout, rs: NotStarted, ws: Idle, in: 0, last-in: 0, cur-in: 0, sync-ops: 0, async-ops: 2, serverEndpoint: localhost:6379, conn-sec: n/a, aoc: 0, mc: 1/1/0, mgr: 10 of 10 available, clientName: QUYDEV(SE.Redis-v2.8.31.52602), IOCP: (Busy=0,Free=1000,Min=1,Max=1000), WORKER: (Busy=1,Free=32766,Min=8,Max=32767), POOL: (Threads=7,QueuedItems=0,CompletedItems=1506,Timers=8), v: 2.8.31.52602 (Please take a look at this article for some common client-side issues that can cause timeouts: https://stackexchange.github.io/StackExchange.Redis/Timeouts)
+ ---> StackExchange.Redis.RedisConnectionException: It was not possible to connect to the redis server(s). ConnectTimeout
+   --- End of inner exception stack trace ---
+   at StackExchange.Redis.RedisSubscriber.SubscribeAsync(RedisChannel channel, CommandFlags flags) in /_/src/StackExchange.Redis/RedisSubscriber.cs:line 421
+   at server.Services.WebSocketService.webSocket.ConnectUserToConversationChanelAsync(Int32 userId, Int32 conversationId) in D:\StudioProject\Message-App\server\Services\WebSocketService\websocket.cs:line 103
+   at server.Services.WebSocketService.webSocket.HandleBootup(Client client, MessageDTO message) in D:\StudioProject\Message-App\server\Services\WebSocketService\websocket.cs:line 321
+   at server.Services.WebSocketService.webSocket.Receiver(Client client) in D:\StudioProject\Message-App\server\Services\WebSocketService\websocket.cs:line 240
+   at server.Services.WebSocketService.webSocket.HandleWebSocket(HttpContext context) in D:\StudioProject\Message-App\server\Services\WebSocketService\websocket.cs:line 203
+   at Program.<>c.<<<Main>$>b__0_4>d.MoveNext() in D:\StudioProject\Message-App\server\Program.cs:line 92
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+2025-06-12 19:37:36.458 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/ws/chat?userId=1 - 101 null null 8193.5069ms
+2025-06-12 19:37:36.553 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/friends/list/1 - null null
+2025-06-12 19:37:36.621 +07:00 [INF] CORS policy execution successful.
+2025-06-12 19:37:36.803 +07:00 [INF] CORS policy execution successful.
+2025-06-12 19:37:36.808 +07:00 [INF] Executing endpoint 'server.Controllers.FriendsController.GetFriendsAsync (Message_app)'
+2025-06-12 19:37:36.817 +07:00 [INF] Route matched with {action = "GetFriends", controller = "Friends"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetFriendsAsync(Int32) on controller server.Controllers.FriendsController (Message_app).
+2025-06-12 19:37:37.200 +07:00 [INF] Executed DbCommand (59ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN CAST(1 AS bit)
+    ELSE CAST(0 AS bit)
+END, [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username], [u0].[id], [u0].[avatar_url], [u0].[bio], [u0].[birthday], [u0].[created_at], [u0].[email], [u0].[gender], [u0].[interests], [u0].[location], [u0].[password], [u0].[passwordSalt], [u0].[username]
+FROM [Friends] AS [f]
+INNER JOIN [Users] AS [u] ON [f].[UserId2] = [u].[id]
+INNER JOIN [Users] AS [u0] ON [f].[UserId1] = [u0].[id]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-06-12 19:37:37.439 +07:00 [INF] Executed DbCommand (124ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-06-12 19:37:37.641 +07:00 [INF] Executed DbCommand (119ms) [Parameters=[@__friend_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__friend_id_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__friend_id_0 OR [f].[UserId2] = @__friend_id_0
+2025-06-12 19:37:37.755 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType8`2[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[server.Models.User, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-06-12 19:37:37.907 +07:00 [INF] Executed action server.Controllers.FriendsController.GetFriendsAsync (Message_app) in 1086.4849ms
+2025-06-12 19:37:37.913 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.GetFriendsAsync (Message_app)'
+2025-06-12 19:37:37.914 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/friends/list/1 - null null
+2025-06-12 19:37:37.949 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/friends/list/1 - 200 null application/json; charset=utf-8 1396.4181ms
+2025-06-12 19:37:38.192 +07:00 [INF] CORS policy execution successful.
+2025-06-12 19:37:38.369 +07:00 [INF] CORS policy execution successful.
+2025-06-12 19:37:38.446 +07:00 [INF] Executing endpoint 'server.Controllers.FriendsController.GetFriendsAsync (Message_app)'
+2025-06-12 19:37:38.538 +07:00 [INF] Route matched with {action = "GetFriends", controller = "Friends"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetFriendsAsync(Int32) on controller server.Controllers.FriendsController (Message_app).
+2025-06-12 19:37:38.749 +07:00 [INF] Executed DbCommand (94ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN CAST(1 AS bit)
+    ELSE CAST(0 AS bit)
+END, [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username], [u0].[id], [u0].[avatar_url], [u0].[bio], [u0].[birthday], [u0].[created_at], [u0].[email], [u0].[gender], [u0].[interests], [u0].[location], [u0].[password], [u0].[passwordSalt], [u0].[username]
+FROM [Friends] AS [f]
+INNER JOIN [Users] AS [u] ON [f].[UserId2] = [u].[id]
+INNER JOIN [Users] AS [u0] ON [f].[UserId1] = [u0].[id]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-06-12 19:37:38.992 +07:00 [INF] Executed DbCommand (141ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-06-12 19:37:39.183 +07:00 [INF] Executed DbCommand (112ms) [Parameters=[@__friend_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__friend_id_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__friend_id_0 OR [f].[UserId2] = @__friend_id_0
+2025-06-12 19:37:39.199 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType8`2[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[server.Models.User, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-06-12 19:37:39.202 +07:00 [INF] Executed action server.Controllers.FriendsController.GetFriendsAsync (Message_app) in 618.9332ms
+2025-06-12 19:37:39.206 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.GetFriendsAsync (Message_app)'
+2025-06-12 19:37:39.207 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/friends/list/1 - 200 null application/json; charset=utf-8 1293.8126ms
+2025-06-12 19:37:41.640 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/ws/chat?userId=1 - null null
+2025-06-12 19:37:41.645 +07:00 [INF] CORS policy execution successful.
+2025-06-12 19:37:41.648 +07:00 [INF] CORS policy execution successful.
+2025-06-12 19:37:41.650 +07:00 [INF] Executing endpoint '/ws/chat'
+2025-06-12 19:38:02.807 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5053/api/friends/list/1 - null null
+2025-06-12 19:38:02.812 +07:00 [INF] CORS policy execution successful.
+2025-06-12 19:38:02.813 +07:00 [INF] CORS policy execution successful.
+2025-06-12 19:38:02.815 +07:00 [INF] Executing endpoint 'server.Controllers.FriendsController.GetFriendsAsync (Message_app)'
+2025-06-12 19:38:02.834 +07:00 [INF] Route matched with {action = "GetFriends", controller = "Friends"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetFriendsAsync(Int32) on controller server.Controllers.FriendsController (Message_app).
+2025-06-12 19:38:02.901 +07:00 [INF] Executed DbCommand (30ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN CAST(1 AS bit)
+    ELSE CAST(0 AS bit)
+END, [u].[id], [u].[avatar_url], [u].[bio], [u].[birthday], [u].[created_at], [u].[email], [u].[gender], [u].[interests], [u].[location], [u].[password], [u].[passwordSalt], [u].[username], [u0].[id], [u0].[avatar_url], [u0].[bio], [u0].[birthday], [u0].[created_at], [u0].[email], [u0].[gender], [u0].[interests], [u0].[location], [u0].[password], [u0].[passwordSalt], [u0].[username]
+FROM [Friends] AS [f]
+INNER JOIN [Users] AS [u] ON [f].[UserId2] = [u].[id]
+INNER JOIN [Users] AS [u0] ON [f].[UserId1] = [u0].[id]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-06-12 19:38:02.915 +07:00 [INF] Executed DbCommand (3ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__userId_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__userId_0 OR [f].[UserId2] = @__userId_0
+2025-06-12 19:38:02.992 +07:00 [INF] Executed DbCommand (32ms) [Parameters=[@__friend_id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN [f].[UserId1] = @__friend_id_0 THEN [f].[UserId2]
+    ELSE [f].[UserId1]
+END
+FROM [Friends] AS [f]
+WHERE [f].[UserId1] = @__friend_id_0 OR [f].[UserId2] = @__friend_id_0
+2025-06-12 19:38:02.998 +07:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType8`2[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[server.Models.User, Message_app, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-06-12 19:38:03.004 +07:00 [INF] Executed action server.Controllers.FriendsController.GetFriendsAsync (Message_app) in 155.1809ms
+2025-06-12 19:38:03.007 +07:00 [INF] Executed endpoint 'server.Controllers.FriendsController.GetFriendsAsync (Message_app)'
+2025-06-12 19:38:03.028 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5053/api/friends/list/1 - 200 null application/json; charset=utf-8 220.9546ms
+2025-06-12 19:40:16.665 +07:00 [INF] Application is shutting down...

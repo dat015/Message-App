@@ -79,15 +79,15 @@ class AppRoutes {
             ? args['onConversationRemoved'] as Function(int)
             : (int _) {};
         // Lấy updateChatListCallback nếu có
-        final updateChatListCallback =
-            args['updateChatListCallback'] is Function
-                ? args['updateChatListCallback']
-                    as Function(MessageWithAttachment)?
-                : null;
-        final onConversationRemoved =
-            args['onConversationRemoved'] is Function
-                ? args['onConversationRemoved'] as Function(int)?
-                : null;
+        // final updateChatListCallback =
+        //     args['updateChatListCallback'] is Function
+        //         ? args['updateChatListCallback']
+        //             as Function(MessageWithAttachment)?
+        //         : null;
+        // final onConversationRemoved =
+        //     args['onConversationRemoved'] is Function
+        //         ? args['onConversationRemoved'] as Function(int)?
+        //         : null;
 
         // Trả về màn hình ChatScreen
         return MaterialPageRoute(

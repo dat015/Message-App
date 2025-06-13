@@ -753,12 +753,26 @@ class _DiaryState extends State<Diary> {
                         ),
                       ),
                       if (address != null)
-                        Text(
-                          'Đang ở: $address',
-                          style: TextStyle(
-                            color: Colors.grey.shade600,
-                            fontSize: 12,
-                          ),
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.location_on,
+                              size: 14,
+                              color: Colors.redAccent,
+                            ),
+                            const SizedBox(width: 4),
+                            Flexible(
+                              child: Text(
+                                'Đang ở: $address',
+                                style: TextStyle(
+                                  color: Colors.redAccent,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
                         ),
                     ],
                   ),
